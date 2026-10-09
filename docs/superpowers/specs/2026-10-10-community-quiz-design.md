@@ -1,6 +1,6 @@
 # Thiết kế quiz cộng đồng và ảnh do người dùng tải lên
 
-Ngày: 2026-10-10. Trạng thái: chức năng đã thống nhất; tài liệu chờ người dùng xem lại trước khi lập kế hoạch triển khai.
+Ngày: 2026-10-10. Trạng thái: người dùng đã duyệt và yêu cầu triển khai. Thiết kế đã được triển khai; xem docs/testing/community-quiz-verification.md để biết bằng chứng kiểm chứng.
 
 ## Mục tiêu và phạm vi
 

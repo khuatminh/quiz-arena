@@ -70,7 +70,7 @@ public final class LoadProbe {
   private SocketHarness login(int index, String password) throws Exception {
     SocketHarness c = SocketHarness.connect(host, port);
     try {
-      c.send(command(MessageType.HELLO, null, null, new Payloads.Hello("1.0", "1")));
+      c.send(command(MessageType.HELLO, null, null, new Payloads.Hello("2.0", "1")));
       c.await(MessageType.HELLO_ACK, WAIT);
       Envelope login =
           command(MessageType.LOGIN, null, null, new Payloads.Login("demo" + index, password));

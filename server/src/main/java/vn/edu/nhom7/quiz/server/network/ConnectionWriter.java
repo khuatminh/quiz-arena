@@ -13,7 +13,7 @@ public final class ConnectionWriter implements Runnable {
     try {
       var out = c.socket.getOutputStream();
       while (!c.closed.get()) {
-        byte[] frame = c.outbound.take();
+        byte[] frame = c.takeOutbound();
         out.write(frame);
         out.flush();
       }

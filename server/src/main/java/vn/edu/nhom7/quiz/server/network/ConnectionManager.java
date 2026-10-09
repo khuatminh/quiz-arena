@@ -54,7 +54,12 @@ public final class ConnectionManager implements OutboundTransport, AutoCloseable
               + failure.code());
       return false;
     }
-    boolean accepted = c.outbound.offer(frame);
+    boolean media =
+        event.type() == MessageType.MEDIA_CHUNK
+            || event.type() == MessageType.MEDIA_UPLOAD_ACK
+            || event.type() == MessageType.MEDIA_UPLOAD_STARTED;
+    boolean accepted = (media ? c.mediaOutbound : c.outbound).offer(frame);
+    if (accepted) c.outboundReady.release();
     if (accepted && event.requestId() != null) c.requests.complete(event.requestId(), event);
     if (!accepted) c.slow.set(true);
     return accepted;

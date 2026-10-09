@@ -24,12 +24,14 @@ public final class AppShell extends BorderPane implements AutoCloseable {
   private String visible = "", query = "";
   private boolean showChat;
   private long presentation = -1, onlineRevision = -1;
-  private JsonNode lastQuiz, lastRanking, lastHistory, lastDetail, lastRematch;
+  private JsonNode lastQuiz, lastRanking, lastHistory, lastDetail, lastRematch, lastReview;
   private GameView game;
+  private CommunityQuizView community;
   private ResultView result;
   private ChatPanel chat;
   private ChallengeDialog challenge;
   private LobbyView lobby;
+  private Long selectedQuizCategory;
   private final boolean reducedMotion = Boolean.getBoolean("quiz.reducedMotion");
 
   public AppShell(ClientStore store, NetworkClient network, UiCommandSink sink) {
@@ -42,16 +44,24 @@ public final class AppShell extends BorderPane implements AutoCloseable {
               store.leaveResult();
               return UUID.randomUUID();
             }
-            return sink.send(type, match, round, payload);
+            UUID sent = sink.send(type, match, round, payload);
+            if (sent != null
+                && type == MessageType.QUIZ_LIST_REQUEST
+                && payload instanceof Payloads.QuizListRequest listRequest)
+              selectedQuizCategory = listRequest.categoryId();
+            return sent;
           } catch (Exception e) {
-            message.setText(e.getMessage());
+            Platform.runLater(() -> message.setText(e.getMessage()));
             return null;
           }
         };
+    vn.edu.nhom7.quiz.client.assets.RemoteMedia.configure(commands);
     auth =
         new AuthView(
             commands,
             (host, port) -> {
+              vn.edu.nhom7.quiz.client.assets.RemoteMedia.clear();
+              community = null;
               store.resetConnection();
               message.setText("Đang kết nối…");
               network
@@ -82,6 +92,7 @@ public final class AppShell extends BorderPane implements AutoCloseable {
   }
 
   public void requestTimeout(vn.edu.nhom7.quiz.common.protocol.MessageType type) {
+    if (type == MessageType.AUTHOR_REQUEST && community != null) community.timeout();
     message.setText(
         type == MessageType.ANSWER
             ? "Server chưa xác nhận câu trả lời · đang chờ, không gửi lại"
@@ -95,12 +106,18 @@ public final class AppShell extends BorderPane implements AutoCloseable {
   }
 
   public void disconnected(String reason) {
+    vn.edu.nhom7.quiz.client.assets.RemoteMedia.clear();
     message.setText(reason + " · Không tự nối lại trận đấu");
     auth.connected(false);
     if (game != null) game.setDisable(true);
   }
 
   public void onEvent(Envelope e) {
+    vn.edu.nhom7.quiz.client.assets.RemoteMedia.onEvent(e);
+    if (community != null) community.onEvent(e);
+    if (e.type() == MessageType.AUTHOR_RESULT
+        && Set.of("PUBLISH", "UNPUBLISH").contains(e.payload().path("action").asText()))
+      refreshQuizzes();
     if (e.type() == MessageType.QUIZ_DETAIL && getLeft() instanceof QuizDetailView detail)
       detail.render(e.payload());
     if (e.type() == MessageType.HELLO_ACK) {
@@ -139,9 +156,23 @@ public final class AppShell extends BorderPane implements AutoCloseable {
     if (e.type() == MessageType.RANKING_INVALIDATED && query.equals("RANKING"))
       commands.send(MessageType.RANKING_REQUEST, null, null, new Payloads.RankingRequest(1, 20));
     if (e.type() == MessageType.LOGOUT_ACK) {
+      vn.edu.nhom7.quiz.client.assets.RemoteMedia.clear();
+      community = null;
+      readyRounds.clear();
+      selectedQuizCategory = null;
+      query = "";
+      visible = "";
       network.disconnect();
       auth.connected(false);
     }
+  }
+
+  private void refreshQuizzes() {
+    commands.send(
+        MessageType.QUIZ_LIST_REQUEST,
+        null,
+        null,
+        new Payloads.QuizListRequest(selectedQuizCategory, 1, 20));
   }
 
   private void header(ClientState s) {
@@ -149,6 +180,29 @@ public final class AppShell extends BorderPane implements AutoCloseable {
       setTop(null);
       return;
     }
+    Button myQuizzes =
+        Ui.button(
+            "Quiz của tôi",
+            () -> {
+              if (s.activeMatchId() != null) return;
+              query = "COMMUNITY";
+              if (community == null)
+                community =
+                    new CommunityQuizView(
+                        commands,
+                        s.payload(MessageType.QUIZ_LIST) == null
+                            ? null
+                            : s.payload(MessageType.QUIZ_LIST).path("categories"));
+              visible = "";
+              setLeft(null);
+              render(s);
+            });
+    JsonNode quizList = s.payload(MessageType.QUIZ_LIST);
+    myQuizzes.setDisable(
+        s.activeMatchId() != null
+            || quizList == null
+            || !quizList.path("categories").isArray()
+            || quizList.path("categories").isEmpty());
     var bar =
         new HBox(
             16,
@@ -164,11 +218,13 @@ public final class AppShell extends BorderPane implements AutoCloseable {
                   if (s.activeMatchId() == null) {
                     query = "";
                     visible = "";
+                    refreshQuizzes();
                     store.leaveResult();
                   } else
                     commands.send(
                         MessageType.EXIT_MATCH, s.activeMatchId(), null, new Payloads.ExitMatch());
                 }),
+            myQuizzes,
             Ui.button(
                 "Xếp hạng",
                 () -> {
@@ -227,7 +283,8 @@ public final class AppShell extends BorderPane implements AutoCloseable {
               || !Objects.equals(lastDetail, s.payload(MessageType.MATCH_DETAIL));
     if (view.equals("RESULT"))
       rebuild |=
-          !Objects.equals(lastRematch, s.payload(MessageType.REMATCH_STATUS))
+          !Objects.equals(lastReview, s.payload(MessageType.LIVE_REVIEW))
+              || !Objects.equals(lastRematch, s.payload(MessageType.REMATCH_STATUS))
               || s.data().containsKey(MessageType.RESULT_SESSION_CLOSED);
     if (rebuild) {
       visible = view;
@@ -238,6 +295,7 @@ public final class AppShell extends BorderPane implements AutoCloseable {
       lastHistory = s.payload(MessageType.HISTORY);
       lastDetail = s.payload(MessageType.MATCH_DETAIL);
       lastRematch = s.payload(MessageType.REMATCH_STATUS);
+      lastReview = s.payload(MessageType.LIVE_REVIEW);
       if (game != null) game.dispose();
       game = null;
       result = null;
@@ -255,8 +313,13 @@ public final class AppShell extends BorderPane implements AutoCloseable {
                     var close = Ui.button("Đóng", () -> setLeft(null));
                     detail.getChildren().add(close);
                     setLeft(detail);
-                  });
+                  },
+                  selectedQuizCategory);
           setCenter(lobby);
+        }
+        case "COMMUNITY" -> {
+          setRight(null);
+          setCenter(community);
         }
         case "RANKING" -> {
           setRight(null);
@@ -292,13 +355,28 @@ public final class AppShell extends BorderPane implements AutoCloseable {
           && s.roundId() != null
           && readyRounds.add(s.roundId())
           && s.question() != null) {
-        Platform.runLater(
-            () ->
-                commands.send(
-                    MessageType.QUESTION_READY,
-                    s.activeMatchId(),
-                    s.roundId(),
-                    new Payloads.QuestionReady(s.question().path("questionId").asLong())));
+        var prepared =
+            s.question().hasNonNull("questionAssetId")
+                ? new vn.edu.nhom7.quiz.client.assets.AssetLoader()
+                    .load(s.question().path("questionAssetId").asText())
+                : java.util.concurrent.CompletableFuture.completedFuture(null);
+        prepared.whenComplete(
+            (image, error) ->
+                Platform.runLater(
+                    () -> {
+                      if (!Objects.equals(store.state().roundId(), s.roundId())
+                          || !Objects.equals(store.state().activeMatchId(), s.activeMatchId()))
+                        return;
+                      if (error != null) {
+                        message.setText(
+                            "Không thể tải/giải mã ảnh câu hỏi. Đang chờ server hủy trận an toàn.");
+                      } else
+                        commands.send(
+                            MessageType.QUESTION_READY,
+                            s.activeMatchId(),
+                            s.roundId(),
+                            new Payloads.QuestionReady(s.question().path("questionId").asLong()));
+                    }));
       }
     }
     if (game != null) game.render(s);

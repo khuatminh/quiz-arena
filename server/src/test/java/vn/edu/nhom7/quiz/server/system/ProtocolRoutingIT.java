@@ -14,7 +14,7 @@ class ProtocolRoutingIT {
 
   private SocketHarness hello(ServerRuntime runtime) throws Exception {
     var s = SocketHarness.connect("127.0.0.1", runtime.port());
-    s.send(command(MessageType.HELLO, null, null, new Payloads.Hello("1", "1")));
+    s.send(command(MessageType.HELLO, null, null, new Payloads.Hello("2.0", "1")));
     s.await(MessageType.HELLO_ACK, WAIT);
     return s;
   }

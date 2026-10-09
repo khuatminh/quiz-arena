@@ -104,7 +104,7 @@ public final class MatchManager implements MatchGateway {
                   "players",
                   players(m),
                   "totalRounds",
-                  10,
+                  m.questions.size(),
                   "readyDeadlineAtMs",
                   endMillis(m)));
         });
@@ -168,6 +168,27 @@ public final class MatchManager implements MatchGateway {
                     command.requestId(),
                     caller.connectionId(),
                     snapshot(m, caller.userId()));
+            case "LIVE_REVIEW_REQUEST" -> {
+              if (m.phase != MatchPhase.RESULT)
+                throw new ProtocolException("INVALID_STATE", "Result required");
+              int page = Math.max(1, p.path("page").asInt(1));
+              emit(
+                  m,
+                  "LIVE_REVIEW",
+                  command.requestId(),
+                  caller.connectionId(),
+                  obj(
+                      "page",
+                      page,
+                      "totalItems",
+                      m.rounds.size(),
+                      "review",
+                      m.rounds.stream()
+                          .skip((long) (page - 1) * Payloads.REVIEW_PAGE_SIZE)
+                          .limit(Payloads.REVIEW_PAGE_SIZE)
+                          .map(this::review)
+                          .toList()));
+            }
             case "REMATCH_REQUEST", "REMATCH_RESPONSE" -> {
               if (rematches == null) throw new IllegalStateException("REMATCH_UNAVAILABLE");
               rematches.commandLocked(m, caller, command);
@@ -283,7 +304,8 @@ public final class MatchManager implements MatchGateway {
       case ANSWERING -> closeRound(m);
       case REVEAL -> leaderboard(m);
       case LEADERBOARD -> {
-        if (m.completed == 10) finish(m, FinishReason.COMPLETED, ReasonCode.NORMAL, null);
+        if (m.completed == m.questions.size())
+          finish(m, FinishReason.COMPLETED, ReasonCode.NORMAL, null);
         else nextQuestion(m);
       }
       case RESULT -> closeResult(m, "EXPIRED");
@@ -296,7 +318,7 @@ public final class MatchManager implements MatchGateway {
     m.roundId = UUID.randomUUID();
     m.accepted.clear();
     m.questionReady.clear();
-    phase(m, MatchPhase.QUESTION_PREPARING, 5);
+    phase(m, MatchPhase.QUESTION_PREPARING, 30);
     emit(
         m,
         "QUESTION",
@@ -308,7 +330,7 @@ public final class MatchManager implements MatchGateway {
             "roundIndex",
             m.index + 1,
             "totalRounds",
-            10,
+            m.questions.size(),
             "readyDeadlineAtMs",
             endMillis(m)));
   }
@@ -527,7 +549,10 @@ public final class MatchManager implements MatchGateway {
             outcome,
             m.completed,
             m.index + 1,
-            m.rounds);
+            m.rounds,
+            !"COMMUNITY".equals(m.quiz.quizSource()),
+            m.quiz.quizVersionId(),
+            m.questions.size());
     phase(m, MatchPhase.RESULT, 60);
     m.resultDeadline = m.deadline;
     Long winner = null;
@@ -554,7 +579,15 @@ public final class MatchManager implements MatchGateway {
             "openedRounds",
             m.index + 1,
             "review",
-            m.rounds.stream().map(this::review).toList(),
+            m.rounds.stream().limit(Payloads.REVIEW_PAGE_SIZE).map(this::review).toList(),
+            "reviewPage",
+            1,
+            "reviewTotalItems",
+            m.rounds.size(),
+            "totalRounds",
+            m.questions.size(),
+            "ranked",
+            m.terminal.ranked(),
             "persistenceStatus",
             "PENDING",
             "resultExpiresAtMs",
@@ -686,7 +719,7 @@ public final class MatchManager implements MatchGateway {
         "roundIndex",
         m.index + 1,
         "totalRounds",
-        10,
+        m.questions.size(),
         "question",
         m.index < 0 ? null : publicQuestion(m.question()),
         "acceptedAnswer",
@@ -740,11 +773,11 @@ public final class MatchManager implements MatchGateway {
         "question",
         publicQuestion(r.question()),
         "correctAnswer",
-        correctAnswer(r.question()),
+        r.revealed() ? correctAnswer(r.question()) : null,
         "explanation",
-        r.question().explanation(),
+        r.revealed() ? r.question().explanation() : null,
         "explanationAssetId",
-        r.question().explanationAssetId(),
+        r.revealed() ? r.question().explanationAssetId() : null,
         "outcomes",
         r.outcomes().stream().map(this::publicOutcome).toList(),
         "revealed",
@@ -848,6 +881,26 @@ public final class MatchManager implements MatchGateway {
           after(() -> onDisconnected(s));
         }
       }
+  }
+
+  public boolean canAccessMedia(long userId, String mediaId) {
+    if (mediaId == null || mediaId.isBlank()) return false;
+    for (Match m : matches.values()) {
+      m.lock.lock();
+      try {
+        if (!m.attached.contains(userId)
+            || m.phase == MatchPhase.CANCELLED
+            || m.phase == MatchPhase.CLOSED) continue;
+        if (m.index >= 0 && mediaId.equals(m.question().questionAssetId())) return true;
+        for (var r : m.rounds) {
+          if (mediaId.equals(r.question().questionAssetId())
+              || r.revealed() && mediaId.equals(r.question().explanationAssetId())) return true;
+        }
+      } finally {
+        m.lock.unlock();
+      }
+    }
+    return false;
   }
 
   public int activeCount() {

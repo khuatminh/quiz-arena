@@ -212,6 +212,9 @@ public final class ProtocolCodec {
               "standings")
           .contains(field);
     return switch (field) {
+      case "correctAnswer" -> owner == Payloads.QuestionReview.class;
+      case "authorName" -> owner == Payloads.QuizSummary.class;
+      case "mediaId" -> owner == MediaPayloads.UploadAck.class;
       case "categoryId" -> owner == Payloads.QuizListRequest.class;
       case "matchId" -> owner == Payloads.ChallengeClosed.class;
       case "answer", "correct", "answerTimeMs" -> owner == Payloads.AnswerOutcome.class;
@@ -232,7 +235,12 @@ public final class ProtocolCodec {
         && (p.get("pageSize").intValue() < 1 || p.get("pageSize").intValue() > 50))
       fail("INVALID_MESSAGE", "Page size outside 1..50");
     for (String id : List.of("userId", "quizId", "questionId", "targetUserId", "senderUserId"))
-      if (p.has(id) && p.get(id).longValue() <= 0) fail("INVALID_MESSAGE", "ID must be positive");
+      if (p.has(id)
+          && p.get(id).longValue() <= 0
+          && !(e.type() == MessageType.AUTHOR_REQUEST
+              && id.equals("quizId")
+              && Set.of("CREATE", "LIST").contains(p.path("action").asText())
+              && p.get(id).longValue() == 0)) fail("INVALID_MESSAGE", "ID must be positive");
   }
 
   private static void uuid(JsonNode n) {

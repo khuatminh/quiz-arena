@@ -15,6 +15,29 @@ class SocketServerTest {
   private final ProtocolCodec codec = new ProtocolCodec();
 
   @Test
+  void controlFramesOvertakeQueuedMediaWithoutSharingCapacity() throws Exception {
+    var manager = new ConnectionManager();
+    var c = new Connection(new Socket(), 1);
+    manager.add(c);
+    var media =
+        codec.envelope(
+            MessageType.MEDIA_CHUNK,
+            UUID.randomUUID(),
+            null,
+            null,
+            null,
+            new MediaPayloads.MediaChunk(
+                "media-" + UUID.randomUUID(), 0, "AA==", 1, "0".repeat(64)));
+    var control = codec.envelope(MessageType.PONG, null, null, null, null, new Payloads.Pong(1, 1));
+    assertTrue(manager.tryEnqueue(c.id, media));
+    assertTrue(manager.tryEnqueue(c.id, media));
+    assertTrue(manager.tryEnqueue(c.id, control));
+    assertArrayEquals(FrameCodec.encode(codec.encode(control)), c.takeOutbound());
+    assertArrayEquals(FrameCodec.encode(codec.encode(media)), c.takeOutbound());
+    manager.close();
+  }
+
+  @Test
   void fragmentedFramesAndBadJsonRecover() throws Exception {
     var manager = new ConnectionManager();
     var disconnected = new java.util.concurrent.atomic.AtomicInteger();
@@ -141,8 +164,14 @@ class SocketServerTest {
     var v = new HandshakeValidator();
     var hello =
         codec.envelope(
-            MessageType.HELLO, UUID.randomUUID(), null, null, null, new Payloads.Hello("1", "1"));
+            MessageType.HELLO, UUID.randomUUID(), null, null, null, new Payloads.Hello("2.0", "1"));
     v.validateFirst(hello, 0, 1);
+    var oldClient =
+        codec.envelope(
+            MessageType.HELLO, UUID.randomUUID(), null, null, null, new Payloads.Hello("1.0", "1"));
+    assertEquals(
+        "UNSUPPORTED_PROTOCOL",
+        assertThrows(ProtocolException.class, () -> v.validateFirst(oldClient, 0, 1)).code());
     assertEquals(
         "HANDSHAKE_TIMEOUT",
         assertThrows(

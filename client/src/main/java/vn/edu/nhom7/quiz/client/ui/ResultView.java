@@ -93,7 +93,45 @@ public final class ResultView extends VBox {
                             null,
                             new Payloads.ExitMatch()))),
             Ui.title("Xem lại câu hỏi"));
-    for (var review : r.path("review")) {
+    getChildren()
+        .add(
+            Ui.label(
+                r.path("totalRounds").asInt(10)
+                    + " câu · tối đa "
+                    + (r.path("totalRounds").asInt(10) * 3)
+                    + " điểm · "
+                    + (r.path("ranked").asBoolean(true)
+                        ? "Tính hạng"
+                        : "Cộng đồng · Không tính hạng")));
+    JsonNode pageData = s.payload(MessageType.LIVE_REVIEW);
+    int page = pageData == null ? r.path("reviewPage").asInt(1) : pageData.path("page").asInt(1);
+    long total =
+        pageData == null
+            ? r.path("reviewTotalItems").asLong(r.path("review").size())
+            : pageData.path("totalItems").asLong();
+    final java.util.UUID reviewMatch = s.resultMatchId();
+    Button previous =
+        Ui.button(
+            "← Trước",
+            () ->
+                sink.send(
+                    MessageType.LIVE_REVIEW_REQUEST,
+                    reviewMatch,
+                    null,
+                    new Payloads.LiveReviewRequest(page - 1)));
+    Button next =
+        Ui.button(
+            "Tiếp →",
+            () ->
+                sink.send(
+                    MessageType.LIVE_REVIEW_REQUEST,
+                    reviewMatch,
+                    null,
+                    new Payloads.LiveReviewRequest(page + 1)));
+    previous.setDisable(page <= 1 || detached);
+    next.setDisable(page * Payloads.REVIEW_PAGE_SIZE >= total || detached);
+    getChildren().add(new HBox(12, previous, Ui.label("Trang " + page), next));
+    for (var review : (pageData == null ? r.path("review") : pageData.path("review"))) {
       var box =
           Ui.stack(
               Ui.label(
@@ -121,6 +159,16 @@ public final class ResultView extends VBox {
                         + PresentationText.outcome(o.path("outcome").asText())));
       if (review.hasNonNull("explanation"))
         box.getChildren().add(Ui.label(review.path("explanation").asText()));
+      if (review.path("question").hasNonNull("questionAssetId"))
+        box.getChildren()
+            .add(
+                new vn.edu.nhom7.quiz.client.assets.AssetLoader()
+                    .view(review.path("question").path("questionAssetId").asText(), 180));
+      if (review.hasNonNull("explanationAssetId"))
+        box.getChildren()
+            .add(
+                new vn.edu.nhom7.quiz.client.assets.AssetLoader()
+                    .view(review.path("explanationAssetId").asText(), 180));
       getChildren().add(box);
     }
     render(s);

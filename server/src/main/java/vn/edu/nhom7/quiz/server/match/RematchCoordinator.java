@@ -96,63 +96,67 @@ public final class RematchCoordinator {
     executor.execute(
         () -> {
           try {
-            var questions =
-                repository.loadMatchQuestions(
-                    old.quiz.quizId(), java.util.random.RandomGenerator.getDefault());
-            if (!completed.compareAndSet(false, true)) return;
-            timeout.cancel();
-            UUID nextId = UUID.randomUUID();
-            Match next = manager.prepare(nextId, old.quiz, old.sessions, questions);
-            if (!manager.sink.reserveMatch(nextId)) {
-              fail(old, generation);
-              return;
-            }
-            manager.registerPrepared(next);
-            boolean[] valid = {false};
-            manager.locked(
-                old,
-                () -> {
-                  valid[0] =
-                      old.phase == MatchPhase.RESULT
-                          && old.rematchGeneration == generation
-                          && old.attached.size() == 2
-                          && manager.clock.nanoTime() < old.resultDeadline
-                          && old.sessions.stream()
-                              .allMatch(s -> manager.alive.test(s.connectionId()));
-                  if (valid[0]) {
-                    old.timer.cancel();
-                    old.rematchGeneration++;
-                    old.rematchLoading = false;
-                    old.phase = MatchPhase.CLOSED;
-                    old.version++;
+            var quiz = repository.currentMatchQuiz(old.quiz);
+            repository.withMatchQuestions(
+                quiz,
+                java.util.random.RandomGenerator.getDefault(),
+                (pinned, questions) -> {
+                  if (!completed.compareAndSet(false, true)) return null;
+                  timeout.cancel();
+                  UUID nextId = UUID.randomUUID();
+                  Match next = manager.prepare(nextId, pinned, old.sessions, questions);
+                  if (!manager.sink.reserveMatch(nextId)) {
+                    fail(old, generation);
+                    return null;
                   }
+                  manager.registerPrepared(next);
+                  boolean[] valid = {false};
+                  manager.locked(
+                      old,
+                      () -> {
+                        valid[0] =
+                            old.phase == MatchPhase.RESULT
+                                && old.rematchGeneration == generation
+                                && old.attached.size() == 2
+                                && manager.clock.nanoTime() < old.resultDeadline
+                                && old.sessions.stream()
+                                    .allMatch(s -> manager.alive.test(s.connectionId()));
+                        if (valid[0]) {
+                          old.timer.cancel();
+                          old.rematchGeneration++;
+                          old.rematchLoading = false;
+                          old.phase = MatchPhase.CLOSED;
+                          old.version++;
+                        }
+                      });
+                  if (!valid[0]) {
+                    manager.discardPrepared(next);
+                    manager.sink.cancelReservation(nextId);
+                    return null;
+                  }
+                  if (!registry.transferPair(old.id, assignment.get().generation(), nextId)) {
+                    manager.discardPrepared(next);
+                    manager.sink.cancelReservation(nextId);
+                    manager.locked(old, () -> manager.closeResult(old, "EXPIRED"));
+                    return null;
+                  }
+                  manager.locked(
+                      old,
+                      () -> {
+                        status(old, "ACCEPTED", nextId);
+                        for (var s : old.sessions)
+                          manager.emit(
+                              old,
+                              "RESULT_SESSION_CLOSED",
+                              null,
+                              s.connectionId(),
+                              MatchManager.obj("reason", "REMATCH"));
+                        old.attached.clear();
+                        manager.after(() -> manager.matches.remove(old.id, old));
+                      });
+                  manager.activate(next);
+                  return null;
                 });
-            if (!valid[0]) {
-              manager.discardPrepared(next);
-              manager.sink.cancelReservation(nextId);
-              return;
-            }
-            if (!registry.transferPair(old.id, assignment.get().generation(), nextId)) {
-              manager.discardPrepared(next);
-              manager.sink.cancelReservation(nextId);
-              manager.locked(old, () -> manager.closeResult(old, "EXPIRED"));
-              return;
-            }
-            manager.locked(
-                old,
-                () -> {
-                  status(old, "ACCEPTED", nextId);
-                  for (var s : old.sessions)
-                    manager.emit(
-                        old,
-                        "RESULT_SESSION_CLOSED",
-                        null,
-                        s.connectionId(),
-                        MatchManager.obj("reason", "REMATCH"));
-                  old.attached.clear();
-                  manager.after(() -> manager.matches.remove(old.id, old));
-                });
-            manager.activate(next);
           } catch (RuntimeException e) {
             if (completed.compareAndSet(false, true)) timeout.cancel();
             fail(old, generation);

@@ -26,6 +26,7 @@ public final class MessageRouter {
   private final Consumer<SessionContext> logout;
   private final Queries queries;
   private final Executor services;
+  private Executor mediaServices;
   private final ScheduledExecutorService timer;
   private final ProtocolCodec codec = new ProtocolCodec();
   private final HandshakeValidator handshake = new HandshakeValidator();
@@ -51,7 +52,12 @@ public final class MessageRouter {
     this.logout = logout;
     this.queries = queries;
     this.services = services;
+    this.mediaServices = services;
     this.timer = timer;
+  }
+
+  public void configureMediaExecutor(Executor executor) {
+    this.mediaServices = executor;
   }
 
   public void route(Connection c, Envelope e) {
@@ -118,16 +124,22 @@ public final class MessageRouter {
             REMATCH_REQUEST,
             REMATCH_RESPONSE,
             EXIT_MATCH,
+            LIVE_REVIEW_REQUEST,
             MATCH_SNAPSHOT_REQUEST -> {
           matches.handle(caller, e);
           presence.broadcast();
         }
         default -> {
-          if (!c.queries.allow(System.nanoTime()))
+          boolean media =
+              e.type() == MessageType.MEDIA_UPLOAD_START
+                  || e.type() == MessageType.MEDIA_UPLOAD_CHUNK
+                  || e.type() == MessageType.MEDIA_REQUEST;
+          if (!(media ? c.mediaRequests : c.queries).allow(System.nanoTime()))
             throw new ProtocolException("RATE_LIMITED", "Too many queries");
           submit(
               c,
               e,
+              media ? mediaServices : services,
               () -> {
                 Object payload = queries.execute(caller, e);
                 if (connections.isAlive(c.id)
@@ -196,8 +208,12 @@ public final class MessageRouter {
   }
 
   private void submit(Connection c, Envelope e, Runnable task) {
+    submit(c, e, services, task);
+  }
+
+  private void submit(Connection c, Envelope e, Executor executor, Runnable task) {
     try {
-      services.execute(
+      executor.execute(
           () -> {
             try {
               task.run();
@@ -268,6 +284,10 @@ public final class MessageRouter {
 
   private static MessageType responseType(MessageType t) {
     return switch (t) {
+      case AUTHOR_REQUEST -> MessageType.AUTHOR_RESULT;
+      case MEDIA_UPLOAD_START -> MessageType.MEDIA_UPLOAD_STARTED;
+      case MEDIA_UPLOAD_CHUNK -> MessageType.MEDIA_UPLOAD_ACK;
+      case MEDIA_REQUEST -> MessageType.MEDIA_CHUNK;
       case QUIZ_LIST_REQUEST -> MessageType.QUIZ_LIST;
       case QUIZ_DETAIL_REQUEST -> MessageType.QUIZ_DETAIL;
       case PROFILE_REQUEST -> MessageType.PROFILE;

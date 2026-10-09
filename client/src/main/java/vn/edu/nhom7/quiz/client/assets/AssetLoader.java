@@ -1,6 +1,9 @@
 package vn.edu.nhom7.quiz.client.assets;
 
+import java.io.ByteArrayInputStream;
 import java.net.URL;
+import java.util.concurrent.CompletableFuture;
+import javafx.application.Platform;
 import javafx.scene.image.*;
 import vn.edu.nhom7.quiz.common.assets.AssetRegistry;
 
@@ -15,12 +18,42 @@ public final class AssetLoader {
     return u != null ? u : getClass().getResource("/assets/images/placeholder.png");
   }
 
+  /** Completes only after bytes are verified and image pixels are decoded. */
+  public CompletableFuture<Image> load(String id) {
+    if (id != null && id.startsWith("media-"))
+      return RemoteMedia.fetch(id)
+          .thenApplyAsync(
+              bytes -> {
+                Image image = new Image(new ByteArrayInputStream(bytes));
+                if (image.isError() || image.getWidth() <= 0 || image.getHeight() <= 0)
+                  throw new IllegalArgumentException("Không thể đọc ảnh câu hỏi.");
+                return image;
+              });
+    return CompletableFuture.completedFuture(new Image(resource(id).toExternalForm()));
+  }
+
   public ImageView view(String id, double size) {
-    URL url = resource(id);
-    var v = new ImageView(new Image(url.toExternalForm(), size, size, true, true));
+    var v = new ImageView(new Image(resource(null).toExternalForm(), size, size, true, true));
     v.setFitWidth(size);
     v.setFitHeight(size);
     v.setPreserveRatio(true);
+    load(id)
+        .whenComplete(
+            (value, error) ->
+                Platform.runLater(
+                    () -> {
+                      if (error == null) v.setImage(value);
+                      else {
+                        var tip =
+                            new javafx.scene.control.Tooltip("Không tải được ảnh · bấm để thử lại");
+                        javafx.scene.control.Tooltip.install(v, tip);
+                        v.setOnMouseClicked(
+                            e ->
+                                load(id)
+                                    .thenAccept(
+                                        image -> Platform.runLater(() -> v.setImage(image))));
+                      }
+                    }));
     return v;
   }
 }

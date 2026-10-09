@@ -23,7 +23,7 @@ public final class SystemTestSupport {
   public static Player login(ServerRuntime runtime) throws IOException {
     SocketHarness socket = SocketHarness.connect("127.0.0.1", runtime.port());
     socket.sendFragmented(
-        command(MessageType.HELLO, null, null, new Payloads.Hello("1.0", "1")), 1);
+        command(MessageType.HELLO, null, null, new Payloads.Hello("2.0", "1")), 1);
     socket.await(MessageType.HELLO_ACK, WAIT);
     String username = "it_" + UUID.randomUUID().toString().replace("-", "").substring(0, 16);
     socket.send(

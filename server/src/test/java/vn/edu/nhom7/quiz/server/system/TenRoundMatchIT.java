@@ -63,7 +63,35 @@ class TenRoundMatchIT {
         assertEquals(
             Map.of("SINGLE_CHOICE", 4, "MULTIPLE_CHOICE", 2, "TRUE_FALSE", 2, "SHORT_ANSWER", 2),
             types);
-        assertEquals(10, result.payload().path("review").size());
+        assertEquals(Payloads.REVIEW_PAGE_SIZE, result.payload().path("review").size());
+        assertEquals(10, result.payload().path("reviewTotalItems").asInt());
+        var reviewedRounds = new HashSet<Integer>();
+        for (var review : result.payload().path("review"))
+          assertTrue(reviewedRounds.add(review.path("roundIndex").asInt()));
+        for (int page = 2;
+            page <= (10 + Payloads.REVIEW_PAGE_SIZE - 1) / Payloads.REVIEW_PAGE_SIZE;
+            page++) {
+          one.socket()
+              .send(
+                  command(
+                      MessageType.LIVE_REVIEW_REQUEST,
+                      match,
+                      null,
+                      new Payloads.LiveReviewRequest(page)));
+          var reviews = one.socket().await(MessageType.LIVE_REVIEW, WAIT).payload();
+          assertEquals(page, reviews.path("page").asInt());
+          assertEquals(10, reviews.path("totalItems").asInt());
+          for (var review : reviews.path("review")) {
+            assertTrue(reviewedRounds.add(review.path("roundIndex").asInt()));
+            assertTrue(review.path("revealed").asBoolean());
+            assertEquals(2, review.path("outcomes").size());
+          }
+        }
+        assertEquals(
+            java.util.stream.IntStream.rangeClosed(1, 10)
+                .boxed()
+                .collect(java.util.stream.Collectors.toSet()),
+            reviewedRounds);
         one.socket().await(MessageType.MATCH_SAVE_STATUS, WAIT);
         assertEquals(0, runtime.persistence.awaitPending(Duration.ofSeconds(8)));
         try (var c = TestDatabase.factory().open();

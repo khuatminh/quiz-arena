@@ -18,7 +18,10 @@
             "categoryName": "Tổng hợp",
             "coverAssetId": null,
             "availability": "AVAILABLE",
-            "totalRounds": 10
+            "totalRounds": 10,
+            "quizSource": "SYSTEM",
+            "authorName": null,
+            "quizVersionId": 0
           },
           "players": [
             {
@@ -2667,7 +2670,11 @@
             }
           ],
           "persistenceStatus": "PENDING",
-          "resultExpiresAtMs": 400000
+          "resultExpiresAtMs": 400000,
+          "reviewPage": 1,
+          "reviewTotalItems": 10,
+          "totalRounds": 10,
+          "ranked": true
         }
       }
     },

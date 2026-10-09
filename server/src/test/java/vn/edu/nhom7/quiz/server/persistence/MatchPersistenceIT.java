@@ -10,6 +10,44 @@ import vn.edu.nhom7.quiz.server.support.*;
 
 class MatchPersistenceIT {
   @Test
+  void communitySaveKeepsAllRankingCountersUnchanged() {
+    var b = DatabaseFixtures.completed();
+    var s =
+        new vn.edu.nhom7.quiz.server.domain.MatchSummary(
+            b.matchId(),
+            b.quizId(),
+            b.quizTitle(),
+            b.player1(),
+            b.player2(),
+            b.startedAt(),
+            b.endedAt(),
+            b.finishReason(),
+            b.reasonCode(),
+            b.outcome(),
+            b.completedRounds(),
+            b.openedRounds(),
+            b.rounds(),
+            false,
+            0,
+            10);
+    var counters = java.util.List.of("total_score", "total_matches", "wins", "losses", "draws");
+    var before = new java.util.HashMap<String, Long>();
+    for (var name : counters)
+      for (long id : java.util.List.of(101L, 102L))
+        before.put(
+            name + id, DatabaseFixtures.scalar("SELECT " + name + " FROM USERS WHERE id=" + id));
+    var repo = new JdbcMatchRepository(TestDatabase.factory());
+    assertEquals(SaveResult.SAVED, repo.save(s));
+    assertEquals(SaveResult.ALREADY_SAVED, repo.save(s));
+    assertFalse(repo.load(s.matchId()).ranked());
+    for (var name : counters)
+      for (long id : java.util.List.of(101L, 102L))
+        assertEquals(
+            before.get(name + id),
+            DatabaseFixtures.scalar("SELECT " + name + " FROM USERS WHERE id=" + id));
+  }
+
+  @Test
   void completedMatchCommitsExactlyOnce() {
     var summary = DatabaseFixtures.completed();
     long before = DatabaseFixtures.scalar("SELECT total_score FROM USERS WHERE id=101");

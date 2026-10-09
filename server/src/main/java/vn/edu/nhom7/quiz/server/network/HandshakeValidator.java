@@ -12,5 +12,8 @@ public final class HandshakeValidator {
       throw new ProtocolException("UNSUPPORTED_PROTOCOL", "Protocol version mismatch");
     if (!e.payload().path("assetPackVersion").asText().equals("1"))
       throw new ProtocolException("ASSET_VERSION_MISMATCH", "Asset pack version mismatch");
+    if (!e.payload().path("clientVersion").asText().equals("2.0"))
+      throw new ProtocolException(
+          "UNSUPPORTED_PROTOCOL", "Quiz Arena requires client version 2.0 (community quizzes).");
   }
 }

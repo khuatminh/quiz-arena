@@ -15,6 +15,14 @@ public final class LobbyView extends BorderPane {
 
   public LobbyView(
       ClientState state, UiCommandSink sink, java.util.function.Consumer<JsonNode> detail) {
+    this(state, sink, detail, null);
+  }
+
+  public LobbyView(
+      ClientState state,
+      UiCommandSink sink,
+      java.util.function.Consumer<JsonNode> detail,
+      Long categoryId) {
     setPadding(new Insets(24));
     var library = new VBox(16, Ui.title("Chọn chủ đề. Mời đối thủ. Bắt đầu!"));
     var topics = new HBox(10);
@@ -58,8 +66,13 @@ public final class LobbyView extends BorderPane {
                 Ui.title(q.path("title").asText()),
                 Ui.label(
                     q.path("categoryName").asText()
-                        + " · 10 câu · "
+                        + " · "
+                        + q.path("totalRounds").asInt(10)
+                        + " câu · "
                         + q.path("availability").asText()));
+        if (q.path("quizSource").asText().equals("COMMUNITY"))
+          card.getChildren()
+              .add(Ui.label("Cộng đồng · Không tính hạng · " + q.path("authorName").asText()));
         card.getStyleClass().add("quiz-card");
         card.setPrefWidth(280);
         var select =
@@ -74,6 +87,30 @@ public final class LobbyView extends BorderPane {
         grid.getChildren().add(card);
       }
     library.getChildren().add(grid);
+    int page = list == null ? 1 : Math.max(1, list.path("page").asInt(1));
+    int pageSize = list == null ? 20 : Math.max(1, list.path("pageSize").asInt(20));
+    long total = list == null ? 0 : list.path("totalItems").asLong();
+    var previous =
+        Ui.button(
+            "← Trước",
+            () ->
+                sink.send(
+                    MessageType.QUIZ_LIST_REQUEST,
+                    null,
+                    null,
+                    new Payloads.QuizListRequest(categoryId, page - 1, pageSize)));
+    var next =
+        Ui.button(
+            "Tiếp →",
+            () ->
+                sink.send(
+                    MessageType.QUIZ_LIST_REQUEST,
+                    null,
+                    null,
+                    new Payloads.QuizListRequest(categoryId, page + 1, pageSize)));
+    previous.setDisable(page <= 1);
+    next.setDisable((long) page * pageSize >= total);
+    library.getChildren().add(new HBox(12, previous, Ui.label("Trang " + page), next));
     setCenter(Ui.scroll(library));
     var online = new VBox(12, Ui.title("Người chơi trực tuyến"));
     online.setPrefWidth(300);
@@ -123,7 +160,7 @@ public final class LobbyView extends BorderPane {
                       MessageType.QUIZ_LIST_REQUEST,
                       null,
                       null,
-                      new Payloads.QuizListRequest(null, 1, 20));
+                      new Payloads.QuizListRequest(categoryId, page, pageSize));
                   sink.send(
                       MessageType.ONLINE_LIST_REQUEST,
                       null,

@@ -2,7 +2,7 @@
 
 A JavaFX desktop quiz duel for two players over persistent TCP. The Maven reactor contains `common` (strict protocol and assets), `server` (sessions, challenges, gameplay and MySQL), and `client` (JavaFX). The existing `udp-student` exercise is separate.
 
-Each match has ten randomly selected questions: four single choice, two multiple choice, two true/false and two short answers. The server owns all timing and scoring. Both players see the answer reveal and a leaderboard after every question, including question ten. Chat, rematches, global ranking and private match history are included.
+System quizzes have ten randomly selected questions: four single choice, two multiple choice, two true/false and two short answers. The server owns all timing and scoring. Both players see the answer reveal and a leaderboard after every question, including question ten. Chat, rematches, global ranking and private match history are included.
 
 ## Build
 
@@ -18,7 +18,7 @@ Dependencies are pinned: JavaFX 21.0.6, Jackson 2.18.3, MySQL Connector/J 8.4.0 
 
 ## Database and server
 
-Prepare a dedicated MySQL 8.4 schema using [database setup](docs/operations/database-setup.md). Apply `database/001_schema.sql` then `database/002_seed.sql` to the selected schema. The seed includes three quizzes and sixty questions. The server checks schema, asset version, indexes and question-bank validity before listening.
+Prepare a dedicated MySQL 8.4 schema using [database setup](docs/operations/database-setup.md). Apply `database/001_schema.sql`, `database/002_seed.sql`, then `database/003_community_quizzes.sql` to the selected schema. The seed includes three quizzes and sixty questions. The server checks schema, asset version, indexes and question-bank validity before listening.
 
 Copy `config/server.properties.example` to `config/server.local.properties`, fill in your own database connection, then:
 
@@ -45,6 +45,17 @@ mvn -f client/pom.xml javafx:run -Djavafx.args="--fixture --participant=101"
 ```
 
 Reduce motion with `-Dquiz.reducedMotion=true` in the JavaFX JVM configuration. The registry and original bundled assets are documented in `common/src/main/resources/assets/registry.json`.
+
+
+## Community quizzes
+
+After signing in, open **Quiz của tôi** to create a draft, enter its name/category, add and reorder questions, and preview question or answer states. Four question types are supported. Save a draft at any time; publishing requires 1–50 valid questions and makes the quiz public in the lobby. Every match plays all questions in authored order, or a shared shuffled order if enabled, with 15 seconds per question.
+
+Choose PNG/JPEG files from your computer (up to 5 MiB and 16 million pixels each). A question can have a question image, an explanation image, or both. Question timing waits for both clients to load their images, with a 30-second preparation limit. Explanation images become accessible only when both players answer or time runs out.
+
+Community matches retain scores, wins/losses and private match history, but do not change global ranking counters. Published versions are immutable: editing creates draft changes, and publishing again affects future matches. Withdrawing prevents new matches; existing matches and history keep their snapshots. Review questions are paginated, including system matches.
+
+Server media is stored in `data/media` by default. Override it with `java -Dquiz.mediaDir=/absolute/media/path -jar server/target/quiz-arena-server.jar ...`; keep this directory persistent and back it up together with MySQL. Clients never access server filesystem paths. Client and server must both be upgraded to this release (HELLO client version `2.0`, protocol envelope version `1`, asset pack `1`). Old clients are rejected at handshake.
 
 ## Verification
 

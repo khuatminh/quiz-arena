@@ -162,40 +162,44 @@ public final class ChallengeManager {
 
   private void create(Challenge c, Envelope request) {
     try {
-      var questions =
-          quizzes.loadMatchQuestions(
-              c.quiz.quizId(), java.util.random.RandomGenerator.getDefault());
-      var match = matches.prepare(c.newMatchId, c.quiz, List.of(c.sender, c.recipient), questions);
-      matches.registerPrepared(match);
-      synchronized (this) {
-        if (c.state != Challenge.State.CREATING_MATCH) {
-          matches.discardPrepared(match);
-          return;
-        }
-        if (sessions.authenticated(c.sender.connectionId()).filter(c.sender::equals).isEmpty()
-            || sessions
-                .authenticated(c.recipient.connectionId())
-                .filter(c.recipient::equals)
-                .isEmpty()
-            || !sessions.attachReservedPair(c.id, c.newMatchId)) {
-          matches.discardPrepared(match);
-          finish(c, Challenge.State.INVALIDATED, "DISCONNECTED", request.requestId());
-          return;
-        }
-        c.state = Challenge.State.ACCEPTED;
-      }
-      try {
-        matches.activate(match);
-        sendClosed(c, "ACCEPTED", "ACCEPTED", request.requestId());
-        presence.broadcast();
-      } catch (Exception e) {
-        matches.discardPrepared(match);
-        sessions.detach(c.sender.userId(), c.newMatchId);
-        sessions.detach(c.recipient.userId(), c.newMatchId);
-        sink.cancelReservation(c.newMatchId);
-        sendClosed(c, "INVALIDATED", "INTERNAL_ERROR", request.requestId());
-        presence.broadcast();
-      }
+      quizzes.withMatchQuestions(
+          c.quiz,
+          java.util.random.RandomGenerator.getDefault(),
+          (pinned, questions) -> {
+            var match =
+                matches.prepare(c.newMatchId, pinned, List.of(c.sender, c.recipient), questions);
+            matches.registerPrepared(match);
+            synchronized (this) {
+              if (c.state != Challenge.State.CREATING_MATCH) {
+                matches.discardPrepared(match);
+                return null;
+              }
+              if (sessions.authenticated(c.sender.connectionId()).filter(c.sender::equals).isEmpty()
+                  || sessions
+                      .authenticated(c.recipient.connectionId())
+                      .filter(c.recipient::equals)
+                      .isEmpty()
+                  || !sessions.attachReservedPair(c.id, c.newMatchId)) {
+                matches.discardPrepared(match);
+                finish(c, Challenge.State.INVALIDATED, "DISCONNECTED", request.requestId());
+                return null;
+              }
+              c.state = Challenge.State.ACCEPTED;
+            }
+            try {
+              matches.activate(match);
+              sendClosed(c, "ACCEPTED", "ACCEPTED", request.requestId());
+              presence.broadcast();
+            } catch (Exception e) {
+              matches.discardPrepared(match);
+              sessions.detach(c.sender.userId(), c.newMatchId);
+              sessions.detach(c.recipient.userId(), c.newMatchId);
+              sink.cancelReservation(c.newMatchId);
+              sendClosed(c, "INVALIDATED", "INTERNAL_ERROR", request.requestId());
+              presence.broadcast();
+            }
+            return null;
+          });
     } catch (Exception e) {
       synchronized (this) {
         if (c.state == Challenge.State.CREATING_MATCH)

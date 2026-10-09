@@ -27,7 +27,19 @@ public final class GameView extends BorderPane {
     getStyleClass().add("game-surface");
     var questionEvent = s.payload(MessageType.QUESTION);
     int roundIndex = questionEvent == null ? 0 : questionEvent.path("roundIndex").asInt();
-    var header = new HBox(20, scores, Ui.label("Câu " + roundIndex + " / 10"), timer, bonus);
+    var header =
+        new HBox(
+            20,
+            scores,
+            Ui.label(
+                "Câu "
+                    + roundIndex
+                    + " / "
+                    + (s.payload(MessageType.MATCH_START) == null
+                        ? 10
+                        : s.payload(MessageType.MATCH_START).path("totalRounds").asInt(10))),
+            timer,
+            bonus);
     header.setPadding(new Insets(12));
     setTop(header);
     JsonNode timing =

@@ -20,7 +20,7 @@ public final class HistoryService {
   }
 
   public Payloads.History history(long requester, int page, int pageSize) {
-    int pg = Math.max(page, 1), sz = pageSize < 1 ? 20 : Math.min(pageSize, 50);
+    int pg = Math.max(page, 1), sz = pageSize < 1 ? 10 : Math.min(pageSize, 10);
     var ids = new ArrayList<UUID>();
     long total;
     try (var c = connections.open()) {
@@ -56,6 +56,10 @@ public final class HistoryService {
   }
 
   public Payloads.MatchDetail detail(long requester, UUID matchId) {
+    return detail(requester, matchId, 1);
+  }
+
+  public Payloads.MatchDetail detail(long requester, UUID matchId, int page) {
     try (var c = connections.open();
         var p = c.prepareStatement("SELECT player1_id,player2_id FROM MATCHES WHERE id=?")) {
       p.setString(1, matchId.toString());
@@ -69,8 +73,37 @@ public final class HistoryService {
       throw ServiceException.database();
     }
     var s = matches.load(matchId);
-    var reviews = s.rounds().stream().map(this::review).toList();
-    return new Payloads.MatchDetail(summary(s, requester), reviews);
+    int pg = Math.max(1, page);
+    var reviews =
+        s.rounds().stream()
+            .skip((long) (pg - 1) * Payloads.REVIEW_PAGE_SIZE)
+            .limit(Payloads.REVIEW_PAGE_SIZE)
+            .map(this::review)
+            .toList();
+    return new Payloads.MatchDetail(summary(s, requester), reviews, pg, s.rounds().size());
+  }
+
+  public boolean canAccessMedia(long userId, String mediaId) {
+    if (mediaId == null || mediaId.isBlank()) return false;
+    try (var c = connections.open();
+        var p =
+            c.prepareStatement(
+                "SELECT 1 FROM MATCH_QUESTIONS q JOIN MATCHES m ON m.id=q.match_id WHERE"
+                    + " (m.player1_id=? OR m.player2_id=?) AND"
+                    + " (JSON_UNQUOTE(JSON_EXTRACT(q.question_snapshot_json,'$.questionAssetId'))=?"
+                    + " OR (q.revealed=TRUE AND"
+                    + " JSON_UNQUOTE(JSON_EXTRACT(q.question_snapshot_json,'$.explanationAssetId'))=?))"
+                    + " LIMIT 1")) {
+      p.setLong(1, userId);
+      p.setLong(2, userId);
+      p.setString(3, mediaId);
+      p.setString(4, mediaId);
+      try (var r = p.executeQuery()) {
+        return r.next();
+      }
+    } catch (SQLException e) {
+      throw ServiceException.database();
+    }
   }
 
   private Payloads.MatchHistorySummary summary(MatchSummary s, long requester) {
@@ -95,7 +128,10 @@ public final class HistoryService {
         s.finishReason().name(),
         s.reasonCode().name(),
         s.startedAt().toEpochMilli(),
-        s.endedAt().toEpochMilli());
+        s.endedAt().toEpochMilli(),
+        s.ranked(),
+        s.totalRounds(),
+        s.quizVersionId());
   }
 
   private Payloads.QuestionReview review(RoundSummary r) {
@@ -110,9 +146,9 @@ public final class HistoryService {
             q.options(),
             q.questionAssetId(),
             15000),
-        correctAnswer(q),
-        q.explanation(),
-        q.explanationAssetId(),
+        r.revealed() ? correctAnswer(q) : null,
+        r.revealed() ? q.explanation() : null,
+        r.revealed() ? q.explanationAssetId() : null,
         r.outcomes().stream()
             .map(
                 a ->

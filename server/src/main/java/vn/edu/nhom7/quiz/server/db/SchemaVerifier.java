@@ -19,7 +19,12 @@ public final class SchemaVerifier {
             "QUESTIONS",
             "MATCHES",
             "MATCH_QUESTIONS",
-            "MATCH_ANSWERS"
+            "MATCH_ANSWERS",
+            "QUIZ_DRAFTS",
+            "QUIZ_DRAFT_QUESTIONS",
+            "QUIZ_VERSIONS",
+            "QUIZ_VERSION_QUESTIONS",
+            "MEDIA_ASSETS"
           })
         try (var p = c.prepareStatement("SELECT 1 FROM " + table + " LIMIT 0")) {
           p.executeQuery().close();
@@ -44,7 +49,7 @@ public final class SchemaVerifier {
       try (var p = c.prepareStatement("SELECT version,asset_pack_version FROM SCHEMA_METADATA");
           var r = p.executeQuery()) {
         if (!r.next()
-            || r.getInt(1) != 1
+            || r.getInt(1) != 3
             || !r.getString(2)
                 .equals(vn.edu.nhom7.quiz.common.assets.AssetRegistry.loadDefault().version()))
           throw new SQLException("Schema version mismatch");
@@ -52,7 +57,7 @@ public final class SchemaVerifier {
     } catch (SQLException e) {
       throw new IllegalStateException(
           "Database schema unavailable or incompatible; apply database/001_schema.sql and"
-              + " database/002_seed.sql");
+              + " database/002_seed.sql and database/003_community_quizzes.sql");
     }
   }
 }

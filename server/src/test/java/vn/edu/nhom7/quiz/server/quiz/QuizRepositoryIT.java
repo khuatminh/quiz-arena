@@ -10,7 +10,11 @@ class QuizRepositoryIT {
   @Test
   void seedSamplesTenUniqueQuestionsInFixedRatio() {
     var repo = new JdbcQuizRepository(TestDatabase.factory());
-    assertEquals(3, repo.list(null, 1, 20).items().size());
+    assertEquals(
+        3,
+        repo.list(null, 1, 50).items().stream()
+            .filter(q -> "SYSTEM".equals(q.quizSource()))
+            .count());
     for (long id = 1; id <= 3; id++) {
       var d = repo.detail(id);
       assertEquals(

@@ -64,6 +64,7 @@ public final class ClientStateReducer {
                 t ->
                     t == MessageType.RESULT_SESSION_CLOSED
                         || t == MessageType.REMATCH_STATUS
+                        || t == MessageType.LIVE_REVIEW
                         || t == MessageType.MATCH_RESULT
                         || t == MessageType.QUESTION_RESULT
                         || t == MessageType.ROUND_LEADERBOARD

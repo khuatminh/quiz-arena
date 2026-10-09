@@ -80,6 +80,62 @@ class RematchCoordinatorTest {
   }
 
   @Test
+  void rematchLoadsCurrentPinnedPublicationAndRejectsUnpublishedQuiz() {
+    var current =
+        new Payloads.QuizSummary(
+            1, "New publication", 1, "General", null, "AVAILABLE", 10, "COMMUNITY", "Author", 77);
+    manager.configureRematch(
+        registry,
+        new vn.edu.nhom7.quiz.server.quiz.QuizRepository() {
+          public List<QuestionSnapshot> loadMatchQuestions(
+              long quiz, java.util.random.RandomGenerator random) {
+            fail("Rematch must load pinned summary");
+            return List.of();
+          }
+
+          public Payloads.QuizSummary currentMatchQuiz(Payloads.QuizSummary old) {
+            return current;
+          }
+
+          public List<QuestionSnapshot> loadMatchQuestions(
+              Payloads.QuizSummary pinned, java.util.random.RandomGenerator random) {
+            assertEquals(77, pinned.quizVersionId());
+            return ServerFixtures.questions();
+          }
+        },
+        loads::add);
+    command(0, "REMATCH_REQUEST");
+    command(1, "REMATCH_RESPONSE", "accept", true);
+    loads.getFirst().run();
+    var next = manager.find(registry.matchOf(101).orElseThrow()).orElseThrow();
+    assertEquals(77, next.quiz.quizVersionId());
+    assertEquals("New publication", next.quiz.title());
+  }
+
+  @Test
+  void unavailablePublicationInvalidatesRematchWithoutReservation() {
+    manager.configureRematch(
+        registry,
+        new vn.edu.nhom7.quiz.server.quiz.QuizRepository() {
+          public List<QuestionSnapshot> loadMatchQuestions(
+              long quiz, java.util.random.RandomGenerator random) {
+            return ServerFixtures.questions();
+          }
+
+          public Payloads.QuizSummary currentMatchQuiz(Payloads.QuizSummary old) {
+            throw new ProtocolException("QUIZ_UNAVAILABLE", "Quiz unavailable");
+          }
+        },
+        loads::add);
+    command(0, "REMATCH_REQUEST");
+    command(1, "REMATCH_RESPONSE", "accept", true);
+    loads.getFirst().run();
+    assertEquals(match.id, registry.matchOf(101).orElseThrow());
+    assertTrue(reserved.isEmpty());
+    assertNull(match.rematchRequester);
+  }
+
+  @Test
   void secondRequestAcceptsAndFreshMatchTransfersWithoutFreeGap() {
     command(0, "REMATCH_REQUEST");
     command(0, "REMATCH_REQUEST");

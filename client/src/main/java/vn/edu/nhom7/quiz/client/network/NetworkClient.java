@@ -63,7 +63,7 @@ public final class NetworkClient implements AutoCloseable {
                     null,
                     null,
                     null,
-                    new Payloads.Hello("1.0", "1")));
+                    new Payloads.Hello("2.0", "1")));
             writer = io.submit(() -> write(s));
             reader = io.submit(() -> read(s));
             heartbeat =
@@ -141,6 +141,11 @@ public final class NetworkClient implements AutoCloseable {
           Envelope e = codec.decode(body);
           validAt = System.nanoTime();
           if (!handshake) {
+            if (e.type() == MessageType.ERROR) {
+              disconnect(
+                  e.payload().path("message").asText("Server không tương thích phiên bản client."));
+              return;
+            }
             if (e.type() != MessageType.HELLO_ACK
                 || !e.payload().path("assetPackVersion").asText().equals("1"))
               throw new IOException("Incompatible server asset pack");

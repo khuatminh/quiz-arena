@@ -24,6 +24,7 @@ class ChallengeManagerTest {
   List<Runnable> jobs;
   ProtocolCodec codec = new ProtocolCodec();
   List<SessionContext> users;
+  boolean pinnedLoad;
 
   @BeforeEach
   void setup() {
@@ -76,7 +77,21 @@ class ChallengeManagerTest {
             sessions,
             presence,
             matches,
-            (id, random) -> ServerFixtures.questions(),
+            new vn.edu.nhom7.quiz.server.quiz.QuizRepository() {
+              public List<QuestionSnapshot> loadMatchQuestions(
+                  long id, java.util.random.RandomGenerator random) {
+                return ServerFixtures.questions();
+              }
+
+              public <T> T withMatchQuestions(
+                  Payloads.QuizSummary quiz,
+                  java.util.random.RandomGenerator random,
+                  java.util.function.BiFunction<Payloads.QuizSummary, List<QuestionSnapshot>, T>
+                      action) {
+                pinnedLoad = true;
+                return action.apply(quiz, ServerFixtures.questions());
+              }
+            },
             sink,
             transport,
             clock,
@@ -125,6 +140,7 @@ class ChallengeManagerTest {
     assertEquals(match, sessions.matchOf(102).orElseThrow());
     assertEquals(2, events.stream().filter(e -> e.type() == MessageType.MATCH_START).count());
     assertEquals(1, reserved.size());
+    assertTrue(pinnedLoad, "Match activation must hold the pinned publication guard");
   }
 
   @Test

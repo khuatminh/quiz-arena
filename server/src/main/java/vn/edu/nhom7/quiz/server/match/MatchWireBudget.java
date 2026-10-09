@@ -5,7 +5,7 @@ import java.util.*;
 import vn.edu.nhom7.quiz.common.protocol.*;
 import vn.edu.nhom7.quiz.server.domain.*;
 
-/** Reject banks whose complete public review cannot fit the v1 64 KiB frame. */
+/** Reject banks whose largest review page cannot fit the 64 KiB frame. */
 public final class MatchWireBudget {
   private MatchWireBudget() {}
 
@@ -35,7 +35,7 @@ public final class MatchWireBudget {
                 "earnedPoints",
                 3,
                 "scoreBefore",
-                30,
+                150,
                 "totalScore",
                 30));
       reviews.add(
@@ -70,13 +70,14 @@ public final class MatchWireBudget {
                             "avatarId",
                             p.avatarId(),
                             "totalScore",
-                            30,
+                            150,
                             "correctCount",
-                            10,
+                            50,
                             "rank",
                             1))
             .toList();
-    // Both result and history include these same reviews. The combined headers deliberately
+    // Both result and history include these same reviews. The two-row review page plus combined
+    // headers deliberately
     // overestimate either message, including maximum-length timestamps and identifiers.
     JsonNode payload =
         MatchManager.obj(
@@ -89,11 +90,14 @@ public final class MatchWireBudget {
             "players",
             summaries,
             "completedRounds",
-            10,
+            50,
             "openedRounds",
-            10,
+            50,
             "review",
-            reviews,
+            reviews.stream()
+                .sorted(Comparator.comparingInt(MatchWireBudget::bytes).reversed())
+                .limit(Payloads.REVIEW_PAGE_SIZE)
+                .toList(),
             "persistenceStatus",
             "PENDING",
             "resultExpiresAtMs",
@@ -111,9 +115,9 @@ public final class MatchWireBudget {
                 "opponentDisplayName",
                 players.getFirst().displayName(),
                 "ownScore",
-                30,
+                150,
                 "opponentScore",
-                30,
+                150,
                 "outcome",
                 "LOSS",
                 "finishReason",

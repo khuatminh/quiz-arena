@@ -53,17 +53,23 @@ public final class Match {
     this.profiles = List.copyOf(profiles);
     if (sessions.size() != 2 || sessions.get(0).userId() == sessions.get(1).userId())
       throw new IllegalArgumentException("Two distinct players required");
-    if (questions.size() != 10
-        || questions.stream().map(QuestionSnapshot::questionId).distinct().count() != 10)
-      throw new IllegalArgumentException("Ten distinct questions required");
-    var counts =
-        new EnumMap<vn.edu.nhom7.quiz.common.protocol.QuestionType, Integer>(
-            vn.edu.nhom7.quiz.common.protocol.QuestionType.class);
-    for (var q : questions) counts.merge(q.questionType(), 1, Integer::sum);
-    for (var type : vn.edu.nhom7.quiz.common.protocol.QuestionType.values())
-      if (counts.getOrDefault(type, 0)
-          != (type == vn.edu.nhom7.quiz.common.protocol.QuestionType.SINGLE_CHOICE ? 4 : 2))
-        throw new IllegalArgumentException("Question distribution must be 4/2/2/2");
+    boolean community = "COMMUNITY".equals(quiz.quizSource());
+    int total = community ? quiz.totalRounds() : 10;
+    if (total < 1
+        || total > 50
+        || questions.size() != total
+        || questions.stream().map(QuestionSnapshot::questionId).distinct().count() != total)
+      throw new IllegalArgumentException("Invalid distinct question count");
+    if (!community) {
+      var counts =
+          new EnumMap<vn.edu.nhom7.quiz.common.protocol.QuestionType, Integer>(
+              vn.edu.nhom7.quiz.common.protocol.QuestionType.class);
+      for (var q : questions) counts.merge(q.questionType(), 1, Integer::sum);
+      for (var type : vn.edu.nhom7.quiz.common.protocol.QuestionType.values())
+        if (counts.getOrDefault(type, 0)
+            != (type == vn.edu.nhom7.quiz.common.protocol.QuestionType.SINGLE_CHOICE ? 4 : 2))
+          throw new IllegalArgumentException("Question distribution must be 4/2/2/2");
+    }
     sessions.forEach(s -> attached.add(s.userId()));
   }
 

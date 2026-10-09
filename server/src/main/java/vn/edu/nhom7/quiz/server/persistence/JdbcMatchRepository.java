@@ -102,7 +102,10 @@ public final class JdbcMatchRepository {
               s.outcome(),
               s.completedRounds(),
               s.openedRounds(),
-              sorted);
+              sorted,
+              s.ranked(),
+              s.quizVersionId(),
+              s.totalRounds());
       var tree = json.valueToTree(copy);
       normalize(tree);
       return tree.toString();
@@ -136,7 +139,10 @@ public final class JdbcMatchRepository {
   }
 
   private void insert(Connection c, MatchSummary s) throws SQLException {
-    String sql = "INSERT INTO MATCHES VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    String sql =
+        "INSERT INTO"
+            + " MATCHES(id,quiz_id,quiz_title_snapshot,player1_id,player2_id,player1_name_snapshot,player2_name_snapshot,score1,score2,correct_count1,correct_count2,outcome,finish_reason,reason_code,started_at,ended_at,completed_rounds,opened_rounds,ranked,quiz_version_id,total_rounds)"
+            + " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
     try (var p = c.prepareStatement(sql)) {
       int i = 1;
       p.setString(i++, s.matchId().toString());
@@ -158,7 +164,11 @@ public final class JdbcMatchRepository {
       p.setTimestamp(
           i++, Timestamp.from(s.endedAt().truncatedTo(java.time.temporal.ChronoUnit.MILLIS)));
       p.setInt(i++, s.completedRounds());
-      p.setInt(i++, s.openedRounds()); /* 18 columns, corrected below */
+      p.setInt(i++, s.openedRounds());
+      p.setBoolean(i++, s.ranked());
+      if (s.quizVersionId() == 0) p.setNull(i++, Types.BIGINT);
+      else p.setLong(i++, s.quizVersionId());
+      p.setInt(i++, s.totalRounds());
       p.executeUpdate();
     }
     for (var round : s.rounds()) {
@@ -204,7 +214,7 @@ public final class JdbcMatchRepository {
       }
       faults.at("after_answers");
     }
-    if (s.finishReason() != FinishReason.ABORTED) {
+    if (s.ranked() && s.finishReason() != FinishReason.ABORTED) {
       var players = new ArrayList<>(List.of(s.player1(), s.player2()));
       players.sort(Comparator.comparingLong(ParticipantSummary::userId));
       for (var player : players) {
@@ -280,7 +290,10 @@ public final class JdbcMatchRepository {
             MatchOutcome.valueOf(r.getString("outcome")),
             r.getInt("completed_rounds"),
             r.getInt("opened_rounds"),
-            rounds);
+            rounds,
+            r.getBoolean("ranked"),
+            r.getLong("quiz_version_id"),
+            r.getInt("total_rounds"));
       }
     }
   }
@@ -343,18 +356,25 @@ public final class JdbcMatchRepository {
 
   private void validate(MatchSummary s) {
     if (s.player1().userId() == s.player2().userId()
-        || s.rounds().size() > 10
+        || s.totalRounds() < 1
+        || s.totalRounds() > 50
+        || s.ranked() && s.totalRounds() != 10
+        || s.rounds().size() > s.totalRounds()
+        || s.openedRounds() != s.rounds().size()
+        || s.completedRounds() != s.rounds().stream().filter(RoundSummary::revealed).count()
         || s.startedAt() == null
         || s.endedAt() == null) throw new IllegalArgumentException("Invalid match summary");
     if (s.finishReason() == FinishReason.COMPLETED
-        && (s.rounds().size() != 10 || s.completedRounds() != 10))
-      throw new IllegalArgumentException("Completed match requires 10 rounds");
+        && (s.rounds().size() != s.totalRounds() || s.completedRounds() != s.totalRounds()))
+      throw new IllegalArgumentException("Completed match requires all rounds");
     var totals = new HashMap<Long, Integer>();
     var counts = new HashMap<Long, Integer>();
     var indices = new HashSet<Integer>();
     for (var r : s.rounds()) {
-      if (!indices.add(r.roundIndex()) || r.outcomes().size() != 2)
-        throw new IllegalArgumentException("Invalid rounds");
+      if (r.roundIndex() < 1
+          || r.roundIndex() > s.totalRounds()
+          || !indices.add(r.roundIndex())
+          || r.outcomes().size() != 2) throw new IllegalArgumentException("Invalid rounds");
       var users = new HashSet<Long>();
       for (var a : r.outcomes()) {
         if (!users.add(a.userId())

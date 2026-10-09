@@ -88,6 +88,113 @@ class MatchEngineTest {
   }
 
   @Test
+  void communityCompletesAllRoundsWithoutRankedSnapshot() {
+    for (int count : List.of(1, 50)) {
+      saved.clear();
+      var quiz =
+          new Payloads.QuizSummary(
+              1, "Community", 1, "General", null, "AVAILABLE", count, "COMMUNITY", "Author", 42);
+      var base = ServerFixtures.questions().getFirst();
+      var questions = new ArrayList<QuestionSnapshot>();
+      for (int i = 1; i <= count; i++)
+        questions.add(
+            new QuestionSnapshot(
+                i,
+                1,
+                base.questionType(),
+                base.content(),
+                base.options(),
+                base.answerKeyJson(),
+                base.explanation(),
+                "question-" + i,
+                "explanation-" + i));
+      match = manager.prepare(UUID.randomUUID(), quiz, ServerFixtures.players(), questions);
+      manager.activate(match);
+      start();
+      for (int i = 0; i < count; i++) {
+        open();
+        command(0, "ANSWER", "questionId", match.question().questionId(), "answer", "A");
+        command(1, "ANSWER", "questionId", match.question().questionId(), "answer", "A");
+        scheduler.advance(Duration.ofSeconds(5));
+      }
+      var summary = saved.getLast();
+      assertEquals(count, summary.completedRounds());
+      assertEquals(count, summary.totalRounds());
+      assertFalse(summary.ranked());
+      assertEquals(42, summary.quizVersionId());
+      assertTrue(events.getLast().payload().path("review").size() <= 5);
+      if (count == 50) {
+        for (int page = 1; page <= 25; page++) {
+          command(0, "LIVE_REVIEW_REQUEST", "page", page);
+          var payload = events.getLast().payload();
+          assertEquals(page, payload.path("page").asInt());
+          assertEquals(50, payload.path("totalItems").asInt());
+          assertEquals(2, payload.path("review").size());
+          assertEquals(
+              (page - 1) * 2 + 1, payload.path("review").get(0).path("roundIndex").asInt());
+        }
+      }
+    }
+  }
+
+  @Test
+  void mediaAccessRequiresParticipantAndReveal() {
+    start();
+    var q = match.question();
+    assertFalse(manager.canAccessMedia(999, "question"));
+    assertFalse(manager.canAccessMedia(101, "unknown"));
+    var question =
+        new QuestionSnapshot(
+            q.questionId(),
+            q.quizId(),
+            q.questionType(),
+            q.content(),
+            q.options(),
+            q.answerKeyJson(),
+            q.explanation(),
+            "question",
+            "explanation");
+    var questions = new ArrayList<>(ServerFixtures.questions());
+    questions.set(0, question);
+    match =
+        manager.prepare(
+            UUID.randomUUID(), ServerFixtures.quiz(), ServerFixtures.players(), questions);
+    manager.activate(match);
+    assertFalse(manager.canAccessMedia(101, "question"));
+    start();
+    assertTrue(manager.canAccessMedia(101, "question"));
+    assertFalse(manager.canAccessMedia(101, "explanation"));
+    open();
+    scheduler.advance(Duration.ofSeconds(15));
+    assertTrue(manager.canAccessMedia(101, "explanation"));
+    scheduler.advance(Duration.ofSeconds(5));
+    assertTrue(manager.canAccessMedia(101, "explanation"));
+    assertTrue(manager.canAccessMedia(102, "question"));
+    assertFalse(manager.canAccessMedia(999, "explanation"));
+    command(0, "EXIT_MATCH");
+    assertFalse(manager.canAccessMedia(101, "explanation"));
+    assertTrue(manager.canAccessMedia(102, "explanation"));
+  }
+
+  @Test
+  void abandonedReviewHidesAnswerKeyAndExplanation() {
+    start();
+    open();
+    command(0, "EXIT_MATCH");
+    var review =
+        events.stream()
+            .filter(e -> e.type() == MessageType.MATCH_RESULT)
+            .findFirst()
+            .orElseThrow()
+            .payload()
+            .path("review")
+            .get(0);
+    assertTrue(review.path("correctAnswer").isNull());
+    assertTrue(review.path("explanation").isNull());
+    assertTrue(review.path("explanationAssetId").isNull());
+  }
+
+  @Test
   void completesTenRoundsAndPublishesLeaderboardTenBeforeResult() {
     start();
     for (int i = 0; i < 10; i++) {
@@ -203,7 +310,9 @@ class MatchEngineTest {
   @Test
   void questionPreparationTimeoutAbortsStartedMatch() {
     start();
-    scheduler.advance(Duration.ofSeconds(5));
+    scheduler.advance(Duration.ofSeconds(29));
+    assertTrue(saved.isEmpty());
+    scheduler.advance(Duration.ofSeconds(1));
     assertEquals(FinishReason.ABORTED, saved.getFirst().finishReason());
     assertEquals(ReasonCode.CLIENT_NOT_READY, saved.getFirst().reasonCode());
     assertEquals(1, saved.getFirst().openedRounds());

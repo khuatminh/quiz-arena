@@ -36,7 +36,7 @@ class MatchWireBudgetTest {
   }
 
   @Test
-  void rejectsAggregateEvenWhenIndividualUnicodeQuestionsAreLegal() {
+  void acceptsPagedReviewWhenAggregateUnicodeQuestionsExceedFrame() {
     var questions =
         ServerFixtures.questions().stream()
             .map(
@@ -46,19 +46,17 @@ class MatchWireBudgetTest {
                         q.quizId(),
                         q.questionType(),
                         "😀".repeat(500),
-                        q.options().stream()
-                            .map(o -> new Payloads.Option(o.id(), "😀".repeat(120)))
-                            .toList(),
+                        q.options().isEmpty()
+                            ? List.of()
+                            : List.of("A", "B", "C", "D", "E", "F").stream()
+                                .map(id -> new Payloads.Option(id, "😀".repeat(120)))
+                                .toList(),
                         q.answerKeyJson(),
                         "😀".repeat(500),
                         null,
                         null))
             .toList();
-    ProtocolException error =
-        assertThrows(
-            ProtocolException.class,
-            () -> MatchWireBudget.validate(ServerFixtures.quiz(), questions, players()));
-    assertEquals("QUIZ_UNAVAILABLE", error.code());
+    assertDoesNotThrow(() -> MatchWireBudget.validate(ServerFixtures.quiz(), questions, players()));
   }
 
   @Test

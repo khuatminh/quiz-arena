@@ -11,6 +11,7 @@ import vn.edu.nhom7.quiz.server.challenge.*;
 import vn.edu.nhom7.quiz.server.db.*;
 import vn.edu.nhom7.quiz.server.domain.ParticipantSummary;
 import vn.edu.nhom7.quiz.server.match.*;
+import vn.edu.nhom7.quiz.server.media.*;
 import vn.edu.nhom7.quiz.server.network.*;
 import vn.edu.nhom7.quiz.server.persistence.*;
 import vn.edu.nhom7.quiz.server.query.*;
@@ -30,6 +31,15 @@ public final class ServerRuntime implements AutoCloseable {
           TimeUnit.MILLISECONDS,
           new ArrayBlockingQueue<>(128),
           new ThreadPoolExecutor.AbortPolicy());
+  private final ThreadPoolExecutor mediaIo =
+      new ThreadPoolExecutor(
+          2,
+          2,
+          0,
+          TimeUnit.MILLISECONDS,
+          new ArrayBlockingQueue<>(64),
+          new ThreadPoolExecutor.AbortPolicy());
+  private final MediaService media;
   private final ScheduledExecutorService maintenance = Executors.newScheduledThreadPool(2);
   private final java.util.Set<Long> pendingProfiles = ConcurrentHashMap.newKeySet();
   private final AuthService authentication;
@@ -64,6 +74,7 @@ public final class ServerRuntime implements AutoCloseable {
     var quizzes = new JdbcQuizRepository(factory);
     var ranking = new RankingService(factory);
     var history = new HistoryService(factory);
+    var authoring = new CommunityQuizService(factory);
     var health = new DatabaseHealth(factory);
     if (!health.probe()) throw new IllegalStateException("Database unavailable");
     persistence =
@@ -89,6 +100,12 @@ public final class ServerRuntime implements AutoCloseable {
               presence.broadcast();
             });
     matches.configureRematch(sessions, quizzes, services);
+    media =
+        new MediaService(
+            java.nio.file.Path.of(System.getProperty("quiz.mediaDir", "data/media")),
+            new JdbcMediaStore(factory),
+            (user, id) -> matches.canAccessMedia(user, id) || history.canAccessMedia(user, id));
+    maintenance.scheduleAtFixedRate(media::cleanup, 30, 30, TimeUnit.SECONDS);
     if (ownedScheduler != null)
       ownedScheduler.setLoadSuppliers(connections::size, matches::activeCount);
     challenges =
@@ -119,6 +136,15 @@ public final class ServerRuntime implements AutoCloseable {
               var p = e.payload();
               int page = p.path("page").asInt(1), size = p.path("pageSize").asInt(20);
               return switch (e.type()) {
+                case AUTHOR_REQUEST ->
+                    authoring.execute(
+                        caller.userId(), codec.payload(e, CommunityPayloads.AuthorRequest.class));
+                case MEDIA_UPLOAD_START ->
+                    media.start(caller.userId(), codec.payload(e, MediaPayloads.UploadStart.class));
+                case MEDIA_UPLOAD_CHUNK ->
+                    media.chunk(caller.userId(), codec.payload(e, MediaPayloads.UploadChunk.class));
+                case MEDIA_REQUEST ->
+                    media.read(caller.userId(), codec.payload(e, MediaPayloads.MediaRequest.class));
                 case QUIZ_LIST_REQUEST ->
                     quizzes.list(
                         p.hasNonNull("categoryId") ? p.get("categoryId").asLong() : null,
@@ -130,7 +156,7 @@ public final class ServerRuntime implements AutoCloseable {
                 case HISTORY_REQUEST -> history.history(caller.userId(), page, size);
                 case MATCH_DETAIL_REQUEST ->
                     history.detail(
-                        caller.userId(), UUID.fromString(p.path("historyMatchId").asText()));
+                        caller.userId(), UUID.fromString(p.path("historyMatchId").asText()), page);
                 default ->
                     throw new vn.edu.nhom7.quiz.common.protocol.ProtocolException(
                         "INVALID_MESSAGE", "Unsupported query");
@@ -138,6 +164,7 @@ public final class ServerRuntime implements AutoCloseable {
             },
             services,
             maintenance);
+    router.configureMediaExecutor(mediaIo);
     connections.onClosed(
         id ->
             sessions
@@ -173,7 +200,7 @@ public final class ServerRuntime implements AutoCloseable {
             .map(SessionContext::connectionId)
             .toList();
     matches.publishSaveStatus(summary, n.status(), n.retryable(), n.savedAtMs(), recipients);
-    if (n.status().equals("SAVED")) {
+    if (n.status().equals("SAVED") && summary.ranked()) {
       var invalid =
           codec.envelope(
               MessageType.RANKING_INVALIDATED,
@@ -245,6 +272,8 @@ public final class ServerRuntime implements AutoCloseable {
     persistence.close();
     maintenance.shutdownNow();
     services.shutdownNow();
+    mediaIo.shutdownNow();
+    media.close();
     if (ownedScheduler != null) {
       String telemetry = System.getenv("QUIZ_TELEMETRY_CSV");
       if (telemetry != null && !telemetry.isBlank())

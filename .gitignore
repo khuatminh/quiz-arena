@@ -5,3 +5,5 @@ target/
 config/*.local.properties
 .env
 *.log
+
+data/media/

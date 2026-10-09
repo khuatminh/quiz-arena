@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import java.util.*;
 
 public final class Payloads {
+  public static final int REVIEW_PAGE_SIZE = 2;
+
   private Payloads() {}
 
   public record Hello(String clientVersion, String assetPackVersion) {}
@@ -125,7 +127,37 @@ public final class Payloads {
       int openedRounds,
       List<QuestionReview> review,
       String persistenceStatus,
-      long resultExpiresAtMs) {}
+      long resultExpiresAtMs,
+      int reviewPage,
+      long reviewTotalItems,
+      int totalRounds,
+      boolean ranked) {
+    public MatchResult(
+        String finishReason,
+        String reasonCode,
+        Long winnerUserId,
+        List<PlayerMatchSummary> players,
+        int completedRounds,
+        int openedRounds,
+        List<QuestionReview> review,
+        String persistenceStatus,
+        long resultExpiresAtMs) {
+      this(
+          finishReason,
+          reasonCode,
+          winnerUserId,
+          players,
+          completedRounds,
+          openedRounds,
+          review,
+          persistenceStatus,
+          resultExpiresAtMs,
+          1,
+          review.size(),
+          10,
+          true);
+    }
+  }
 
   public record MatchSaveStatus(String status, boolean retryable, Long savedAtMs) {}
 
@@ -183,9 +215,22 @@ public final class Payloads {
 
   public record History(int page, int pageSize, long totalItems, List<MatchHistorySummary> items) {}
 
-  public record MatchDetailRequest(UUID historyMatchId) {}
+  public record MatchDetailRequest(UUID historyMatchId, int page) {
+    public MatchDetailRequest(UUID historyMatchId) {
+      this(historyMatchId, 1);
+    }
+  }
 
-  public record MatchDetail(MatchHistorySummary summary, List<QuestionReview> review) {}
+  public record MatchDetail(
+      MatchHistorySummary summary, List<QuestionReview> review, int page, long totalItems) {
+    public MatchDetail(MatchHistorySummary summary, List<QuestionReview> review) {
+      this(summary, review, 1, review.size());
+    }
+  }
+
+  public record LiveReviewRequest(int page) {}
+
+  public record LiveReview(int page, long totalItems, List<QuestionReview> review) {}
 
   public record Error(String code, String message, boolean retryable, JsonNode details) {}
 
@@ -209,7 +254,31 @@ public final class Payloads {
       String categoryName,
       String coverAssetId,
       String availability,
-      int totalRounds) {}
+      int totalRounds,
+      String quizSource,
+      String authorName,
+      long quizVersionId) {
+    public QuizSummary(
+        long quizId,
+        String title,
+        long categoryId,
+        String categoryName,
+        String coverAssetId,
+        String availability,
+        int totalRounds) {
+      this(
+          quizId,
+          title,
+          categoryId,
+          categoryName,
+          coverAssetId,
+          availability,
+          totalRounds,
+          "SYSTEM",
+          null,
+          0);
+    }
+  }
 
   public record PublicQuestion(
       long questionId,
@@ -273,7 +342,41 @@ public final class Payloads {
       String finishReason,
       String reasonCode,
       long startedAtMs,
-      long endedAtMs) {}
+      long endedAtMs,
+      boolean ranked,
+      int totalRounds,
+      long quizVersionId) {
+    public MatchHistorySummary(
+        UUID matchId,
+        long quizId,
+        String quizTitle,
+        long opponentUserId,
+        String opponentName,
+        int ownScore,
+        int opponentScore,
+        String outcome,
+        String finishReason,
+        String reasonCode,
+        long startedAtMs,
+        long endedAtMs) {
+      this(
+          matchId,
+          quizId,
+          quizTitle,
+          opponentUserId,
+          opponentName,
+          ownScore,
+          opponentScore,
+          outcome,
+          finishReason,
+          reasonCode,
+          startedAtMs,
+          endedAtMs,
+          true,
+          10,
+          0);
+    }
+  }
 
   public record RankingEntry(
       int rank,

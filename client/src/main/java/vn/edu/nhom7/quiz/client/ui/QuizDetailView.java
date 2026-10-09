@@ -16,7 +16,12 @@ public final class QuizDetailView extends VBox {
     getChildren()
         .addAll(
             Ui.title(quiz.path("title").asText()),
-            Ui.label("10 câu: 4 một đáp án · 2 nhiều đáp án · 2 đúng/sai · 2 trả lời ngắn"),
+            Ui.label(
+                quiz.path("totalRounds").asInt(10)
+                    + " câu · "
+                    + (quiz.path("quizSource").asText().equals("COMMUNITY")
+                        ? "Cộng đồng · Không tính hạng · " + quiz.path("authorName").asText()
+                        : "Quiz hệ thống · Tính hạng")),
             Ui.label("15 giây mỗi câu · Điểm theo server: 3 / 2 / 1 · Không trừ điểm khi sai"));
     sink.send(
         MessageType.QUIZ_DETAIL_REQUEST,
