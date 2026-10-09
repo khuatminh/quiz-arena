@@ -1,0 +1,8 @@
+2026-10-09 17:27 Asia/Ho_Chi_Minh — actual isolated server localhost:15555
+Command executed:
+JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-21.jdk/Contents/Home mvn -pl client -am test -q -Dtest=NetworkClientLiveTest -Dsurefire.failIfNoSpecifiedTests=false -Dquiz.integrationPort=15555
+Process exit: 0
+Tests selected: 1 integration test, two freshly generated ui_<random> accounts.
+Verified for each actual NetworkClient: HELLO_ACK, REGISTER_RESULT, LOGIN_RESULT profile username, nonempty QUIZ_LIST, LOGOUT_ACK.
+The source is now named NetworkClientLiveProbe so normal unit runs do not report an intentionally skipped live-server test. To repeat against a running isolated server, use -Dtest=NetworkClientLiveProbe with the same remaining arguments.
+No passwords or raw authentication bodies are logged.

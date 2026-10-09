@@ -1,0 +1,5 @@
+LOGIN_RESULT samples=100 p95Ms=58.965
+ONLINE_LIST samples=100 p95Ms=2.297
+ANSWER_ACK samples=100 p95Ms=3.341
+CHAT_MESSAGE samples=100 p95Ms=3.524
+CSV: /Users/justminh/Desktop/DH/LTM/docs/testing/evidence/latency.csv; timer dispatch is measured separately by server telemetry.

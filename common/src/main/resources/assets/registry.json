@@ -1,0 +1,96 @@
+{
+  "assetPackVersion": "1",
+  "assets": [
+    {
+      "id": "avatar-01",
+      "kind": "avatar",
+      "path": "/assets/avatars/avatar-01.png",
+      "attribution": "Original Quiz Arena team artwork; CC0",
+      "required": true
+    },
+    {
+      "id": "avatar-02",
+      "kind": "avatar",
+      "path": "/assets/avatars/avatar-02.png",
+      "attribution": "Original Quiz Arena team artwork; CC0",
+      "required": true
+    },
+    {
+      "id": "avatar-03",
+      "kind": "avatar",
+      "path": "/assets/avatars/avatar-03.png",
+      "attribution": "Original Quiz Arena team artwork; CC0",
+      "required": true
+    },
+    {
+      "id": "avatar-04",
+      "kind": "avatar",
+      "path": "/assets/avatars/avatar-04.png",
+      "attribution": "Original Quiz Arena team artwork; CC0",
+      "required": true
+    },
+    {
+      "id": "avatar-05",
+      "kind": "avatar",
+      "path": "/assets/avatars/avatar-05.png",
+      "attribution": "Original Quiz Arena team artwork; CC0",
+      "required": true
+    },
+    {
+      "id": "avatar-06",
+      "kind": "avatar",
+      "path": "/assets/avatars/avatar-06.png",
+      "attribution": "Original Quiz Arena team artwork; CC0",
+      "required": true
+    },
+    {
+      "id": "avatar-07",
+      "kind": "avatar",
+      "path": "/assets/avatars/avatar-07.png",
+      "attribution": "Original Quiz Arena team artwork; CC0",
+      "required": true
+    },
+    {
+      "id": "avatar-08",
+      "kind": "avatar",
+      "path": "/assets/avatars/avatar-08.png",
+      "attribution": "Original Quiz Arena team artwork; CC0",
+      "required": true
+    },
+    {
+      "id": "quiz-cover-general",
+      "kind": "image",
+      "path": "/assets/images/quiz-cover-general.png",
+      "attribution": "Original Quiz Arena team artwork; CC0",
+      "required": false
+    },
+    {
+      "id": "quiz-cover-science",
+      "kind": "image",
+      "path": "/assets/images/quiz-cover-science.png",
+      "attribution": "Original Quiz Arena team artwork; CC0",
+      "required": false
+    },
+    {
+      "id": "quiz-cover-history",
+      "kind": "image",
+      "path": "/assets/images/quiz-cover-history.png",
+      "attribution": "Original Quiz Arena team artwork; CC0",
+      "required": false
+    },
+    {
+      "id": "question-sample",
+      "kind": "image",
+      "path": "/assets/images/question-sample.png",
+      "attribution": "Original Quiz Arena team artwork; CC0",
+      "required": false
+    },
+    {
+      "id": "placeholder",
+      "kind": "image",
+      "path": "/assets/images/placeholder.png",
+      "attribution": "Original Quiz Arena team artwork; CC0",
+      "required": true
+    }
+  ]
+}

@@ -1,0 +1,2691 @@
+{
+  "assetPackVersion": "1",
+  "events": [
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "MATCH_START",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": null,
+        "eventSeq": 1,
+        "payload": {
+          "quiz": {
+            "quizId": 1,
+            "title": "Kiến thức chung",
+            "categoryId": 1,
+            "categoryName": "Tổng hợp",
+            "coverAssetId": null,
+            "availability": "AVAILABLE",
+            "totalRounds": 10
+          },
+          "players": [
+            {
+              "userId": 101,
+              "displayName": "Minh",
+              "avatarId": "avatar-01",
+              "totalScore": 0,
+              "correctCount": 0,
+              "rank": 1
+            },
+            {
+              "userId": 102,
+              "displayName": "Phúc",
+              "avatarId": "avatar-02",
+              "totalScore": 0,
+              "correctCount": 0,
+              "rank": 1
+            }
+          ],
+          "totalRounds": 10,
+          "readyDeadlineAtMs": 10000
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "MATCH_COUNTDOWN",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": null,
+        "eventSeq": 2,
+        "payload": {
+          "durationMs": 3000,
+          "phaseEndsAtMs": 3000,
+          "serverTimeMs": 0
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "QUESTION",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-00000000000b",
+        "eventSeq": 3,
+        "payload": {
+          "question": {
+            "questionId": 1,
+            "questionType": "SINGLE_CHOICE",
+            "content": "Thủ đô Việt Nam?",
+            "options": [
+              {
+                "id": "A",
+                "text": "Hà Nội"
+              },
+              {
+                "id": "B",
+                "text": "Huế"
+              }
+            ],
+            "questionAssetId": null,
+            "timeLimitMs": 15000
+          },
+          "roundIndex": 1,
+          "totalRounds": 10,
+          "readyDeadlineAtMs": 30000
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ROUND_COUNTDOWN",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-00000000000b",
+        "eventSeq": 4,
+        "payload": {
+          "durationMs": 2000,
+          "phaseEndsAtMs": 32000,
+          "serverTimeMs": 30000
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "QUESTION_OPEN",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-00000000000b",
+        "eventSeq": 5,
+        "payload": {
+          "questionId": 1,
+          "remainingMs": 15000,
+          "deadlineAtMs": 47000,
+          "serverTimeMs": 32000
+        }
+      }
+    },
+    {
+      "participantUserId": 101,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ANSWER_ACK",
+        "requestId": "00000000-0000-0000-0000-000000000001",
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-00000000000b",
+        "eventSeq": 6,
+        "payload": {
+          "questionId": 1,
+          "accepted": true,
+          "answerTimeMs": 1000,
+          "acceptedRequestId": "00000000-0000-0000-0000-000000000001"
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ANSWER_STATUS",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-00000000000b",
+        "eventSeq": 7,
+        "payload": {
+          "userId": 101,
+          "answered": true
+        }
+      }
+    },
+    {
+      "participantUserId": 102,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ANSWER_ACK",
+        "requestId": "00000000-0000-0000-0000-000000000001",
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-00000000000b",
+        "eventSeq": 8,
+        "payload": {
+          "questionId": 1,
+          "accepted": true,
+          "answerTimeMs": 1500,
+          "acceptedRequestId": "00000000-0000-0000-0000-000000000001"
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ANSWER_STATUS",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-00000000000b",
+        "eventSeq": 9,
+        "payload": {
+          "userId": 102,
+          "answered": true
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "QUESTION_RESULT",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-00000000000b",
+        "eventSeq": 10,
+        "payload": {
+          "questionId": 1,
+          "correctAnswer": "A",
+          "explanation": "Lời giải công bố sau khi chấm.",
+          "explanationAssetId": null,
+          "outcomes": [
+            {
+              "userId": 101,
+              "answer": "A",
+              "outcome": "ANSWERED",
+              "correct": true,
+              "answerTimeMs": 1000,
+              "earnedPoints": 2,
+              "scoreBefore": 0,
+              "totalScore": 2
+            },
+            {
+              "userId": 102,
+              "answer": "A",
+              "outcome": "ANSWERED",
+              "correct": true,
+              "answerTimeMs": 1500,
+              "earnedPoints": 2,
+              "scoreBefore": 0,
+              "totalScore": 2
+            }
+          ],
+          "durationMs": 2000,
+          "phaseEndsAtMs": 49000,
+          "serverTimeMs": 47000
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ROUND_LEADERBOARD",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-00000000000b",
+        "eventSeq": 11,
+        "payload": {
+          "roundIndex": 1,
+          "standings": [
+            {
+              "userId": 101,
+              "displayName": "Minh",
+              "avatarId": "avatar-01",
+              "rank": 1,
+              "previousRank": 1,
+              "scoreBefore": 0,
+              "earnedPoints": 2,
+              "totalScore": 2,
+              "correctCount": 1,
+              "outcome": "ANSWERED"
+            },
+            {
+              "userId": 102,
+              "displayName": "Phúc",
+              "avatarId": "avatar-02",
+              "rank": 1,
+              "previousRank": 1,
+              "scoreBefore": 0,
+              "earnedPoints": 2,
+              "totalScore": 2,
+              "correctCount": 1,
+              "outcome": "ANSWERED"
+            }
+          ],
+          "durationMs": 3000,
+          "phaseEndsAtMs": 52000,
+          "serverTimeMs": 49000
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "QUESTION",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-00000000000c",
+        "eventSeq": 12,
+        "payload": {
+          "question": {
+            "questionId": 2,
+            "questionType": "SINGLE_CHOICE",
+            "content": "Thủ đô Việt Nam?",
+            "options": [
+              {
+                "id": "A",
+                "text": "Hà Nội"
+              },
+              {
+                "id": "B",
+                "text": "Huế"
+              }
+            ],
+            "questionAssetId": null,
+            "timeLimitMs": 15000
+          },
+          "roundIndex": 2,
+          "totalRounds": 10,
+          "readyDeadlineAtMs": 60000
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ROUND_COUNTDOWN",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-00000000000c",
+        "eventSeq": 13,
+        "payload": {
+          "durationMs": 2000,
+          "phaseEndsAtMs": 62000,
+          "serverTimeMs": 60000
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "QUESTION_OPEN",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-00000000000c",
+        "eventSeq": 14,
+        "payload": {
+          "questionId": 2,
+          "remainingMs": 15000,
+          "deadlineAtMs": 77000,
+          "serverTimeMs": 62000
+        }
+      }
+    },
+    {
+      "participantUserId": 101,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ANSWER_ACK",
+        "requestId": "00000000-0000-0000-0000-000000000001",
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-00000000000c",
+        "eventSeq": 15,
+        "payload": {
+          "questionId": 2,
+          "accepted": true,
+          "answerTimeMs": 1000,
+          "acceptedRequestId": "00000000-0000-0000-0000-000000000001"
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ANSWER_STATUS",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-00000000000c",
+        "eventSeq": 16,
+        "payload": {
+          "userId": 101,
+          "answered": true
+        }
+      }
+    },
+    {
+      "participantUserId": 102,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ANSWER_ACK",
+        "requestId": "00000000-0000-0000-0000-000000000001",
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-00000000000c",
+        "eventSeq": 17,
+        "payload": {
+          "questionId": 2,
+          "accepted": true,
+          "answerTimeMs": 1500,
+          "acceptedRequestId": "00000000-0000-0000-0000-000000000001"
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ANSWER_STATUS",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-00000000000c",
+        "eventSeq": 18,
+        "payload": {
+          "userId": 102,
+          "answered": true
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "QUESTION_RESULT",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-00000000000c",
+        "eventSeq": 19,
+        "payload": {
+          "questionId": 2,
+          "correctAnswer": "A",
+          "explanation": "Lời giải công bố sau khi chấm.",
+          "explanationAssetId": null,
+          "outcomes": [
+            {
+              "userId": 101,
+              "answer": "A",
+              "outcome": "ANSWERED",
+              "correct": true,
+              "answerTimeMs": 1000,
+              "earnedPoints": 3,
+              "scoreBefore": 2,
+              "totalScore": 5
+            },
+            {
+              "userId": 102,
+              "answer": "A",
+              "outcome": "ANSWERED",
+              "correct": true,
+              "answerTimeMs": 1500,
+              "earnedPoints": 1,
+              "scoreBefore": 2,
+              "totalScore": 3
+            }
+          ],
+          "durationMs": 2000,
+          "phaseEndsAtMs": 79000,
+          "serverTimeMs": 77000
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ROUND_LEADERBOARD",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-00000000000c",
+        "eventSeq": 20,
+        "payload": {
+          "roundIndex": 2,
+          "standings": [
+            {
+              "userId": 101,
+              "displayName": "Minh",
+              "avatarId": "avatar-01",
+              "rank": 1,
+              "previousRank": 1,
+              "scoreBefore": 2,
+              "earnedPoints": 3,
+              "totalScore": 5,
+              "correctCount": 2,
+              "outcome": "ANSWERED"
+            },
+            {
+              "userId": 102,
+              "displayName": "Phúc",
+              "avatarId": "avatar-02",
+              "rank": 2,
+              "previousRank": 1,
+              "scoreBefore": 2,
+              "earnedPoints": 1,
+              "totalScore": 3,
+              "correctCount": 2,
+              "outcome": "ANSWERED"
+            }
+          ],
+          "durationMs": 3000,
+          "phaseEndsAtMs": 82000,
+          "serverTimeMs": 79000
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "QUESTION",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-00000000000d",
+        "eventSeq": 21,
+        "payload": {
+          "question": {
+            "questionId": 3,
+            "questionType": "SINGLE_CHOICE",
+            "content": "Thủ đô Việt Nam?",
+            "options": [
+              {
+                "id": "A",
+                "text": "Hà Nội"
+              },
+              {
+                "id": "B",
+                "text": "Huế"
+              }
+            ],
+            "questionAssetId": null,
+            "timeLimitMs": 15000
+          },
+          "roundIndex": 3,
+          "totalRounds": 10,
+          "readyDeadlineAtMs": 90000
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ROUND_COUNTDOWN",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-00000000000d",
+        "eventSeq": 22,
+        "payload": {
+          "durationMs": 2000,
+          "phaseEndsAtMs": 92000,
+          "serverTimeMs": 90000
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "QUESTION_OPEN",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-00000000000d",
+        "eventSeq": 23,
+        "payload": {
+          "questionId": 3,
+          "remainingMs": 15000,
+          "deadlineAtMs": 107000,
+          "serverTimeMs": 92000
+        }
+      }
+    },
+    {
+      "participantUserId": 101,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ANSWER_ACK",
+        "requestId": "00000000-0000-0000-0000-000000000001",
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-00000000000d",
+        "eventSeq": 24,
+        "payload": {
+          "questionId": 3,
+          "accepted": true,
+          "answerTimeMs": 1000,
+          "acceptedRequestId": "00000000-0000-0000-0000-000000000001"
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ANSWER_STATUS",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-00000000000d",
+        "eventSeq": 25,
+        "payload": {
+          "userId": 101,
+          "answered": true
+        }
+      }
+    },
+    {
+      "participantUserId": 102,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ANSWER_ACK",
+        "requestId": "00000000-0000-0000-0000-000000000001",
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-00000000000d",
+        "eventSeq": 26,
+        "payload": {
+          "questionId": 3,
+          "accepted": true,
+          "answerTimeMs": 1500,
+          "acceptedRequestId": "00000000-0000-0000-0000-000000000001"
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ANSWER_STATUS",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-00000000000d",
+        "eventSeq": 27,
+        "payload": {
+          "userId": 102,
+          "answered": true
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "QUESTION_RESULT",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-00000000000d",
+        "eventSeq": 28,
+        "payload": {
+          "questionId": 3,
+          "correctAnswer": "A",
+          "explanation": "Lời giải công bố sau khi chấm.",
+          "explanationAssetId": null,
+          "outcomes": [
+            {
+              "userId": 101,
+              "answer": "A",
+              "outcome": "ANSWERED",
+              "correct": true,
+              "answerTimeMs": 1000,
+              "earnedPoints": 3,
+              "scoreBefore": 5,
+              "totalScore": 8
+            },
+            {
+              "userId": 102,
+              "answer": "A",
+              "outcome": "ANSWERED",
+              "correct": true,
+              "answerTimeMs": 1500,
+              "earnedPoints": 1,
+              "scoreBefore": 3,
+              "totalScore": 4
+            }
+          ],
+          "durationMs": 2000,
+          "phaseEndsAtMs": 109000,
+          "serverTimeMs": 107000
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ROUND_LEADERBOARD",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-00000000000d",
+        "eventSeq": 29,
+        "payload": {
+          "roundIndex": 3,
+          "standings": [
+            {
+              "userId": 101,
+              "displayName": "Minh",
+              "avatarId": "avatar-01",
+              "rank": 1,
+              "previousRank": 1,
+              "scoreBefore": 5,
+              "earnedPoints": 3,
+              "totalScore": 8,
+              "correctCount": 3,
+              "outcome": "ANSWERED"
+            },
+            {
+              "userId": 102,
+              "displayName": "Phúc",
+              "avatarId": "avatar-02",
+              "rank": 2,
+              "previousRank": 1,
+              "scoreBefore": 3,
+              "earnedPoints": 1,
+              "totalScore": 4,
+              "correctCount": 3,
+              "outcome": "ANSWERED"
+            }
+          ],
+          "durationMs": 3000,
+          "phaseEndsAtMs": 112000,
+          "serverTimeMs": 109000
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "QUESTION",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-00000000000e",
+        "eventSeq": 30,
+        "payload": {
+          "question": {
+            "questionId": 4,
+            "questionType": "SINGLE_CHOICE",
+            "content": "Thủ đô Việt Nam?",
+            "options": [
+              {
+                "id": "A",
+                "text": "Hà Nội"
+              },
+              {
+                "id": "B",
+                "text": "Huế"
+              }
+            ],
+            "questionAssetId": null,
+            "timeLimitMs": 15000
+          },
+          "roundIndex": 4,
+          "totalRounds": 10,
+          "readyDeadlineAtMs": 120000
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ROUND_COUNTDOWN",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-00000000000e",
+        "eventSeq": 31,
+        "payload": {
+          "durationMs": 2000,
+          "phaseEndsAtMs": 122000,
+          "serverTimeMs": 120000
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "QUESTION_OPEN",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-00000000000e",
+        "eventSeq": 32,
+        "payload": {
+          "questionId": 4,
+          "remainingMs": 15000,
+          "deadlineAtMs": 137000,
+          "serverTimeMs": 122000
+        }
+      }
+    },
+    {
+      "participantUserId": 101,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ANSWER_ACK",
+        "requestId": "00000000-0000-0000-0000-000000000001",
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-00000000000e",
+        "eventSeq": 33,
+        "payload": {
+          "questionId": 4,
+          "accepted": true,
+          "answerTimeMs": 1000,
+          "acceptedRequestId": "00000000-0000-0000-0000-000000000001"
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ANSWER_STATUS",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-00000000000e",
+        "eventSeq": 34,
+        "payload": {
+          "userId": 101,
+          "answered": true
+        }
+      }
+    },
+    {
+      "participantUserId": 102,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ANSWER_ACK",
+        "requestId": "00000000-0000-0000-0000-000000000001",
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-00000000000e",
+        "eventSeq": 35,
+        "payload": {
+          "questionId": 4,
+          "accepted": true,
+          "answerTimeMs": 1500,
+          "acceptedRequestId": "00000000-0000-0000-0000-000000000001"
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ANSWER_STATUS",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-00000000000e",
+        "eventSeq": 36,
+        "payload": {
+          "userId": 102,
+          "answered": true
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "QUESTION_RESULT",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-00000000000e",
+        "eventSeq": 37,
+        "payload": {
+          "questionId": 4,
+          "correctAnswer": "A",
+          "explanation": "Lời giải công bố sau khi chấm.",
+          "explanationAssetId": null,
+          "outcomes": [
+            {
+              "userId": 101,
+              "answer": "A",
+              "outcome": "ANSWERED",
+              "correct": true,
+              "answerTimeMs": 1000,
+              "earnedPoints": 3,
+              "scoreBefore": 8,
+              "totalScore": 11
+            },
+            {
+              "userId": 102,
+              "answer": "A",
+              "outcome": "ANSWERED",
+              "correct": true,
+              "answerTimeMs": 1500,
+              "earnedPoints": 1,
+              "scoreBefore": 4,
+              "totalScore": 5
+            }
+          ],
+          "durationMs": 2000,
+          "phaseEndsAtMs": 139000,
+          "serverTimeMs": 137000
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ROUND_LEADERBOARD",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-00000000000e",
+        "eventSeq": 38,
+        "payload": {
+          "roundIndex": 4,
+          "standings": [
+            {
+              "userId": 101,
+              "displayName": "Minh",
+              "avatarId": "avatar-01",
+              "rank": 1,
+              "previousRank": 1,
+              "scoreBefore": 8,
+              "earnedPoints": 3,
+              "totalScore": 11,
+              "correctCount": 4,
+              "outcome": "ANSWERED"
+            },
+            {
+              "userId": 102,
+              "displayName": "Phúc",
+              "avatarId": "avatar-02",
+              "rank": 2,
+              "previousRank": 1,
+              "scoreBefore": 4,
+              "earnedPoints": 1,
+              "totalScore": 5,
+              "correctCount": 4,
+              "outcome": "ANSWERED"
+            }
+          ],
+          "durationMs": 3000,
+          "phaseEndsAtMs": 142000,
+          "serverTimeMs": 139000
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "QUESTION",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-00000000000f",
+        "eventSeq": 39,
+        "payload": {
+          "question": {
+            "questionId": 5,
+            "questionType": "MULTIPLE_CHOICE",
+            "content": "Thủ đô Việt Nam?",
+            "options": [
+              {
+                "id": "A",
+                "text": "Hà Nội"
+              },
+              {
+                "id": "B",
+                "text": "Huế"
+              }
+            ],
+            "questionAssetId": null,
+            "timeLimitMs": 15000
+          },
+          "roundIndex": 5,
+          "totalRounds": 10,
+          "readyDeadlineAtMs": 150000
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ROUND_COUNTDOWN",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-00000000000f",
+        "eventSeq": 40,
+        "payload": {
+          "durationMs": 2000,
+          "phaseEndsAtMs": 152000,
+          "serverTimeMs": 150000
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "QUESTION_OPEN",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-00000000000f",
+        "eventSeq": 41,
+        "payload": {
+          "questionId": 5,
+          "remainingMs": 15000,
+          "deadlineAtMs": 167000,
+          "serverTimeMs": 152000
+        }
+      }
+    },
+    {
+      "participantUserId": 101,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ANSWER_ACK",
+        "requestId": "00000000-0000-0000-0000-000000000001",
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-00000000000f",
+        "eventSeq": 42,
+        "payload": {
+          "questionId": 5,
+          "accepted": true,
+          "answerTimeMs": 1000,
+          "acceptedRequestId": "00000000-0000-0000-0000-000000000001"
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ANSWER_STATUS",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-00000000000f",
+        "eventSeq": 43,
+        "payload": {
+          "userId": 101,
+          "answered": true
+        }
+      }
+    },
+    {
+      "participantUserId": 102,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ANSWER_ACK",
+        "requestId": "00000000-0000-0000-0000-000000000001",
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-00000000000f",
+        "eventSeq": 44,
+        "payload": {
+          "questionId": 5,
+          "accepted": true,
+          "answerTimeMs": 1500,
+          "acceptedRequestId": "00000000-0000-0000-0000-000000000001"
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ANSWER_STATUS",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-00000000000f",
+        "eventSeq": 45,
+        "payload": {
+          "userId": 102,
+          "answered": true
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "QUESTION_RESULT",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-00000000000f",
+        "eventSeq": 46,
+        "payload": {
+          "questionId": 5,
+          "correctAnswer": [
+            "A"
+          ],
+          "explanation": "Lời giải công bố sau khi chấm.",
+          "explanationAssetId": null,
+          "outcomes": [
+            {
+              "userId": 101,
+              "answer": [
+                "A"
+              ],
+              "outcome": "ANSWERED",
+              "correct": true,
+              "answerTimeMs": 1000,
+              "earnedPoints": 3,
+              "scoreBefore": 11,
+              "totalScore": 14
+            },
+            {
+              "userId": 102,
+              "answer": [
+                "A"
+              ],
+              "outcome": "ANSWERED",
+              "correct": true,
+              "answerTimeMs": 1500,
+              "earnedPoints": 1,
+              "scoreBefore": 5,
+              "totalScore": 6
+            }
+          ],
+          "durationMs": 2000,
+          "phaseEndsAtMs": 169000,
+          "serverTimeMs": 167000
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ROUND_LEADERBOARD",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-00000000000f",
+        "eventSeq": 47,
+        "payload": {
+          "roundIndex": 5,
+          "standings": [
+            {
+              "userId": 101,
+              "displayName": "Minh",
+              "avatarId": "avatar-01",
+              "rank": 1,
+              "previousRank": 1,
+              "scoreBefore": 11,
+              "earnedPoints": 3,
+              "totalScore": 14,
+              "correctCount": 5,
+              "outcome": "ANSWERED"
+            },
+            {
+              "userId": 102,
+              "displayName": "Phúc",
+              "avatarId": "avatar-02",
+              "rank": 2,
+              "previousRank": 1,
+              "scoreBefore": 5,
+              "earnedPoints": 1,
+              "totalScore": 6,
+              "correctCount": 5,
+              "outcome": "ANSWERED"
+            }
+          ],
+          "durationMs": 3000,
+          "phaseEndsAtMs": 172000,
+          "serverTimeMs": 169000
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "QUESTION",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-000000000010",
+        "eventSeq": 48,
+        "payload": {
+          "question": {
+            "questionId": 6,
+            "questionType": "MULTIPLE_CHOICE",
+            "content": "Thủ đô Việt Nam?",
+            "options": [
+              {
+                "id": "A",
+                "text": "Hà Nội"
+              },
+              {
+                "id": "B",
+                "text": "Huế"
+              }
+            ],
+            "questionAssetId": null,
+            "timeLimitMs": 15000
+          },
+          "roundIndex": 6,
+          "totalRounds": 10,
+          "readyDeadlineAtMs": 180000
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ROUND_COUNTDOWN",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-000000000010",
+        "eventSeq": 49,
+        "payload": {
+          "durationMs": 2000,
+          "phaseEndsAtMs": 182000,
+          "serverTimeMs": 180000
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "QUESTION_OPEN",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-000000000010",
+        "eventSeq": 50,
+        "payload": {
+          "questionId": 6,
+          "remainingMs": 15000,
+          "deadlineAtMs": 197000,
+          "serverTimeMs": 182000
+        }
+      }
+    },
+    {
+      "participantUserId": 101,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ANSWER_ACK",
+        "requestId": "00000000-0000-0000-0000-000000000001",
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-000000000010",
+        "eventSeq": 51,
+        "payload": {
+          "questionId": 6,
+          "accepted": true,
+          "answerTimeMs": 1000,
+          "acceptedRequestId": "00000000-0000-0000-0000-000000000001"
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ANSWER_STATUS",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-000000000010",
+        "eventSeq": 52,
+        "payload": {
+          "userId": 101,
+          "answered": true
+        }
+      }
+    },
+    {
+      "participantUserId": 102,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ANSWER_ACK",
+        "requestId": "00000000-0000-0000-0000-000000000001",
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-000000000010",
+        "eventSeq": 53,
+        "payload": {
+          "questionId": 6,
+          "accepted": true,
+          "answerTimeMs": 1500,
+          "acceptedRequestId": "00000000-0000-0000-0000-000000000001"
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ANSWER_STATUS",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-000000000010",
+        "eventSeq": 54,
+        "payload": {
+          "userId": 102,
+          "answered": true
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "QUESTION_RESULT",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-000000000010",
+        "eventSeq": 55,
+        "payload": {
+          "questionId": 6,
+          "correctAnswer": [
+            "A"
+          ],
+          "explanation": "Lời giải công bố sau khi chấm.",
+          "explanationAssetId": null,
+          "outcomes": [
+            {
+              "userId": 101,
+              "answer": [
+                "A"
+              ],
+              "outcome": "ANSWERED",
+              "correct": true,
+              "answerTimeMs": 1000,
+              "earnedPoints": 3,
+              "scoreBefore": 14,
+              "totalScore": 17
+            },
+            {
+              "userId": 102,
+              "answer": [
+                "A"
+              ],
+              "outcome": "ANSWERED",
+              "correct": true,
+              "answerTimeMs": 1500,
+              "earnedPoints": 1,
+              "scoreBefore": 6,
+              "totalScore": 7
+            }
+          ],
+          "durationMs": 2000,
+          "phaseEndsAtMs": 199000,
+          "serverTimeMs": 197000
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ROUND_LEADERBOARD",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-000000000010",
+        "eventSeq": 56,
+        "payload": {
+          "roundIndex": 6,
+          "standings": [
+            {
+              "userId": 101,
+              "displayName": "Minh",
+              "avatarId": "avatar-01",
+              "rank": 1,
+              "previousRank": 1,
+              "scoreBefore": 14,
+              "earnedPoints": 3,
+              "totalScore": 17,
+              "correctCount": 6,
+              "outcome": "ANSWERED"
+            },
+            {
+              "userId": 102,
+              "displayName": "Phúc",
+              "avatarId": "avatar-02",
+              "rank": 2,
+              "previousRank": 1,
+              "scoreBefore": 6,
+              "earnedPoints": 1,
+              "totalScore": 7,
+              "correctCount": 6,
+              "outcome": "ANSWERED"
+            }
+          ],
+          "durationMs": 3000,
+          "phaseEndsAtMs": 202000,
+          "serverTimeMs": 199000
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "QUESTION",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-000000000011",
+        "eventSeq": 57,
+        "payload": {
+          "question": {
+            "questionId": 7,
+            "questionType": "TRUE_FALSE",
+            "content": "Thủ đô Việt Nam?",
+            "options": [],
+            "questionAssetId": null,
+            "timeLimitMs": 15000
+          },
+          "roundIndex": 7,
+          "totalRounds": 10,
+          "readyDeadlineAtMs": 210000
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ROUND_COUNTDOWN",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-000000000011",
+        "eventSeq": 58,
+        "payload": {
+          "durationMs": 2000,
+          "phaseEndsAtMs": 212000,
+          "serverTimeMs": 210000
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "QUESTION_OPEN",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-000000000011",
+        "eventSeq": 59,
+        "payload": {
+          "questionId": 7,
+          "remainingMs": 15000,
+          "deadlineAtMs": 227000,
+          "serverTimeMs": 212000
+        }
+      }
+    },
+    {
+      "participantUserId": 101,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ANSWER_ACK",
+        "requestId": "00000000-0000-0000-0000-000000000001",
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-000000000011",
+        "eventSeq": 60,
+        "payload": {
+          "questionId": 7,
+          "accepted": true,
+          "answerTimeMs": 1000,
+          "acceptedRequestId": "00000000-0000-0000-0000-000000000001"
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ANSWER_STATUS",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-000000000011",
+        "eventSeq": 61,
+        "payload": {
+          "userId": 101,
+          "answered": true
+        }
+      }
+    },
+    {
+      "participantUserId": 102,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ANSWER_ACK",
+        "requestId": "00000000-0000-0000-0000-000000000001",
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-000000000011",
+        "eventSeq": 62,
+        "payload": {
+          "questionId": 7,
+          "accepted": true,
+          "answerTimeMs": 1500,
+          "acceptedRequestId": "00000000-0000-0000-0000-000000000001"
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ANSWER_STATUS",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-000000000011",
+        "eventSeq": 63,
+        "payload": {
+          "userId": 102,
+          "answered": true
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "QUESTION_RESULT",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-000000000011",
+        "eventSeq": 64,
+        "payload": {
+          "questionId": 7,
+          "correctAnswer": true,
+          "explanation": "Lời giải công bố sau khi chấm.",
+          "explanationAssetId": null,
+          "outcomes": [
+            {
+              "userId": 101,
+              "answer": true,
+              "outcome": "ANSWERED",
+              "correct": true,
+              "answerTimeMs": 1000,
+              "earnedPoints": 3,
+              "scoreBefore": 17,
+              "totalScore": 20
+            },
+            {
+              "userId": 102,
+              "answer": true,
+              "outcome": "ANSWERED",
+              "correct": true,
+              "answerTimeMs": 1500,
+              "earnedPoints": 1,
+              "scoreBefore": 7,
+              "totalScore": 8
+            }
+          ],
+          "durationMs": 2000,
+          "phaseEndsAtMs": 229000,
+          "serverTimeMs": 227000
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ROUND_LEADERBOARD",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-000000000011",
+        "eventSeq": 65,
+        "payload": {
+          "roundIndex": 7,
+          "standings": [
+            {
+              "userId": 101,
+              "displayName": "Minh",
+              "avatarId": "avatar-01",
+              "rank": 1,
+              "previousRank": 1,
+              "scoreBefore": 17,
+              "earnedPoints": 3,
+              "totalScore": 20,
+              "correctCount": 7,
+              "outcome": "ANSWERED"
+            },
+            {
+              "userId": 102,
+              "displayName": "Phúc",
+              "avatarId": "avatar-02",
+              "rank": 2,
+              "previousRank": 1,
+              "scoreBefore": 7,
+              "earnedPoints": 1,
+              "totalScore": 8,
+              "correctCount": 7,
+              "outcome": "ANSWERED"
+            }
+          ],
+          "durationMs": 3000,
+          "phaseEndsAtMs": 232000,
+          "serverTimeMs": 229000
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "QUESTION",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-000000000012",
+        "eventSeq": 66,
+        "payload": {
+          "question": {
+            "questionId": 8,
+            "questionType": "TRUE_FALSE",
+            "content": "Thủ đô Việt Nam?",
+            "options": [],
+            "questionAssetId": null,
+            "timeLimitMs": 15000
+          },
+          "roundIndex": 8,
+          "totalRounds": 10,
+          "readyDeadlineAtMs": 240000
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ROUND_COUNTDOWN",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-000000000012",
+        "eventSeq": 67,
+        "payload": {
+          "durationMs": 2000,
+          "phaseEndsAtMs": 242000,
+          "serverTimeMs": 240000
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "QUESTION_OPEN",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-000000000012",
+        "eventSeq": 68,
+        "payload": {
+          "questionId": 8,
+          "remainingMs": 15000,
+          "deadlineAtMs": 257000,
+          "serverTimeMs": 242000
+        }
+      }
+    },
+    {
+      "participantUserId": 101,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ANSWER_ACK",
+        "requestId": "00000000-0000-0000-0000-000000000001",
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-000000000012",
+        "eventSeq": 69,
+        "payload": {
+          "questionId": 8,
+          "accepted": true,
+          "answerTimeMs": 1000,
+          "acceptedRequestId": "00000000-0000-0000-0000-000000000001"
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ANSWER_STATUS",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-000000000012",
+        "eventSeq": 70,
+        "payload": {
+          "userId": 101,
+          "answered": true
+        }
+      }
+    },
+    {
+      "participantUserId": 102,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ANSWER_ACK",
+        "requestId": "00000000-0000-0000-0000-000000000001",
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-000000000012",
+        "eventSeq": 71,
+        "payload": {
+          "questionId": 8,
+          "accepted": true,
+          "answerTimeMs": 1500,
+          "acceptedRequestId": "00000000-0000-0000-0000-000000000001"
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ANSWER_STATUS",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-000000000012",
+        "eventSeq": 72,
+        "payload": {
+          "userId": 102,
+          "answered": true
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "QUESTION_RESULT",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-000000000012",
+        "eventSeq": 73,
+        "payload": {
+          "questionId": 8,
+          "correctAnswer": true,
+          "explanation": "Lời giải công bố sau khi chấm.",
+          "explanationAssetId": null,
+          "outcomes": [
+            {
+              "userId": 101,
+              "answer": true,
+              "outcome": "ANSWERED",
+              "correct": true,
+              "answerTimeMs": 1000,
+              "earnedPoints": 3,
+              "scoreBefore": 20,
+              "totalScore": 23
+            },
+            {
+              "userId": 102,
+              "answer": true,
+              "outcome": "ANSWERED",
+              "correct": true,
+              "answerTimeMs": 1500,
+              "earnedPoints": 1,
+              "scoreBefore": 8,
+              "totalScore": 9
+            }
+          ],
+          "durationMs": 2000,
+          "phaseEndsAtMs": 259000,
+          "serverTimeMs": 257000
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ROUND_LEADERBOARD",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-000000000012",
+        "eventSeq": 74,
+        "payload": {
+          "roundIndex": 8,
+          "standings": [
+            {
+              "userId": 101,
+              "displayName": "Minh",
+              "avatarId": "avatar-01",
+              "rank": 1,
+              "previousRank": 1,
+              "scoreBefore": 20,
+              "earnedPoints": 3,
+              "totalScore": 23,
+              "correctCount": 8,
+              "outcome": "ANSWERED"
+            },
+            {
+              "userId": 102,
+              "displayName": "Phúc",
+              "avatarId": "avatar-02",
+              "rank": 2,
+              "previousRank": 1,
+              "scoreBefore": 8,
+              "earnedPoints": 1,
+              "totalScore": 9,
+              "correctCount": 8,
+              "outcome": "ANSWERED"
+            }
+          ],
+          "durationMs": 3000,
+          "phaseEndsAtMs": 262000,
+          "serverTimeMs": 259000
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "QUESTION",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-000000000013",
+        "eventSeq": 75,
+        "payload": {
+          "question": {
+            "questionId": 9,
+            "questionType": "SHORT_ANSWER",
+            "content": "Thủ đô Việt Nam?",
+            "options": [],
+            "questionAssetId": null,
+            "timeLimitMs": 15000
+          },
+          "roundIndex": 9,
+          "totalRounds": 10,
+          "readyDeadlineAtMs": 270000
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ROUND_COUNTDOWN",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-000000000013",
+        "eventSeq": 76,
+        "payload": {
+          "durationMs": 2000,
+          "phaseEndsAtMs": 272000,
+          "serverTimeMs": 270000
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "QUESTION_OPEN",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-000000000013",
+        "eventSeq": 77,
+        "payload": {
+          "questionId": 9,
+          "remainingMs": 15000,
+          "deadlineAtMs": 287000,
+          "serverTimeMs": 272000
+        }
+      }
+    },
+    {
+      "participantUserId": 101,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ANSWER_ACK",
+        "requestId": "00000000-0000-0000-0000-000000000001",
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-000000000013",
+        "eventSeq": 78,
+        "payload": {
+          "questionId": 9,
+          "accepted": true,
+          "answerTimeMs": 1000,
+          "acceptedRequestId": "00000000-0000-0000-0000-000000000001"
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ANSWER_STATUS",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-000000000013",
+        "eventSeq": 79,
+        "payload": {
+          "userId": 101,
+          "answered": true
+        }
+      }
+    },
+    {
+      "participantUserId": 102,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ANSWER_ACK",
+        "requestId": "00000000-0000-0000-0000-000000000001",
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-000000000013",
+        "eventSeq": 80,
+        "payload": {
+          "questionId": 9,
+          "accepted": true,
+          "answerTimeMs": 1500,
+          "acceptedRequestId": "00000000-0000-0000-0000-000000000001"
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ANSWER_STATUS",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-000000000013",
+        "eventSeq": 81,
+        "payload": {
+          "userId": 102,
+          "answered": true
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "QUESTION_RESULT",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-000000000013",
+        "eventSeq": 82,
+        "payload": {
+          "questionId": 9,
+          "correctAnswer": "Hà Nội",
+          "explanation": "Lời giải công bố sau khi chấm.",
+          "explanationAssetId": null,
+          "outcomes": [
+            {
+              "userId": 101,
+              "answer": "Hà Nội",
+              "outcome": "ANSWERED",
+              "correct": true,
+              "answerTimeMs": 1000,
+              "earnedPoints": 3,
+              "scoreBefore": 23,
+              "totalScore": 26
+            },
+            {
+              "userId": 102,
+              "answer": "Hà Nội",
+              "outcome": "ANSWERED",
+              "correct": true,
+              "answerTimeMs": 1500,
+              "earnedPoints": 1,
+              "scoreBefore": 9,
+              "totalScore": 10
+            }
+          ],
+          "durationMs": 2000,
+          "phaseEndsAtMs": 289000,
+          "serverTimeMs": 287000
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ROUND_LEADERBOARD",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-000000000013",
+        "eventSeq": 83,
+        "payload": {
+          "roundIndex": 9,
+          "standings": [
+            {
+              "userId": 101,
+              "displayName": "Minh",
+              "avatarId": "avatar-01",
+              "rank": 1,
+              "previousRank": 1,
+              "scoreBefore": 23,
+              "earnedPoints": 3,
+              "totalScore": 26,
+              "correctCount": 9,
+              "outcome": "ANSWERED"
+            },
+            {
+              "userId": 102,
+              "displayName": "Phúc",
+              "avatarId": "avatar-02",
+              "rank": 2,
+              "previousRank": 1,
+              "scoreBefore": 9,
+              "earnedPoints": 1,
+              "totalScore": 10,
+              "correctCount": 9,
+              "outcome": "ANSWERED"
+            }
+          ],
+          "durationMs": 3000,
+          "phaseEndsAtMs": 292000,
+          "serverTimeMs": 289000
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "QUESTION",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-000000000014",
+        "eventSeq": 84,
+        "payload": {
+          "question": {
+            "questionId": 10,
+            "questionType": "SHORT_ANSWER",
+            "content": "Thủ đô Việt Nam?",
+            "options": [],
+            "questionAssetId": null,
+            "timeLimitMs": 15000
+          },
+          "roundIndex": 10,
+          "totalRounds": 10,
+          "readyDeadlineAtMs": 300000
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ROUND_COUNTDOWN",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-000000000014",
+        "eventSeq": 85,
+        "payload": {
+          "durationMs": 2000,
+          "phaseEndsAtMs": 302000,
+          "serverTimeMs": 300000
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "QUESTION_OPEN",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-000000000014",
+        "eventSeq": 86,
+        "payload": {
+          "questionId": 10,
+          "remainingMs": 15000,
+          "deadlineAtMs": 317000,
+          "serverTimeMs": 302000
+        }
+      }
+    },
+    {
+      "participantUserId": 101,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ANSWER_ACK",
+        "requestId": "00000000-0000-0000-0000-000000000001",
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-000000000014",
+        "eventSeq": 87,
+        "payload": {
+          "questionId": 10,
+          "accepted": true,
+          "answerTimeMs": 1000,
+          "acceptedRequestId": "00000000-0000-0000-0000-000000000001"
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ANSWER_STATUS",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-000000000014",
+        "eventSeq": 88,
+        "payload": {
+          "userId": 101,
+          "answered": true
+        }
+      }
+    },
+    {
+      "participantUserId": 102,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ANSWER_ACK",
+        "requestId": "00000000-0000-0000-0000-000000000001",
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-000000000014",
+        "eventSeq": 89,
+        "payload": {
+          "questionId": 10,
+          "accepted": true,
+          "answerTimeMs": 1500,
+          "acceptedRequestId": "00000000-0000-0000-0000-000000000001"
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ANSWER_STATUS",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-000000000014",
+        "eventSeq": 90,
+        "payload": {
+          "userId": 102,
+          "answered": true
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "QUESTION_RESULT",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-000000000014",
+        "eventSeq": 91,
+        "payload": {
+          "questionId": 10,
+          "correctAnswer": "Hà Nội",
+          "explanation": "Lời giải công bố sau khi chấm.",
+          "explanationAssetId": null,
+          "outcomes": [
+            {
+              "userId": 101,
+              "answer": "Hà Nội",
+              "outcome": "ANSWERED",
+              "correct": true,
+              "answerTimeMs": 1000,
+              "earnedPoints": 3,
+              "scoreBefore": 26,
+              "totalScore": 29
+            },
+            {
+              "userId": 102,
+              "answer": "Hà Nội",
+              "outcome": "ANSWERED",
+              "correct": true,
+              "answerTimeMs": 1500,
+              "earnedPoints": 1,
+              "scoreBefore": 10,
+              "totalScore": 11
+            }
+          ],
+          "durationMs": 2000,
+          "phaseEndsAtMs": 319000,
+          "serverTimeMs": 317000
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "ROUND_LEADERBOARD",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": "00000000-0000-0000-0000-000000000014",
+        "eventSeq": 92,
+        "payload": {
+          "roundIndex": 10,
+          "standings": [
+            {
+              "userId": 101,
+              "displayName": "Minh",
+              "avatarId": "avatar-01",
+              "rank": 1,
+              "previousRank": 1,
+              "scoreBefore": 26,
+              "earnedPoints": 3,
+              "totalScore": 29,
+              "correctCount": 10,
+              "outcome": "ANSWERED"
+            },
+            {
+              "userId": 102,
+              "displayName": "Phúc",
+              "avatarId": "avatar-02",
+              "rank": 2,
+              "previousRank": 1,
+              "scoreBefore": 10,
+              "earnedPoints": 1,
+              "totalScore": 11,
+              "correctCount": 10,
+              "outcome": "ANSWERED"
+            }
+          ],
+          "durationMs": 3000,
+          "phaseEndsAtMs": 322000,
+          "serverTimeMs": 319000
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "MATCH_RESULT",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": null,
+        "eventSeq": 93,
+        "payload": {
+          "finishReason": "COMPLETED",
+          "reasonCode": "NORMAL",
+          "winnerUserId": 101,
+          "players": [
+            {
+              "userId": 101,
+              "displayName": "Minh",
+              "avatarId": "avatar-01",
+              "totalScore": 29,
+              "correctCount": 10,
+              "rank": 1
+            },
+            {
+              "userId": 102,
+              "displayName": "Phúc",
+              "avatarId": "avatar-02",
+              "totalScore": 11,
+              "correctCount": 10,
+              "rank": 2
+            }
+          ],
+          "completedRounds": 10,
+          "openedRounds": 10,
+          "review": [
+            {
+              "roundId": "00000000-0000-0000-0000-00000000000b",
+              "roundIndex": 1,
+              "question": {
+                "questionId": 1,
+                "questionType": "SINGLE_CHOICE",
+                "content": "Thủ đô Việt Nam?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "Hà Nội"
+                  },
+                  {
+                    "id": "B",
+                    "text": "Huế"
+                  }
+                ],
+                "questionAssetId": null,
+                "timeLimitMs": 15000
+              },
+              "correctAnswer": "A",
+              "explanation": "Lời giải.",
+              "explanationAssetId": null,
+              "outcomes": [
+                {
+                  "userId": 101,
+                  "answer": "A",
+                  "outcome": "ANSWERED",
+                  "correct": true,
+                  "answerTimeMs": 1000,
+                  "earnedPoints": 2,
+                  "scoreBefore": 0,
+                  "totalScore": 2
+                },
+                {
+                  "userId": 102,
+                  "answer": "A",
+                  "outcome": "ANSWERED",
+                  "correct": true,
+                  "answerTimeMs": 1500,
+                  "earnedPoints": 2,
+                  "scoreBefore": 0,
+                  "totalScore": 2
+                }
+              ],
+              "revealed": true
+            },
+            {
+              "roundId": "00000000-0000-0000-0000-00000000000c",
+              "roundIndex": 2,
+              "question": {
+                "questionId": 2,
+                "questionType": "SINGLE_CHOICE",
+                "content": "Thủ đô Việt Nam?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "Hà Nội"
+                  },
+                  {
+                    "id": "B",
+                    "text": "Huế"
+                  }
+                ],
+                "questionAssetId": null,
+                "timeLimitMs": 15000
+              },
+              "correctAnswer": "A",
+              "explanation": "Lời giải.",
+              "explanationAssetId": null,
+              "outcomes": [
+                {
+                  "userId": 101,
+                  "answer": "A",
+                  "outcome": "ANSWERED",
+                  "correct": true,
+                  "answerTimeMs": 1000,
+                  "earnedPoints": 3,
+                  "scoreBefore": 2,
+                  "totalScore": 5
+                },
+                {
+                  "userId": 102,
+                  "answer": "A",
+                  "outcome": "ANSWERED",
+                  "correct": true,
+                  "answerTimeMs": 1500,
+                  "earnedPoints": 1,
+                  "scoreBefore": 2,
+                  "totalScore": 3
+                }
+              ],
+              "revealed": true
+            },
+            {
+              "roundId": "00000000-0000-0000-0000-00000000000d",
+              "roundIndex": 3,
+              "question": {
+                "questionId": 3,
+                "questionType": "SINGLE_CHOICE",
+                "content": "Thủ đô Việt Nam?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "Hà Nội"
+                  },
+                  {
+                    "id": "B",
+                    "text": "Huế"
+                  }
+                ],
+                "questionAssetId": null,
+                "timeLimitMs": 15000
+              },
+              "correctAnswer": "A",
+              "explanation": "Lời giải.",
+              "explanationAssetId": null,
+              "outcomes": [
+                {
+                  "userId": 101,
+                  "answer": "A",
+                  "outcome": "ANSWERED",
+                  "correct": true,
+                  "answerTimeMs": 1000,
+                  "earnedPoints": 3,
+                  "scoreBefore": 5,
+                  "totalScore": 8
+                },
+                {
+                  "userId": 102,
+                  "answer": "A",
+                  "outcome": "ANSWERED",
+                  "correct": true,
+                  "answerTimeMs": 1500,
+                  "earnedPoints": 1,
+                  "scoreBefore": 3,
+                  "totalScore": 4
+                }
+              ],
+              "revealed": true
+            },
+            {
+              "roundId": "00000000-0000-0000-0000-00000000000e",
+              "roundIndex": 4,
+              "question": {
+                "questionId": 4,
+                "questionType": "SINGLE_CHOICE",
+                "content": "Thủ đô Việt Nam?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "Hà Nội"
+                  },
+                  {
+                    "id": "B",
+                    "text": "Huế"
+                  }
+                ],
+                "questionAssetId": null,
+                "timeLimitMs": 15000
+              },
+              "correctAnswer": "A",
+              "explanation": "Lời giải.",
+              "explanationAssetId": null,
+              "outcomes": [
+                {
+                  "userId": 101,
+                  "answer": "A",
+                  "outcome": "ANSWERED",
+                  "correct": true,
+                  "answerTimeMs": 1000,
+                  "earnedPoints": 3,
+                  "scoreBefore": 8,
+                  "totalScore": 11
+                },
+                {
+                  "userId": 102,
+                  "answer": "A",
+                  "outcome": "ANSWERED",
+                  "correct": true,
+                  "answerTimeMs": 1500,
+                  "earnedPoints": 1,
+                  "scoreBefore": 4,
+                  "totalScore": 5
+                }
+              ],
+              "revealed": true
+            },
+            {
+              "roundId": "00000000-0000-0000-0000-00000000000f",
+              "roundIndex": 5,
+              "question": {
+                "questionId": 5,
+                "questionType": "MULTIPLE_CHOICE",
+                "content": "Thủ đô Việt Nam?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "Hà Nội"
+                  },
+                  {
+                    "id": "B",
+                    "text": "Huế"
+                  }
+                ],
+                "questionAssetId": null,
+                "timeLimitMs": 15000
+              },
+              "correctAnswer": [
+                "A"
+              ],
+              "explanation": "Lời giải.",
+              "explanationAssetId": null,
+              "outcomes": [
+                {
+                  "userId": 101,
+                  "answer": [
+                    "A"
+                  ],
+                  "outcome": "ANSWERED",
+                  "correct": true,
+                  "answerTimeMs": 1000,
+                  "earnedPoints": 3,
+                  "scoreBefore": 11,
+                  "totalScore": 14
+                },
+                {
+                  "userId": 102,
+                  "answer": [
+                    "A"
+                  ],
+                  "outcome": "ANSWERED",
+                  "correct": true,
+                  "answerTimeMs": 1500,
+                  "earnedPoints": 1,
+                  "scoreBefore": 5,
+                  "totalScore": 6
+                }
+              ],
+              "revealed": true
+            },
+            {
+              "roundId": "00000000-0000-0000-0000-000000000010",
+              "roundIndex": 6,
+              "question": {
+                "questionId": 6,
+                "questionType": "MULTIPLE_CHOICE",
+                "content": "Thủ đô Việt Nam?",
+                "options": [
+                  {
+                    "id": "A",
+                    "text": "Hà Nội"
+                  },
+                  {
+                    "id": "B",
+                    "text": "Huế"
+                  }
+                ],
+                "questionAssetId": null,
+                "timeLimitMs": 15000
+              },
+              "correctAnswer": [
+                "A"
+              ],
+              "explanation": "Lời giải.",
+              "explanationAssetId": null,
+              "outcomes": [
+                {
+                  "userId": 101,
+                  "answer": [
+                    "A"
+                  ],
+                  "outcome": "ANSWERED",
+                  "correct": true,
+                  "answerTimeMs": 1000,
+                  "earnedPoints": 3,
+                  "scoreBefore": 14,
+                  "totalScore": 17
+                },
+                {
+                  "userId": 102,
+                  "answer": [
+                    "A"
+                  ],
+                  "outcome": "ANSWERED",
+                  "correct": true,
+                  "answerTimeMs": 1500,
+                  "earnedPoints": 1,
+                  "scoreBefore": 6,
+                  "totalScore": 7
+                }
+              ],
+              "revealed": true
+            },
+            {
+              "roundId": "00000000-0000-0000-0000-000000000011",
+              "roundIndex": 7,
+              "question": {
+                "questionId": 7,
+                "questionType": "TRUE_FALSE",
+                "content": "Thủ đô Việt Nam?",
+                "options": [],
+                "questionAssetId": null,
+                "timeLimitMs": 15000
+              },
+              "correctAnswer": true,
+              "explanation": "Lời giải.",
+              "explanationAssetId": null,
+              "outcomes": [
+                {
+                  "userId": 101,
+                  "answer": true,
+                  "outcome": "ANSWERED",
+                  "correct": true,
+                  "answerTimeMs": 1000,
+                  "earnedPoints": 3,
+                  "scoreBefore": 17,
+                  "totalScore": 20
+                },
+                {
+                  "userId": 102,
+                  "answer": true,
+                  "outcome": "ANSWERED",
+                  "correct": true,
+                  "answerTimeMs": 1500,
+                  "earnedPoints": 1,
+                  "scoreBefore": 7,
+                  "totalScore": 8
+                }
+              ],
+              "revealed": true
+            },
+            {
+              "roundId": "00000000-0000-0000-0000-000000000012",
+              "roundIndex": 8,
+              "question": {
+                "questionId": 8,
+                "questionType": "TRUE_FALSE",
+                "content": "Thủ đô Việt Nam?",
+                "options": [],
+                "questionAssetId": null,
+                "timeLimitMs": 15000
+              },
+              "correctAnswer": true,
+              "explanation": "Lời giải.",
+              "explanationAssetId": null,
+              "outcomes": [
+                {
+                  "userId": 101,
+                  "answer": true,
+                  "outcome": "ANSWERED",
+                  "correct": true,
+                  "answerTimeMs": 1000,
+                  "earnedPoints": 3,
+                  "scoreBefore": 20,
+                  "totalScore": 23
+                },
+                {
+                  "userId": 102,
+                  "answer": true,
+                  "outcome": "ANSWERED",
+                  "correct": true,
+                  "answerTimeMs": 1500,
+                  "earnedPoints": 1,
+                  "scoreBefore": 8,
+                  "totalScore": 9
+                }
+              ],
+              "revealed": true
+            },
+            {
+              "roundId": "00000000-0000-0000-0000-000000000013",
+              "roundIndex": 9,
+              "question": {
+                "questionId": 9,
+                "questionType": "SHORT_ANSWER",
+                "content": "Thủ đô Việt Nam?",
+                "options": [],
+                "questionAssetId": null,
+                "timeLimitMs": 15000
+              },
+              "correctAnswer": "Hà Nội",
+              "explanation": "Lời giải.",
+              "explanationAssetId": null,
+              "outcomes": [
+                {
+                  "userId": 101,
+                  "answer": "Hà Nội",
+                  "outcome": "ANSWERED",
+                  "correct": true,
+                  "answerTimeMs": 1000,
+                  "earnedPoints": 3,
+                  "scoreBefore": 23,
+                  "totalScore": 26
+                },
+                {
+                  "userId": 102,
+                  "answer": "Hà Nội",
+                  "outcome": "ANSWERED",
+                  "correct": true,
+                  "answerTimeMs": 1500,
+                  "earnedPoints": 1,
+                  "scoreBefore": 9,
+                  "totalScore": 10
+                }
+              ],
+              "revealed": true
+            },
+            {
+              "roundId": "00000000-0000-0000-0000-000000000014",
+              "roundIndex": 10,
+              "question": {
+                "questionId": 10,
+                "questionType": "SHORT_ANSWER",
+                "content": "Thủ đô Việt Nam?",
+                "options": [],
+                "questionAssetId": null,
+                "timeLimitMs": 15000
+              },
+              "correctAnswer": "Hà Nội",
+              "explanation": "Lời giải.",
+              "explanationAssetId": null,
+              "outcomes": [
+                {
+                  "userId": 101,
+                  "answer": "Hà Nội",
+                  "outcome": "ANSWERED",
+                  "correct": true,
+                  "answerTimeMs": 1000,
+                  "earnedPoints": 3,
+                  "scoreBefore": 26,
+                  "totalScore": 29
+                },
+                {
+                  "userId": 102,
+                  "answer": "Hà Nội",
+                  "outcome": "ANSWERED",
+                  "correct": true,
+                  "answerTimeMs": 1500,
+                  "earnedPoints": 1,
+                  "scoreBefore": 10,
+                  "totalScore": 11
+                }
+              ],
+              "revealed": true
+            }
+          ],
+          "persistenceStatus": "PENDING",
+          "resultExpiresAtMs": 400000
+        }
+      }
+    },
+    {
+      "participantUserId": null,
+      "envelope": {
+        "protocolVersion": 1,
+        "type": "MATCH_SAVE_STATUS",
+        "requestId": null,
+        "matchId": "10000000-0000-0000-0000-000000000001",
+        "roundId": null,
+        "eventSeq": 94,
+        "payload": {
+          "status": "SAVED",
+          "retryable": false,
+          "savedAtMs": 330000
+        }
+      }
+    }
+  ]
+}

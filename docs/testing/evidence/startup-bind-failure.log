@@ -1,0 +1,2 @@
+IPv6 wildcard port already occupied: expected exit 1
+Server could not start or continue: Cannot bind server port; check for an existing server

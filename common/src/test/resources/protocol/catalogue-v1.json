@@ -1,0 +1,2743 @@
+[
+  {
+    "type": "HELLO",
+    "direction": "C_TO_S",
+    "phase": "AUTH",
+    "requiredFields": [
+      "clientVersion",
+      "assetPackVersion"
+    ],
+    "optionalFields": [],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "HELLO",
+      "requestId": "00000000-0000-0000-0000-000000000001",
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "clientVersion": "1.0",
+        "assetPackVersion": "1"
+      }
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "HELLO",
+      "requestId": "00000000-0000-0000-0000-000000000001",
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "clientVersion": "1.0",
+        "assetPackVersion": "1",
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "HELLO_ACK",
+    "direction": "S_TO_C",
+    "phase": "AUTH",
+    "requiredFields": [
+      "connectionId",
+      "protocolVersion",
+      "serverTimeMs",
+      "heartbeatIntervalMs",
+      "assetPackVersion"
+    ],
+    "optionalFields": [],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "HELLO_ACK",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "connectionId": "00000000-0000-0000-0000-000000000001",
+        "protocolVersion": 1,
+        "serverTimeMs": 1,
+        "heartbeatIntervalMs": 1,
+        "assetPackVersion": "1"
+      }
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "HELLO_ACK",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "connectionId": "00000000-0000-0000-0000-000000000001",
+        "protocolVersion": 1,
+        "serverTimeMs": 1,
+        "heartbeatIntervalMs": 1,
+        "assetPackVersion": "1",
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "PING",
+    "direction": "C_TO_S",
+    "phase": "ANY",
+    "requiredFields": [
+      "clientTimeMs"
+    ],
+    "optionalFields": [],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "PING",
+      "requestId": "00000000-0000-0000-0000-000000000001",
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "clientTimeMs": 1
+      }
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "PING",
+      "requestId": "00000000-0000-0000-0000-000000000001",
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "clientTimeMs": 1,
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "PONG",
+    "direction": "S_TO_C",
+    "phase": "ANY",
+    "requiredFields": [
+      "clientTimeMs",
+      "serverTimeMs"
+    ],
+    "optionalFields": [],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "PONG",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "clientTimeMs": 1,
+        "serverTimeMs": 1
+      }
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "PONG",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "clientTimeMs": 1,
+        "serverTimeMs": 1,
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "REGISTER",
+    "direction": "C_TO_S",
+    "phase": "AUTH",
+    "requiredFields": [
+      "username",
+      "password",
+      "displayName",
+      "avatarId"
+    ],
+    "optionalFields": [],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "REGISTER",
+      "requestId": "00000000-0000-0000-0000-000000000001",
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "username": "player1",
+        "password": "password123",
+        "displayName": "Minh",
+        "avatarId": "avatar-01"
+      }
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "REGISTER",
+      "requestId": "00000000-0000-0000-0000-000000000001",
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "username": "player1",
+        "password": "password123",
+        "displayName": "Minh",
+        "avatarId": "avatar-01",
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "REGISTER_RESULT",
+    "direction": "S_TO_C",
+    "phase": "AUTH",
+    "requiredFields": [
+      "userId",
+      "username"
+    ],
+    "optionalFields": [],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "REGISTER_RESULT",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "userId": 1,
+        "username": "player1"
+      }
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "REGISTER_RESULT",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "userId": 1,
+        "username": "player1",
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "LOGIN",
+    "direction": "C_TO_S",
+    "phase": "AUTH",
+    "requiredFields": [
+      "username",
+      "password"
+    ],
+    "optionalFields": [],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "LOGIN",
+      "requestId": "00000000-0000-0000-0000-000000000001",
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "username": "player1",
+        "password": "password123"
+      }
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "LOGIN",
+      "requestId": "00000000-0000-0000-0000-000000000001",
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "username": "player1",
+        "password": "password123",
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "LOGIN_RESULT",
+    "direction": "S_TO_C",
+    "phase": "AUTH",
+    "requiredFields": [
+      "profile"
+    ],
+    "optionalFields": [],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "LOGIN_RESULT",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "profile": {
+          "userId": 1,
+          "username": "player1",
+          "displayName": "Minh",
+          "avatarId": "avatar-01",
+          "totalScore": 1,
+          "totalMatches": 1,
+          "wins": 1,
+          "losses": 1,
+          "draws": 1
+        }
+      }
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "LOGIN_RESULT",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "profile": {
+          "userId": 1,
+          "username": "player1",
+          "displayName": "Minh",
+          "avatarId": "avatar-01",
+          "totalScore": 1,
+          "totalMatches": 1,
+          "wins": 1,
+          "losses": 1,
+          "draws": 1
+        },
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "LOGOUT",
+    "direction": "C_TO_S",
+    "phase": "AUTHENTICATED",
+    "requiredFields": [],
+    "optionalFields": [],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "LOGOUT",
+      "requestId": "00000000-0000-0000-0000-000000000001",
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {}
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "LOGOUT",
+      "requestId": "00000000-0000-0000-0000-000000000001",
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "LOGOUT_ACK",
+    "direction": "S_TO_C",
+    "phase": "AUTHENTICATED",
+    "requiredFields": [],
+    "optionalFields": [],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "LOGOUT_ACK",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {}
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "LOGOUT_ACK",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "ONLINE_LIST_REQUEST",
+    "direction": "C_TO_S",
+    "phase": "AUTHENTICATED",
+    "requiredFields": [],
+    "optionalFields": [],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "ONLINE_LIST_REQUEST",
+      "requestId": "00000000-0000-0000-0000-000000000001",
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {}
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "ONLINE_LIST_REQUEST",
+      "requestId": "00000000-0000-0000-0000-000000000001",
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "ONLINE_LIST",
+    "direction": "S_TO_C",
+    "phase": "AUTHENTICATED",
+    "requiredFields": [
+      "revision",
+      "users"
+    ],
+    "optionalFields": [],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "ONLINE_LIST",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "revision": 1,
+        "users": [
+          {
+            "userId": 1,
+            "displayName": "Minh",
+            "avatarId": "avatar-01",
+            "totalScore": 1,
+            "status": "FREE"
+          }
+        ]
+      }
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "ONLINE_LIST",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "revision": 1,
+        "users": [
+          {
+            "userId": 1,
+            "displayName": "Minh",
+            "avatarId": "avatar-01",
+            "totalScore": 1,
+            "status": "FREE"
+          }
+        ],
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "QUIZ_LIST_REQUEST",
+    "direction": "C_TO_S",
+    "phase": "AUTHENTICATED",
+    "requiredFields": [
+      "page",
+      "pageSize"
+    ],
+    "optionalFields": [
+      "categoryId"
+    ],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "QUIZ_LIST_REQUEST",
+      "requestId": "00000000-0000-0000-0000-000000000001",
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "categoryId": null,
+        "page": 1,
+        "pageSize": 1
+      }
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "QUIZ_LIST_REQUEST",
+      "requestId": "00000000-0000-0000-0000-000000000001",
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "categoryId": null,
+        "page": 1,
+        "pageSize": 1,
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "QUIZ_LIST",
+    "direction": "S_TO_C",
+    "phase": "AUTHENTICATED",
+    "requiredFields": [
+      "page",
+      "pageSize",
+      "totalItems",
+      "categories",
+      "items"
+    ],
+    "optionalFields": [],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "QUIZ_LIST",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "page": 1,
+        "pageSize": 1,
+        "totalItems": 1,
+        "categories": [
+          {
+            "categoryId": 1,
+            "categoryName": "Tổng hợp",
+            "displayOrder": 1
+          }
+        ],
+        "items": [
+          {
+            "quizId": 1,
+            "title": "Kiến thức chung",
+            "categoryId": 1,
+            "categoryName": "Tổng hợp",
+            "coverAssetId": null,
+            "availability": "AVAILABLE",
+            "totalRounds": 10
+          }
+        ]
+      }
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "QUIZ_LIST",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "page": 1,
+        "pageSize": 1,
+        "totalItems": 1,
+        "categories": [
+          {
+            "categoryId": 1,
+            "categoryName": "Tổng hợp",
+            "displayOrder": 1
+          }
+        ],
+        "items": [
+          {
+            "quizId": 1,
+            "title": "Kiến thức chung",
+            "categoryId": 1,
+            "categoryName": "Tổng hợp",
+            "coverAssetId": null,
+            "availability": "AVAILABLE",
+            "totalRounds": 10
+          }
+        ],
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "QUIZ_DETAIL_REQUEST",
+    "direction": "C_TO_S",
+    "phase": "AUTHENTICATED",
+    "requiredFields": [
+      "quizId"
+    ],
+    "optionalFields": [],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "QUIZ_DETAIL_REQUEST",
+      "requestId": "00000000-0000-0000-0000-000000000001",
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "quizId": 1
+      }
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "QUIZ_DETAIL_REQUEST",
+      "requestId": "00000000-0000-0000-0000-000000000001",
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "quizId": 1,
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "QUIZ_DETAIL",
+    "direction": "S_TO_C",
+    "phase": "AUTHENTICATED",
+    "requiredFields": [
+      "quiz",
+      "description",
+      "typeCounts",
+      "rules"
+    ],
+    "optionalFields": [],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "QUIZ_DETAIL",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "quiz": {
+          "quizId": 1,
+          "title": "Kiến thức chung",
+          "categoryId": 1,
+          "categoryName": "Tổng hợp",
+          "coverAssetId": null,
+          "availability": "AVAILABLE",
+          "totalRounds": 10
+        },
+        "description": "Sample",
+        "typeCounts": {
+          "SINGLE_CHOICE": 4,
+          "MULTIPLE_CHOICE": 2,
+          "TRUE_FALSE": 2,
+          "SHORT_ANSWER": 2
+        },
+        "rules": {}
+      }
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "QUIZ_DETAIL",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "quiz": {
+          "quizId": 1,
+          "title": "Kiến thức chung",
+          "categoryId": 1,
+          "categoryName": "Tổng hợp",
+          "coverAssetId": null,
+          "availability": "AVAILABLE",
+          "totalRounds": 10
+        },
+        "description": "Sample",
+        "typeCounts": {
+          "SINGLE_CHOICE": 4,
+          "MULTIPLE_CHOICE": 2,
+          "TRUE_FALSE": 2,
+          "SHORT_ANSWER": 2
+        },
+        "rules": {},
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "CHALLENGE",
+    "direction": "C_TO_S",
+    "phase": "AUTHENTICATED",
+    "requiredFields": [
+      "targetUserId",
+      "quizId"
+    ],
+    "optionalFields": [],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "CHALLENGE",
+      "requestId": "00000000-0000-0000-0000-000000000001",
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "targetUserId": 1,
+        "quizId": 1
+      }
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "CHALLENGE",
+      "requestId": "00000000-0000-0000-0000-000000000001",
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "targetUserId": 1,
+        "quizId": 1,
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "CHALLENGE_ACK",
+    "direction": "S_TO_C",
+    "phase": "AUTHENTICATED",
+    "requiredFields": [
+      "challengeId",
+      "targetUserId",
+      "quiz",
+      "expiresAtMs"
+    ],
+    "optionalFields": [],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "CHALLENGE_ACK",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "challengeId": "00000000-0000-0000-0000-000000000001",
+        "targetUserId": 1,
+        "quiz": {
+          "quizId": 1,
+          "title": "Kiến thức chung",
+          "categoryId": 1,
+          "categoryName": "Tổng hợp",
+          "coverAssetId": null,
+          "availability": "AVAILABLE",
+          "totalRounds": 10
+        },
+        "expiresAtMs": 10000
+      }
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "CHALLENGE_ACK",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "challengeId": "00000000-0000-0000-0000-000000000001",
+        "targetUserId": 1,
+        "quiz": {
+          "quizId": 1,
+          "title": "Kiến thức chung",
+          "categoryId": 1,
+          "categoryName": "Tổng hợp",
+          "coverAssetId": null,
+          "availability": "AVAILABLE",
+          "totalRounds": 10
+        },
+        "expiresAtMs": 10000,
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "CHALLENGE_RECEIVED",
+    "direction": "S_TO_C",
+    "phase": "AUTHENTICATED",
+    "requiredFields": [
+      "challengeId",
+      "challengerProfile",
+      "quiz",
+      "expiresAtMs"
+    ],
+    "optionalFields": [],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "CHALLENGE_RECEIVED",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "challengeId": "00000000-0000-0000-0000-000000000001",
+        "challengerProfile": {
+          "userId": 1,
+          "username": "player1",
+          "displayName": "Minh",
+          "avatarId": "avatar-01",
+          "totalScore": 1,
+          "totalMatches": 1,
+          "wins": 1,
+          "losses": 1,
+          "draws": 1
+        },
+        "quiz": {
+          "quizId": 1,
+          "title": "Kiến thức chung",
+          "categoryId": 1,
+          "categoryName": "Tổng hợp",
+          "coverAssetId": null,
+          "availability": "AVAILABLE",
+          "totalRounds": 10
+        },
+        "expiresAtMs": 10000
+      }
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "CHALLENGE_RECEIVED",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "challengeId": "00000000-0000-0000-0000-000000000001",
+        "challengerProfile": {
+          "userId": 1,
+          "username": "player1",
+          "displayName": "Minh",
+          "avatarId": "avatar-01",
+          "totalScore": 1,
+          "totalMatches": 1,
+          "wins": 1,
+          "losses": 1,
+          "draws": 1
+        },
+        "quiz": {
+          "quizId": 1,
+          "title": "Kiến thức chung",
+          "categoryId": 1,
+          "categoryName": "Tổng hợp",
+          "coverAssetId": null,
+          "availability": "AVAILABLE",
+          "totalRounds": 10
+        },
+        "expiresAtMs": 10000,
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "CHALLENGE_ACCEPT",
+    "direction": "C_TO_S",
+    "phase": "AUTHENTICATED",
+    "requiredFields": [
+      "challengeId"
+    ],
+    "optionalFields": [],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "CHALLENGE_ACCEPT",
+      "requestId": "00000000-0000-0000-0000-000000000001",
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "challengeId": "00000000-0000-0000-0000-000000000001"
+      }
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "CHALLENGE_ACCEPT",
+      "requestId": "00000000-0000-0000-0000-000000000001",
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "challengeId": "00000000-0000-0000-0000-000000000001",
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "CHALLENGE_REJECT",
+    "direction": "C_TO_S",
+    "phase": "AUTHENTICATED",
+    "requiredFields": [
+      "challengeId"
+    ],
+    "optionalFields": [],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "CHALLENGE_REJECT",
+      "requestId": "00000000-0000-0000-0000-000000000001",
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "challengeId": "00000000-0000-0000-0000-000000000001"
+      }
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "CHALLENGE_REJECT",
+      "requestId": "00000000-0000-0000-0000-000000000001",
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "challengeId": "00000000-0000-0000-0000-000000000001",
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "CHALLENGE_CANCEL",
+    "direction": "C_TO_S",
+    "phase": "AUTHENTICATED",
+    "requiredFields": [
+      "challengeId"
+    ],
+    "optionalFields": [],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "CHALLENGE_CANCEL",
+      "requestId": "00000000-0000-0000-0000-000000000001",
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "challengeId": "00000000-0000-0000-0000-000000000001"
+      }
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "CHALLENGE_CANCEL",
+      "requestId": "00000000-0000-0000-0000-000000000001",
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "challengeId": "00000000-0000-0000-0000-000000000001",
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "CHALLENGE_CLOSED",
+    "direction": "S_TO_C",
+    "phase": "AUTHENTICATED",
+    "requiredFields": [
+      "challengeId",
+      "status",
+      "reason"
+    ],
+    "optionalFields": [
+      "matchId"
+    ],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "CHALLENGE_CLOSED",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "challengeId": "00000000-0000-0000-0000-000000000001",
+        "status": "FREE",
+        "reason": "NORMAL",
+        "matchId": null
+      }
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "CHALLENGE_CLOSED",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "challengeId": "00000000-0000-0000-0000-000000000001",
+        "status": "FREE",
+        "reason": "NORMAL",
+        "matchId": null,
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "MATCH_START",
+    "direction": "S_TO_C",
+    "phase": "AUTHENTICATED",
+    "requiredFields": [
+      "quiz",
+      "players",
+      "totalRounds",
+      "readyDeadlineAtMs"
+    ],
+    "optionalFields": [],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "MATCH_START",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "quiz": {
+          "quizId": 1,
+          "title": "Kiến thức chung",
+          "categoryId": 1,
+          "categoryName": "Tổng hợp",
+          "coverAssetId": null,
+          "availability": "AVAILABLE",
+          "totalRounds": 10
+        },
+        "players": [
+          {
+            "userId": 1,
+            "displayName": "Minh",
+            "avatarId": "avatar-01",
+            "totalScore": 1,
+            "correctCount": 1,
+            "rank": 1
+          }
+        ],
+        "totalRounds": 10,
+        "readyDeadlineAtMs": 1
+      }
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "MATCH_START",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "quiz": {
+          "quizId": 1,
+          "title": "Kiến thức chung",
+          "categoryId": 1,
+          "categoryName": "Tổng hợp",
+          "coverAssetId": null,
+          "availability": "AVAILABLE",
+          "totalRounds": 10
+        },
+        "players": [
+          {
+            "userId": 1,
+            "displayName": "Minh",
+            "avatarId": "avatar-01",
+            "totalScore": 1,
+            "correctCount": 1,
+            "rank": 1
+          }
+        ],
+        "totalRounds": 10,
+        "readyDeadlineAtMs": 1,
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "MATCH_READY",
+    "direction": "C_TO_S",
+    "phase": "AUTHENTICATED",
+    "requiredFields": [],
+    "optionalFields": [],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "MATCH_READY",
+      "requestId": "00000000-0000-0000-0000-000000000001",
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {}
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "MATCH_READY",
+      "requestId": "00000000-0000-0000-0000-000000000001",
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "READY_STATUS",
+    "direction": "S_TO_C",
+    "phase": "AUTHENTICATED",
+    "requiredFields": [
+      "readyUserIds",
+      "phase"
+    ],
+    "optionalFields": [],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "READY_STATUS",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "readyUserIds": [
+          1
+        ],
+        "phase": "WAITING_READY"
+      }
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "READY_STATUS",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "readyUserIds": [
+          1
+        ],
+        "phase": "WAITING_READY",
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "MATCH_COUNTDOWN",
+    "direction": "S_TO_C",
+    "phase": "AUTHENTICATED",
+    "requiredFields": [
+      "durationMs",
+      "phaseEndsAtMs",
+      "serverTimeMs"
+    ],
+    "optionalFields": [],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "MATCH_COUNTDOWN",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "durationMs": 1,
+        "phaseEndsAtMs": 1,
+        "serverTimeMs": 1
+      }
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "MATCH_COUNTDOWN",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "durationMs": 1,
+        "phaseEndsAtMs": 1,
+        "serverTimeMs": 1,
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "QUESTION",
+    "direction": "S_TO_C",
+    "phase": "AUTHENTICATED",
+    "requiredFields": [
+      "question",
+      "roundIndex",
+      "totalRounds",
+      "readyDeadlineAtMs"
+    ],
+    "optionalFields": [],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "QUESTION",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "question": {
+          "questionId": 1,
+          "questionType": "SINGLE_CHOICE",
+          "content": "Thủ đô Việt Nam?",
+          "options": [
+            {
+              "id": "A",
+              "text": "Hà Nội"
+            }
+          ],
+          "questionAssetId": null,
+          "timeLimitMs": 15000
+        },
+        "roundIndex": 1,
+        "totalRounds": 10,
+        "readyDeadlineAtMs": 1
+      }
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "QUESTION",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "question": {
+          "questionId": 1,
+          "questionType": "SINGLE_CHOICE",
+          "content": "Thủ đô Việt Nam?",
+          "options": [
+            {
+              "id": "A",
+              "text": "Hà Nội"
+            }
+          ],
+          "questionAssetId": null,
+          "timeLimitMs": 15000
+        },
+        "roundIndex": 1,
+        "totalRounds": 10,
+        "readyDeadlineAtMs": 1,
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "QUESTION_READY",
+    "direction": "C_TO_S",
+    "phase": "AUTHENTICATED",
+    "requiredFields": [
+      "questionId"
+    ],
+    "optionalFields": [],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "QUESTION_READY",
+      "requestId": "00000000-0000-0000-0000-000000000001",
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "questionId": 1
+      }
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "QUESTION_READY",
+      "requestId": "00000000-0000-0000-0000-000000000001",
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "questionId": 1,
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "ROUND_COUNTDOWN",
+    "direction": "S_TO_C",
+    "phase": "AUTHENTICATED",
+    "requiredFields": [
+      "durationMs",
+      "phaseEndsAtMs",
+      "serverTimeMs"
+    ],
+    "optionalFields": [],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "ROUND_COUNTDOWN",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "durationMs": 1,
+        "phaseEndsAtMs": 1,
+        "serverTimeMs": 1
+      }
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "ROUND_COUNTDOWN",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "durationMs": 1,
+        "phaseEndsAtMs": 1,
+        "serverTimeMs": 1,
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "QUESTION_OPEN",
+    "direction": "S_TO_C",
+    "phase": "AUTHENTICATED",
+    "requiredFields": [
+      "questionId",
+      "remainingMs",
+      "deadlineAtMs",
+      "serverTimeMs"
+    ],
+    "optionalFields": [],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "QUESTION_OPEN",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "questionId": 1,
+        "remainingMs": 1,
+        "deadlineAtMs": 1,
+        "serverTimeMs": 1
+      }
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "QUESTION_OPEN",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "questionId": 1,
+        "remainingMs": 1,
+        "deadlineAtMs": 1,
+        "serverTimeMs": 1,
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "ANSWER",
+    "direction": "C_TO_S",
+    "phase": "AUTHENTICATED",
+    "requiredFields": [
+      "questionId",
+      "answer"
+    ],
+    "optionalFields": [],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "ANSWER",
+      "requestId": "00000000-0000-0000-0000-000000000001",
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "questionId": 1,
+        "answer": "A"
+      }
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "ANSWER",
+      "requestId": "00000000-0000-0000-0000-000000000001",
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "questionId": 1,
+        "answer": "A",
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "ANSWER_ACK",
+    "direction": "S_TO_C",
+    "phase": "AUTHENTICATED",
+    "requiredFields": [
+      "questionId",
+      "accepted",
+      "answerTimeMs",
+      "acceptedRequestId"
+    ],
+    "optionalFields": [],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "ANSWER_ACK",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "questionId": 1,
+        "accepted": true,
+        "answerTimeMs": 1000,
+        "acceptedRequestId": "00000000-0000-0000-0000-000000000001"
+      }
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "ANSWER_ACK",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "questionId": 1,
+        "accepted": true,
+        "answerTimeMs": 1000,
+        "acceptedRequestId": "00000000-0000-0000-0000-000000000001",
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "ANSWER_STATUS",
+    "direction": "S_TO_C",
+    "phase": "AUTHENTICATED",
+    "requiredFields": [
+      "userId",
+      "answered"
+    ],
+    "optionalFields": [],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "ANSWER_STATUS",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "userId": 1,
+        "answered": true
+      }
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "ANSWER_STATUS",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "userId": 1,
+        "answered": true,
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "QUESTION_RESULT",
+    "direction": "S_TO_C",
+    "phase": "AUTHENTICATED",
+    "requiredFields": [
+      "questionId",
+      "correctAnswer",
+      "outcomes",
+      "durationMs",
+      "phaseEndsAtMs",
+      "serverTimeMs"
+    ],
+    "optionalFields": [
+      "explanation",
+      "explanationAssetId"
+    ],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "QUESTION_RESULT",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "questionId": 1,
+        "correctAnswer": "A",
+        "explanation": null,
+        "explanationAssetId": null,
+        "outcomes": [
+          {
+            "userId": 1,
+            "answer": "A",
+            "outcome": "ANSWERED",
+            "correct": null,
+            "answerTimeMs": null,
+            "earnedPoints": 1,
+            "scoreBefore": 1,
+            "totalScore": 1
+          }
+        ],
+        "durationMs": 1,
+        "phaseEndsAtMs": 1,
+        "serverTimeMs": 1
+      }
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "QUESTION_RESULT",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "questionId": 1,
+        "correctAnswer": "A",
+        "explanation": null,
+        "explanationAssetId": null,
+        "outcomes": [
+          {
+            "userId": 1,
+            "answer": "A",
+            "outcome": "ANSWERED",
+            "correct": null,
+            "answerTimeMs": null,
+            "earnedPoints": 1,
+            "scoreBefore": 1,
+            "totalScore": 1
+          }
+        ],
+        "durationMs": 1,
+        "phaseEndsAtMs": 1,
+        "serverTimeMs": 1,
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "ROUND_LEADERBOARD",
+    "direction": "S_TO_C",
+    "phase": "AUTHENTICATED",
+    "requiredFields": [
+      "roundIndex",
+      "standings",
+      "durationMs",
+      "phaseEndsAtMs",
+      "serverTimeMs"
+    ],
+    "optionalFields": [],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "ROUND_LEADERBOARD",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "roundIndex": 1,
+        "standings": [],
+        "durationMs": 1,
+        "phaseEndsAtMs": 1,
+        "serverTimeMs": 1
+      }
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "ROUND_LEADERBOARD",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "roundIndex": 1,
+        "standings": [],
+        "durationMs": 1,
+        "phaseEndsAtMs": 1,
+        "serverTimeMs": 1,
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "CHAT",
+    "direction": "C_TO_S",
+    "phase": "AUTHENTICATED",
+    "requiredFields": [
+      "text"
+    ],
+    "optionalFields": [],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "CHAT",
+      "requestId": "00000000-0000-0000-0000-000000000001",
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "text": "Hà Nội"
+      }
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "CHAT",
+      "requestId": "00000000-0000-0000-0000-000000000001",
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "text": "Hà Nội",
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "CHAT_MESSAGE",
+    "direction": "S_TO_C",
+    "phase": "AUTHENTICATED",
+    "requiredFields": [
+      "chatMessageId",
+      "senderUserId",
+      "displayName",
+      "text",
+      "sentAtMs"
+    ],
+    "optionalFields": [],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "CHAT_MESSAGE",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "chatMessageId": "00000000-0000-0000-0000-000000000001",
+        "senderUserId": 1,
+        "displayName": "Minh",
+        "text": "Hà Nội",
+        "sentAtMs": 1
+      }
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "CHAT_MESSAGE",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "chatMessageId": "00000000-0000-0000-0000-000000000001",
+        "senderUserId": 1,
+        "displayName": "Minh",
+        "text": "Hà Nội",
+        "sentAtMs": 1,
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "MATCH_RESULT",
+    "direction": "S_TO_C",
+    "phase": "AUTHENTICATED",
+    "requiredFields": [
+      "finishReason",
+      "reasonCode",
+      "players",
+      "completedRounds",
+      "openedRounds",
+      "review",
+      "persistenceStatus",
+      "resultExpiresAtMs"
+    ],
+    "optionalFields": [
+      "winnerUserId"
+    ],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "MATCH_RESULT",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "finishReason": "COMPLETED",
+        "reasonCode": "NORMAL",
+        "winnerUserId": null,
+        "players": [
+          {
+            "userId": 1,
+            "displayName": "Minh",
+            "avatarId": "avatar-01",
+            "totalScore": 1,
+            "correctCount": 1,
+            "rank": 1
+          }
+        ],
+        "completedRounds": 1,
+        "openedRounds": 1,
+        "review": [
+          {
+            "roundId": "00000000-0000-0000-0000-000000000001",
+            "roundIndex": 1,
+            "question": {
+              "questionId": 1,
+              "questionType": "SINGLE_CHOICE",
+              "content": "Thủ đô Việt Nam?",
+              "options": [
+                {
+                  "id": "A",
+                  "text": "Hà Nội"
+                }
+              ],
+              "questionAssetId": null,
+              "timeLimitMs": 15000
+            },
+            "correctAnswer": "A",
+            "explanation": null,
+            "explanationAssetId": null,
+            "outcomes": [
+              {
+                "userId": 1,
+                "answer": "A",
+                "outcome": "ANSWERED",
+                "correct": null,
+                "answerTimeMs": null,
+                "earnedPoints": 1,
+                "scoreBefore": 1,
+                "totalScore": 1
+              }
+            ],
+            "revealed": true
+          }
+        ],
+        "persistenceStatus": "PENDING",
+        "resultExpiresAtMs": 1
+      }
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "MATCH_RESULT",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "finishReason": "COMPLETED",
+        "reasonCode": "NORMAL",
+        "winnerUserId": null,
+        "players": [
+          {
+            "userId": 1,
+            "displayName": "Minh",
+            "avatarId": "avatar-01",
+            "totalScore": 1,
+            "correctCount": 1,
+            "rank": 1
+          }
+        ],
+        "completedRounds": 1,
+        "openedRounds": 1,
+        "review": [
+          {
+            "roundId": "00000000-0000-0000-0000-000000000001",
+            "roundIndex": 1,
+            "question": {
+              "questionId": 1,
+              "questionType": "SINGLE_CHOICE",
+              "content": "Thủ đô Việt Nam?",
+              "options": [
+                {
+                  "id": "A",
+                  "text": "Hà Nội"
+                }
+              ],
+              "questionAssetId": null,
+              "timeLimitMs": 15000
+            },
+            "correctAnswer": "A",
+            "explanation": null,
+            "explanationAssetId": null,
+            "outcomes": [
+              {
+                "userId": 1,
+                "answer": "A",
+                "outcome": "ANSWERED",
+                "correct": null,
+                "answerTimeMs": null,
+                "earnedPoints": 1,
+                "scoreBefore": 1,
+                "totalScore": 1
+              }
+            ],
+            "revealed": true
+          }
+        ],
+        "persistenceStatus": "PENDING",
+        "resultExpiresAtMs": 1,
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "MATCH_SAVE_STATUS",
+    "direction": "S_TO_C",
+    "phase": "AUTHENTICATED",
+    "requiredFields": [
+      "status",
+      "retryable"
+    ],
+    "optionalFields": [
+      "savedAtMs"
+    ],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "MATCH_SAVE_STATUS",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "status": "FREE",
+        "retryable": true,
+        "savedAtMs": null
+      }
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "MATCH_SAVE_STATUS",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "status": "FREE",
+        "retryable": true,
+        "savedAtMs": null,
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "REMATCH_REQUEST",
+    "direction": "C_TO_S",
+    "phase": "AUTHENTICATED",
+    "requiredFields": [],
+    "optionalFields": [],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "REMATCH_REQUEST",
+      "requestId": "00000000-0000-0000-0000-000000000001",
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {}
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "REMATCH_REQUEST",
+      "requestId": "00000000-0000-0000-0000-000000000001",
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "REMATCH_RESPONSE",
+    "direction": "C_TO_S",
+    "phase": "AUTHENTICATED",
+    "requiredFields": [
+      "accept"
+    ],
+    "optionalFields": [],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "REMATCH_RESPONSE",
+      "requestId": "00000000-0000-0000-0000-000000000001",
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "accept": true
+      }
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "REMATCH_RESPONSE",
+      "requestId": "00000000-0000-0000-0000-000000000001",
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "accept": true,
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "REMATCH_STATUS",
+    "direction": "S_TO_C",
+    "phase": "AUTHENTICATED",
+    "requiredFields": [
+      "status",
+      "requesterUserId"
+    ],
+    "optionalFields": [
+      "expiresAtMs",
+      "newMatchId"
+    ],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "REMATCH_STATUS",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "status": "FREE",
+        "requesterUserId": 1,
+        "expiresAtMs": null,
+        "newMatchId": null
+      }
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "REMATCH_STATUS",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "status": "FREE",
+        "requesterUserId": 1,
+        "expiresAtMs": null,
+        "newMatchId": null,
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "EXIT_MATCH",
+    "direction": "C_TO_S",
+    "phase": "AUTHENTICATED",
+    "requiredFields": [],
+    "optionalFields": [],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "EXIT_MATCH",
+      "requestId": "00000000-0000-0000-0000-000000000001",
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {}
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "EXIT_MATCH",
+      "requestId": "00000000-0000-0000-0000-000000000001",
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "EXIT_ACK",
+    "direction": "S_TO_C",
+    "phase": "AUTHENTICATED",
+    "requiredFields": [
+      "reason",
+      "lobbyStatus"
+    ],
+    "optionalFields": [],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "EXIT_ACK",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "reason": "NORMAL",
+        "lobbyStatus": "FREE"
+      }
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "EXIT_ACK",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "reason": "NORMAL",
+        "lobbyStatus": "FREE",
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "RESULT_SESSION_CLOSED",
+    "direction": "S_TO_C",
+    "phase": "AUTHENTICATED",
+    "requiredFields": [
+      "reason"
+    ],
+    "optionalFields": [],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "RESULT_SESSION_CLOSED",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "reason": "NORMAL"
+      }
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "RESULT_SESSION_CLOSED",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "reason": "NORMAL",
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "MATCH_SNAPSHOT_REQUEST",
+    "direction": "C_TO_S",
+    "phase": "AUTHENTICATED",
+    "requiredFields": [],
+    "optionalFields": [],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "MATCH_SNAPSHOT_REQUEST",
+      "requestId": "00000000-0000-0000-0000-000000000001",
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {}
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "MATCH_SNAPSHOT_REQUEST",
+      "requestId": "00000000-0000-0000-0000-000000000001",
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "MATCH_SNAPSHOT",
+    "direction": "S_TO_C",
+    "phase": "AUTHENTICATED",
+    "requiredFields": [
+      "phase",
+      "phaseVersion",
+      "serverTimeMs",
+      "phaseRemainingMs",
+      "quiz",
+      "players",
+      "answeredUserIds"
+    ],
+    "optionalFields": [
+      "question",
+      "roundIndex",
+      "totalRounds",
+      "acceptedAnswer",
+      "latestResult",
+      "standings"
+    ],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "MATCH_SNAPSHOT",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "phase": "WAITING_READY",
+        "phaseVersion": 1,
+        "serverTimeMs": 1,
+        "phaseRemainingMs": 1,
+        "quiz": {
+          "quizId": 1,
+          "title": "Kiến thức chung",
+          "categoryId": 1,
+          "categoryName": "Tổng hợp",
+          "coverAssetId": null,
+          "availability": "AVAILABLE",
+          "totalRounds": 10
+        },
+        "players": [
+          {
+            "userId": 1,
+            "displayName": "Minh",
+            "avatarId": "avatar-01",
+            "totalScore": 1,
+            "correctCount": 1,
+            "rank": 1
+          }
+        ],
+        "question": {
+          "questionId": 1,
+          "questionType": "SINGLE_CHOICE",
+          "content": "Thủ đô Việt Nam?",
+          "options": [
+            {
+              "id": "A",
+              "text": "Hà Nội"
+            }
+          ],
+          "questionAssetId": null,
+          "timeLimitMs": 15000
+        },
+        "roundIndex": 1,
+        "totalRounds": 10,
+        "acceptedAnswer": null,
+        "answeredUserIds": [
+          1
+        ],
+        "latestResult": {
+          "questionId": 1,
+          "correctAnswer": "A",
+          "explanation": null,
+          "explanationAssetId": null,
+          "outcomes": [
+            {
+              "userId": 1,
+              "answer": "A",
+              "outcome": "ANSWERED",
+              "correct": null,
+              "answerTimeMs": null,
+              "earnedPoints": 1,
+              "scoreBefore": 1,
+              "totalScore": 1
+            }
+          ],
+          "durationMs": 1,
+          "phaseEndsAtMs": 1,
+          "serverTimeMs": 1
+        },
+        "standings": null
+      }
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "MATCH_SNAPSHOT",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "phase": "WAITING_READY",
+        "phaseVersion": 1,
+        "serverTimeMs": 1,
+        "phaseRemainingMs": 1,
+        "quiz": {
+          "quizId": 1,
+          "title": "Kiến thức chung",
+          "categoryId": 1,
+          "categoryName": "Tổng hợp",
+          "coverAssetId": null,
+          "availability": "AVAILABLE",
+          "totalRounds": 10
+        },
+        "players": [
+          {
+            "userId": 1,
+            "displayName": "Minh",
+            "avatarId": "avatar-01",
+            "totalScore": 1,
+            "correctCount": 1,
+            "rank": 1
+          }
+        ],
+        "question": {
+          "questionId": 1,
+          "questionType": "SINGLE_CHOICE",
+          "content": "Thủ đô Việt Nam?",
+          "options": [
+            {
+              "id": "A",
+              "text": "Hà Nội"
+            }
+          ],
+          "questionAssetId": null,
+          "timeLimitMs": 15000
+        },
+        "roundIndex": 1,
+        "totalRounds": 10,
+        "acceptedAnswer": null,
+        "answeredUserIds": [
+          1
+        ],
+        "latestResult": {
+          "questionId": 1,
+          "correctAnswer": "A",
+          "explanation": null,
+          "explanationAssetId": null,
+          "outcomes": [
+            {
+              "userId": 1,
+              "answer": "A",
+              "outcome": "ANSWERED",
+              "correct": null,
+              "answerTimeMs": null,
+              "earnedPoints": 1,
+              "scoreBefore": 1,
+              "totalScore": 1
+            }
+          ],
+          "durationMs": 1,
+          "phaseEndsAtMs": 1,
+          "serverTimeMs": 1
+        },
+        "standings": null,
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "RANKING_REQUEST",
+    "direction": "C_TO_S",
+    "phase": "AUTHENTICATED",
+    "requiredFields": [
+      "page",
+      "pageSize"
+    ],
+    "optionalFields": [],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "RANKING_REQUEST",
+      "requestId": "00000000-0000-0000-0000-000000000001",
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "page": 1,
+        "pageSize": 1
+      }
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "RANKING_REQUEST",
+      "requestId": "00000000-0000-0000-0000-000000000001",
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "page": 1,
+        "pageSize": 1,
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "RANKING",
+    "direction": "S_TO_C",
+    "phase": "AUTHENTICATED",
+    "requiredFields": [
+      "page",
+      "pageSize",
+      "totalItems",
+      "entries"
+    ],
+    "optionalFields": [
+      "myRank"
+    ],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "RANKING",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "page": 1,
+        "pageSize": 1,
+        "totalItems": 1,
+        "entries": [
+          {
+            "rank": 1,
+            "userId": 1,
+            "displayName": "Minh",
+            "avatarId": "avatar-01",
+            "totalScore": 1,
+            "wins": 1,
+            "totalMatches": 1
+          }
+        ],
+        "myRank": {
+          "rank": 1,
+          "userId": 1,
+          "displayName": "Minh",
+          "avatarId": "avatar-01",
+          "totalScore": 1,
+          "wins": 1,
+          "totalMatches": 1
+        }
+      }
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "RANKING",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "page": 1,
+        "pageSize": 1,
+        "totalItems": 1,
+        "entries": [
+          {
+            "rank": 1,
+            "userId": 1,
+            "displayName": "Minh",
+            "avatarId": "avatar-01",
+            "totalScore": 1,
+            "wins": 1,
+            "totalMatches": 1
+          }
+        ],
+        "myRank": {
+          "rank": 1,
+          "userId": 1,
+          "displayName": "Minh",
+          "avatarId": "avatar-01",
+          "totalScore": 1,
+          "wins": 1,
+          "totalMatches": 1
+        },
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "RANKING_INVALIDATED",
+    "direction": "S_TO_C",
+    "phase": "AUTHENTICATED",
+    "requiredFields": [
+      "revision",
+      "reason"
+    ],
+    "optionalFields": [],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "RANKING_INVALIDATED",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "revision": 1,
+        "reason": "NORMAL"
+      }
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "RANKING_INVALIDATED",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "revision": 1,
+        "reason": "NORMAL",
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "PROFILE_REQUEST",
+    "direction": "C_TO_S",
+    "phase": "AUTHENTICATED",
+    "requiredFields": [],
+    "optionalFields": [],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "PROFILE_REQUEST",
+      "requestId": "00000000-0000-0000-0000-000000000001",
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {}
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "PROFILE_REQUEST",
+      "requestId": "00000000-0000-0000-0000-000000000001",
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "PROFILE",
+    "direction": "S_TO_C",
+    "phase": "AUTHENTICATED",
+    "requiredFields": [
+      "userId",
+      "username",
+      "displayName",
+      "avatarId",
+      "totalScore",
+      "totalMatches",
+      "wins",
+      "losses",
+      "draws"
+    ],
+    "optionalFields": [],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "PROFILE",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "userId": 1,
+        "username": "player1",
+        "displayName": "Minh",
+        "avatarId": "avatar-01",
+        "totalScore": 1,
+        "totalMatches": 1,
+        "wins": 1,
+        "losses": 1,
+        "draws": 1
+      }
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "PROFILE",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "userId": 1,
+        "username": "player1",
+        "displayName": "Minh",
+        "avatarId": "avatar-01",
+        "totalScore": 1,
+        "totalMatches": 1,
+        "wins": 1,
+        "losses": 1,
+        "draws": 1,
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "HISTORY_REQUEST",
+    "direction": "C_TO_S",
+    "phase": "AUTHENTICATED",
+    "requiredFields": [
+      "page",
+      "pageSize"
+    ],
+    "optionalFields": [],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "HISTORY_REQUEST",
+      "requestId": "00000000-0000-0000-0000-000000000001",
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "page": 1,
+        "pageSize": 1
+      }
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "HISTORY_REQUEST",
+      "requestId": "00000000-0000-0000-0000-000000000001",
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "page": 1,
+        "pageSize": 1,
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "HISTORY",
+    "direction": "S_TO_C",
+    "phase": "AUTHENTICATED",
+    "requiredFields": [
+      "page",
+      "pageSize",
+      "totalItems",
+      "items"
+    ],
+    "optionalFields": [],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "HISTORY",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "page": 1,
+        "pageSize": 1,
+        "totalItems": 1,
+        "items": [
+          {
+            "matchId": "00000000-0000-0000-0000-000000000001",
+            "quizId": 1,
+            "quizTitle": "Kiến thức chung",
+            "opponentUserId": 1,
+            "opponentName": "Phúc",
+            "ownScore": 1,
+            "opponentScore": 1,
+            "outcome": "ANSWERED",
+            "finishReason": "COMPLETED",
+            "reasonCode": "NORMAL",
+            "startedAtMs": 1,
+            "endedAtMs": 1
+          }
+        ]
+      }
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "HISTORY",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "page": 1,
+        "pageSize": 1,
+        "totalItems": 1,
+        "items": [
+          {
+            "matchId": "00000000-0000-0000-0000-000000000001",
+            "quizId": 1,
+            "quizTitle": "Kiến thức chung",
+            "opponentUserId": 1,
+            "opponentName": "Phúc",
+            "ownScore": 1,
+            "opponentScore": 1,
+            "outcome": "ANSWERED",
+            "finishReason": "COMPLETED",
+            "reasonCode": "NORMAL",
+            "startedAtMs": 1,
+            "endedAtMs": 1
+          }
+        ],
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "MATCH_DETAIL_REQUEST",
+    "direction": "C_TO_S",
+    "phase": "AUTHENTICATED",
+    "requiredFields": [
+      "historyMatchId"
+    ],
+    "optionalFields": [],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "MATCH_DETAIL_REQUEST",
+      "requestId": "00000000-0000-0000-0000-000000000001",
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "historyMatchId": "00000000-0000-0000-0000-000000000001"
+      }
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "MATCH_DETAIL_REQUEST",
+      "requestId": "00000000-0000-0000-0000-000000000001",
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "historyMatchId": "00000000-0000-0000-0000-000000000001",
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "MATCH_DETAIL",
+    "direction": "S_TO_C",
+    "phase": "AUTHENTICATED",
+    "requiredFields": [
+      "summary",
+      "review"
+    ],
+    "optionalFields": [],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "MATCH_DETAIL",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "summary": {
+          "matchId": "00000000-0000-0000-0000-000000000001",
+          "quizId": 1,
+          "quizTitle": "Kiến thức chung",
+          "opponentUserId": 1,
+          "opponentName": "Phúc",
+          "ownScore": 1,
+          "opponentScore": 1,
+          "outcome": "ANSWERED",
+          "finishReason": "COMPLETED",
+          "reasonCode": "NORMAL",
+          "startedAtMs": 1,
+          "endedAtMs": 1
+        },
+        "review": [
+          {
+            "roundId": "00000000-0000-0000-0000-000000000001",
+            "roundIndex": 1,
+            "question": {
+              "questionId": 1,
+              "questionType": "SINGLE_CHOICE",
+              "content": "Thủ đô Việt Nam?",
+              "options": [
+                {
+                  "id": "A",
+                  "text": "Hà Nội"
+                }
+              ],
+              "questionAssetId": null,
+              "timeLimitMs": 15000
+            },
+            "correctAnswer": "A",
+            "explanation": null,
+            "explanationAssetId": null,
+            "outcomes": [
+              {
+                "userId": 1,
+                "answer": "A",
+                "outcome": "ANSWERED",
+                "correct": null,
+                "answerTimeMs": null,
+                "earnedPoints": 1,
+                "scoreBefore": 1,
+                "totalScore": 1
+              }
+            ],
+            "revealed": true
+          }
+        ]
+      }
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "MATCH_DETAIL",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "summary": {
+          "matchId": "00000000-0000-0000-0000-000000000001",
+          "quizId": 1,
+          "quizTitle": "Kiến thức chung",
+          "opponentUserId": 1,
+          "opponentName": "Phúc",
+          "ownScore": 1,
+          "opponentScore": 1,
+          "outcome": "ANSWERED",
+          "finishReason": "COMPLETED",
+          "reasonCode": "NORMAL",
+          "startedAtMs": 1,
+          "endedAtMs": 1
+        },
+        "review": [
+          {
+            "roundId": "00000000-0000-0000-0000-000000000001",
+            "roundIndex": 1,
+            "question": {
+              "questionId": 1,
+              "questionType": "SINGLE_CHOICE",
+              "content": "Thủ đô Việt Nam?",
+              "options": [
+                {
+                  "id": "A",
+                  "text": "Hà Nội"
+                }
+              ],
+              "questionAssetId": null,
+              "timeLimitMs": 15000
+            },
+            "correctAnswer": "A",
+            "explanation": null,
+            "explanationAssetId": null,
+            "outcomes": [
+              {
+                "userId": 1,
+                "answer": "A",
+                "outcome": "ANSWERED",
+                "correct": null,
+                "answerTimeMs": null,
+                "earnedPoints": 1,
+                "scoreBefore": 1,
+                "totalScore": 1
+              }
+            ],
+            "revealed": true
+          }
+        ],
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "ERROR",
+    "direction": "S_TO_C",
+    "phase": "ANY",
+    "requiredFields": [
+      "code",
+      "message",
+      "retryable",
+      "details"
+    ],
+    "optionalFields": [],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "ERROR",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "code": "INVALID_STATE",
+        "message": "Request is not allowed in this phase",
+        "retryable": true,
+        "details": {}
+      }
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "ERROR",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "code": "INVALID_STATE",
+        "message": "Request is not allowed in this phase",
+        "retryable": true,
+        "details": {},
+        "unexpected": true
+      }
+    }
+  }
+]

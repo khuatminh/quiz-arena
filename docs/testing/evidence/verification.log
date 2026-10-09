@@ -1,0 +1,900 @@
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] quiz-arena                                                         [pom]
+[INFO] quiz-arena-common                                                  [jar]
+[INFO] quiz-arena-server                                                  [jar]
+[INFO] quiz-arena-client                                                  [jar]
+[INFO] 
+[INFO] ----------------------< vn.edu.nhom7:quiz-arena >-----------------------
+[INFO] Building quiz-arena 1.0.0-SNAPSHOT                                 [1/4]
+[INFO]   from pom.xml
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ quiz-arena ---
+[INFO] 
+[INFO] --- failsafe:3.5.2:integration-test (default) @ quiz-arena ---
+[INFO] No tests to run.
+[INFO] 
+[INFO] --- failsafe:3.5.2:verify (default) @ quiz-arena ---
+[INFO] No tests to run.
+[INFO] 
+[INFO] --- install:3.1.2:install (default-install) @ quiz-arena ---
+[INFO] Installing /Users/justminh/Desktop/DH/LTM/pom.xml to /Users/justminh/.m2/repository/vn/edu/nhom7/quiz-arena/1.0.0-SNAPSHOT/quiz-arena-1.0.0-SNAPSHOT.pom
+[INFO] 
+[INFO] -------------------< vn.edu.nhom7:quiz-arena-common >-------------------
+[INFO] Building quiz-arena-common 1.0.0-SNAPSHOT                          [2/4]
+[INFO]   from common/pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ quiz-arena-common ---
+[INFO] Deleting /Users/justminh/Desktop/DH/LTM/common/target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ quiz-arena-common ---
+[INFO] Copying 2 resources from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ quiz-arena-common ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 10 source files with javac [debug release 21] to target/classes
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ quiz-arena-common ---
+[INFO] Copying 1 resource from src/test/resources to target/test-classes
+[INFO] 
+[INFO] --- compiler:3.13.0:testCompile (default-testCompile) @ quiz-arena-common ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 5 source files with javac [debug release 21] to target/test-classes
+[INFO] 
+[INFO] --- surefire:3.5.2:test (default-test) @ quiz-arena-common ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running vn.edu.nhom7.quiz.common.net.FrameDecoderTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.019 s -- in vn.edu.nhom7.quiz.common.net.FrameDecoderTest
+[INFO] Running vn.edu.nhom7.quiz.common.protocol.ProtocolCatalogueTest
+[INFO] Tests run: 118, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.180 s -- in vn.edu.nhom7.quiz.common.protocol.ProtocolCatalogueTest
+[INFO] Running vn.edu.nhom7.quiz.common.protocol.ProtocolContractTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.017 s -- in vn.edu.nhom7.quiz.common.protocol.ProtocolContractTest
+[INFO] Running vn.edu.nhom7.quiz.common.BuildSmokeTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.001 s -- in vn.edu.nhom7.quiz.common.BuildSmokeTest
+[INFO] Running vn.edu.nhom7.quiz.common.assets.AssetRegistryTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.007 s -- in vn.edu.nhom7.quiz.common.assets.AssetRegistryTest
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 126, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] 
+[INFO] --- jar:3.4.1:jar (default-jar) @ quiz-arena-common ---
+[INFO] Building jar: /Users/justminh/Desktop/DH/LTM/common/target/quiz-arena-common-1.0.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- failsafe:3.5.2:integration-test (default) @ quiz-arena-common ---
+[INFO] 
+[INFO] --- failsafe:3.5.2:verify (default) @ quiz-arena-common ---
+[INFO] No tests to run.
+[INFO] 
+[INFO] --- install:3.1.2:install (default-install) @ quiz-arena-common ---
+[INFO] Installing /Users/justminh/Desktop/DH/LTM/common/pom.xml to /Users/justminh/.m2/repository/vn/edu/nhom7/quiz-arena-common/1.0.0-SNAPSHOT/quiz-arena-common-1.0.0-SNAPSHOT.pom
+[INFO] Installing /Users/justminh/Desktop/DH/LTM/common/target/quiz-arena-common-1.0.0-SNAPSHOT.jar to /Users/justminh/.m2/repository/vn/edu/nhom7/quiz-arena-common/1.0.0-SNAPSHOT/quiz-arena-common-1.0.0-SNAPSHOT.jar
+[INFO] 
+[INFO] -------------------< vn.edu.nhom7:quiz-arena-server >-------------------
+[INFO] Building quiz-arena-server 1.0.0-SNAPSHOT                          [3/4]
+[INFO]   from server/pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ quiz-arena-server ---
+[INFO] Deleting /Users/justminh/Desktop/DH/LTM/server/target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ quiz-arena-server ---
+[INFO] skip non existing resourceDirectory /Users/justminh/Desktop/DH/LTM/server/src/main/resources
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ quiz-arena-server ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 66 source files with javac [debug release 21] to target/classes
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ quiz-arena-server ---
+[INFO] skip non existing resourceDirectory /Users/justminh/Desktop/DH/LTM/server/src/test/resources
+[INFO] 
+[INFO] --- compiler:3.13.0:testCompile (default-testCompile) @ quiz-arena-server ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 40 source files with javac [debug release 21] to target/test-classes
+[INFO] 
+[INFO] --- surefire:3.5.2:test (default-test) @ quiz-arena-server ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running vn.edu.nhom7.quiz.server.auth.AccountValidatorTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.013 s -- in vn.edu.nhom7.quiz.server.auth.AccountValidatorTest
+[INFO] Running vn.edu.nhom7.quiz.server.auth.PasswordHasherTest
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.319 s -- in vn.edu.nhom7.quiz.server.auth.PasswordHasherTest
+[INFO] Running vn.edu.nhom7.quiz.server.match.MatchTerminationTest
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=1ae54175-e2fc-4b11-84cf-a045aa7c6a33 roundId=null phase=WAITING_READY phaseVersion=1 eventSeq=0
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=09b373ec-691c-4146-9fd1-e9cab1a641e1 roundId=null phase=WAITING_READY phaseVersion=1 eventSeq=0
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=39a7e125-b9af-47c9-873e-71da742a69a5 roundId=null phase=WAITING_READY phaseVersion=1 eventSeq=0
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=9cb8a43c-cc36-49c4-9aef-6e0eeff8e8a6 roundId=null phase=WAITING_READY phaseVersion=1 eventSeq=0
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=9cb8a43c-cc36-49c4-9aef-6e0eeff8e8a6 roundId=null phase=MATCH_COUNTDOWN phaseVersion=2 eventSeq=3
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=9cb8a43c-cc36-49c4-9aef-6e0eeff8e8a6 roundId=null phase=RESULT phaseVersion=3 eventSeq=4
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=bd429167-7d8b-413c-b7e1-176d8ce48f39 roundId=null phase=WAITING_READY phaseVersion=1 eventSeq=0
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=bd429167-7d8b-413c-b7e1-176d8ce48f39 roundId=null phase=MATCH_COUNTDOWN phaseVersion=2 eventSeq=3
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=bd429167-7d8b-413c-b7e1-176d8ce48f39 roundId=null phase=RESULT phaseVersion=3 eventSeq=4
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=74407a3d-6937-4dd7-a430-c08a6ef7241c roundId=null phase=WAITING_READY phaseVersion=1 eventSeq=0
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=74407a3d-6937-4dd7-a430-c08a6ef7241c roundId=null phase=MATCH_COUNTDOWN phaseVersion=2 eventSeq=3
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=74407a3d-6937-4dd7-a430-c08a6ef7241c roundId=null phase=RESULT phaseVersion=3 eventSeq=4
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=6e9c0832-5648-44f2-93ba-14d09d3880ac roundId=null phase=WAITING_READY phaseVersion=1 eventSeq=0
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=6e9c0832-5648-44f2-93ba-14d09d3880ac roundId=null phase=MATCH_COUNTDOWN phaseVersion=2 eventSeq=3
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=6e9c0832-5648-44f2-93ba-14d09d3880ac roundId=d443e66a-0619-4e2d-a53c-5b6252f3772b phase=QUESTION_PREPARING phaseVersion=3 eventSeq=4
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=6e9c0832-5648-44f2-93ba-14d09d3880ac roundId=d443e66a-0619-4e2d-a53c-5b6252f3772b phase=RESULT phaseVersion=4 eventSeq=5
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=5428ee78-65ef-4cdb-b742-0eaa8f82469b roundId=null phase=WAITING_READY phaseVersion=1 eventSeq=0
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=5428ee78-65ef-4cdb-b742-0eaa8f82469b roundId=null phase=MATCH_COUNTDOWN phaseVersion=2 eventSeq=3
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=5428ee78-65ef-4cdb-b742-0eaa8f82469b roundId=f6345d01-27d8-466d-b890-bbe7ffaccd7f phase=QUESTION_PREPARING phaseVersion=3 eventSeq=4
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=5428ee78-65ef-4cdb-b742-0eaa8f82469b roundId=f6345d01-27d8-466d-b890-bbe7ffaccd7f phase=RESULT phaseVersion=4 eventSeq=5
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=4d99ef49-36f1-47d7-8b7d-afd9dd8caaf7 roundId=null phase=WAITING_READY phaseVersion=1 eventSeq=0
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=4d99ef49-36f1-47d7-8b7d-afd9dd8caaf7 roundId=null phase=MATCH_COUNTDOWN phaseVersion=2 eventSeq=3
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=4d99ef49-36f1-47d7-8b7d-afd9dd8caaf7 roundId=85b73543-3551-4019-8da1-809deb9a81f2 phase=QUESTION_PREPARING phaseVersion=3 eventSeq=4
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=4d99ef49-36f1-47d7-8b7d-afd9dd8caaf7 roundId=85b73543-3551-4019-8da1-809deb9a81f2 phase=RESULT phaseVersion=4 eventSeq=5
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=cf9bbae6-0cad-4176-89e0-5e2d96c53ea7 roundId=null phase=WAITING_READY phaseVersion=1 eventSeq=0
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=cf9bbae6-0cad-4176-89e0-5e2d96c53ea7 roundId=null phase=MATCH_COUNTDOWN phaseVersion=2 eventSeq=3
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=cf9bbae6-0cad-4176-89e0-5e2d96c53ea7 roundId=4342a812-5a6a-4c51-bd28-c06d751a0d66 phase=QUESTION_PREPARING phaseVersion=3 eventSeq=4
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=cf9bbae6-0cad-4176-89e0-5e2d96c53ea7 roundId=4342a812-5a6a-4c51-bd28-c06d751a0d66 phase=ROUND_COUNTDOWN phaseVersion=4 eventSeq=5
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=cf9bbae6-0cad-4176-89e0-5e2d96c53ea7 roundId=4342a812-5a6a-4c51-bd28-c06d751a0d66 phase=RESULT phaseVersion=5 eventSeq=6
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=5aef2a40-03ba-4eb4-8c1d-b2568ca91147 roundId=null phase=WAITING_READY phaseVersion=1 eventSeq=0
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=5aef2a40-03ba-4eb4-8c1d-b2568ca91147 roundId=null phase=MATCH_COUNTDOWN phaseVersion=2 eventSeq=3
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=5aef2a40-03ba-4eb4-8c1d-b2568ca91147 roundId=fc7a126f-0118-47c1-b25c-1a74f44ad8e4 phase=QUESTION_PREPARING phaseVersion=3 eventSeq=4
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=5aef2a40-03ba-4eb4-8c1d-b2568ca91147 roundId=fc7a126f-0118-47c1-b25c-1a74f44ad8e4 phase=ROUND_COUNTDOWN phaseVersion=4 eventSeq=5
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=5aef2a40-03ba-4eb4-8c1d-b2568ca91147 roundId=fc7a126f-0118-47c1-b25c-1a74f44ad8e4 phase=RESULT phaseVersion=5 eventSeq=6
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=56023bd8-4840-48ed-8a5b-546714fe1405 roundId=null phase=WAITING_READY phaseVersion=1 eventSeq=0
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=56023bd8-4840-48ed-8a5b-546714fe1405 roundId=null phase=MATCH_COUNTDOWN phaseVersion=2 eventSeq=3
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=56023bd8-4840-48ed-8a5b-546714fe1405 roundId=53a6097b-fdfc-421a-95fb-bf5931af4423 phase=QUESTION_PREPARING phaseVersion=3 eventSeq=4
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=56023bd8-4840-48ed-8a5b-546714fe1405 roundId=53a6097b-fdfc-421a-95fb-bf5931af4423 phase=ROUND_COUNTDOWN phaseVersion=4 eventSeq=5
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=56023bd8-4840-48ed-8a5b-546714fe1405 roundId=53a6097b-fdfc-421a-95fb-bf5931af4423 phase=RESULT phaseVersion=5 eventSeq=6
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=04c5119a-2790-4ef0-a175-55c68e64aeb7 roundId=null phase=WAITING_READY phaseVersion=1 eventSeq=0
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=04c5119a-2790-4ef0-a175-55c68e64aeb7 roundId=null phase=MATCH_COUNTDOWN phaseVersion=2 eventSeq=3
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=04c5119a-2790-4ef0-a175-55c68e64aeb7 roundId=f2e6be96-dbbb-4c9c-aea5-f4ec56ebec0c phase=QUESTION_PREPARING phaseVersion=3 eventSeq=4
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=04c5119a-2790-4ef0-a175-55c68e64aeb7 roundId=f2e6be96-dbbb-4c9c-aea5-f4ec56ebec0c phase=ROUND_COUNTDOWN phaseVersion=4 eventSeq=5
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:05Z matchId=04c5119a-2790-4ef0-a175-55c68e64aeb7 roundId=f2e6be96-dbbb-4c9c-aea5-f4ec56ebec0c phase=ANSWERING phaseVersion=5 eventSeq=6
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:05Z matchId=04c5119a-2790-4ef0-a175-55c68e64aeb7 roundId=f2e6be96-dbbb-4c9c-aea5-f4ec56ebec0c phase=RESULT phaseVersion=6 eventSeq=7
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=71f45f1e-8af3-4b24-968b-f832a53a31ce roundId=null phase=WAITING_READY phaseVersion=1 eventSeq=0
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=71f45f1e-8af3-4b24-968b-f832a53a31ce roundId=null phase=MATCH_COUNTDOWN phaseVersion=2 eventSeq=3
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=71f45f1e-8af3-4b24-968b-f832a53a31ce roundId=e1d7224e-e6e8-4604-a794-4b937fb1b13d phase=QUESTION_PREPARING phaseVersion=3 eventSeq=4
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=71f45f1e-8af3-4b24-968b-f832a53a31ce roundId=e1d7224e-e6e8-4604-a794-4b937fb1b13d phase=ROUND_COUNTDOWN phaseVersion=4 eventSeq=5
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:05Z matchId=71f45f1e-8af3-4b24-968b-f832a53a31ce roundId=e1d7224e-e6e8-4604-a794-4b937fb1b13d phase=ANSWERING phaseVersion=5 eventSeq=6
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:05Z matchId=71f45f1e-8af3-4b24-968b-f832a53a31ce roundId=e1d7224e-e6e8-4604-a794-4b937fb1b13d phase=RESULT phaseVersion=6 eventSeq=7
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=cb72a852-7ca4-4c14-a5eb-16287105b940 roundId=null phase=WAITING_READY phaseVersion=1 eventSeq=0
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=cb72a852-7ca4-4c14-a5eb-16287105b940 roundId=null phase=MATCH_COUNTDOWN phaseVersion=2 eventSeq=3
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=cb72a852-7ca4-4c14-a5eb-16287105b940 roundId=4cc387cf-aa39-4b25-b0f2-1a018356501b phase=QUESTION_PREPARING phaseVersion=3 eventSeq=4
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=cb72a852-7ca4-4c14-a5eb-16287105b940 roundId=4cc387cf-aa39-4b25-b0f2-1a018356501b phase=ROUND_COUNTDOWN phaseVersion=4 eventSeq=5
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:05Z matchId=cb72a852-7ca4-4c14-a5eb-16287105b940 roundId=4cc387cf-aa39-4b25-b0f2-1a018356501b phase=ANSWERING phaseVersion=5 eventSeq=6
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:05Z matchId=cb72a852-7ca4-4c14-a5eb-16287105b940 roundId=4cc387cf-aa39-4b25-b0f2-1a018356501b phase=RESULT phaseVersion=6 eventSeq=7
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=9c3c00e9-94c6-40d8-89bb-8595900652f7 roundId=null phase=WAITING_READY phaseVersion=1 eventSeq=0
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=9c3c00e9-94c6-40d8-89bb-8595900652f7 roundId=null phase=MATCH_COUNTDOWN phaseVersion=2 eventSeq=3
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=9c3c00e9-94c6-40d8-89bb-8595900652f7 roundId=8d358373-1208-4466-9399-dea5332b0bc8 phase=QUESTION_PREPARING phaseVersion=3 eventSeq=4
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=9c3c00e9-94c6-40d8-89bb-8595900652f7 roundId=8d358373-1208-4466-9399-dea5332b0bc8 phase=ROUND_COUNTDOWN phaseVersion=4 eventSeq=5
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:05Z matchId=9c3c00e9-94c6-40d8-89bb-8595900652f7 roundId=8d358373-1208-4466-9399-dea5332b0bc8 phase=ANSWERING phaseVersion=5 eventSeq=6
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:05Z matchId=9c3c00e9-94c6-40d8-89bb-8595900652f7 roundId=8d358373-1208-4466-9399-dea5332b0bc8 phase=REVEAL phaseVersion=6 eventSeq=11
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:05Z matchId=9c3c00e9-94c6-40d8-89bb-8595900652f7 roundId=8d358373-1208-4466-9399-dea5332b0bc8 phase=RESULT phaseVersion=7 eventSeq=12
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=5f87c250-3d29-4c84-955f-23166d08190b roundId=null phase=WAITING_READY phaseVersion=1 eventSeq=0
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=5f87c250-3d29-4c84-955f-23166d08190b roundId=null phase=MATCH_COUNTDOWN phaseVersion=2 eventSeq=3
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=5f87c250-3d29-4c84-955f-23166d08190b roundId=af81767e-3c0a-47bd-be5f-a286c0d0be5f phase=QUESTION_PREPARING phaseVersion=3 eventSeq=4
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=5f87c250-3d29-4c84-955f-23166d08190b roundId=af81767e-3c0a-47bd-be5f-a286c0d0be5f phase=ROUND_COUNTDOWN phaseVersion=4 eventSeq=5
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:05Z matchId=5f87c250-3d29-4c84-955f-23166d08190b roundId=af81767e-3c0a-47bd-be5f-a286c0d0be5f phase=ANSWERING phaseVersion=5 eventSeq=6
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:05Z matchId=5f87c250-3d29-4c84-955f-23166d08190b roundId=af81767e-3c0a-47bd-be5f-a286c0d0be5f phase=REVEAL phaseVersion=6 eventSeq=11
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:05Z matchId=5f87c250-3d29-4c84-955f-23166d08190b roundId=af81767e-3c0a-47bd-be5f-a286c0d0be5f phase=RESULT phaseVersion=7 eventSeq=12
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=f10d1da9-497f-4aa1-aca3-c587c0dad81f roundId=null phase=WAITING_READY phaseVersion=1 eventSeq=0
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=f10d1da9-497f-4aa1-aca3-c587c0dad81f roundId=null phase=MATCH_COUNTDOWN phaseVersion=2 eventSeq=3
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=f10d1da9-497f-4aa1-aca3-c587c0dad81f roundId=6d6d032e-6a3c-4374-a974-6199b1a04dde phase=QUESTION_PREPARING phaseVersion=3 eventSeq=4
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=f10d1da9-497f-4aa1-aca3-c587c0dad81f roundId=6d6d032e-6a3c-4374-a974-6199b1a04dde phase=ROUND_COUNTDOWN phaseVersion=4 eventSeq=5
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:05Z matchId=f10d1da9-497f-4aa1-aca3-c587c0dad81f roundId=6d6d032e-6a3c-4374-a974-6199b1a04dde phase=ANSWERING phaseVersion=5 eventSeq=6
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:05Z matchId=f10d1da9-497f-4aa1-aca3-c587c0dad81f roundId=6d6d032e-6a3c-4374-a974-6199b1a04dde phase=REVEAL phaseVersion=6 eventSeq=11
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:05Z matchId=f10d1da9-497f-4aa1-aca3-c587c0dad81f roundId=6d6d032e-6a3c-4374-a974-6199b1a04dde phase=RESULT phaseVersion=7 eventSeq=12
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=45812924-fcfd-4cda-b89d-c85f4c427d81 roundId=null phase=WAITING_READY phaseVersion=1 eventSeq=0
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=45812924-fcfd-4cda-b89d-c85f4c427d81 roundId=null phase=MATCH_COUNTDOWN phaseVersion=2 eventSeq=3
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=45812924-fcfd-4cda-b89d-c85f4c427d81 roundId=3fbdae72-1db0-4bc2-9fba-de4360e2b941 phase=QUESTION_PREPARING phaseVersion=3 eventSeq=4
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=45812924-fcfd-4cda-b89d-c85f4c427d81 roundId=3fbdae72-1db0-4bc2-9fba-de4360e2b941 phase=ROUND_COUNTDOWN phaseVersion=4 eventSeq=5
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:05Z matchId=45812924-fcfd-4cda-b89d-c85f4c427d81 roundId=3fbdae72-1db0-4bc2-9fba-de4360e2b941 phase=ANSWERING phaseVersion=5 eventSeq=6
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:05Z matchId=45812924-fcfd-4cda-b89d-c85f4c427d81 roundId=3fbdae72-1db0-4bc2-9fba-de4360e2b941 phase=REVEAL phaseVersion=6 eventSeq=11
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:07Z matchId=45812924-fcfd-4cda-b89d-c85f4c427d81 roundId=3fbdae72-1db0-4bc2-9fba-de4360e2b941 phase=LEADERBOARD phaseVersion=7 eventSeq=12
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:07Z matchId=45812924-fcfd-4cda-b89d-c85f4c427d81 roundId=3fbdae72-1db0-4bc2-9fba-de4360e2b941 phase=RESULT phaseVersion=8 eventSeq=13
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=0882f1cb-d691-441b-8e35-c7322add54e8 roundId=null phase=WAITING_READY phaseVersion=1 eventSeq=0
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=0882f1cb-d691-441b-8e35-c7322add54e8 roundId=null phase=MATCH_COUNTDOWN phaseVersion=2 eventSeq=3
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=0882f1cb-d691-441b-8e35-c7322add54e8 roundId=620b1245-7e1b-4b9c-a7fa-22453c84fd35 phase=QUESTION_PREPARING phaseVersion=3 eventSeq=4
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=0882f1cb-d691-441b-8e35-c7322add54e8 roundId=620b1245-7e1b-4b9c-a7fa-22453c84fd35 phase=ROUND_COUNTDOWN phaseVersion=4 eventSeq=5
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:05Z matchId=0882f1cb-d691-441b-8e35-c7322add54e8 roundId=620b1245-7e1b-4b9c-a7fa-22453c84fd35 phase=ANSWERING phaseVersion=5 eventSeq=6
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:05Z matchId=0882f1cb-d691-441b-8e35-c7322add54e8 roundId=620b1245-7e1b-4b9c-a7fa-22453c84fd35 phase=REVEAL phaseVersion=6 eventSeq=11
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:07Z matchId=0882f1cb-d691-441b-8e35-c7322add54e8 roundId=620b1245-7e1b-4b9c-a7fa-22453c84fd35 phase=LEADERBOARD phaseVersion=7 eventSeq=12
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:07Z matchId=0882f1cb-d691-441b-8e35-c7322add54e8 roundId=620b1245-7e1b-4b9c-a7fa-22453c84fd35 phase=RESULT phaseVersion=8 eventSeq=13
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=62b5ba8d-3c14-4869-bbde-1f02a68d60f3 roundId=null phase=WAITING_READY phaseVersion=1 eventSeq=0
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=62b5ba8d-3c14-4869-bbde-1f02a68d60f3 roundId=null phase=MATCH_COUNTDOWN phaseVersion=2 eventSeq=3
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=62b5ba8d-3c14-4869-bbde-1f02a68d60f3 roundId=49c904d4-7b97-4c12-af5e-a33df7a23ea0 phase=QUESTION_PREPARING phaseVersion=3 eventSeq=4
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=62b5ba8d-3c14-4869-bbde-1f02a68d60f3 roundId=49c904d4-7b97-4c12-af5e-a33df7a23ea0 phase=ROUND_COUNTDOWN phaseVersion=4 eventSeq=5
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:05Z matchId=62b5ba8d-3c14-4869-bbde-1f02a68d60f3 roundId=49c904d4-7b97-4c12-af5e-a33df7a23ea0 phase=ANSWERING phaseVersion=5 eventSeq=6
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:05Z matchId=62b5ba8d-3c14-4869-bbde-1f02a68d60f3 roundId=49c904d4-7b97-4c12-af5e-a33df7a23ea0 phase=REVEAL phaseVersion=6 eventSeq=11
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:07Z matchId=62b5ba8d-3c14-4869-bbde-1f02a68d60f3 roundId=49c904d4-7b97-4c12-af5e-a33df7a23ea0 phase=LEADERBOARD phaseVersion=7 eventSeq=12
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:07Z matchId=62b5ba8d-3c14-4869-bbde-1f02a68d60f3 roundId=49c904d4-7b97-4c12-af5e-a33df7a23ea0 phase=RESULT phaseVersion=8 eventSeq=13
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=6f8cc68a-4be7-4faf-a598-c4556cf3d69b roundId=null phase=WAITING_READY phaseVersion=1 eventSeq=0
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=6f8cc68a-4be7-4faf-a598-c4556cf3d69b roundId=null phase=MATCH_COUNTDOWN phaseVersion=2 eventSeq=1
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=6f8cc68a-4be7-4faf-a598-c4556cf3d69b roundId=null phase=RESULT phaseVersion=3 eventSeq=1
+[INFO] Tests run: 22, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.255 s -- in vn.edu.nhom7.quiz.server.match.MatchTerminationTest
+[INFO] Running vn.edu.nhom7.quiz.server.match.RematchCoordinatorTest
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=f3e0126c-11bb-4efb-945c-3ec40f4c3850 roundId=null phase=WAITING_READY phaseVersion=1 eventSeq=0
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=f3e0126c-11bb-4efb-945c-3ec40f4c3850 roundId=null phase=MATCH_COUNTDOWN phaseVersion=2 eventSeq=3
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=f3e0126c-11bb-4efb-945c-3ec40f4c3850 roundId=null phase=RESULT phaseVersion=3 eventSeq=4
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=ce5ac5f7-f7f8-4fc8-9e79-c3755102dcb2 roundId=null phase=WAITING_READY phaseVersion=1 eventSeq=0
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=ce5ac5f7-f7f8-4fc8-9e79-c3755102dcb2 roundId=null phase=MATCH_COUNTDOWN phaseVersion=2 eventSeq=3
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=ce5ac5f7-f7f8-4fc8-9e79-c3755102dcb2 roundId=null phase=RESULT phaseVersion=3 eventSeq=4
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=ae00824a-7363-44a4-a872-8b446fcf2627 roundId=null phase=WAITING_READY phaseVersion=1 eventSeq=0
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=ae00824a-7363-44a4-a872-8b446fcf2627 roundId=null phase=MATCH_COUNTDOWN phaseVersion=2 eventSeq=3
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=ae00824a-7363-44a4-a872-8b446fcf2627 roundId=null phase=RESULT phaseVersion=3 eventSeq=4
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=d85a9ea3-0173-49a4-9e07-f505ce6cf0a5 roundId=null phase=WAITING_READY phaseVersion=1 eventSeq=0
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=d85a9ea3-0173-49a4-9e07-f505ce6cf0a5 roundId=null phase=MATCH_COUNTDOWN phaseVersion=2 eventSeq=3
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=d85a9ea3-0173-49a4-9e07-f505ce6cf0a5 roundId=null phase=RESULT phaseVersion=3 eventSeq=4
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=94672f3d-eee6-4f80-8e7c-8ca9caaa5f32 roundId=null phase=WAITING_READY phaseVersion=1 eventSeq=0
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.022 s -- in vn.edu.nhom7.quiz.server.match.RematchCoordinatorTest
+[INFO] Running vn.edu.nhom7.quiz.server.match.MatchEngineTest
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=d54ee23f-4e2b-4bfe-8bbe-b8b0512ed91d roundId=null phase=WAITING_READY phaseVersion=1 eventSeq=0
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=d54ee23f-4e2b-4bfe-8bbe-b8b0512ed91d roundId=null phase=MATCH_COUNTDOWN phaseVersion=2 eventSeq=3
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=d54ee23f-4e2b-4bfe-8bbe-b8b0512ed91d roundId=153abb24-ba5b-4651-8eac-eef66fef7446 phase=QUESTION_PREPARING phaseVersion=3 eventSeq=4
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=d54ee23f-4e2b-4bfe-8bbe-b8b0512ed91d roundId=153abb24-ba5b-4651-8eac-eef66fef7446 phase=ROUND_COUNTDOWN phaseVersion=4 eventSeq=5
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:05Z matchId=d54ee23f-4e2b-4bfe-8bbe-b8b0512ed91d roundId=153abb24-ba5b-4651-8eac-eef66fef7446 phase=ANSWERING phaseVersion=5 eventSeq=6
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:05Z matchId=d54ee23f-4e2b-4bfe-8bbe-b8b0512ed91d roundId=153abb24-ba5b-4651-8eac-eef66fef7446 phase=RESULT phaseVersion=6 eventSeq=9
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=0869b6b0-8d79-4fee-bd81-62af9aaa79c1 roundId=null phase=WAITING_READY phaseVersion=1 eventSeq=0
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=0869b6b0-8d79-4fee-bd81-62af9aaa79c1 roundId=null phase=MATCH_COUNTDOWN phaseVersion=2 eventSeq=3
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=0869b6b0-8d79-4fee-bd81-62af9aaa79c1 roundId=a3b4a28e-5619-43d7-b12b-9cd5bd5c5c8c phase=QUESTION_PREPARING phaseVersion=3 eventSeq=4
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=0869b6b0-8d79-4fee-bd81-62af9aaa79c1 roundId=a3b4a28e-5619-43d7-b12b-9cd5bd5c5c8c phase=ROUND_COUNTDOWN phaseVersion=4 eventSeq=5
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:05Z matchId=0869b6b0-8d79-4fee-bd81-62af9aaa79c1 roundId=a3b4a28e-5619-43d7-b12b-9cd5bd5c5c8c phase=ANSWERING phaseVersion=5 eventSeq=6
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:05Z matchId=0869b6b0-8d79-4fee-bd81-62af9aaa79c1 roundId=a3b4a28e-5619-43d7-b12b-9cd5bd5c5c8c phase=REVEAL phaseVersion=6 eventSeq=11
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=06012658-aae9-424c-9967-0636b485d64f roundId=null phase=WAITING_READY phaseVersion=1 eventSeq=0
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=59c9069f-63ee-41c5-8f0b-af4fde0c86de roundId=null phase=WAITING_READY phaseVersion=1 eventSeq=0
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=59c9069f-63ee-41c5-8f0b-af4fde0c86de roundId=null phase=MATCH_COUNTDOWN phaseVersion=2 eventSeq=3
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=59c9069f-63ee-41c5-8f0b-af4fde0c86de roundId=ebc21815-5154-4362-8dd5-e265665977c8 phase=QUESTION_PREPARING phaseVersion=3 eventSeq=4
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=59c9069f-63ee-41c5-8f0b-af4fde0c86de roundId=ebc21815-5154-4362-8dd5-e265665977c8 phase=ROUND_COUNTDOWN phaseVersion=4 eventSeq=5
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:05Z matchId=59c9069f-63ee-41c5-8f0b-af4fde0c86de roundId=ebc21815-5154-4362-8dd5-e265665977c8 phase=ANSWERING phaseVersion=5 eventSeq=6
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=ad5e69d1-e615-4321-8912-e5f16fd3a9c5 roundId=null phase=WAITING_READY phaseVersion=1 eventSeq=0
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=ad5e69d1-e615-4321-8912-e5f16fd3a9c5 roundId=null phase=MATCH_COUNTDOWN phaseVersion=2 eventSeq=3
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=ad5e69d1-e615-4321-8912-e5f16fd3a9c5 roundId=0a8409cf-b64f-454b-b120-ed55b3be2d7f phase=QUESTION_PREPARING phaseVersion=3 eventSeq=4
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=ad5e69d1-e615-4321-8912-e5f16fd3a9c5 roundId=0a8409cf-b64f-454b-b120-ed55b3be2d7f phase=ROUND_COUNTDOWN phaseVersion=4 eventSeq=5
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:05Z matchId=ad5e69d1-e615-4321-8912-e5f16fd3a9c5 roundId=0a8409cf-b64f-454b-b120-ed55b3be2d7f phase=ANSWERING phaseVersion=5 eventSeq=6
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:05Z matchId=ad5e69d1-e615-4321-8912-e5f16fd3a9c5 roundId=0a8409cf-b64f-454b-b120-ed55b3be2d7f phase=REVEAL phaseVersion=6 eventSeq=11
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:07Z matchId=ad5e69d1-e615-4321-8912-e5f16fd3a9c5 roundId=0a8409cf-b64f-454b-b120-ed55b3be2d7f phase=LEADERBOARD phaseVersion=7 eventSeq=12
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:10Z matchId=ad5e69d1-e615-4321-8912-e5f16fd3a9c5 roundId=3930b15f-d804-4d8a-9fc6-bfec16d25c46 phase=QUESTION_PREPARING phaseVersion=8 eventSeq=13
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:10Z matchId=ad5e69d1-e615-4321-8912-e5f16fd3a9c5 roundId=3930b15f-d804-4d8a-9fc6-bfec16d25c46 phase=ROUND_COUNTDOWN phaseVersion=9 eventSeq=14
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:12Z matchId=ad5e69d1-e615-4321-8912-e5f16fd3a9c5 roundId=3930b15f-d804-4d8a-9fc6-bfec16d25c46 phase=ANSWERING phaseVersion=10 eventSeq=15
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:12Z matchId=ad5e69d1-e615-4321-8912-e5f16fd3a9c5 roundId=3930b15f-d804-4d8a-9fc6-bfec16d25c46 phase=REVEAL phaseVersion=11 eventSeq=20
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:14Z matchId=ad5e69d1-e615-4321-8912-e5f16fd3a9c5 roundId=3930b15f-d804-4d8a-9fc6-bfec16d25c46 phase=LEADERBOARD phaseVersion=12 eventSeq=21
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:17Z matchId=ad5e69d1-e615-4321-8912-e5f16fd3a9c5 roundId=b60c71cc-4a82-49aa-b213-01e3c06c1d5c phase=QUESTION_PREPARING phaseVersion=13 eventSeq=22
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:17Z matchId=ad5e69d1-e615-4321-8912-e5f16fd3a9c5 roundId=b60c71cc-4a82-49aa-b213-01e3c06c1d5c phase=ROUND_COUNTDOWN phaseVersion=14 eventSeq=23
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:19Z matchId=ad5e69d1-e615-4321-8912-e5f16fd3a9c5 roundId=b60c71cc-4a82-49aa-b213-01e3c06c1d5c phase=ANSWERING phaseVersion=15 eventSeq=24
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:19Z matchId=ad5e69d1-e615-4321-8912-e5f16fd3a9c5 roundId=b60c71cc-4a82-49aa-b213-01e3c06c1d5c phase=REVEAL phaseVersion=16 eventSeq=29
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:21Z matchId=ad5e69d1-e615-4321-8912-e5f16fd3a9c5 roundId=b60c71cc-4a82-49aa-b213-01e3c06c1d5c phase=LEADERBOARD phaseVersion=17 eventSeq=30
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:24Z matchId=ad5e69d1-e615-4321-8912-e5f16fd3a9c5 roundId=bed53428-43cd-4cdc-b795-1ab00b4f6fe6 phase=QUESTION_PREPARING phaseVersion=18 eventSeq=31
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:24Z matchId=ad5e69d1-e615-4321-8912-e5f16fd3a9c5 roundId=bed53428-43cd-4cdc-b795-1ab00b4f6fe6 phase=ROUND_COUNTDOWN phaseVersion=19 eventSeq=32
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:26Z matchId=ad5e69d1-e615-4321-8912-e5f16fd3a9c5 roundId=bed53428-43cd-4cdc-b795-1ab00b4f6fe6 phase=ANSWERING phaseVersion=20 eventSeq=33
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:26Z matchId=ad5e69d1-e615-4321-8912-e5f16fd3a9c5 roundId=bed53428-43cd-4cdc-b795-1ab00b4f6fe6 phase=REVEAL phaseVersion=21 eventSeq=38
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:28Z matchId=ad5e69d1-e615-4321-8912-e5f16fd3a9c5 roundId=bed53428-43cd-4cdc-b795-1ab00b4f6fe6 phase=LEADERBOARD phaseVersion=22 eventSeq=39
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:31Z matchId=ad5e69d1-e615-4321-8912-e5f16fd3a9c5 roundId=3f18f3bd-c736-43e6-a38b-c29c7f13615d phase=QUESTION_PREPARING phaseVersion=23 eventSeq=40
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:31Z matchId=ad5e69d1-e615-4321-8912-e5f16fd3a9c5 roundId=3f18f3bd-c736-43e6-a38b-c29c7f13615d phase=ROUND_COUNTDOWN phaseVersion=24 eventSeq=41
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:33Z matchId=ad5e69d1-e615-4321-8912-e5f16fd3a9c5 roundId=3f18f3bd-c736-43e6-a38b-c29c7f13615d phase=ANSWERING phaseVersion=25 eventSeq=42
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:33Z matchId=ad5e69d1-e615-4321-8912-e5f16fd3a9c5 roundId=3f18f3bd-c736-43e6-a38b-c29c7f13615d phase=REVEAL phaseVersion=26 eventSeq=47
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:35Z matchId=ad5e69d1-e615-4321-8912-e5f16fd3a9c5 roundId=3f18f3bd-c736-43e6-a38b-c29c7f13615d phase=LEADERBOARD phaseVersion=27 eventSeq=48
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:38Z matchId=ad5e69d1-e615-4321-8912-e5f16fd3a9c5 roundId=b77c91cb-d4c2-4480-8c1f-8f9604647900 phase=QUESTION_PREPARING phaseVersion=28 eventSeq=49
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:38Z matchId=ad5e69d1-e615-4321-8912-e5f16fd3a9c5 roundId=b77c91cb-d4c2-4480-8c1f-8f9604647900 phase=ROUND_COUNTDOWN phaseVersion=29 eventSeq=50
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:40Z matchId=ad5e69d1-e615-4321-8912-e5f16fd3a9c5 roundId=b77c91cb-d4c2-4480-8c1f-8f9604647900 phase=ANSWERING phaseVersion=30 eventSeq=51
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:40Z matchId=ad5e69d1-e615-4321-8912-e5f16fd3a9c5 roundId=b77c91cb-d4c2-4480-8c1f-8f9604647900 phase=REVEAL phaseVersion=31 eventSeq=56
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:42Z matchId=ad5e69d1-e615-4321-8912-e5f16fd3a9c5 roundId=b77c91cb-d4c2-4480-8c1f-8f9604647900 phase=LEADERBOARD phaseVersion=32 eventSeq=57
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:45Z matchId=ad5e69d1-e615-4321-8912-e5f16fd3a9c5 roundId=6b8ff55f-a4cf-48b9-b42e-6fa6956a1cb7 phase=QUESTION_PREPARING phaseVersion=33 eventSeq=58
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:45Z matchId=ad5e69d1-e615-4321-8912-e5f16fd3a9c5 roundId=6b8ff55f-a4cf-48b9-b42e-6fa6956a1cb7 phase=ROUND_COUNTDOWN phaseVersion=34 eventSeq=59
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:47Z matchId=ad5e69d1-e615-4321-8912-e5f16fd3a9c5 roundId=6b8ff55f-a4cf-48b9-b42e-6fa6956a1cb7 phase=ANSWERING phaseVersion=35 eventSeq=60
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:47Z matchId=ad5e69d1-e615-4321-8912-e5f16fd3a9c5 roundId=6b8ff55f-a4cf-48b9-b42e-6fa6956a1cb7 phase=REVEAL phaseVersion=36 eventSeq=65
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:49Z matchId=ad5e69d1-e615-4321-8912-e5f16fd3a9c5 roundId=6b8ff55f-a4cf-48b9-b42e-6fa6956a1cb7 phase=LEADERBOARD phaseVersion=37 eventSeq=66
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:52Z matchId=ad5e69d1-e615-4321-8912-e5f16fd3a9c5 roundId=1efd8e8e-0814-4549-8436-f9c7f23b3747 phase=QUESTION_PREPARING phaseVersion=38 eventSeq=67
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:52Z matchId=ad5e69d1-e615-4321-8912-e5f16fd3a9c5 roundId=1efd8e8e-0814-4549-8436-f9c7f23b3747 phase=ROUND_COUNTDOWN phaseVersion=39 eventSeq=68
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:54Z matchId=ad5e69d1-e615-4321-8912-e5f16fd3a9c5 roundId=1efd8e8e-0814-4549-8436-f9c7f23b3747 phase=ANSWERING phaseVersion=40 eventSeq=69
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:54Z matchId=ad5e69d1-e615-4321-8912-e5f16fd3a9c5 roundId=1efd8e8e-0814-4549-8436-f9c7f23b3747 phase=REVEAL phaseVersion=41 eventSeq=74
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:56Z matchId=ad5e69d1-e615-4321-8912-e5f16fd3a9c5 roundId=1efd8e8e-0814-4549-8436-f9c7f23b3747 phase=LEADERBOARD phaseVersion=42 eventSeq=75
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:59Z matchId=ad5e69d1-e615-4321-8912-e5f16fd3a9c5 roundId=4ddefc57-6f76-42f3-9757-7be5813bff48 phase=QUESTION_PREPARING phaseVersion=43 eventSeq=76
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:59Z matchId=ad5e69d1-e615-4321-8912-e5f16fd3a9c5 roundId=4ddefc57-6f76-42f3-9757-7be5813bff48 phase=ROUND_COUNTDOWN phaseVersion=44 eventSeq=77
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:01:01Z matchId=ad5e69d1-e615-4321-8912-e5f16fd3a9c5 roundId=4ddefc57-6f76-42f3-9757-7be5813bff48 phase=ANSWERING phaseVersion=45 eventSeq=78
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:01:01Z matchId=ad5e69d1-e615-4321-8912-e5f16fd3a9c5 roundId=4ddefc57-6f76-42f3-9757-7be5813bff48 phase=REVEAL phaseVersion=46 eventSeq=83
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:01:03Z matchId=ad5e69d1-e615-4321-8912-e5f16fd3a9c5 roundId=4ddefc57-6f76-42f3-9757-7be5813bff48 phase=LEADERBOARD phaseVersion=47 eventSeq=84
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:01:06Z matchId=ad5e69d1-e615-4321-8912-e5f16fd3a9c5 roundId=c52e11f4-731d-469e-a775-419e2bc9a9d8 phase=QUESTION_PREPARING phaseVersion=48 eventSeq=85
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:01:06Z matchId=ad5e69d1-e615-4321-8912-e5f16fd3a9c5 roundId=c52e11f4-731d-469e-a775-419e2bc9a9d8 phase=ROUND_COUNTDOWN phaseVersion=49 eventSeq=86
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:01:08Z matchId=ad5e69d1-e615-4321-8912-e5f16fd3a9c5 roundId=c52e11f4-731d-469e-a775-419e2bc9a9d8 phase=ANSWERING phaseVersion=50 eventSeq=87
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:01:08Z matchId=ad5e69d1-e615-4321-8912-e5f16fd3a9c5 roundId=c52e11f4-731d-469e-a775-419e2bc9a9d8 phase=REVEAL phaseVersion=51 eventSeq=92
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:01:10Z matchId=ad5e69d1-e615-4321-8912-e5f16fd3a9c5 roundId=c52e11f4-731d-469e-a775-419e2bc9a9d8 phase=LEADERBOARD phaseVersion=52 eventSeq=93
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:01:13Z matchId=ad5e69d1-e615-4321-8912-e5f16fd3a9c5 roundId=c52e11f4-731d-469e-a775-419e2bc9a9d8 phase=RESULT phaseVersion=53 eventSeq=94
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=32e5718e-f37d-41f4-9450-d171df2d578d roundId=null phase=WAITING_READY phaseVersion=1 eventSeq=0
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=32e5718e-f37d-41f4-9450-d171df2d578d roundId=null phase=MATCH_COUNTDOWN phaseVersion=2 eventSeq=3
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=32e5718e-f37d-41f4-9450-d171df2d578d roundId=49f94872-b795-4be9-bfde-6ea697ff466b phase=QUESTION_PREPARING phaseVersion=3 eventSeq=4
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=32e5718e-f37d-41f4-9450-d171df2d578d roundId=49f94872-b795-4be9-bfde-6ea697ff466b phase=ROUND_COUNTDOWN phaseVersion=4 eventSeq=5
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:05Z matchId=32e5718e-f37d-41f4-9450-d171df2d578d roundId=49f94872-b795-4be9-bfde-6ea697ff466b phase=ANSWERING phaseVersion=5 eventSeq=6
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=9fc9d503-e24d-43ae-a6dc-a3671056d99c roundId=null phase=WAITING_READY phaseVersion=1 eventSeq=0
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=9fc9d503-e24d-43ae-a6dc-a3671056d99c roundId=null phase=MATCH_COUNTDOWN phaseVersion=2 eventSeq=3
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=9fc9d503-e24d-43ae-a6dc-a3671056d99c roundId=07e4b6d8-1ea0-4a9a-afe4-f5b9a0a3a05e phase=QUESTION_PREPARING phaseVersion=3 eventSeq=4
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=9fc9d503-e24d-43ae-a6dc-a3671056d99c roundId=07e4b6d8-1ea0-4a9a-afe4-f5b9a0a3a05e phase=ROUND_COUNTDOWN phaseVersion=4 eventSeq=5
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:05Z matchId=9fc9d503-e24d-43ae-a6dc-a3671056d99c roundId=07e4b6d8-1ea0-4a9a-afe4-f5b9a0a3a05e phase=ANSWERING phaseVersion=5 eventSeq=6
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:20Z matchId=9fc9d503-e24d-43ae-a6dc-a3671056d99c roundId=07e4b6d8-1ea0-4a9a-afe4-f5b9a0a3a05e phase=REVEAL phaseVersion=6 eventSeq=11
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=454af12a-fd76-4e17-8a28-5e97b02a41b7 roundId=null phase=WAITING_READY phaseVersion=1 eventSeq=0
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=454af12a-fd76-4e17-8a28-5e97b02a41b7 roundId=null phase=MATCH_COUNTDOWN phaseVersion=2 eventSeq=3
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=454af12a-fd76-4e17-8a28-5e97b02a41b7 roundId=f7e065cc-546b-4e25-8345-a53bcbaaf68e phase=QUESTION_PREPARING phaseVersion=3 eventSeq=4
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=454af12a-fd76-4e17-8a28-5e97b02a41b7 roundId=f7e065cc-546b-4e25-8345-a53bcbaaf68e phase=ROUND_COUNTDOWN phaseVersion=4 eventSeq=5
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:05Z matchId=454af12a-fd76-4e17-8a28-5e97b02a41b7 roundId=f7e065cc-546b-4e25-8345-a53bcbaaf68e phase=ANSWERING phaseVersion=5 eventSeq=6
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:05Z matchId=454af12a-fd76-4e17-8a28-5e97b02a41b7 roundId=f7e065cc-546b-4e25-8345-a53bcbaaf68e phase=RESULT phaseVersion=6 eventSeq=7
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=b1099294-1cc2-4ab4-838a-f8fc4eb3b2d4 roundId=null phase=WAITING_READY phaseVersion=1 eventSeq=0
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=d6d2f992-b38d-4f6d-a577-13d7230fcf80 roundId=null phase=WAITING_READY phaseVersion=1 eventSeq=0
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=d6d2f992-b38d-4f6d-a577-13d7230fcf80 roundId=null phase=MATCH_COUNTDOWN phaseVersion=2 eventSeq=3
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=d6d2f992-b38d-4f6d-a577-13d7230fcf80 roundId=56329ecd-3cf8-42fc-977a-69c94575935c phase=QUESTION_PREPARING phaseVersion=3 eventSeq=4
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=d6d2f992-b38d-4f6d-a577-13d7230fcf80 roundId=56329ecd-3cf8-42fc-977a-69c94575935c phase=ROUND_COUNTDOWN phaseVersion=4 eventSeq=5
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:05Z matchId=d6d2f992-b38d-4f6d-a577-13d7230fcf80 roundId=56329ecd-3cf8-42fc-977a-69c94575935c phase=ANSWERING phaseVersion=5 eventSeq=6
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:05Z matchId=d6d2f992-b38d-4f6d-a577-13d7230fcf80 roundId=56329ecd-3cf8-42fc-977a-69c94575935c phase=REVEAL phaseVersion=6 eventSeq=9
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=37ee2c09-626f-4974-9e61-5a0adbceb2ad roundId=null phase=WAITING_READY phaseVersion=1 eventSeq=0
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=37ee2c09-626f-4974-9e61-5a0adbceb2ad roundId=null phase=MATCH_COUNTDOWN phaseVersion=2 eventSeq=3
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=37ee2c09-626f-4974-9e61-5a0adbceb2ad roundId=700ac9f9-8654-4e9f-b266-b311dccbe8cc phase=QUESTION_PREPARING phaseVersion=3 eventSeq=4
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:08Z matchId=37ee2c09-626f-4974-9e61-5a0adbceb2ad roundId=700ac9f9-8654-4e9f-b266-b311dccbe8cc phase=RESULT phaseVersion=4 eventSeq=5
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=4f21d5cd-4fd0-4064-81fa-cd1b460ad0af roundId=null phase=WAITING_READY phaseVersion=1 eventSeq=0
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=97a7c1b0-a0b3-42dc-9095-296a59088c04 roundId=null phase=WAITING_READY phaseVersion=1 eventSeq=0
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:01Z matchId=97a7c1b0-a0b3-42dc-9095-296a59088c04 roundId=null phase=MATCH_COUNTDOWN phaseVersion=2 eventSeq=4
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:04Z matchId=97a7c1b0-a0b3-42dc-9095-296a59088c04 roundId=3f813e7f-56a4-4ed2-9b57-1d7b525aff74 phase=QUESTION_PREPARING phaseVersion=3 eventSeq=5
+[INFO] Tests run: 13, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.058 s -- in vn.edu.nhom7.quiz.server.match.MatchEngineTest
+[INFO] Running vn.edu.nhom7.quiz.server.match.AnswerEvaluatorTest
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.002 s -- in vn.edu.nhom7.quiz.server.match.AnswerEvaluatorTest
+[INFO] Running vn.edu.nhom7.quiz.server.match.MatchWireBudgetTest
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=965d78c4-d57c-4d5d-a7b0-0cec4b18fd6c roundId=null phase=WAITING_READY phaseVersion=1 eventSeq=0
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=965d78c4-d57c-4d5d-a7b0-0cec4b18fd6c roundId=null phase=RESULT phaseVersion=2 eventSeq=1
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.007 s -- in vn.edu.nhom7.quiz.server.match.MatchWireBudgetTest
+[INFO] Running vn.edu.nhom7.quiz.server.match.ScoreCalculatorTest
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.001 s -- in vn.edu.nhom7.quiz.server.match.ScoreCalculatorTest
+[INFO] Running vn.edu.nhom7.quiz.server.network.HeartbeatTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.002 s -- in vn.edu.nhom7.quiz.server.network.HeartbeatTest
+[INFO] Running vn.edu.nhom7.quiz.server.network.RequestCacheTest
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.002 s -- in vn.edu.nhom7.quiz.server.network.RequestCacheTest
+[INFO] Running vn.edu.nhom7.quiz.server.network.SocketServerTest
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.027 s -- in vn.edu.nhom7.quiz.server.network.SocketServerTest
+[INFO] Running vn.edu.nhom7.quiz.server.quiz.QuestionValidatorTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.001 s -- in vn.edu.nhom7.quiz.server.quiz.QuestionValidatorTest
+[INFO] Running vn.edu.nhom7.quiz.server.support.TestSupportTest
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.002 s -- in vn.edu.nhom7.quiz.server.support.TestSupportTest
+[INFO] Running vn.edu.nhom7.quiz.server.persistence.PersistenceServiceTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.003 s -- in vn.edu.nhom7.quiz.server.persistence.PersistenceServiceTest
+[INFO] Running vn.edu.nhom7.quiz.server.db.ServerConfigTest
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.006 s -- in vn.edu.nhom7.quiz.server.db.ServerConfigTest
+[INFO] Running vn.edu.nhom7.quiz.server.challenge.ChallengeManagerTest
+Oct 09, 2026 5:35:48 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=c0b92ef5-8d76-4588-9cdb-999a961ae252 roundId=null phase=WAITING_READY phaseVersion=1 eventSeq=0
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.025 s -- in vn.edu.nhom7.quiz.server.challenge.ChallengeManagerTest
+[INFO] Running vn.edu.nhom7.quiz.server.session.OnlinePresenceTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.001 s -- in vn.edu.nhom7.quiz.server.session.OnlinePresenceTest
+[INFO] Running vn.edu.nhom7.quiz.server.session.SessionRegistryTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.002 s -- in vn.edu.nhom7.quiz.server.session.SessionRegistryTest
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 75, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] 
+[INFO] --- jar:3.4.1:jar (default-jar) @ quiz-arena-server ---
+[INFO] Building jar: /Users/justminh/Desktop/DH/LTM/server/target/quiz-arena-server.jar
+[INFO] 
+[INFO] --- shade:3.6.0:shade (default) @ quiz-arena-server ---
+[INFO] Including vn.edu.nhom7:quiz-arena-common:jar:1.0.0-SNAPSHOT in the shaded jar.
+[INFO] Including com.fasterxml.jackson.core:jackson-databind:jar:2.18.3 in the shaded jar.
+[INFO] Including com.fasterxml.jackson.core:jackson-annotations:jar:2.18.3 in the shaded jar.
+[INFO] Including com.fasterxml.jackson.core:jackson-core:jar:2.18.3 in the shaded jar.
+[INFO] Including com.fasterxml.jackson.datatype:jackson-datatype-jsr310:jar:2.18.3 in the shaded jar.
+[INFO] Including com.mysql:mysql-connector-j:jar:8.4.0 in the shaded jar.
+[INFO] Including com.google.protobuf:protobuf-java:jar:3.25.1 in the shaded jar.
+[WARNING] Discovered module-info.class. Shading will break its strong encapsulation.
+[WARNING] jackson-annotations-2.18.3.jar, jackson-core-2.18.3.jar, jackson-databind-2.18.3.jar, jackson-datatype-jsr310-2.18.3.jar, mysql-connector-j-8.4.0.jar, protobuf-java-3.25.1.jar, quiz-arena-common-1.0.0-SNAPSHOT.jar, quiz-arena-server.jar define 1 overlapping resource: 
+[WARNING]   - META-INF/MANIFEST.MF
+[WARNING] jackson-core-2.18.3.jar, jackson-databind-2.18.3.jar, jackson-datatype-jsr310-2.18.3.jar define 1 overlapping classes: 
+[WARNING]   - META-INF.versions.9.module-info
+[WARNING] jackson-annotations-2.18.3.jar, jackson-core-2.18.3.jar, jackson-databind-2.18.3.jar, jackson-datatype-jsr310-2.18.3.jar define 2 overlapping resources: 
+[WARNING]   - META-INF/LICENSE
+[WARNING]   - META-INF/NOTICE
+[WARNING] maven-shade-plugin has detected that some files are
+[WARNING] present in two or more JARs. When this happens, only one
+[WARNING] single version of the file is copied to the uber jar.
+[WARNING] Usually this is not harmful and you can skip these warnings,
+[WARNING] otherwise try to manually exclude artifacts based on
+[WARNING] mvn dependency:tree -Ddetail=true and the above output.
+[WARNING] See https://maven.apache.org/plugins/maven-shade-plugin/
+[INFO] Replacing original artifact with shaded artifact.
+[INFO] Replacing /Users/justminh/Desktop/DH/LTM/server/target/quiz-arena-server.jar with /Users/justminh/Desktop/DH/LTM/server/target/quiz-arena-server-1.0.0-SNAPSHOT-shaded.jar
+[INFO] 
+[INFO] --- failsafe:3.5.2:integration-test (default) @ quiz-arena-server ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running vn.edu.nhom7.quiz.server.auth.UserRepositoryIT
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.745 s -- in vn.edu.nhom7.quiz.server.auth.UserRepositoryIT
+[INFO] Running vn.edu.nhom7.quiz.server.quiz.QuizRepositoryIT
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.237 s -- in vn.edu.nhom7.quiz.server.quiz.QuizRepositoryIT
+[INFO] Running vn.edu.nhom7.quiz.server.system.ProtocolRoutingIT
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.762 s -- in vn.edu.nhom7.quiz.server.system.ProtocolRoutingIT
+[INFO] Running vn.edu.nhom7.quiz.server.system.ConcurrentMatchesIT
+Oct 09, 2026 5:35:51 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=57c02736-1a54-431b-a0de-8f0a58c4fe2c roundId=null phase=WAITING_READY phaseVersion=1 eventSeq=0
+Oct 09, 2026 5:35:51 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=b2df9a92-c8da-4250-b284-5ba4dfc7f950 roundId=null phase=WAITING_READY phaseVersion=1 eventSeq=0
+Oct 09, 2026 5:35:51 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=57c02736-1a54-431b-a0de-8f0a58c4fe2c roundId=null phase=MATCH_COUNTDOWN phaseVersion=2 eventSeq=3
+Oct 09, 2026 5:35:51 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=b2df9a92-c8da-4250-b284-5ba4dfc7f950 roundId=null phase=MATCH_COUNTDOWN phaseVersion=2 eventSeq=3
+Oct 09, 2026 5:35:51 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=57c02736-1a54-431b-a0de-8f0a58c4fe2c roundId=bbb2ecac-c143-48d0-ae8d-080b35e53fae phase=QUESTION_PREPARING phaseVersion=3 eventSeq=4
+Oct 09, 2026 5:35:51 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=b2df9a92-c8da-4250-b284-5ba4dfc7f950 roundId=7a3ea397-3f39-4616-bc66-bf72fec958ce phase=QUESTION_PREPARING phaseVersion=3 eventSeq=4
+Oct 09, 2026 5:35:51 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=b2df9a92-c8da-4250-b284-5ba4dfc7f950 roundId=7a3ea397-3f39-4616-bc66-bf72fec958ce phase=ROUND_COUNTDOWN phaseVersion=4 eventSeq=5
+Oct 09, 2026 5:35:51 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=57c02736-1a54-431b-a0de-8f0a58c4fe2c roundId=bbb2ecac-c143-48d0-ae8d-080b35e53fae phase=ROUND_COUNTDOWN phaseVersion=4 eventSeq=5
+Oct 09, 2026 5:35:51 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:05Z matchId=b2df9a92-c8da-4250-b284-5ba4dfc7f950 roundId=7a3ea397-3f39-4616-bc66-bf72fec958ce phase=ANSWERING phaseVersion=5 eventSeq=6
+Oct 09, 2026 5:35:51 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:05Z matchId=57c02736-1a54-431b-a0de-8f0a58c4fe2c roundId=bbb2ecac-c143-48d0-ae8d-080b35e53fae phase=ANSWERING phaseVersion=5 eventSeq=6
+Oct 09, 2026 5:35:51 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:05Z matchId=57c02736-1a54-431b-a0de-8f0a58c4fe2c roundId=bbb2ecac-c143-48d0-ae8d-080b35e53fae phase=REVEAL phaseVersion=6 eventSeq=12
+Oct 09, 2026 5:35:51 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:05Z matchId=b2df9a92-c8da-4250-b284-5ba4dfc7f950 roundId=7a3ea397-3f39-4616-bc66-bf72fec958ce phase=RESULT phaseVersion=6 eventSeq=7
+Oct 09, 2026 5:35:51 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:05Z matchId=57c02736-1a54-431b-a0de-8f0a58c4fe2c roundId=bbb2ecac-c143-48d0-ae8d-080b35e53fae phase=RESULT phaseVersion=7 eventSeq=13
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.633 s -- in vn.edu.nhom7.quiz.server.system.ConcurrentMatchesIT
+[INFO] Running vn.edu.nhom7.quiz.server.system.TenRoundMatchIT
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=5bb802bd-63d5-4df9-bd07-c6e74d5896df roundId=null phase=WAITING_READY phaseVersion=1 eventSeq=0
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=5bb802bd-63d5-4df9-bd07-c6e74d5896df roundId=null phase=MATCH_COUNTDOWN phaseVersion=2 eventSeq=3
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=5bb802bd-63d5-4df9-bd07-c6e74d5896df roundId=2dba00df-b7aa-4485-aecb-a4c1bad077cb phase=QUESTION_PREPARING phaseVersion=3 eventSeq=4
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:03Z matchId=5bb802bd-63d5-4df9-bd07-c6e74d5896df roundId=2dba00df-b7aa-4485-aecb-a4c1bad077cb phase=ROUND_COUNTDOWN phaseVersion=4 eventSeq=5
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:05Z matchId=5bb802bd-63d5-4df9-bd07-c6e74d5896df roundId=2dba00df-b7aa-4485-aecb-a4c1bad077cb phase=ANSWERING phaseVersion=5 eventSeq=6
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:05Z matchId=5bb802bd-63d5-4df9-bd07-c6e74d5896df roundId=2dba00df-b7aa-4485-aecb-a4c1bad077cb phase=REVEAL phaseVersion=6 eventSeq=11
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:07Z matchId=5bb802bd-63d5-4df9-bd07-c6e74d5896df roundId=2dba00df-b7aa-4485-aecb-a4c1bad077cb phase=LEADERBOARD phaseVersion=7 eventSeq=12
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:10Z matchId=5bb802bd-63d5-4df9-bd07-c6e74d5896df roundId=3b5cebe2-23cc-4b7b-a769-2a49f4e05e07 phase=QUESTION_PREPARING phaseVersion=8 eventSeq=13
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:10Z matchId=5bb802bd-63d5-4df9-bd07-c6e74d5896df roundId=3b5cebe2-23cc-4b7b-a769-2a49f4e05e07 phase=ROUND_COUNTDOWN phaseVersion=9 eventSeq=14
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:12Z matchId=5bb802bd-63d5-4df9-bd07-c6e74d5896df roundId=3b5cebe2-23cc-4b7b-a769-2a49f4e05e07 phase=ANSWERING phaseVersion=10 eventSeq=15
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:12Z matchId=5bb802bd-63d5-4df9-bd07-c6e74d5896df roundId=3b5cebe2-23cc-4b7b-a769-2a49f4e05e07 phase=REVEAL phaseVersion=11 eventSeq=20
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:14Z matchId=5bb802bd-63d5-4df9-bd07-c6e74d5896df roundId=3b5cebe2-23cc-4b7b-a769-2a49f4e05e07 phase=LEADERBOARD phaseVersion=12 eventSeq=21
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:17Z matchId=5bb802bd-63d5-4df9-bd07-c6e74d5896df roundId=16f93e29-aed2-49a5-b47d-39536806aeae phase=QUESTION_PREPARING phaseVersion=13 eventSeq=22
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:17Z matchId=5bb802bd-63d5-4df9-bd07-c6e74d5896df roundId=16f93e29-aed2-49a5-b47d-39536806aeae phase=ROUND_COUNTDOWN phaseVersion=14 eventSeq=23
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:19Z matchId=5bb802bd-63d5-4df9-bd07-c6e74d5896df roundId=16f93e29-aed2-49a5-b47d-39536806aeae phase=ANSWERING phaseVersion=15 eventSeq=24
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:19Z matchId=5bb802bd-63d5-4df9-bd07-c6e74d5896df roundId=16f93e29-aed2-49a5-b47d-39536806aeae phase=REVEAL phaseVersion=16 eventSeq=29
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:21Z matchId=5bb802bd-63d5-4df9-bd07-c6e74d5896df roundId=16f93e29-aed2-49a5-b47d-39536806aeae phase=LEADERBOARD phaseVersion=17 eventSeq=30
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:24Z matchId=5bb802bd-63d5-4df9-bd07-c6e74d5896df roundId=977eb2fb-288f-44d8-afa1-adb2f6eb514c phase=QUESTION_PREPARING phaseVersion=18 eventSeq=31
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:24Z matchId=5bb802bd-63d5-4df9-bd07-c6e74d5896df roundId=977eb2fb-288f-44d8-afa1-adb2f6eb514c phase=ROUND_COUNTDOWN phaseVersion=19 eventSeq=32
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:26Z matchId=5bb802bd-63d5-4df9-bd07-c6e74d5896df roundId=977eb2fb-288f-44d8-afa1-adb2f6eb514c phase=ANSWERING phaseVersion=20 eventSeq=33
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:26Z matchId=5bb802bd-63d5-4df9-bd07-c6e74d5896df roundId=977eb2fb-288f-44d8-afa1-adb2f6eb514c phase=REVEAL phaseVersion=21 eventSeq=38
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:28Z matchId=5bb802bd-63d5-4df9-bd07-c6e74d5896df roundId=977eb2fb-288f-44d8-afa1-adb2f6eb514c phase=LEADERBOARD phaseVersion=22 eventSeq=39
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:31Z matchId=5bb802bd-63d5-4df9-bd07-c6e74d5896df roundId=c822cb6c-e0c7-4bb4-a25b-d9c5d1795b95 phase=QUESTION_PREPARING phaseVersion=23 eventSeq=40
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:31Z matchId=5bb802bd-63d5-4df9-bd07-c6e74d5896df roundId=c822cb6c-e0c7-4bb4-a25b-d9c5d1795b95 phase=ROUND_COUNTDOWN phaseVersion=24 eventSeq=41
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:33Z matchId=5bb802bd-63d5-4df9-bd07-c6e74d5896df roundId=c822cb6c-e0c7-4bb4-a25b-d9c5d1795b95 phase=ANSWERING phaseVersion=25 eventSeq=42
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:33Z matchId=5bb802bd-63d5-4df9-bd07-c6e74d5896df roundId=c822cb6c-e0c7-4bb4-a25b-d9c5d1795b95 phase=REVEAL phaseVersion=26 eventSeq=47
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:35Z matchId=5bb802bd-63d5-4df9-bd07-c6e74d5896df roundId=c822cb6c-e0c7-4bb4-a25b-d9c5d1795b95 phase=LEADERBOARD phaseVersion=27 eventSeq=48
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:38Z matchId=5bb802bd-63d5-4df9-bd07-c6e74d5896df roundId=33f69e8b-af11-4aa0-bf5e-0806353c3f50 phase=QUESTION_PREPARING phaseVersion=28 eventSeq=49
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:38Z matchId=5bb802bd-63d5-4df9-bd07-c6e74d5896df roundId=33f69e8b-af11-4aa0-bf5e-0806353c3f50 phase=ROUND_COUNTDOWN phaseVersion=29 eventSeq=50
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:40Z matchId=5bb802bd-63d5-4df9-bd07-c6e74d5896df roundId=33f69e8b-af11-4aa0-bf5e-0806353c3f50 phase=ANSWERING phaseVersion=30 eventSeq=51
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:40Z matchId=5bb802bd-63d5-4df9-bd07-c6e74d5896df roundId=33f69e8b-af11-4aa0-bf5e-0806353c3f50 phase=REVEAL phaseVersion=31 eventSeq=56
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:42Z matchId=5bb802bd-63d5-4df9-bd07-c6e74d5896df roundId=33f69e8b-af11-4aa0-bf5e-0806353c3f50 phase=LEADERBOARD phaseVersion=32 eventSeq=57
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:45Z matchId=5bb802bd-63d5-4df9-bd07-c6e74d5896df roundId=db2e86f5-6e72-4d9f-966e-543d8c332724 phase=QUESTION_PREPARING phaseVersion=33 eventSeq=58
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:45Z matchId=5bb802bd-63d5-4df9-bd07-c6e74d5896df roundId=db2e86f5-6e72-4d9f-966e-543d8c332724 phase=ROUND_COUNTDOWN phaseVersion=34 eventSeq=59
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:47Z matchId=5bb802bd-63d5-4df9-bd07-c6e74d5896df roundId=db2e86f5-6e72-4d9f-966e-543d8c332724 phase=ANSWERING phaseVersion=35 eventSeq=60
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:47Z matchId=5bb802bd-63d5-4df9-bd07-c6e74d5896df roundId=db2e86f5-6e72-4d9f-966e-543d8c332724 phase=REVEAL phaseVersion=36 eventSeq=65
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:49Z matchId=5bb802bd-63d5-4df9-bd07-c6e74d5896df roundId=db2e86f5-6e72-4d9f-966e-543d8c332724 phase=LEADERBOARD phaseVersion=37 eventSeq=66
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:52Z matchId=5bb802bd-63d5-4df9-bd07-c6e74d5896df roundId=f7c63fd1-06d1-44df-a22e-77fa88a07ae7 phase=QUESTION_PREPARING phaseVersion=38 eventSeq=67
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:52Z matchId=5bb802bd-63d5-4df9-bd07-c6e74d5896df roundId=f7c63fd1-06d1-44df-a22e-77fa88a07ae7 phase=ROUND_COUNTDOWN phaseVersion=39 eventSeq=68
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:54Z matchId=5bb802bd-63d5-4df9-bd07-c6e74d5896df roundId=f7c63fd1-06d1-44df-a22e-77fa88a07ae7 phase=ANSWERING phaseVersion=40 eventSeq=69
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:54Z matchId=5bb802bd-63d5-4df9-bd07-c6e74d5896df roundId=f7c63fd1-06d1-44df-a22e-77fa88a07ae7 phase=REVEAL phaseVersion=41 eventSeq=74
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:56Z matchId=5bb802bd-63d5-4df9-bd07-c6e74d5896df roundId=f7c63fd1-06d1-44df-a22e-77fa88a07ae7 phase=LEADERBOARD phaseVersion=42 eventSeq=75
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:59Z matchId=5bb802bd-63d5-4df9-bd07-c6e74d5896df roundId=992d119f-c18d-4e3c-9a31-44d069e0f587 phase=QUESTION_PREPARING phaseVersion=43 eventSeq=76
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:59Z matchId=5bb802bd-63d5-4df9-bd07-c6e74d5896df roundId=992d119f-c18d-4e3c-9a31-44d069e0f587 phase=ROUND_COUNTDOWN phaseVersion=44 eventSeq=77
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:01:01Z matchId=5bb802bd-63d5-4df9-bd07-c6e74d5896df roundId=992d119f-c18d-4e3c-9a31-44d069e0f587 phase=ANSWERING phaseVersion=45 eventSeq=78
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:01:01Z matchId=5bb802bd-63d5-4df9-bd07-c6e74d5896df roundId=992d119f-c18d-4e3c-9a31-44d069e0f587 phase=REVEAL phaseVersion=46 eventSeq=83
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:01:03Z matchId=5bb802bd-63d5-4df9-bd07-c6e74d5896df roundId=992d119f-c18d-4e3c-9a31-44d069e0f587 phase=LEADERBOARD phaseVersion=47 eventSeq=84
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:01:06Z matchId=5bb802bd-63d5-4df9-bd07-c6e74d5896df roundId=5c858b70-5fa7-49b6-9010-aae1c41e4231 phase=QUESTION_PREPARING phaseVersion=48 eventSeq=85
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:01:06Z matchId=5bb802bd-63d5-4df9-bd07-c6e74d5896df roundId=5c858b70-5fa7-49b6-9010-aae1c41e4231 phase=ROUND_COUNTDOWN phaseVersion=49 eventSeq=86
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:01:08Z matchId=5bb802bd-63d5-4df9-bd07-c6e74d5896df roundId=5c858b70-5fa7-49b6-9010-aae1c41e4231 phase=ANSWERING phaseVersion=50 eventSeq=87
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:01:08Z matchId=5bb802bd-63d5-4df9-bd07-c6e74d5896df roundId=5c858b70-5fa7-49b6-9010-aae1c41e4231 phase=REVEAL phaseVersion=51 eventSeq=92
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:01:10Z matchId=5bb802bd-63d5-4df9-bd07-c6e74d5896df roundId=5c858b70-5fa7-49b6-9010-aae1c41e4231 phase=LEADERBOARD phaseVersion=52 eventSeq=93
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:01:13Z matchId=5bb802bd-63d5-4df9-bd07-c6e74d5896df roundId=5c858b70-5fa7-49b6-9010-aae1c41e4231 phase=RESULT phaseVersion=53 eventSeq=94
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:01:13Z matchId=ed0fefd7-07ab-412d-a449-fe91cd4c3d3b roundId=null phase=WAITING_READY phaseVersion=1 eventSeq=0
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.406 s -- in vn.edu.nhom7.quiz.server.system.TenRoundMatchIT
+[INFO] Running vn.edu.nhom7.quiz.server.system.LobbyFlowIT
+Oct 09, 2026 5:35:52 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=688841e3-a083-4767-bab2-13ec6fd92cf8 roundId=null phase=WAITING_READY phaseVersion=1 eventSeq=0
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.743 s -- in vn.edu.nhom7.quiz.server.system.LobbyFlowIT
+[INFO] Running vn.edu.nhom7.quiz.server.system.DatabaseOutageIT
+Oct 09, 2026 5:35:53 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=45c61bc7-fb51-4dc8-b4a9-af2167de2ab7 roundId=null phase=WAITING_READY phaseVersion=1 eventSeq=0
+Oct 09, 2026 5:35:53 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=45c61bc7-fb51-4dc8-b4a9-af2167de2ab7 roundId=null phase=MATCH_COUNTDOWN phaseVersion=2 eventSeq=3
+Oct 09, 2026 5:35:53 PM vn.edu.nhom7.quiz.server.match.MatchManager phase
+INFO: utc=2026-10-05T00:00:00Z matchId=45c61bc7-fb51-4dc8-b4a9-af2167de2ab7 roundId=null phase=RESULT phaseVersion=3 eventSeq=4
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.348 s -- in vn.edu.nhom7.quiz.server.system.DatabaseOutageIT
+[INFO] Running vn.edu.nhom7.quiz.server.persistence.MatchPersistenceIT
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.263 s -- in vn.edu.nhom7.quiz.server.persistence.MatchPersistenceIT
+[INFO] Running vn.edu.nhom7.quiz.server.db.SchemaIT
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.021 s -- in vn.edu.nhom7.quiz.server.db.SchemaIT
+[INFO] Running vn.edu.nhom7.quiz.server.db.StartupChecksIT
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.054 s -- in vn.edu.nhom7.quiz.server.db.StartupChecksIT
+[INFO] Running vn.edu.nhom7.quiz.server.query.RankingHistoryIT
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.312 s -- in vn.edu.nhom7.quiz.server.query.RankingHistoryIT
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 22, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] 
+[INFO] --- failsafe:3.5.2:verify (default) @ quiz-arena-server ---
+[INFO] 
+[INFO] --- install:3.1.2:install (default-install) @ quiz-arena-server ---
+[INFO] Installing /Users/justminh/Desktop/DH/LTM/server/pom.xml to /Users/justminh/.m2/repository/vn/edu/nhom7/quiz-arena-server/1.0.0-SNAPSHOT/quiz-arena-server-1.0.0-SNAPSHOT.pom
+[INFO] Installing /Users/justminh/Desktop/DH/LTM/server/target/quiz-arena-server.jar to /Users/justminh/.m2/repository/vn/edu/nhom7/quiz-arena-server/1.0.0-SNAPSHOT/quiz-arena-server-1.0.0-SNAPSHOT.jar
+[INFO] 
+[INFO] -------------------< vn.edu.nhom7:quiz-arena-client >-------------------
+[INFO] Building quiz-arena-client 1.0.0-SNAPSHOT                          [4/4]
+[INFO]   from client/pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ quiz-arena-client ---
+[INFO] Deleting /Users/justminh/Desktop/DH/LTM/client/target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ quiz-arena-client ---
+[INFO] Copying 14 resources from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ quiz-arena-client ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 33 source files with javac [debug release 21] to target/classes
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ quiz-arena-client ---
+[INFO] skip non existing resourceDirectory /Users/justminh/Desktop/DH/LTM/client/src/test/resources
+[INFO] 
+[INFO] --- compiler:3.13.0:testCompile (default-testCompile) @ quiz-arena-client ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 16 source files with javac [debug release 21] to target/test-classes
+[INFO] 
+[INFO] --- surefire:3.5.2:test (default-test) @ quiz-arena-client ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running vn.edu.nhom7.quiz.client.ui.AnswerIntentFactoryTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.017 s -- in vn.edu.nhom7.quiz.client.ui.AnswerIntentFactoryTest
+[INFO] Running vn.edu.nhom7.quiz.client.ui.PresentationTextTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.002 s -- in vn.edu.nhom7.quiz.client.ui.PresentationTextTest
+[INFO] Running vn.edu.nhom7.quiz.client.ui.LeaderboardPresentationTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.001 s -- in vn.edu.nhom7.quiz.client.ui.LeaderboardPresentationTest
+[INFO] Running vn.edu.nhom7.quiz.client.ui.LobbyIntentTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.087 s -- in vn.edu.nhom7.quiz.client.ui.LobbyIntentTest
+[INFO] Running vn.edu.nhom7.quiz.client.ui.NativeViewsTest
+Oct 09, 2026 5:35:54 PM com.sun.javafx.application.PlatformImpl startup
+WARNING: Unsupported JavaFX configuration: classes were loaded from 'unnamed module @e320068'
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.225 s -- in vn.edu.nhom7.quiz.client.ui.NativeViewsTest
+[INFO] Running vn.edu.nhom7.quiz.client.network.ServerTimeEstimatorTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.001 s -- in vn.edu.nhom7.quiz.client.network.ServerTimeEstimatorTest
+[INFO] Running vn.edu.nhom7.quiz.client.network.NetworkClientTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.263 s -- in vn.edu.nhom7.quiz.client.network.NetworkClientTest
+[INFO] Running vn.edu.nhom7.quiz.client.network.RequestTrackerTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.005 s -- in vn.edu.nhom7.quiz.client.network.RequestTrackerTest
+[INFO] Running vn.edu.nhom7.quiz.client.state.ResultSessionTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.002 s -- in vn.edu.nhom7.quiz.client.state.ResultSessionTest
+[INFO] Running vn.edu.nhom7.quiz.client.state.ResyncStateTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.001 s -- in vn.edu.nhom7.quiz.client.state.ResyncStateTest
+[INFO] Running vn.edu.nhom7.quiz.client.state.ChatResultStateTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.002 s -- in vn.edu.nhom7.quiz.client.state.ChatResultStateTest
+[INFO] Running vn.edu.nhom7.quiz.client.state.AnswerPendingTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.001 s -- in vn.edu.nhom7.quiz.client.state.AnswerPendingTest
+[INFO] Running vn.edu.nhom7.quiz.client.state.ClientStateReducerTest
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.001 s -- in vn.edu.nhom7.quiz.client.state.ClientStateReducerTest
+[INFO] Running vn.edu.nhom7.quiz.client.state.GamePhaseStateTest
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.002 s -- in vn.edu.nhom7.quiz.client.state.GamePhaseStateTest
+[INFO] Running vn.edu.nhom7.quiz.client.assets.AssetRegistryTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.009 s -- in vn.edu.nhom7.quiz.client.assets.AssetRegistryTest
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 20, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] 
+[INFO] --- jar:3.4.1:jar (default-jar) @ quiz-arena-client ---
+[INFO] Building jar: /Users/justminh/Desktop/DH/LTM/client/target/quiz-arena-client-1.0.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- failsafe:3.5.2:integration-test (default) @ quiz-arena-client ---
+[INFO] 
+[INFO] --- failsafe:3.5.2:verify (default) @ quiz-arena-client ---
+[INFO] No tests to run.
+[INFO] 
+[INFO] --- install:3.1.2:install (default-install) @ quiz-arena-client ---
+[INFO] Installing /Users/justminh/Desktop/DH/LTM/client/pom.xml to /Users/justminh/.m2/repository/vn/edu/nhom7/quiz-arena-client/1.0.0-SNAPSHOT/quiz-arena-client-1.0.0-SNAPSHOT.pom
+[INFO] Installing /Users/justminh/Desktop/DH/LTM/client/target/quiz-arena-client-1.0.0-SNAPSHOT.jar to /Users/justminh/.m2/repository/vn/edu/nhom7/quiz-arena-client/1.0.0-SNAPSHOT/quiz-arena-client-1.0.0-SNAPSHOT.jar
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary for quiz-arena 1.0.0-SNAPSHOT:
+[INFO] 
+[INFO] quiz-arena ......................................... SUCCESS [  0.215 s]
+[INFO] quiz-arena-common .................................. SUCCESS [  1.507 s]
+[INFO] quiz-arena-server .................................. SUCCESS [  6.779 s]
+[INFO] quiz-arena-client .................................. SUCCESS [  1.516 s]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  10.061 s
+[INFO] Finished at: 2026-10-09T17:35:55+07:00
+[INFO] ------------------------------------------------------------------------

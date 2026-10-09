@@ -1,0 +1,5 @@
+# Copy outside version control; environment QUIZ_DB_* values take precedence.
+db.url=jdbc:mysql://127.0.0.1:3306/quiz_arena
+db.username=quiz
+db.password=CHANGE_ME
+server.port=5555
