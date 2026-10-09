@@ -24,7 +24,7 @@ abstract class BaseQuestionRenderer implements QuestionRenderer {
     var b = new Button(text);
     b.setWrapText(true);
     b.setMaxWidth(Double.MAX_VALUE);
-    b.setMinHeight(70);
+    b.setMinHeight(56);
     b.getStyleClass().add("answer-card");
     b.setOnAction(e -> action.run());
     controls.add(b);
@@ -45,7 +45,7 @@ abstract class BaseQuestionRenderer implements QuestionRenderer {
     }
     for (var entry : answerControls.entrySet())
       if (correct.contains(entry.getKey())) {
-        entry.getValue().setStyle("-fx-background-color: #C5F6DF; -fx-opacity: 1;");
+        entry.getValue().getStyleClass().add("correct");
         entry.getValue().setAccessibleText("Đáp án đúng: " + entry.getKey());
         int correctIndex = box.getChildren().indexOf(entry.getValue());
         box.getChildren().add(correctIndex + 1, Ui.label("✓ Đáp án đúng"));
@@ -58,8 +58,7 @@ abstract class BaseQuestionRenderer implements QuestionRenderer {
       for (String id : selected) {
         Control control = answerControls.get(id);
         if (control == null) continue;
-        if (!correct.contains(id))
-          control.setStyle("-fx-background-color: #EFA4A2; -fx-opacity: 1;");
+        if (!correct.contains(id)) control.getStyleClass().add("incorrect");
         String name = outcome.userId() == self ? "Bạn" : "Đối thủ";
         String avatar = "avatar-01";
         if (players != null)

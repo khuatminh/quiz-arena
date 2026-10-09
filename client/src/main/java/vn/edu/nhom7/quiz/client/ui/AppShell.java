@@ -62,6 +62,7 @@ public final class AppShell extends BorderPane implements AutoCloseable {
             (host, port) -> {
               vn.edu.nhom7.quiz.client.assets.RemoteMedia.clear();
               community = null;
+              lobby = null;
               store.resetConnection();
               message.setText("Đang kết nối…");
               network
@@ -76,6 +77,10 @@ public final class AppShell extends BorderPane implements AutoCloseable {
                                           : "Không thể kết nối tới server")));
             });
     setCenter(auth);
+    message.getStyleClass().add("status-bar");
+    message.setMaxWidth(Double.MAX_VALUE);
+    message.visibleProperty().bind(message.textProperty().isNotEmpty());
+    message.managedProperty().bind(message.visibleProperty());
     setBottom(message);
     widthProperty().addListener((o, b, a) -> updateChatPlacement());
     clock =
@@ -149,6 +154,16 @@ public final class AppShell extends BorderPane implements AutoCloseable {
           new ChallengeDialog(e.payload(), e.type() == MessageType.CHALLENGE_RECEIVED, commands);
       setLeft(challenge);
     }
+    if (e.type() == MessageType.CHALLENGE_CLOSED) {
+      String status = e.payload().path("status").asText();
+      message.setText(
+          switch (status) {
+            case "EXPIRED" -> "Lời mời đã hết hạn. Bạn có thể gửi lời mời mới.";
+            case "REJECTED" -> "Đối thủ đã từ chối lời mời.";
+            case "CANCELLED" -> "Lời mời đã được hủy.";
+            default -> "Lời mời đã đóng.";
+          });
+    }
     if (e.type() == MessageType.CHALLENGE_CLOSED || e.type() == MessageType.MATCH_START) {
       challenge = null;
       setLeft(null);
@@ -158,6 +173,7 @@ public final class AppShell extends BorderPane implements AutoCloseable {
     if (e.type() == MessageType.LOGOUT_ACK) {
       vn.edu.nhom7.quiz.client.assets.RemoteMedia.clear();
       community = null;
+      lobby = null;
       readyRounds.clear();
       selectedQuizCategory = null;
       query = "";
@@ -254,7 +270,32 @@ public final class AppShell extends BorderPane implements AutoCloseable {
             Ui.button(
                 "Đăng xuất",
                 () -> commands.send(MessageType.LOGOUT, null, null, new Payloads.Logout())));
-    bar.setPadding(new javafx.geometry.Insets(16));
+    bar.getChildren().add(2, Ui.spacer());
+    bar.getStyleClass().add("app-header");
+    ((Label) bar.getChildren().get(0)).getStyleClass().add("brand");
+    ((Label) bar.getChildren().get(1)).setMaxWidth(160);
+    ((Label) bar.getChildren().get(1)).setWrapText(false);
+    HBox.setHgrow(bar.getChildren().get(1), Priority.ALWAYS);
+    for (var node : bar.getChildren()) {
+      if (node instanceof Button b) {
+        b.getStyleClass().add("nav");
+        boolean active =
+            (b.getText().equals("Sảnh") && query.isEmpty())
+                || (b.getText().equals("Quiz của tôi") && query.equals("COMMUNITY"))
+                || (b.getText().equals("Xếp hạng") && query.equals("RANKING"))
+                || (b.getText().equals("Lịch sử") && query.equals("HISTORY"));
+        if (active) b.getStyleClass().add("active");
+        if (b.getText().equals("Đăng xuất")) b.getStyleClass().add("danger");
+        if (s.activeMatchId() != null && b.getText().equals("Sảnh")) {
+          b.setText("Rời trận");
+          b.getStyleClass().remove("active");
+          b.getStyleClass().add("danger");
+        }
+        if (s.activeMatchId() != null
+            && java.util.Set.of("Quiz của tôi", "Xếp hạng", "Lịch sử").contains(b.getText()))
+          b.setDisable(true);
+      }
+    }
     setTop(bar);
   }
 
@@ -303,6 +344,7 @@ public final class AppShell extends BorderPane implements AutoCloseable {
         case "LOBBY" -> {
           chat = null;
           setRight(null);
+          var selection = lobby == null ? null : lobby.selection();
           lobby =
               new LobbyView(
                   s,
@@ -315,6 +357,10 @@ public final class AppShell extends BorderPane implements AutoCloseable {
                     setLeft(detail);
                   },
                   selectedQuizCategory);
+          lobby.restore(selection);
+          if (selection != null
+              && lobby.selection().quiz() == 0
+              && getLeft() instanceof QuizDetailView) setLeft(null);
           setCenter(lobby);
         }
         case "COMMUNITY" -> {
@@ -329,7 +375,7 @@ public final class AppShell extends BorderPane implements AutoCloseable {
           setRight(null);
           setCenter(Ui.scroll(new HistoryView(lastHistory, lastDetail, commands)));
         }
-        case "WAITING_READY" -> setCenter(new WaitingView(s, commands));
+        case "WAITING_READY" -> setCenter(Ui.scroll(new WaitingView(s, commands)));
         case "RESULT" -> {
           result = new ResultView(s, commands);
           setCenter(Ui.scroll(result));
@@ -379,6 +425,8 @@ public final class AppShell extends BorderPane implements AutoCloseable {
                     }));
       }
     }
+    if (getCenter() instanceof ScrollPane scroll
+        && scroll.getContent() instanceof WaitingView waiting) waiting.render(s);
     if (game != null) game.render(s);
     if (result != null) result.render(s);
     if (chat != null) chat.render(s);

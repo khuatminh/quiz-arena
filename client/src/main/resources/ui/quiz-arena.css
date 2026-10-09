@@ -1,23 +1,114 @@
-.root { -fx-font-family: "Arial"; -fx-font-size: 16px; -fx-text-base-color: #17282C; -fx-background-color: #FFF9EF; }
-.label { -fx-text-fill: #17282C; }
-.title { -fx-font-size: 26px; -fx-font-weight: bold; }
-.question-title { -fx-font-size: 30px; }
-.button { -fx-background-color: #4FA477; -fx-text-fill: #102C24; -fx-background-radius: 24; -fx-padding: 12 20; -fx-cursor: hand; }
-.button:focused { -fx-border-color: #15292E; -fx-border-width: 3; -fx-border-radius: 24; }
-.button:disabled { -fx-opacity: .55; }
-.text-field, .text-area { -fx-background-color: #FFFFFF; -fx-background-radius: 12; -fx-border-color: #58736C; -fx-border-radius: 12; -fx-padding: 10; }
-.game-surface { -fx-background-color: #234349; }
-.game-surface .label { -fx-text-fill: #FFF9EF; }
-.game-surface .scroll-pane, .game-surface .viewport { -fx-background-color: #234349; }
-.answer-card { -fx-background-color: #C5F6DF; -fx-background-radius: 16; -fx-border-color: #15292E; -fx-border-width: 2; -fx-border-radius: 16; -fx-text-fill: #17282C; -fx-font-size: 20px; -fx-padding: 16; }
-.answer-card:focused { -fx-border-width: 3; }
-.answer-card.incorrect { -fx-background-color: #EFA4A2; }
-.quiz-card { -fx-background-color: #F1EAD9; -fx-background-radius: 16; -fx-border-color: #D4CAB5; -fx-border-radius: 16; }
-.leaderboard-row { -fx-background-color: #C5F6DF; -fx-background-radius: 16; -fx-padding: 24; }
-.leaderboard-row .label { -fx-text-fill: #17282C; }
-.scroll-pane { -fx-background-color: transparent; }
-.scroll-pane .viewport { -fx-background-color: #FFF9EF; }
-.game-surface .scroll-pane > .viewport { -fx-background-color: #234349; }
-.game-surface .leaderboard-row .label { -fx-text-fill: #17282C; }
-.game-surface .answer-card .label { -fx-text-fill: #17282C; }
-.game-surface .check-box { -fx-text-fill: #17282C; }
+/* Native JavaFX theme. Inspiration: the supplied QuizArena storyboard. */
+.root {
+  -fx-font-family: "System"; -fx-font-size: 14px;
+  -fx-base: #FFFFFF; -fx-background: #F4F7F5;
+  -fx-control-inner-background: #FFFFFF; -fx-accent: #087F70;
+  -fx-focus-color: #087F70; -fx-faint-focus-color: transparent;
+  -fx-text-base-color: #183B40; -fx-background-color: #F4F7F5;
+}
+.label { -fx-text-fill: #183B40; }
+.title { -fx-font-size: 25px; -fx-font-weight: bold; }
+.subtitle { -fx-font-size: 18px; -fx-font-weight: bold; }
+.muted { -fx-text-fill: #536B70; }
+.brand { -fx-font-size: 23px; -fx-font-weight: bold; -fx-text-fill: #08695E; }
+.display { -fx-font-size: 38px; -fx-font-weight: bold; }
+.button, .toggle-button {
+  -fx-background-color: #087F70; -fx-text-fill: white; -fx-background-radius: 10;
+  -fx-border-color: transparent; -fx-border-radius: 10; -fx-border-width: 2;
+  -fx-padding: 10 16; -fx-font-weight: bold; -fx-cursor: hand;
+}
+.button:hover, .toggle-button:hover { -fx-background-color: #06685C; }
+.button:pressed { -fx-background-color: #054E46; }
+.button:focused, .toggle-button:focused { -fx-border-color: #D29F24; }
+.button:disabled { -fx-opacity: .5; }
+.button.secondary, .button.nav, .button.topic {
+  -fx-background-color: #EAF1EE; -fx-text-fill: #224C4B;
+}
+.button.secondary:hover, .button.nav:hover, .button.topic:hover { -fx-background-color: #D4E7DE; }
+.button.nav.active, .button.topic.active { -fx-background-color: #087F70; -fx-text-fill: white; }
+.button.danger { -fx-background-color: #FFF1EF; -fx-text-fill: #A32F35; }
+.button.danger:hover { -fx-background-color: #F9DCD8; }
+.app-header { -fx-background-color: white; -fx-border-color: transparent transparent #DCE6E0 transparent; -fx-padding: 12 20; -fx-spacing: 8; -fx-alignment: center-left; }
+.app-header .button { -fx-padding: 9 11; -fx-font-size: 13px; }
+.status-bar { -fx-padding: 8 24; -fx-font-size: 12px; -fx-text-fill: #536B70; -fx-background-color: #EAF1EE; }
+.text-field, .text-area, .combo-box-base {
+  -fx-background-color: white; -fx-background-radius: 10; -fx-border-color: #AABEB7;
+  -fx-border-radius: 10; -fx-border-width: 1; -fx-padding: 9 12;
+  -fx-prompt-text-fill: #657A78; -fx-text-fill: #183B40;
+}
+.text-field:focused, .text-area:focused, .combo-box-base:focused { -fx-border-color: #087F70; -fx-effect: dropshadow(gaussian, #C5E4D7, 5, .4, 0, 0); }
+.text-area .content, .text-area .viewport { -fx-background-color: white; }
+.combo-box-base { -fx-padding: 3 6; }
+.check-box { -fx-text-fill: #183B40; -fx-padding: 6 0; }
+.check-box .box { -fx-background-color: white; -fx-border-color: #8DA89C; -fx-border-radius: 4; -fx-background-radius: 4; }
+.check-box:selected .box { -fx-background-color: #087F70; -fx-border-color: #087F70; }
+.check-box:selected .mark { -fx-background-color: white; }
+.scroll-pane, .scroll-pane > .viewport { -fx-background-color: transparent; }
+.scroll-pane { -fx-padding: 0; -fx-background-insets: 0; }
+.scroll-bar { -fx-background-color: transparent; -fx-pref-width: 10; -fx-pref-height: 10; }
+.scroll-bar .thumb { -fx-background-color: #ACBFB6; -fx-background-radius: 8; }
+.scroll-bar .increment-button, .scroll-bar .decrement-button { -fx-padding: 2; -fx-background-color: transparent; }
+.panel, .quiz-card, .review-card {
+  -fx-background-color: white; -fx-background-radius: 16; -fx-border-color: #DCE6E0; -fx-border-radius: 16; -fx-border-width: 1;
+}
+.quiz-card { -fx-padding: 16; -fx-spacing: 10; }
+.quiz-card:hover { -fx-border-color: #87B7A5; -fx-effect: dropshadow(gaussian, #173E4015, 12, 0, 0, 3); }
+.quiz-card.selected { -fx-border-color: #087F70; -fx-border-width: 2; -fx-background-color: #F0FAF5; }
+.card-title { -fx-font-size: 19px; -fx-font-weight: bold; }
+.badge { -fx-font-size: 12px; -fx-font-weight: bold; -fx-background-color: #E5F3EB; -fx-text-fill: #146453; -fx-padding: 5 9; -fx-background-radius: 6; }
+.gold-badge { -fx-background-color: #FFF0C6; -fx-text-fill: #79591D; }
+.online-panel { -fx-padding: 20; -fx-background-color: white; -fx-background-radius: 16; -fx-border-color: #DCE6E0; -fx-border-radius: 16; }
+.button.opponent { -fx-background-color: #F4F7F5; -fx-text-fill: #183B40; -fx-alignment: center-left; -fx-padding: 10; }
+.button.opponent.selected { -fx-background-color: #E1F3E9; -fx-border-color: #087F70; }
+.auth-view { -fx-background-color: #EAF2EC; -fx-padding: 28; }
+.auth-art { -fx-background-color: #FFF8E9; -fx-background-radius: 20 0 0 20; -fx-padding: 32; }
+.auth-form { -fx-background-color: white; -fx-background-radius: 0 20 20 0; -fx-padding: 28 32; }
+.auth-tabs .button { -fx-max-width: infinity; }
+.auth-feedback { -fx-text-fill: #A32F35; }
+.game-surface { -fx-background-color: #123E43; -fx-padding: 24; }
+.game-surface > .label, .game-header .label, .game-heading, .game-surface .light-label { -fx-text-fill: #F7FAF6; }
+.game-header { -fx-padding: 4 0 20 0; -fx-alignment: center-left; }
+.timer { -fx-background-color: #F5C65A; -fx-text-fill: #183B40; -fx-font-size: 21px; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 9 18; }
+.game-header .timer { -fx-text-fill: #183B40; }
+.question-panel { -fx-background-color: #FFFEF9; -fx-background-radius: 20; -fx-padding: 28; }
+.question-title { -fx-font-size: 27px; -fx-font-weight: bold; }
+.answer-card {
+  -fx-background-color: #F0F5F2; -fx-border-color: #C5D6CC; -fx-border-width: 1;
+  -fx-background-radius: 12; -fx-border-radius: 12; -fx-text-fill: #183B40;
+  -fx-font-size: 17px; -fx-padding: 14 18; -fx-alignment: center-left;
+}
+.answer-card:hover { -fx-background-color: #E1F3E9; -fx-border-color: #087F70; }
+.answer-card:focused { -fx-border-color: #087F70; -fx-border-width: 2; }
+.answer-card:selected { -fx-background-color: #CCF0DF; -fx-border-color: #087F70; }
+.answer-card:disabled { -fx-opacity: .75; }
+.answer-card.correct { -fx-background-color: #C8EEDD; -fx-border-color: #087F70; -fx-opacity: 1; }
+.answer-card.incorrect { -fx-background-color: #F9DCD8; -fx-border-color: #BE4A4E; -fx-opacity: 1; }
+.reveal-panel { -fx-background-color: #EAF5EE; -fx-background-radius: 12; -fx-padding: 20; }
+.reveal-panel .title { -fx-font-size: 20px; }
+.leaderboard-row { -fx-background-color: white; -fx-background-radius: 16; -fx-padding: 20; -fx-alignment: center-left; }
+.leaderboard-row .label { -fx-text-fill: #183B40; }
+.waiting-panel { -fx-background-color: #123E43; -fx-alignment: center; -fx-padding: 40; }
+.waiting-panel .label { -fx-text-fill: #F7FAF6; }
+.player-tile { -fx-background-color: #245259; -fx-background-radius: 20; -fx-padding: 24; -fx-alignment: center; }
+.player-tile .label { -fx-text-fill: white; }
+.countdown-number { -fx-font-size: 84px; -fx-font-weight: bold; -fx-text-fill: #F5C65A; }
+.challenge-panel, .detail-panel { -fx-padding: 24; -fx-background-color: white; -fx-border-color: #DCE6E0; -fx-border-width: 0 1 0 0; }
+.result-hero { -fx-background-color: #123E43; -fx-background-radius: 20; -fx-padding: 28; -fx-alignment: center; }
+.result-hero .label { -fx-text-fill: white; }
+.result-score { -fx-font-size: 42px; -fx-font-weight: bold; }
+.table-heading { -fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #536B70; -fx-padding: 12 16; }
+.data-row { -fx-background-color: white; -fx-background-radius: 12; -fx-padding: 14 16; -fx-alignment: center-left; }
+.data-row.self { -fx-background-color: #E1F3E9; -fx-border-color: #6BAE96; -fx-border-radius: 12; }
+.chat-panel { -fx-background-color: white; -fx-padding: 20; -fx-border-color: transparent transparent transparent #DCE6E0; }
+.chat-bubble { -fx-background-color: #EEF5F0; -fx-background-radius: 12; -fx-padding: 12; }
+.editor-panel { -fx-padding: 24; -fx-background-color: white; -fx-background-radius: 16; -fx-border-color: #DCE6E0; -fx-border-radius: 16; }
+.titled-pane > .title { -fx-font-size: 14px; -fx-background-color: #EEF5F0; -fx-padding: 8; }
+.titled-pane > .content { -fx-background-color: white; -fx-border-color: #DCE6E0; }
+.dialog-pane { -fx-background-color: #F4F7F5; -fx-padding: 20; }
+.tooltip { -fx-background-color: #183B40; -fx-text-fill: white; -fx-background-radius: 8; }
+.progress-bar > .track { -fx-background-color: #2F5A60; -fx-background-radius: 4; }
+.progress-bar > .bar { -fx-background-color: #75D6AC; -fx-background-radius: 4; -fx-background-insets: 0; -fx-padding: 3; }
+.score-line { -fx-font-size: 18px; -fx-font-weight: bold; }
+.badge:error { -fx-background-color: #FFF1EF; -fx-text-fill: #A32F35; }
+.question-title.long-question { -fx-font-size: 20px; }
+.waiting-scroll, .waiting-scroll > .viewport { -fx-background-color: #123E43; }

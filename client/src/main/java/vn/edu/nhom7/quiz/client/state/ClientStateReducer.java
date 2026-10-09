@@ -62,7 +62,8 @@ public final class ClientStateReducer {
         data.keySet()
             .removeIf(
                 t ->
-                    t == MessageType.RESULT_SESSION_CLOSED
+                    t == MessageType.READY_STATUS
+                        || t == MessageType.RESULT_SESSION_CLOSED
                         || t == MessageType.REMATCH_STATUS
                         || t == MessageType.LIVE_REVIEW
                         || t == MessageType.MATCH_RESULT

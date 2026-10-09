@@ -15,10 +15,14 @@ public final class ChatPanel extends VBox {
   private final Set<UUID> ids = new HashSet<>();
 
   public ChatPanel(java.util.function.Consumer<String> send) {
-    setSpacing(10);
+    getStyleClass().add("chat-panel");
+    setSpacing(14);
     setPadding(new Insets(16));
     setPrefWidth(270);
-    getChildren().addAll(Ui.title("Trò chuyện"), Ui.scroll(messages));
+    var scroll = Ui.scroll(messages);
+    VBox.setVgrow(scroll, Priority.ALWAYS);
+    getChildren()
+        .addAll(Ui.title("Trò chuyện"), Ui.muted("Enter để gửi · Shift+Enter xuống dòng"), scroll);
     input.setPrefRowCount(2);
     input.setPromptText("Tin nhắn (1–300 ký tự)");
     Runnable submit =
@@ -38,16 +42,16 @@ public final class ChatPanel extends VBox {
     getChildren().addAll(input, Ui.button("Gửi", submit));
   }
 
+  private VBox bubble(JsonNode message) {
+    var name = Ui.badge(message.path("displayName").asText());
+    var box = new VBox(6, name, Ui.label(message.path("text").asText()));
+    box.getStyleClass().add("chat-bubble");
+    return box;
+  }
+
   public void render(ClientState s) {
     for (var e : s.chatById().entrySet())
-      if (ids.add(e.getKey()))
-        messages
-            .getChildren()
-            .add(
-                Ui.label(
-                    e.getValue().path("displayName").asText()
-                        + ": "
-                        + e.getValue().path("text").asText()));
+      if (ids.add(e.getKey())) messages.getChildren().add(bubble(e.getValue()));
     boolean detached = !s.resultAttached();
     setDisable(detached);
   }

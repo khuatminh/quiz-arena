@@ -12,6 +12,7 @@ import vn.edu.nhom7.quiz.common.protocol.*;
 public final class RevealPanel extends VBox {
   public RevealPanel(JsonNode p, JsonNode question, long self) {
     setSpacing(12);
+    getStyleClass().add("reveal-panel");
     setPadding(new Insets(20));
     getChildren()
         .addAll(

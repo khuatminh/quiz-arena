@@ -285,7 +285,11 @@ class NativeViewsTest {
             assertFalse(headerButton(shell, "Quiz của tôi").isDisabled());
             var lobby = (LobbyView) shell.getCenter();
             var library = (VBox) ((ScrollPane) lobby.getCenter()).getContent();
-            ((Button) ((HBox) library.getChildren().get(1)).getChildren().get(1)).fire();
+            ((Button)
+                    ((HBox) ((ScrollPane) library.getChildren().get(1)).getContent())
+                        .getChildren()
+                        .get(1))
+                .fire();
             assertEquals(new Payloads.QuizListRequest(9L, 1, 20), requests.getLast());
             for (String action : List.of("PUBLISH", "UNPUBLISH")) {
               shell.onEvent(

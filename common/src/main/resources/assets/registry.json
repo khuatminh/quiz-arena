@@ -60,22 +60,22 @@
     {
       "id": "quiz-cover-general",
       "kind": "image",
-      "path": "/assets/images/quiz-cover-general.png",
-      "attribution": "Original Quiz Arena team artwork; CC0",
+      "path": "/assets/images/quiz-cover-general-v2.png",
+      "attribution": "Quiz Arena illustration generated with OpenAI image generation, 2026",
       "required": false
     },
     {
       "id": "quiz-cover-science",
       "kind": "image",
-      "path": "/assets/images/quiz-cover-science.png",
-      "attribution": "Original Quiz Arena team artwork; CC0",
+      "path": "/assets/images/quiz-cover-science-v2.png",
+      "attribution": "Quiz Arena illustration generated with OpenAI image generation, 2026",
       "required": false
     },
     {
       "id": "quiz-cover-history",
       "kind": "image",
-      "path": "/assets/images/quiz-cover-history.png",
-      "attribution": "Original Quiz Arena team artwork; CC0",
+      "path": "/assets/images/quiz-cover-history-v2.png",
+      "attribution": "Quiz Arena illustration generated with OpenAI image generation, 2026",
       "required": false
     },
     {

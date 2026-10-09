@@ -28,24 +28,32 @@ public final class ResultView extends VBox {
                 : r.path("winnerUserId").asLong() == s.selfUserId()
                     ? "Bạn chiến thắng!"
                     : "Trận đấu đã kết thúc";
-    getChildren()
-        .addAll(
-            Ui.title(title),
+    var hero = new VBox(16, Ui.title(title));
+    hero.getStyleClass().add("result-hero");
+    hero.getChildren()
+        .add(
             Ui.label(
                 PresentationText.outcome(r.path("finishReason").asText())
                     + " · "
-                    + PresentationText.reason(r.path("reasonCode").asText())),
-            save);
-    for (var player : r.path("players"))
-      getChildren()
-          .add(
-              Ui.label(
-                  player.path("displayName").asText()
-                      + " · "
-                      + player.path("totalScore").asInt()
-                      + " điểm · "
-                      + player.path("correctCount").asInt()
-                      + " câu đúng"));
+                    + PresentationText.reason(r.path("reasonCode").asText())));
+    var players = new HBox(48);
+    players.setAlignment(Pos.CENTER);
+    for (var player : r.path("players")) {
+      var score = Ui.title(player.path("totalScore").asInt() + "");
+      score.getStyleClass().add("result-score");
+      var tile =
+          new VBox(
+              8,
+              new vn.edu.nhom7.quiz.client.assets.AssetLoader()
+                  .view(player.path("avatarId").asText(), 72),
+              Ui.label(player.path("displayName").asText()),
+              score,
+              Ui.label(player.path("correctCount").asInt() + " câu đúng"));
+      tile.setAlignment(Pos.CENTER);
+      players.getChildren().add(tile);
+    }
+    hero.getChildren().addAll(players, save);
+    getChildren().add(hero);
     var rematch =
         Ui.button(
             "Đấu lại",
@@ -79,7 +87,8 @@ public final class ResultView extends VBox {
     reject.setDisable(accept.isDisabled());
     getChildren()
         .addAll(
-            new HBox(
+            new FlowPane(
+                12,
                 12,
                 rematch,
                 accept,
@@ -132,44 +141,7 @@ public final class ResultView extends VBox {
     next.setDisable(page * Payloads.REVIEW_PAGE_SIZE >= total || detached);
     getChildren().add(new HBox(12, previous, Ui.label("Trang " + page), next));
     for (var review : (pageData == null ? r.path("review") : pageData.path("review"))) {
-      var box =
-          Ui.stack(
-              Ui.label(
-                  "Câu "
-                      + review.path("roundIndex").asInt()
-                      + " · "
-                      + review.path("question").path("content").asText()));
-      box.getChildren()
-          .add(
-              Ui.label(
-                  review.path("revealed").asBoolean()
-                      ? "Đáp án: "
-                          + PresentationText.answer(
-                              review.path("question"), review.path("correctAnswer"))
-                      : "Câu chưa được chấm"));
-      for (var o : review.path("outcomes"))
-        box.getChildren()
-            .add(
-                Ui.label(
-                    PresentationText.playerName(
-                            r.path("players"), o.path("userId").asLong(), s.selfUserId())
-                        + " · "
-                        + PresentationText.answer(review.path("question"), o.path("answer"))
-                        + " · "
-                        + PresentationText.outcome(o.path("outcome").asText())));
-      if (review.hasNonNull("explanation"))
-        box.getChildren().add(Ui.label(review.path("explanation").asText()));
-      if (review.path("question").hasNonNull("questionAssetId"))
-        box.getChildren()
-            .add(
-                new vn.edu.nhom7.quiz.client.assets.AssetLoader()
-                    .view(review.path("question").path("questionAssetId").asText(), 180));
-      if (review.hasNonNull("explanationAssetId"))
-        box.getChildren()
-            .add(
-                new vn.edu.nhom7.quiz.client.assets.AssetLoader()
-                    .view(review.path("explanationAssetId").asText(), 180));
-      getChildren().add(box);
+      getChildren().add(new ReviewCard(review, r.path("players"), s.selfUserId()));
     }
     render(s);
   }

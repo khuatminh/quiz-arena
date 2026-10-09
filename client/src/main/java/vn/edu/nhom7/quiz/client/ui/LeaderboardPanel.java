@@ -30,7 +30,9 @@ public final class LeaderboardPanel extends VBox {
   public LeaderboardPanel(JsonNode p, long self, boolean reducedMotion) {
     setSpacing(18);
     setPadding(new Insets(28));
-    getChildren().add(Ui.title("Bảng điểm sau câu " + p.path("roundIndex").asInt()));
+    var heading = Ui.title("Bảng điểm sau câu " + p.path("roundIndex").asInt());
+    heading.getStyleClass().add("light-label");
+    getChildren().add(heading);
     for (var standing : p.path("standings")) {
       var row = Row.from(standing);
       var score = Ui.title(Integer.toString(row.totalScore()));
@@ -47,6 +49,7 @@ public final class LeaderboardPanel extends VBox {
                       + (row.userId() == self ? " · Bạn" : "")),
               score,
               Ui.label("+" + row.earnedPoints() + " · " + row.correctCount() + " đúng"));
+      HBox.setHgrow(line.getChildren().get(1), Priority.ALWAYS);
       line.getStyleClass().add("leaderboard-row");
       getChildren().add(line);
       if (!reducedMotion) {

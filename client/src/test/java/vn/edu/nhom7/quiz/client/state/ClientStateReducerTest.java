@@ -22,6 +22,31 @@ class ClientStateReducerTest {
   }
 
   @Test
+  void aNewMatchClearsThePreviousReadyStatus() {
+    var reducer = new ClientStateReducer();
+    var empty = JsonNodeFactory.instance.objectNode();
+    UUID first = UUID.randomUUID(), second = UUID.randomUUID();
+    var state =
+        reducer.apply(
+            ClientState.initial(),
+            new Envelope(1, MessageType.MATCH_START, null, first, null, 1L, empty),
+            0);
+    var ready =
+        JsonNodeFactory.instance
+            .objectNode()
+            .set("readyUserIds", JsonNodeFactory.instance.arrayNode().add(101));
+    state =
+        reducer.apply(
+            state, new Envelope(1, MessageType.READY_STATUS, null, first, null, 2L, ready), 0);
+    assertNotNull(state.payload(MessageType.READY_STATUS));
+    state =
+        reducer.apply(
+            state, new Envelope(1, MessageType.MATCH_START, null, second, null, 1L, empty), 0);
+    assertNull(state.payload(MessageType.READY_STATUS));
+    assertEquals("WAITING_READY", state.phase());
+  }
+
+  @Test
   void oldSaveDoesNotReplaceMatch() {
     var r = new ClientStateReducer();
     UUID old = UUID.randomUUID(), current = UUID.randomUUID();

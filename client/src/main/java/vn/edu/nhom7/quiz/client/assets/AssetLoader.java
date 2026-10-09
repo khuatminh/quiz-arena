@@ -8,7 +8,9 @@ import javafx.scene.image.*;
 import vn.edu.nhom7.quiz.common.assets.AssetRegistry;
 
 public final class AssetLoader {
-  private final AssetRegistry registry = AssetRegistry.loadDefault();
+  private static final AssetRegistry registry = AssetRegistry.loadDefault();
+  private static final java.util.concurrent.ConcurrentMap<String, Image> bundled =
+      new java.util.concurrent.ConcurrentHashMap<>();
 
   public URL resource(String id) {
     var asset = registry.find(id).orElse(null);
@@ -29,11 +31,12 @@ public final class AssetLoader {
                   throw new IllegalArgumentException("Không thể đọc ảnh câu hỏi.");
                 return image;
               });
-    return CompletableFuture.completedFuture(new Image(resource(id).toExternalForm()));
+    return CompletableFuture.completedFuture(
+        bundled.computeIfAbsent(resource(id).toExternalForm(), Image::new));
   }
 
   public ImageView view(String id, double size) {
-    var v = new ImageView(new Image(resource(null).toExternalForm(), size, size, true, true));
+    var v = new ImageView(bundled.computeIfAbsent(resource(null).toExternalForm(), Image::new));
     v.setFitWidth(size);
     v.setFitHeight(size);
     v.setPreserveRatio(true);
