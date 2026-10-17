@@ -11,7 +11,8 @@ class StreakStateTest {
   private final ClientStateReducer reducer = new ClientStateReducer();
   private long seq = 1;
 
-  private ClientState result(ClientState s, UUID match, long question, boolean self, boolean other) {
+  private ClientState result(
+      ClientState s, UUID match, long question, boolean self, boolean other) {
     var p = JsonNodeFactory.instance.objectNode().put("questionId", question);
     var outcomes = p.putArray("outcomes");
     outcomes.addObject().put("userId", 101).put("correct", self);
@@ -55,7 +56,9 @@ class StreakStateTest {
     assertEquals(1, streak(s, 101));
     UUID next = UUID.randomUUID();
     seq = 1;
-    s = reducer.apply(s, new Envelope(1, MessageType.MATCH_START, null, next, null, seq++, empty), 0);
+    s =
+        reducer.apply(
+            s, new Envelope(1, MessageType.MATCH_START, null, next, null, seq++, empty), 0);
     s = result(s, next, 1, true, false);
     assertEquals(1, streak(s, 101));
     assertEquals(0, streak(s, 102));

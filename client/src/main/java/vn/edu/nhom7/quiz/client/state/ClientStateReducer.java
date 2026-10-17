@@ -186,8 +186,8 @@ public final class ClientStateReducer {
   }
 
   /**
-   * Adds {@code streaks}: each player's run of correct answers, counted from the previous result
-   * of this match (results are cleared at MATCH_START). A repeated result keeps the old counts.
+   * Adds {@code streaks}: each player's run of correct answers, counted from the previous result of
+   * this match (results are cleared at MATCH_START). A repeated result keeps the old counts.
    */
   static JsonNode withStreaks(JsonNode result, JsonNode previous) {
     if (!result.isObject()) return result;

@@ -47,14 +47,22 @@ public final class ChallengeDialog extends VBox {
     var headline =
         Ui.label(
             received
-                ? (name.isEmpty() ? "Bạn nhận được lời thách đấu!" : name + " muốn đấu trí với bạn!")
+                ? (name.isEmpty()
+                    ? "Bạn nhận được lời thách đấu!"
+                    : name + " muốn đấu trí với bạn!")
                 : opponentName == null || opponentName.isBlank()
                     ? "Đang chờ đối thủ…"
                     : "Đang chờ " + opponentName + " trả lời…");
     headline.getStyleClass().add("challenge-headline");
+    headline.setMinHeight(Region.USE_PREF_SIZE);
     var who = new VBox(4, kicker, headline);
+    who.setMinWidth(0);
     if (received && player.has("totalScore")) {
-      var score = Ui.label(player.path("totalScore").asLong() + " điểm · muốn chơi " + quiz.path("title").asText());
+      var score =
+          Ui.label(
+              player.path("totalScore").asLong()
+                  + " điểm · muốn chơi "
+                  + quiz.path("title").asText());
       score.getStyleClass().add("challenge-sub");
       who.getChildren().add(score);
     }
@@ -85,7 +93,10 @@ public final class ChallengeDialog extends VBox {
     var meta = new ArrayList<String>();
     if (quiz.has("totalRounds")) meta.add(quiz.path("totalRounds").asInt() + " câu");
     if (quiz.hasNonNull("categoryName")) meta.add(quiz.path("categoryName").asText());
-    meta.add(quiz.path("quizSource").asText("SYSTEM").equals("COMMUNITY") ? "Không tính hạng" : "Tính hạng");
+    meta.add(
+        quiz.path("quizSource").asText("SYSTEM").equals("COMMUNITY")
+            ? "Không tính hạng"
+            : "Tính hạng");
     var quizMeta = Ui.muted(String.join(" · ", meta));
     var quizCard = new HBox(16, cover, new VBox(4, quizTitle, quizMeta));
     quizCard.setAlignment(Pos.CENTER_LEFT);

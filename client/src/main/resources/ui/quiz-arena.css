@@ -173,7 +173,7 @@
 .streak-banner.tier-3 .streak-banner-line { -fx-text-fill: #CFC2FF; }
 .streak-banner-line { -fx-font-size: 17px; -fx-font-weight: bold; }
 .wrong-flash {
-  -fx-background-color: radial-gradient(center 50% 50%, radius 75%, #E8364F00 35%, #E8364F8C 100%), #E8364F1F;
+  -fx-background-color: radial-gradient(center 50% 50%, radius 75%, #E8364F00 40%, #E8364F66 100%), #E8364F14;
 }
 .invite-backdrop { -fx-background-color: #0C2629A0; }
 .challenge-dialog { -fx-background-color: white; -fx-background-radius: 24; -fx-effect: dropshadow(gaussian, #0A1F2266, 44, 0, 0, 14); }
@@ -203,15 +203,15 @@
 .result-title { -fx-font-size: 34px; }
 .result-hero.win .result-title { -fx-text-fill: #F5C65A; }
 .result-hero.lose .result-title { -fx-text-fill: #DCE8F0; }
-.result-halo { -fx-background-radius: 999; -fx-padding: 18; -fx-background-color: radial-gradient(radius 60%, #F5C65A55, #F5C65A00); }
-.result-hero.lose .result-halo { -fx-background-color: radial-gradient(radius 60%, #8FC3F033, #8FC3F000); }
-.result-hero.draw .result-halo { -fx-background-color: radial-gradient(radius 60%, #75D6AC44, #75D6AC00); }
+.result-halo { -fx-background-radius: 999; -fx-padding: 18; -fx-background-color: #F5C65A26, #F5C65A1A; -fx-background-insets: 0, 8; }
+.result-hero.lose .result-halo { -fx-background-color: #8FC3F01A, #8FC3F014; }
+.result-hero.draw .result-halo { -fx-background-color: #75D6AC22, #75D6AC18; }
 .result-avatar { -fx-background-color: #245259; -fx-background-radius: 999; -fx-border-color: #3B6066; -fx-border-width: 3; -fx-border-radius: 999; -fx-padding: 4; }
 .result-avatar.winner { -fx-border-color: #F5C65A; -fx-border-width: 4; -fx-effect: dropshadow(gaussian, #F5C65AAA, 24, .3, 0, 0); }
 .result-player.winner .result-score { -fx-text-fill: #F5C65A; }
 .sticker { -fx-effect: dropshadow(gaussian, #183B4033, 6, 0, 0, 2); }
 .sticker-caption { -fx-text-fill: white; -fx-font-weight: bold; -fx-effect: dropshadow(gaussian, #00000055, 2, .4, 0, 1); }
-.sticker-tray { -fx-background-color: #F4F7F5; -fx-background-radius: 14; -fx-padding: 10; }
+.sticker-tray { -fx-background-color: #F4F7F5; -fx-background-radius: 14; -fx-padding: 8; }
 .button.sticker-pick { -fx-background-color: transparent; -fx-padding: 2; -fx-background-radius: 14; -fx-border-radius: 14; }
 .button.sticker-pick:hover { -fx-background-color: #DCEBE4; -fx-translate-y: -2; }
 .button.sticker-toggle { -fx-padding: 8 10; }

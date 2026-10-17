@@ -8,8 +8,8 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 
 /**
- * Game sounds and background music. Silent until {@link #enable()} is called by the real client,
- * so tests and headless renders never touch the audio stack; any media failure just means silence.
+ * Game sounds and background music. Silent until {@link #enable()} is called by the real client, so
+ * tests and headless renders never touch the audio stack; any media failure just means silence.
  */
 public final class Sound {
   public enum Effect {

@@ -14,7 +14,7 @@ public final class ChatPanel extends VBox {
   private final TextArea input = new TextArea();
   private final Set<UUID> ids = new HashSet<>();
   private final ScrollPane scroll;
-  private final TilePane tray = new TilePane(8, 8);
+  private final TilePane tray = new TilePane(6, 6);
   private boolean primed;
 
   public ChatPanel(java.util.function.Consumer<String> send) {
@@ -44,7 +44,7 @@ public final class ChatPanel extends VBox {
         });
     for (var sticker : Stickers.ALL) {
       var pick = new Button();
-      pick.setGraphic(Stickers.view(sticker, 46));
+      pick.setGraphic(Stickers.view(sticker, 44, false));
       pick.getStyleClass().add("sticker-pick");
       pick.setAccessibleText("Gửi sticker " + sticker.caption());
       pick.setTooltip(new Tooltip(sticker.caption()));
@@ -62,7 +62,8 @@ public final class ChatPanel extends VBox {
     smile.setGraphic(
         Effects.glyph(
             22,
-            Effects.stroke("M12 2.5 A9.5 9.5 0 1 1 12 21.5 A9.5 9.5 0 1 1 12 2.5 Z", "#224C4B", 1.8),
+            Effects.stroke(
+                "M12 2.5 A9.5 9.5 0 1 1 12 21.5 A9.5 9.5 0 1 1 12 2.5 Z", "#224C4B", 1.8),
             Effects.fill("M8.6 8.4 A1.3 1.3 0 1 1 8.6 11 A1.3 1.3 0 1 1 8.6 8.4 Z", "#224C4B"),
             Effects.fill("M15.4 8.4 A1.3 1.3 0 1 1 15.4 11 A1.3 1.3 0 1 1 15.4 8.4 Z", "#224C4B"),
             Effects.stroke("M7.8 14 C9.6 17.2 14.4 17.2 16.2 14", "#224C4B", 1.8)));
@@ -105,7 +106,10 @@ public final class ChatPanel extends VBox {
         wiggle.setAutoReverse(true);
         wiggle.setCycleCount(4);
         wiggle.setOnFinished(e -> art.setRotate(0));
-        Effects.run(new javafx.animation.SequentialTransition(pop, wiggle), null, javafx.util.Duration.millis(420));
+        Effects.run(
+            new javafx.animation.SequentialTransition(pop, wiggle),
+            null,
+            javafx.util.Duration.millis(420));
       }
       return box;
     }
@@ -119,7 +123,10 @@ public final class ChatPanel extends VBox {
       var rise = new javafx.animation.TranslateTransition(javafx.util.Duration.millis(220), box);
       rise.setFromY(10);
       rise.setToY(0);
-      Effects.run(new javafx.animation.ParallelTransition(fade, rise), null, javafx.util.Duration.millis(220));
+      Effects.run(
+          new javafx.animation.ParallelTransition(fade, rise),
+          null,
+          javafx.util.Duration.millis(220));
     }
     return box;
   }

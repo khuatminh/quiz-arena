@@ -13,7 +13,9 @@ import javafx.util.Duration;
 
 /** Vector flames, overlay effects (red flash, streak banner, confetti) and animation helpers. */
 final class Effects {
-  /** Evidence renders set this so every effect stops at its most visible frame instead of playing. */
+  /**
+   * Evidence renders set this so every effect stops at its most visible frame instead of playing.
+   */
   static boolean preview;
 
   static final String FLAME =
@@ -114,6 +116,9 @@ final class Effects {
     banner.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
     banner.setAccessibleText(streakTitle(streak) + " " + streakLine(streak));
     var holder = centred(layer, banner);
+    // Sits over the question card so the answer tiles stay readable during the reveal.
+    StackPane.setAlignment(banner, Pos.TOP_CENTER);
+    StackPane.setMargin(banner, new javafx.geometry.Insets(150, 0, 0, 0));
     banner.setOpacity(0);
     var pop =
         new Timeline(
@@ -152,11 +157,13 @@ final class Effects {
         new Timeline(
             new KeyFrame(Duration.ZERO, new KeyValue(flash.opacityProperty(), 0)),
             new KeyFrame(
-                Duration.millis(110), new KeyValue(flash.opacityProperty(), 1, Interpolator.EASE_OUT)),
+                Duration.millis(110),
+                new KeyValue(flash.opacityProperty(), 1, Interpolator.EASE_OUT)),
             new KeyFrame(Duration.millis(260), new KeyValue(flash.opacityProperty(), 0.55)),
             new KeyFrame(Duration.millis(360), new KeyValue(flash.opacityProperty(), 0.85)),
             new KeyFrame(
-                Duration.millis(900), new KeyValue(flash.opacityProperty(), 0, Interpolator.EASE_IN)));
+                Duration.millis(900),
+                new KeyValue(flash.opacityProperty(), 0, Interpolator.EASE_IN)));
     pulse.setOnFinished(e -> layer.getChildren().remove(flash));
     run(pulse, running, Duration.millis(120));
   }
@@ -284,9 +291,14 @@ final class Effects {
         stroke("M6.5 5 H3.5 V7 C3.5 9.2 5 10.6 6.8 10.9", "#F5C65A", 1.8),
         stroke("M17.5 5 H20.5 V7 C20.5 9.2 19 10.6 17.2 10.9", "#F5C65A", 1.8),
         fill("M6 3 H18 V8 C18 11.9 15.3 14.5 12 14.5 C8.7 14.5 6 11.9 6 8 Z", "#F5C65A"),
-        fill("M12 5.2 L12.9 7.1 L15 7.4 L13.5 8.8 L13.9 10.9 L12 9.9 L10.1 10.9 L10.5 8.8 L9 7.4 L11.1 7.1 Z", "#FFF4D0"),
+        fill(
+            "M12 5.2 L12.9 7.1 L15 7.4 L13.5 8.8 L13.9 10.9 L12 9.9 L10.1 10.9 L10.5 8.8 L9 7.4"
+                + " L11.1 7.1 Z",
+            "#FFF4D0"),
         fill("M10.6 14.3 H13.4 V17.6 H10.6 Z", "#D9A93A"),
-        fill("M7.5 18 H16.5 C17.1 18 17.5 18.4 17.5 19 V21 H6.5 V19 C6.5 18.4 6.9 18 7.5 18 Z", "#F5C65A"));
+        fill(
+            "M7.5 18 H16.5 C17.1 18 17.5 18.4 17.5 19 V21 H6.5 V19 C6.5 18.4 6.9 18 7.5 18 Z",
+            "#F5C65A"));
   }
 
   static Node crown(double size) {
@@ -368,18 +380,23 @@ final class Effects {
       };
 
   /**
-   * A transparent, click-through pane that hosts overlay effects above a view. The host lays it
-   * out over its whole area; every child is stretched to the layer's size.
+   * A transparent, click-through pane that hosts overlay effects above a view. The host lays it out
+   * over its whole area; every child is stretched to the layer's size.
    */
   static final class Layer extends Pane {
+    private final Rectangle clip = new Rectangle();
+
     Layer() {
       setManaged(false);
       setPickOnBounds(false);
       getStyleClass().add("fx-layer");
+      setClip(clip);
     }
 
     @Override
     protected void layoutChildren() {
+      clip.setWidth(getWidth());
+      clip.setHeight(getHeight());
       for (var child : getManagedChildren()) child.resizeRelocate(0, 0, getWidth(), getHeight());
     }
   }

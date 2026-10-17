@@ -250,7 +250,8 @@ public final class ResultView extends VBox {
                   javafx.util.Duration.ZERO,
                   new javafx.animation.KeyValue(heroIcon.scaleXProperty(), 0.2),
                   new javafx.animation.KeyValue(heroIcon.scaleYProperty(), 0.2),
-                  new javafx.animation.KeyValue(heroIcon.rotateProperty(), outcome.equals("win") ? -25 : 0)),
+                  new javafx.animation.KeyValue(
+                      heroIcon.rotateProperty(), outcome.equals("win") ? -25 : 0)),
               new javafx.animation.KeyFrame(
                   javafx.util.Duration.millis(560),
                   new javafx.animation.KeyValue(heroIcon.scaleXProperty(), 1, Effects.BACK_OUT),

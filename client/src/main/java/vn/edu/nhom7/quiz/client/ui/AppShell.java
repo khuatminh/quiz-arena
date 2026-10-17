@@ -115,7 +115,8 @@ public final class AppShell extends BorderPane implements AutoCloseable {
     inviteHost = host;
     host.getStyleClass().add(incoming ? "invite-backdrop" : "invite-dock");
     host.setPickOnBounds(incoming);
-    StackPane.setAlignment(dialog, incoming ? javafx.geometry.Pos.CENTER : javafx.geometry.Pos.BOTTOM_RIGHT);
+    StackPane.setAlignment(
+        dialog, incoming ? javafx.geometry.Pos.CENTER : javafx.geometry.Pos.BOTTOM_RIGHT);
     if (!incoming) StackPane.setMargin(dialog, new javafx.geometry.Insets(0, 24, 56, 0));
     fx.getChildren().add(host);
     dialog.tick(System.currentTimeMillis() + network.time.offsetMs());
@@ -179,7 +180,8 @@ public final class AppShell extends BorderPane implements AutoCloseable {
     glyph.setContent(
         music
             ? "M8 5 L20 2.5 V15.5 A3 3 0 1 1 18 12.7 V7.2 L10 8.9 V18 A3 3 0 1 1 8 15.2 Z"
-            : "M3 9 H7 L12 5 V19 L7 15 H3 Z M15 8.2 A5 5 0 0 1 15 15.8 L16.3 17.2 A7 7 0 0 0 16.3 6.8 Z");
+            : "M3 9 H7 L12 5 V19 L7 15 H3 Z M15 8.2 A5 5 0 0 1 15 15.8 L16.3 17.2 A7 7 0 0 0 16.3"
+                  + " 6.8 Z");
     glyph.getStyleClass().add("sound-glyph");
     var icon = new StackPane(glyph);
     if (!on) {

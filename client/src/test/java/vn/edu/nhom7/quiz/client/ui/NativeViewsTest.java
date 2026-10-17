@@ -418,12 +418,24 @@ class NativeViewsTest {
         reducer.apply(
             state,
             new Envelope(
-                1, MessageType.LOGIN_RESULT, null, null, null, null,
+                1,
+                MessageType.LOGIN_RESULT,
+                null,
+                null,
+                null,
+                null,
                 json.createObjectNode().set("profile", profile)),
             0);
     var start = json.createObjectNode().put("totalRounds", 10);
-    start.putArray("players").add(profile).addObject().put("userId", 102).put("displayName", "Tuấn");
-    state = reducer.apply(state, new Envelope(1, MessageType.MATCH_START, null, match, null, 1L, start), 0);
+    start
+        .putArray("players")
+        .add(profile)
+        .addObject()
+        .put("userId", 102)
+        .put("displayName", "Tuấn");
+    state =
+        reducer.apply(
+            state, new Envelope(1, MessageType.MATCH_START, null, match, null, 1L, start), 0);
     long seq = 2;
     for (int q = 1; q <= 3; q++) {
       UUID round = UUID.randomUUID();
@@ -437,10 +449,22 @@ class NativeViewsTest {
           .putArray("options")
           .add(json.createObjectNode().put("id", "A").put("text", "Hà Nội"))
           .add(json.createObjectNode().put("id", "B").put("text", "Huế"));
-      state = reducer.apply(state, new Envelope(1, MessageType.QUESTION, null, match, round, seq++, question), 0);
+      state =
+          reducer.apply(
+              state, new Envelope(1, MessageType.QUESTION, null, match, round, seq++, question), 0);
       var result = json.createObjectNode().put("questionId", q).put("correctAnswer", "A");
-      result.putArray("outcomes").addObject().put("userId", 101).put("answer", "A").put("correct", true).put("earnedPoints", 3);
-      state = reducer.apply(state, new Envelope(1, MessageType.QUESTION_RESULT, null, match, round, seq++, result), 0);
+      result
+          .putArray("outcomes")
+          .addObject()
+          .put("userId", 101)
+          .put("answer", "A")
+          .put("correct", true)
+          .put("earnedPoints", 3);
+      state =
+          reducer.apply(
+              state,
+              new Envelope(1, MessageType.QUESTION_RESULT, null, match, round, seq++, result),
+              0);
     }
     var reveal = state;
     assertEquals("REVEAL", reveal.phase());

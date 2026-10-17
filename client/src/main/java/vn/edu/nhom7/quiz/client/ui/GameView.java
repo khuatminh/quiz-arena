@@ -41,6 +41,7 @@ public final class GameView extends BorderPane {
   private int shownSelfStreak = -1, shownOpponentStreak = -1;
   private long lastTickSecond = -1;
   private final Effects.Layer fx = new Effects.Layer();
+
   /** The round whose reveal already played its sounds and effects, so rebuilds stay quiet. */
   static UUID revealedRound;
 
@@ -318,7 +319,9 @@ public final class GameView extends BorderPane {
     var opponentBar = new Region();
     opponentBar.getStyleClass().add("race-opponent");
     selfBar.prefWidthProperty().bind(race.widthProperty().multiply(selfShare).multiply(0.5));
-    opponentBar.prefWidthProperty().bind(race.widthProperty().multiply(opponentShare).multiply(0.5));
+    opponentBar
+        .prefWidthProperty()
+        .bind(race.widthProperty().multiply(opponentShare).multiply(0.5));
     selfBar.minWidthProperty().bind(selfBar.prefWidthProperty());
     opponentBar.minWidthProperty().bind(opponentBar.prefWidthProperty());
     race.getChildren().addAll(selfBar, Ui.spacer(), opponentBar);
@@ -342,7 +345,8 @@ public final class GameView extends BorderPane {
     var streakSlot = mirrored ? opponentStreak : selfStreak;
     streakSlot.setAlignment(Pos.CENTER);
     streakSlot.setMinWidth(Region.USE_PREF_SIZE);
-    var nameRow = mirrored ? new HBox(8, streakSlot, nameLabel) : new HBox(8, nameLabel, streakSlot);
+    var nameRow =
+        mirrored ? new HBox(8, streakSlot, nameLabel) : new HBox(8, nameLabel, streakSlot);
     nameRow.setAlignment(mirrored ? Pos.CENTER_RIGHT : Pos.CENTER_LEFT);
     score.getStyleClass().add("versus-score");
     gain.getStyleClass().add("gain-pill");
@@ -509,9 +513,7 @@ public final class GameView extends BorderPane {
                     : left > 0 ? "Thưởng hiện tại: 1 điểm" : "")
             : "");
     timer.setText(
-        bound.phase().equals("REVEAL")
-            ? "✓"
-            : left > 0 ? Long.toString((left + 999) / 1000) : "…");
+        bound.phase().equals("REVEAL") ? "✓" : left > 0 ? Long.toString((left + 999) / 1000) : "…");
     String count = left > 0 ? Long.toString((left + 999) / 1000) : "Sẵn sàng";
     if (!count.equals(lastCountdown)) {
       lastCountdown = count;

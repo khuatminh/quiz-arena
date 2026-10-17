@@ -582,14 +582,19 @@ class InterfaceEvidenceTest {
       shell.onEvent(
           envelope(
               incoming ? MessageType.CHALLENGE_RECEIVED : MessageType.CHALLENGE_ACK,
-              null, null, null, null, invite));
+              null,
+              null,
+              null,
+              null,
+              invite));
       add(incoming ? "fx-invite-incoming" : "fx-invite-outgoing", shell);
     }
     if (reveal != null) {
       for (int streak : List.of(3, 5, 10)) {
         ObjectNode r = reveal.payload(MessageType.QUESTION_RESULT).deepCopy();
         r.putObject("streaks").put("101", streak).put("102", streak == 10 ? 4 : streak + 1);
-        var game = new GameView(with(reveal, MessageType.QUESTION_RESULT, r, Map.of()), sink, false);
+        var game =
+            new GameView(with(reveal, MessageType.QUESTION_RESULT, r, Map.of()), sink, false);
         cleanup.add(game::dispose);
         add("fx-streak-" + streak, game);
       }
@@ -598,24 +603,38 @@ class InterfaceEvidenceTest {
         if (o.path("userId").asLong() == 101)
           ((ObjectNode) o).put("correct", false).put("answer", "B").put("earnedPoints", 0);
       wrong.putObject("streaks").put("101", 0).put("102", 6);
-      var game = new GameView(with(reveal, MessageType.QUESTION_RESULT, wrong, Map.of()), sink, false);
+      var game =
+          new GameView(with(reveal, MessageType.QUESTION_RESULT, wrong, Map.of()), sink, false);
       cleanup.add(game::dispose);
       add("fx-wrong-flash", game);
     }
     ObjectNode lost = result.payload(MessageType.MATCH_RESULT).deepCopy();
     lost.put("winnerUserId", 102);
     var players = (ArrayNode) lost.path("players");
-    int a = players.get(0).path("totalScore").asInt(), b = players.get(1).path("totalScore").asInt();
+    int a = players.get(0).path("totalScore").asInt(),
+        b = players.get(1).path("totalScore").asInt();
     ((ObjectNode) players.get(0)).put("totalScore", Math.min(a, b));
     ((ObjectNode) players.get(1)).put("totalScore", Math.max(a, b));
     add("fx-result-lose", shell(with(result, MessageType.MATCH_RESULT, lost, Map.of()), false));
     var messages = new LinkedHashMap<UUID, JsonNode>();
-    messages.put(UUID.randomUUID(),
-        json.createObjectNode().put("displayName", "Tuấn").put("senderUserId", 102).put("text", "Câu này khó ghê"));
-    messages.put(UUID.randomUUID(),
-        json.createObjectNode().put("displayName", "Tuấn").put("senderUserId", 102).put("text", "[sticker:hurry]"));
-    messages.put(UUID.randomUUID(),
-        json.createObjectNode().put("displayName", "Minh").put("senderUserId", 101).put("text", "[sticker:fire]"));
+    messages.put(
+        UUID.randomUUID(),
+        json.createObjectNode()
+            .put("displayName", "Tuấn")
+            .put("senderUserId", 102)
+            .put("text", "Câu này khó ghê"));
+    messages.put(
+        UUID.randomUUID(),
+        json.createObjectNode()
+            .put("displayName", "Tuấn")
+            .put("senderUserId", 102)
+            .put("text", "[sticker:hurry]"));
+    messages.put(
+        UUID.randomUUID(),
+        json.createObjectNode()
+            .put("displayName", "Minh")
+            .put("senderUserId", 101)
+            .put("text", "[sticker:fire]"));
     var chat = new ChatPanel(t -> {});
     chat.render(with(reveal == null ? result : reveal, MessageType.CHAT_MESSAGE, null, messages));
     findButtonByText(chat, "").fire();

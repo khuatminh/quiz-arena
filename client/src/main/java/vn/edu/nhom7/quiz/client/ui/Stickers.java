@@ -43,11 +43,16 @@ final class Stickers {
 
   /** A rounded, gradient tile with a white icon and the caption underneath. */
   static StackPane view(Sticker sticker, double size) {
-    var icon = icon(sticker, size * 0.5);
+    return view(sticker, size, true);
+  }
+
+  /** Small tray tiles leave the caption out; it is in the tooltip and the sent bubble. */
+  static StackPane view(Sticker sticker, double size, boolean captioned) {
+    var icon = icon(sticker, size * (captioned ? 0.5 : 0.58));
     var caption = new Label(sticker.caption());
     caption.getStyleClass().add("sticker-caption");
     caption.setStyle("-fx-font-size: " + Math.round(Math.max(10, size * 0.15)) + "px;");
-    var content = new VBox(size * 0.04, icon, caption);
+    var content = captioned ? new VBox(size * 0.04, icon, caption) : new VBox(icon);
     content.setAlignment(Pos.CENTER);
     var tile = new StackPane(content);
     tile.getStyleClass().add("sticker");
@@ -106,8 +111,10 @@ final class Stickers {
               size,
               Effects.fill("M12 2 A10 10 0 1 1 12 22 A10 10 0 1 1 12 2 Z", white),
               Effects.stroke("M6.8 10 Q8.4 7.6 10 10 M14 10 Q15.6 7.6 17.2 10", "#B86E00", 1.8),
-              Effects.fill("M6.5 13 H17.5 C17.5 16.5 15 19 12 19 C9 19 6.5 16.5 6.5 13 Z", "#B86E00"));
-      case "go" -> Effects.glyph(size, Effects.fill("M13.5 1.5 L4 14 H11 L10 22.5 L20 9.5 H13 Z", white));
+              Effects.fill(
+                  "M6.5 13 H17.5 C17.5 16.5 15 19 12 19 C9 19 6.5 16.5 6.5 13 Z", "#B86E00"));
+      case "go" ->
+          Effects.glyph(size, Effects.fill("M13.5 1.5 L4 14 H11 L10 22.5 L20 9.5 H13 Z", white));
       default ->
           Effects.glyph(
               size,
