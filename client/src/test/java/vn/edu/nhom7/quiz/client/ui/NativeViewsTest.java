@@ -568,10 +568,19 @@ class NativeViewsTest {
           var buttons = view.lookupAll(".button.lifeline").stream().toList();
           assertEquals(3, buttons.size());
           assertTrue(buttons.stream().noneMatch(javafx.scene.Node::isDisabled));
+          var card = view.lookup(".lifeline-pop");
+          var use = (Button) view.lookup(".lifeline-use");
+          assertFalse(card.isVisible());
+          // The icon only opens the card; the card's button spends the lifeline.
           ((Button) buttons.get(2)).fire();
+          assertTrue(card.isVisible());
+          assertTrue(sent.isEmpty());
+          use.fire();
           assertEquals(List.of(new Payloads.LifelineUse(7, "FIFTY_FIFTY")), sent);
+          assertFalse(card.isVisible());
           // Waiting for the server: no second lifeline can be sent.
-          assertTrue(buttons.stream().allMatch(javafx.scene.Node::isDisabled));
+          ((Button) buttons.get(0)).fire();
+          assertTrue(use.isDisabled());
           view.render(after);
           view.applyCss();
           var removed = view.lookupAll(".answer-tile.eliminated");
@@ -618,6 +627,10 @@ class NativeViewsTest {
           assertTrue(buttons.get(1).getStyleClass().contains("unavailable"));
           assertTrue(buttons.get(2).getStyleClass().contains("used"));
           assertFalse(view.lookup(".opponent-lifeline").isVisible());
+          ((Button) buttons.get(1)).fire();
+          assertTrue(view.lookup(".lifeline-use").isDisabled());
+          ((Button) buttons.get(0)).fire();
+          assertFalse(view.lookup(".lifeline-use").isDisabled());
           view.dispose();
         });
   }

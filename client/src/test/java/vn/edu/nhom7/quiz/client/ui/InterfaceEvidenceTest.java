@@ -653,6 +653,14 @@ class InterfaceEvidenceTest {
     for (int i = 0; i < names.size(); i++)
       options.addObject().put("id", String.valueOf((char) ('A' + i))).put("text", names.get(i));
     add("fx-lifeline-ready", new GameView(answering(open, question, Map.of()), sink, false));
+    var card = new GameView(answering(open, question, Map.of()), sink, false);
+    cleanup.add(card::dispose);
+    card.openLifeline("FIFTY_FIFTY");
+    add("fx-lifeline-card", card);
+    var x2Card = new GameView(answering(open, question, Map.of()), sink, false);
+    cleanup.add(x2Card::dispose);
+    x2Card.openLifeline("DOUBLE_POINTS");
+    add("fx-lifeline-card-x2", x2Card);
     var fifty = json.createObjectNode().put("questionId", id).put("kind", "FIFTY_FIFTY");
     fifty.putArray("removedOptionIds").add("A").add("C");
     fifty.putArray("remaining").add("DOUBLE_POINTS").add("REMOVE_ONE");

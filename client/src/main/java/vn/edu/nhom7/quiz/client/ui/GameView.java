@@ -42,7 +42,13 @@ public final class GameView extends BorderPane {
   private long lastTickSecond = -1;
   private final Effects.Layer fx = new Effects.Layer();
   private final Map<String, Button> lifelineButtons = new LinkedHashMap<>();
-  private final Map<String, Label> lifelineNotes = new HashMap<>();
+  private final HBox dock = new HBox(12);
+  private final VBox popover = new VBox(10);
+  private final Polygon tail = new Polygon(0, 0, 18, 0, 9, 10);
+  private final Label popIcon = Ui.label(""), popName = Ui.label(""), popKey = Ui.label("");
+  private final Label popText = Ui.label(""), popStatus = Ui.label("");
+  private final Button popUse = new Button("Sử dụng");
+  private String openKind;
   private final Label selfDouble = Ui.label("x2");
   private final Label opponentLifeline = Ui.label("");
   private final UiCommandSink sink;
@@ -59,9 +65,20 @@ public final class GameView extends BorderPane {
 
   static final Map<String, String[]> LIFELINE_TEXT =
       Map.of(
-          "DOUBLE_POINTS", new String[] {"×2", "x2 điểm", "Nhân đôi điểm câu này", "X"},
-          "REMOVE_ONE", new String[] {"−1", "Loại 1 đáp án", "Bỏ một phương án sai", "L"},
-          "FIFTY_FIFTY", new String[] {"½", "50-50", "Còn đáp án đúng và một sai", "N"});
+          "DOUBLE_POINTS",
+          new String[] {
+            "×2",
+            "x2 điểm",
+            "Nhân đôi điểm của câu này: trả lời đúng được 6, 4 hoặc 2 điểm. Trả lời sai vẫn 0"
+                + " điểm.",
+            "X"
+          },
+          "REMOVE_ONE",
+          new String[] {
+            "−1", "Loại 1 đáp án", "Ẩn ngẫu nhiên một phương án sai, giúp bạn chọn dễ hơn.", "L"
+          },
+          "FIFTY_FIFTY",
+          new String[] {"½", "50-50", "Chỉ giữ lại đáp án đúng và một phương án sai.", "N"});
 
   public GameView(ClientState s, UiCommandSink sink, boolean reducedMotion) {
     bound = s;
@@ -160,7 +177,9 @@ public final class GameView extends BorderPane {
         lifelineFits =
             q.path("questionType").asText().equals("SINGLE_CHOICE")
                 && q.path("options").size() >= 3;
-        body.getChildren().add(lifelineBar());
+        buildLifelines();
+        // Room under the last answers so the corner lifeline icons never cover them.
+        body.setPadding(new Insets(0, 0, 84, 0));
         renderer =
             switch (q.path("questionType").asText()) {
               case "MULTIPLE_CHOICE" -> new MultipleChoiceRenderer();
@@ -215,18 +234,28 @@ public final class GameView extends BorderPane {
           if (getScene() != null
               && getScene().getFocusOwner() instanceof javafx.scene.control.TextInputControl)
             return;
-          if (!current.canAnswer()) return;
+          if (openKind != null && e.getCode() == javafx.scene.input.KeyCode.ESCAPE) {
+            closeLifeline();
+            e.consume();
+            return;
+          }
+          if (openKind != null && e.getCode() == javafx.scene.input.KeyCode.ENTER) {
+            if (!popUse.isDisabled()) popUse.fire();
+            e.consume();
+            return;
+          }
           String key = e.getCode().getName();
           if (key.length() != 1) key = e.getText();
           if (key == null || key.length() != 1) return;
           char c = key.charAt(0);
           for (var entry : LIFELINE_TEXT.entrySet())
-            if (Character.toUpperCase(c) == entry.getValue()[3].charAt(0)) {
-              var button = lifelineButtons.get(entry.getKey());
-              if (button != null && !button.isDisabled()) button.fire();
+            if (Character.toUpperCase(c) == entry.getValue()[3].charAt(0)
+                && lifelineButtons.containsKey(entry.getKey())) {
+              lifelineButtons.get(entry.getKey()).fire();
               e.consume();
               return;
             }
+          if (!current.canAnswer()) return;
           if (renderer instanceof SingleChoiceRenderer single
               && (Character.isLetter(c) || Character.isDigit(c))) {
             single.activateOption(c);
@@ -236,6 +265,8 @@ public final class GameView extends BorderPane {
             e.consume();
           }
         });
+    // Above the question area, which was added after the corner icons.
+    if (!lifelineButtons.isEmpty()) List.of(dock, tail, popover).forEach(Node::toFront);
     getChildren().add(fx);
     render(s);
     tick();
@@ -248,6 +279,20 @@ public final class GameView extends BorderPane {
   @Override
   protected void layoutChildren() {
     super.layoutChildren();
+    if (!lifelineButtons.isEmpty()) {
+      // The lifeline icons sit in the bottom-right corner; the open card floats above them.
+      double w = dock.prefWidth(-1), h = dock.prefHeight(-1);
+      double right = getWidth() - snappedRightInset(), bottom = getHeight() - 18;
+      dock.resizeRelocate(right - w, bottom - h, w, h);
+      if (openKind != null) {
+        double pw = popover.prefWidth(-1), ph = popover.prefHeight(pw);
+        double top = bottom - h - 14 - ph;
+        popover.resizeRelocate(right - pw, top, pw, ph);
+        var icon = lifelineButtons.get(openKind);
+        double centre = dock.getLayoutX() + icon.getLayoutX() + icon.getWidth() / 2;
+        tail.relocate(centre - 9, top + ph - 1);
+      }
+    }
     fx.resizeRelocate(0, 0, getWidth(), getHeight());
     if (getChildren().getLast() != fx) fx.toFront();
   }
@@ -454,57 +499,112 @@ public final class GameView extends BorderPane {
     if (theirs != shownOpponentStreak) showStreak(opponentStreak, shownOpponentStreak = theirs);
   }
 
-  /** Three lifeline buttons under the question: x2, remove one wrong option, and 50-50. */
-  private Node lifelineBar() {
-    var title = Ui.label("Trợ giúp");
-    title.getStyleClass().add("lifeline-title");
-    var bar = new HBox(10, title);
-    bar.setAlignment(Pos.CENTER_LEFT);
-    bar.getStyleClass().add("lifeline-bar");
+  /**
+   * Lifeline icons in the bottom-right corner. Clicking one (or its key) opens a small card above
+   * it with what the lifeline does and a "Sử dụng" button.
+   */
+  private void buildLifelines() {
+    dock.getStyleClass().add("lifeline-dock");
+    dock.setAlignment(Pos.CENTER_RIGHT);
     for (String kind : Payloads.LIFELINES) {
       String[] text = LIFELINE_TEXT.get(kind);
-      var icon = Ui.label(text[0]);
-      icon.getStyleClass().addAll("lifeline-icon", "lifeline-" + kind.toLowerCase(Locale.ROOT));
-      icon.setMinSize(38, 38);
-      icon.setAlignment(Pos.CENTER);
-      var name = Ui.label(text[1]);
-      name.getStyleClass().add("lifeline-name");
-      var note = Ui.label(text[2]);
-      note.getStyleClass().add("lifeline-note");
-      lifelineNotes.put(kind, note);
-      for (var l : List.of(name, note)) {
-        l.setWrapText(false);
-        l.setMinWidth(0);
-      }
-      var words = new VBox(1, name, note);
-      words.setMinWidth(0);
-      words.setAlignment(Pos.CENTER_LEFT);
-      HBox.setHgrow(words, Priority.ALWAYS);
+      var glyph = Ui.label(text[0]);
+      glyph.getStyleClass().add("lifeline-glyph");
       var cap = Ui.label(text[3]);
       cap.getStyleClass().add("lifeline-key");
-      cap.setMinWidth(Region.USE_PREF_SIZE);
-      var content = new HBox(10, icon, words, cap);
-      content.setAlignment(Pos.CENTER_LEFT);
+      StackPane.setAlignment(cap, Pos.BOTTOM_RIGHT);
+      cap.setTranslateX(6);
+      cap.setTranslateY(6);
+      var face = new StackPane(glyph, cap);
+      face.setMinSize(56, 56);
+      face.setMaxSize(56, 56);
       var b = new Button();
-      b.setGraphic(content);
+      b.setGraphic(face);
       b.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
-      b.setAccessibleText(text[1] + ". " + text[2] + ". Phím " + text[3]);
-      b.setMaxWidth(Double.MAX_VALUE);
-      b.setPrefWidth(0);
-      b.setMinWidth(0);
-      b.setMaxHeight(Region.USE_PREF_SIZE);
-      b.getStyleClass().add("lifeline");
-      content.prefWidthProperty().bind(b.widthProperty().subtract(28));
-      HBox.setHgrow(b, Priority.ALWAYS);
-      b.setOnAction(e -> useLifeline(kind));
+      b.setAccessibleText(text[1] + ". Phím " + text[3]);
+      b.getStyleClass().addAll("lifeline", "lifeline-" + kind.toLowerCase(Locale.ROOT));
+      b.setTooltip(new Tooltip(text[1] + " · phím " + text[3]));
+      b.setOnAction(e -> toggleLifeline(kind));
       lifelineButtons.put(kind, b);
-      bar.getChildren().add(b);
+      dock.getChildren().add(b);
     }
-    return bar;
+    popIcon.getStyleClass().add("lifeline-pop-icon");
+    popIcon.setMinSize(40, 40);
+    popIcon.setAlignment(Pos.CENTER);
+    popName.getStyleClass().add("lifeline-pop-name");
+    popKey.getStyleClass().add("lifeline-pop-key");
+    var close = new Button("✕");
+    close.getStyleClass().add("lifeline-pop-close");
+    close.setAccessibleText("Đóng");
+    close.setOnAction(e -> closeLifeline());
+    var header = new HBox(10, popIcon, popName, Ui.spacer(), popKey, close);
+    header.setAlignment(Pos.CENTER_LEFT);
+    popText.getStyleClass().add("lifeline-pop-text");
+    popStatus.getStyleClass().add("lifeline-pop-status");
+    var rule = Ui.label("Mỗi quyền dùng 1 lần mỗi trận, tối đa 1 quyền mỗi câu.");
+    rule.getStyleClass().add("lifeline-pop-rule");
+    popUse.getStyleClass().add("lifeline-use");
+    popUse.setMaxWidth(Double.MAX_VALUE);
+    popUse.setOnAction(e -> useLifeline(openKind));
+    popover.getChildren().addAll(header, popText, popStatus, popUse, rule);
+    popover.getStyleClass().add("lifeline-pop");
+    popover.setPrefWidth(330);
+    popover.setFillWidth(true);
+    tail.getStyleClass().add("lifeline-pop-tail");
+    for (Node n : List.of(dock, tail, popover)) {
+      n.setManaged(false);
+      getChildren().add(n);
+    }
+    popover.setVisible(false);
+    tail.setVisible(false);
+  }
+
+  private void toggleLifeline(String kind) {
+    if (kind.equals(openKind)) closeLifeline();
+    else openLifeline(kind);
+  }
+
+  void openLifeline(String kind) {
+    if (!lifelineButtons.containsKey(kind)) return;
+    openKind = kind;
+    String[] text = LIFELINE_TEXT.get(kind);
+    popIcon.setText(text[0]);
+    popIcon
+        .getStyleClass()
+        .removeIf(c -> c.startsWith("lifeline-") && !c.equals("lifeline-pop-icon"));
+    popIcon.getStyleClass().add("lifeline-" + kind.toLowerCase(Locale.ROOT));
+    popName.setText(text[1]);
+    popKey.setText("Phím " + text[3]);
+    popText.setText(text[2]);
+    lifelineButtons.forEach((k, b) -> b.getStyleClass().remove("open"));
+    lifelineButtons.get(kind).getStyleClass().add("open");
+    popover.setVisible(true);
+    tail.setVisible(true);
+    renderLifelines(current);
+    requestLayout();
+    if (!reducedMotion) {
+      popover.setScaleX(0.85);
+      popover.setScaleY(0.85);
+      popover.setOpacity(0);
+      var grow = new ScaleTransition(Duration.millis(180), popover);
+      grow.setToX(1);
+      grow.setToY(1);
+      grow.setInterpolator(Effects.BACK_OUT);
+      var fade = new FadeTransition(Duration.millis(140), popover);
+      fade.setToValue(1);
+      Effects.run(new ParallelTransition(grow, fade), animations, Duration.millis(180));
+    }
+  }
+
+  private void closeLifeline() {
+    openKind = null;
+    lifelineButtons.forEach((k, b) -> b.getStyleClass().remove("open"));
+    popover.setVisible(false);
+    tail.setVisible(false);
   }
 
   private void useLifeline(String kind) {
-    if (!current.canAnswer() || lifelinePending || questionId < 0) return;
+    if (kind == null || !current.canAnswer() || lifelinePending || questionId < 0) return;
     lifelinePending = true;
     errorAtSend = current.error();
     try {
@@ -513,6 +613,7 @@ public final class GameView extends BorderPane {
           current.activeMatchId(),
           current.roundId(),
           new Payloads.LifelineUse(questionId, kind));
+      closeLifeline();
     } catch (RuntimeException failure) {
       lifelinePending = false;
     }
@@ -538,21 +639,33 @@ public final class GameView extends BorderPane {
       Button b = entry.getValue();
       boolean used = !remaining.contains(kind), isActive = kind.equals(active);
       boolean fits = kind.equals("DOUBLE_POINTS") || lifelineFits;
-      b.setDisable(!s.canAnswer() || used || !fits || !active.isEmpty() || lifelinePending);
       b.getStyleClass().removeAll("used", "active", "unavailable");
       if (isActive) b.getStyleClass().add("active");
       else if (used) b.getStyleClass().add("used");
       else if (!fits) b.getStyleClass().add("unavailable");
-      lifelineNotes
-          .get(kind)
-          .setText(
-              isActive
-                  ? kind.equals("DOUBLE_POINTS")
-                      ? s.phase().equals("OPEN") ? "Đang nhân đôi câu này" : "Đã nhân đôi câu này"
-                      : "Đã loại phương án"
-                  : used
-                      ? "Đã dùng trong trận"
-                      : !fits ? "Chỉ cho câu một đáp án" : LIFELINE_TEXT.get(kind)[2]);
+      if (!kind.equals(openKind)) continue;
+      String why =
+          isActive
+              ? kind.equals("DOUBLE_POINTS")
+                  ? s.phase().equals("OPEN") ? "Đang nhân đôi câu này" : "Đã nhân đôi câu này"
+                  : "Đã loại phương án ở câu này"
+              : used
+                  ? "Đã dùng trong trận này"
+                  : !fits
+                      ? "Chỉ dùng cho câu một đáp án có từ 3 phương án"
+                      : !active.isEmpty()
+                          ? "Câu này đã dùng một quyền trợ giúp"
+                          : s.accepted() || s.ownPending()
+                              ? "Bạn đã trả lời câu này"
+                              : !s.phase().equals("OPEN")
+                                  ? "Dùng được khi câu hỏi bắt đầu tính giờ"
+                                  : lifelinePending ? "Đang gửi…" : "Còn 1 lần trong trận";
+      boolean usable = s.canAnswer() && !used && fits && active.isEmpty() && !lifelinePending;
+      popStatus.setText(why);
+      popStatus.getStyleClass().removeAll("ok", "blocked");
+      popStatus.getStyleClass().add(usable || isActive ? "ok" : "blocked");
+      popUse.setDisable(!usable);
+      popUse.setText(usable ? "Sử dụng · Enter" : isActive ? "Đang dùng" : "Sử dụng");
     }
     doubled = active.equals("DOUBLE_POINTS");
     selfDouble.setVisible(doubled);

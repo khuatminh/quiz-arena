@@ -381,7 +381,7 @@ Ví dụ: trả lời đúng sau 4 giây được 3 điểm; đúng sau 8 giây 
 
 ### Quyền trợ giúp
 
-Mỗi người có ba quyền trợ giúp, mỗi quyền dùng **một lần mỗi trận** và **tối đa một quyền mỗi câu**. Chỉ dùng được khi câu đang mở và mình chưa trả lời; đồng hồ không dừng. Đối thủ thấy thông báo bạn vừa dùng quyền nào, nhưng không thấy phương án bị loại.
+Mỗi người có ba quyền trợ giúp, mỗi quyền dùng **một lần mỗi trận** và **tối đa một quyền mỗi câu**. Chỉ dùng được khi câu đang mở và mình chưa trả lời; đồng hồ không dừng. Ba biểu tượng trợ giúp nằm ở góc dưới bên phải màn trận đấu: bấm vào biểu tượng (hoặc nhấn phím của nó) để mở khung mô tả, rồi chọn **Sử dụng** hoặc nhấn Enter; Esc để đóng. Đối thủ thấy thông báo bạn vừa dùng quyền nào, nhưng không thấy phương án bị loại.
 
 | Quyền | Phím | Tác dụng | Áp dụng cho |
 | --- | --- | --- | --- |
