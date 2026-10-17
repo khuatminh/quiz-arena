@@ -344,6 +344,16 @@ class InterfaceEvidenceTest {
         }
       }
       if (open != null) {
+        var paused = new GameView(open, sink, true);
+        cleanup.add(paused::dispose);
+        add(
+            "pause-overlay",
+            new StackPane(paused, new SettingsOverlay(() -> 7, () -> {}, () -> {})));
+        add(
+            "settings-overlay",
+            new StackPane(
+                new LobbyView(state.lobby(), sink, q -> {}),
+                new SettingsOverlay(() -> -1, () -> {}, null)));
         ObjectNode pictureQuestion = open.question().deepCopy();
         pictureQuestion.put("content", "Quan sát hình ảnh. Thủ đô của Việt Nam là gì?");
         pictureQuestion.put("questionAssetId", "question-sample");

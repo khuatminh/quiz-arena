@@ -31,7 +31,7 @@ public final class GameView extends BorderPane {
   private final QuestionRenderer renderer;
   private final long received, remaining;
   private final ClientState bound;
-  private final boolean reducedMotion;
+  private final boolean reducedMotionFlag;
   private final List<Animation> animations = new ArrayList<>();
   private ScaleTransition pulse;
   private String lastCountdown = "";
@@ -85,7 +85,7 @@ public final class GameView extends BorderPane {
     bound = s;
     current = s;
     this.sink = sink;
-    this.reducedMotion = reducedMotion;
+    this.reducedMotionFlag = reducedMotion;
     received = s.receivedNanos();
     getStyleClass().add("game-surface");
     var questionEvent = s.payload(MessageType.QUESTION);
@@ -127,7 +127,7 @@ public final class GameView extends BorderPane {
           new LeaderboardPanel(
               s.payload(MessageType.ROUND_LEADERBOARD),
               s.selfUserId(),
-              reducedMotion || s.payload(MessageType.MATCH_SNAPSHOT) != null);
+              reducedMotion() || s.payload(MessageType.MATCH_SNAPSHOT) != null);
       var holder = new StackPane(leaderboard);
       holder.setAlignment(Pos.TOP_CENTER);
       var scroll = Ui.scroll(holder);
@@ -256,8 +256,8 @@ public final class GameView extends BorderPane {
                     () -> scroll.getViewportBounds().getHeight(), scroll.viewportBoundsProperty()));
         setCenter(scroll);
         setBottom(deck);
-        if (!reducedMotion && s.phase().equals("QUESTION_PREPARE")) enter(stage, 0);
-        if (!reducedMotion && s.phase().equals("REVEAL"))
+        if (!reducedMotion() && s.phase().equals("QUESTION_PREPARE")) enter(stage, 0);
+        if (!reducedMotion() && s.phase().equals("REVEAL"))
           javafx.application.Platform.runLater(() -> celebrate(deck));
       }
     }
@@ -351,16 +351,16 @@ public final class GameView extends BorderPane {
       for (var o : result.path("outcomes"))
         if (o.path("userId").asLong() == selfId) right = o.path("correct").asBoolean(false);
     Sound.play(right ? Sound.Effect.CORRECT : Sound.Effect.WRONG);
-    if (!right && !reducedMotion) Effects.wrongFlash(fx, animations);
+    if (!right && !reducedMotion()) Effects.wrongFlash(fx, animations);
     int streak = streak(s, selfId);
     if (right && (streak == 3 || streak == 5 || streak == 10)) {
       var later = new PauseTransition(Duration.millis(Effects.preview ? 0 : 260));
       later.setOnFinished(
           e -> {
             Sound.play(Sound.Effect.STREAK);
-            if (!reducedMotion) Effects.streakBanner(fx, streak, animations);
+            if (!reducedMotion()) Effects.streakBanner(fx, streak, animations);
           });
-      if (Effects.preview && !reducedMotion) Effects.streakBanner(fx, streak, animations);
+      if (Effects.preview && !reducedMotion()) Effects.streakBanner(fx, streak, animations);
       else play(later);
     }
   }
@@ -529,6 +529,7 @@ public final class GameView extends BorderPane {
               .addAll(Ui.prompt("1–" + options, "Chọn"), Ui.prompt("Tab", "Di chuyển"));
     }
     if (!lifelineButtons.isEmpty()) prompts.getChildren().add(Ui.prompt("X · L · N", "Trợ giúp"));
+    prompts.getChildren().add(Ui.prompt("Esc", "Tạm dừng"));
   }
 
   public void render(ClientState s) {
@@ -664,7 +665,7 @@ public final class GameView extends BorderPane {
     tail.setVisible(true);
     renderLifelines(current);
     requestLayout();
-    if (!reducedMotion) {
+    if (!reducedMotion()) {
       popover.setScaleX(0.85);
       popover.setScaleY(0.85);
       popover.setOpacity(0);
@@ -754,10 +755,10 @@ public final class GameView extends BorderPane {
     String key = s.roundId() + ":" + selfId;
     boolean fresh = !active.isEmpty() && announcedLifelines.add(key);
     if (fresh) Sound.play(Sound.Effect.LIFELINE);
-    if (doubled && fresh && !reducedMotion) pop(selfDouble);
+    if (doubled && fresh && !reducedMotion()) pop(selfDouble);
     if (thisQuestion && renderer instanceof BaseQuestionRenderer base) {
       var removed = base.eliminate(texts(result.path("removedOptionIds")));
-      if (fresh && !reducedMotion) removed.forEach(this::crumble);
+      if (fresh && !reducedMotion()) removed.forEach(this::crumble);
     }
     var status = s.payload(MessageType.LIFELINE_STATUS);
     var theirs = status == null ? null : status.path("byUser").get(Long.toString(opponentId));
@@ -769,7 +770,7 @@ public final class GameView extends BorderPane {
     if (shown
         && !wasShown
         && announcedLifelines.add(s.roundId() + ":" + opponentId)
-        && !reducedMotion) pop(opponentLifeline);
+        && !reducedMotion()) pop(opponentLifeline);
   }
 
   private void pop(Node node) {
@@ -805,9 +806,9 @@ public final class GameView extends BorderPane {
   private void showStreak(HBox slot, int streak) {
     slot.getChildren().clear();
     if (Effects.tier(streak) == 0) return;
-    var badge = Effects.streakBadge(streak, !reducedMotion, animations);
+    var badge = Effects.streakBadge(streak, !reducedMotion(), animations);
     slot.getChildren().add(badge);
-    if (!reducedMotion && bound.phase().equals("REVEAL")) {
+    if (!reducedMotion() && bound.phase().equals("REVEAL")) {
       var pop = new ScaleTransition(Duration.millis(420), badge);
       pop.setFromX(0.3);
       pop.setFromY(0.3);
@@ -890,6 +891,18 @@ public final class GameView extends BorderPane {
     return Math.max(0, initial - Math.max(0, nowNanos - receivedNanos) / 1_000_000);
   }
 
+  /** Motion is reduced by the start-up flag or, from the next animation on, by the settings. */
+  private boolean reducedMotion() {
+    return reducedMotionFlag || Theme.reduceMotion();
+  }
+
+  /** Whole seconds left to answer, or -1 when no question is open. */
+  public int secondsLeft() {
+    if (!bound.phase().equals("OPEN")) return -1;
+    long left = remainingAt(remaining, received, System.nanoTime());
+    return left > 0 ? (int) ((left + 999) / 1000) : 0;
+  }
+
   public void tick() {
     long left = remainingAt(remaining, received, System.nanoTime());
     boolean open = bound.phase().equals("OPEN");
@@ -916,7 +929,7 @@ public final class GameView extends BorderPane {
     if (!count.equals(lastCountdown)) {
       lastCountdown = count;
       countdown.setText(count);
-      if (!reducedMotion && bound.phase().equals("MATCH_COUNTDOWN")) {
+      if (!reducedMotion() && bound.phase().equals("MATCH_COUNTDOWN")) {
         var pop = new ScaleTransition(Duration.millis(220), countdown);
         pop.setFromX(1.4);
         pop.setFromY(1.4);
@@ -937,7 +950,7 @@ public final class GameView extends BorderPane {
     if (urgent != ring.getStyleClass().contains("urgent")) {
       if (urgent) {
         ring.getStyleClass().add("urgent");
-        if (!reducedMotion) {
+        if (!reducedMotion()) {
           pulse = new ScaleTransition(Duration.millis(450), ring);
           pulse.setToX(1.08);
           pulse.setToY(1.08);

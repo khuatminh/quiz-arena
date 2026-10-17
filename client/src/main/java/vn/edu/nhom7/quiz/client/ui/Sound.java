@@ -31,11 +31,17 @@ public final class Sound {
     }
   }
 
-  private static final double MUSIC_VOLUME = 0.22;
+  /** Loudest music volume; the default level of 40% gives the original 0.22. */
+  private static final double MUSIC_VOLUME = 0.55;
+
+  /** Effect volumes are tuned for the default level of 80%. */
+  private static final double EFFECTS_DEFAULT = 0.8;
+
   private static final Map<Effect, AudioClip> clips = new EnumMap<>(Effect.class);
   private static Preferences prefs;
   private static boolean enabled, effectsOn = true, musicOn = true, musicWanted;
   private static MediaPlayer music;
+  private static double musicLevel = 0.4, effectsLevel = EFFECTS_DEFAULT;
 
   private Sound() {}
 
@@ -47,6 +53,8 @@ public final class Sound {
       prefs = Preferences.userNodeForPackage(Sound.class);
       effectsOn = prefs.getBoolean("effects", true);
       musicOn = prefs.getBoolean("music", true);
+      musicLevel = clamp(prefs.getDouble("musicLevel", musicLevel));
+      effectsLevel = clamp(prefs.getDouble("effectsLevel", effectsLevel));
     } catch (Throwable ignored) {
       prefs = null;
     }
@@ -82,7 +90,7 @@ public final class Sound {
     var clip = clip(effect);
     if (clip == null) return;
     try {
-      clip.play();
+      clip.play(Math.min(1, effect.volume * effectsLevel / EFFECTS_DEFAULT));
     } catch (Throwable ignored) {
     }
   }
@@ -98,7 +106,7 @@ public final class Sound {
           if (url == null) return;
           music = new MediaPlayer(new Media(url.toExternalForm()));
           music.setCycleCount(MediaPlayer.INDEFINITE);
-          music.setVolume(MUSIC_VOLUME);
+          music.setVolume(MUSIC_VOLUME * musicLevel);
         }
         music.play();
       } else if (music != null) music.pause();
@@ -128,6 +136,41 @@ public final class Sound {
     musicOn = on;
     save("music", on);
     music(musicWanted);
+  }
+
+  /** Music loudness from 0 to 1, shown as a percentage in the settings. */
+  public static double musicLevel() {
+    return musicLevel;
+  }
+
+  public static double effectsLevel() {
+    return effectsLevel;
+  }
+
+  public static synchronized void setMusicLevel(double level) {
+    musicLevel = clamp(level);
+    save("musicLevel", musicLevel);
+    try {
+      if (music != null) music.setVolume(MUSIC_VOLUME * musicLevel);
+    } catch (Throwable ignored) {
+    }
+  }
+
+  public static void setEffectsLevel(double level) {
+    effectsLevel = clamp(level);
+    save("effectsLevel", effectsLevel);
+  }
+
+  private static double clamp(double level) {
+    return Double.isNaN(level) ? 0 : Math.max(0, Math.min(1, level));
+  }
+
+  private static void save(String key, double value) {
+    if (prefs == null) return;
+    try {
+      prefs.putDouble(key, value);
+    } catch (Throwable ignored) {
+    }
   }
 
   private static void save(String key, boolean value) {

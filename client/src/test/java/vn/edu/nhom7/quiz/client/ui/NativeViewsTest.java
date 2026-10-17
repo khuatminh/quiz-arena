@@ -320,6 +320,64 @@ class NativeViewsTest {
         });
   }
 
+  @Test
+  void escOpensTheSettingsMenuAndItsChoicesRestyleTheApp() throws Exception {
+    fx(
+        () -> {
+          var store = new vn.edu.nhom7.quiz.client.state.ClientStore();
+          var network = new vn.edu.nhom7.quiz.client.network.NetworkClient(e -> {}, reason -> {});
+          var shell = new AppShell(store, network, (type, m, r, p) -> UUID.randomUUID());
+          var scene = new javafx.scene.Scene(shell, 1280, 800);
+          Theme.attach(scene);
+          try {
+            shell.fireEvent(escape());
+            shell.applyCss();
+            shell.layout();
+            var menu = shell.lookup(".settings-backdrop");
+            assertNotNull(menu);
+            // Outside a match there is nothing to forfeit.
+            assertTrue(
+                menu.lookupAll(".button").stream()
+                    .noneMatch(n -> ((Button) n).getText().startsWith("Rời trận")));
+            choice(menu, "Lớn").fire();
+            choice(menu, "Sáng").fire();
+            assertEquals(Theme.TextSize.LARGE, Theme.textSize());
+            assertEquals(Theme.Mode.LIGHT, Theme.mode());
+            assertEquals(Theme.stylesheets(), scene.getStylesheets());
+            assertEquals(3, scene.getStylesheets().size());
+            menu.fireEvent(escape());
+            assertNull(shell.lookup(".settings-backdrop"));
+          } finally {
+            Theme.setTextSize(Theme.TextSize.NORMAL);
+            Theme.setMode(Theme.Mode.DARK);
+            Theme.detach(scene);
+            shell.close();
+            network.close();
+            store.close();
+          }
+        });
+  }
+
+  private static javafx.scene.input.KeyEvent escape() {
+    return new javafx.scene.input.KeyEvent(
+        javafx.scene.input.KeyEvent.KEY_PRESSED,
+        "",
+        "",
+        javafx.scene.input.KeyCode.ESCAPE,
+        false,
+        false,
+        false,
+        false);
+  }
+
+  private static ToggleButton choice(javafx.scene.Node menu, String text) {
+    return menu.lookupAll(".toggle-button").stream()
+        .map(n -> (ToggleButton) n)
+        .filter(b -> b.getText().equals(text))
+        .findFirst()
+        .orElseThrow();
+  }
+
   private Button headerButton(AppShell shell, String text) {
     return ((HBox) shell.getTop())
         .getChildren().stream()

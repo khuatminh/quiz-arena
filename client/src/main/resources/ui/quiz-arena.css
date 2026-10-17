@@ -451,3 +451,27 @@
 .review-result.wrong { -fx-background-color: -q-bad-soft; -fx-text-fill: -q-bad-text; }
 .review-result.neutral { -fx-background-color: -q-surface-2; -fx-text-fill: -q-ink-3; }
 .review-body .answer-card { -fx-font-size: 15px; -fx-padding: 10 14; }
+
+/* ---------- Esc menu: pause and settings (GĐ3) ---------- */
+.settings-backdrop { -fx-background-color: -q-scrim; }
+.settings-card {
+  -fx-background-color: -q-surface; -fx-background-radius: 20; -fx-border-color: -q-line-strong; -fx-border-radius: 20;
+  -fx-padding: 24 28; -fx-effect: dropshadow(gaussian, -q-shadow, 30, 0, 0, 8);
+}
+.settings-scroll, .settings-scroll > .viewport { -fx-background-color: transparent; }
+.settings-card .settings-kicker { -fx-text-fill: -q-gold-text; }
+.settings-card .title { -fx-font-size: 22px; }
+.settings-clock { -fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: -q-gold-text; -fx-background-color: -q-gold-soft; -fx-background-radius: 10; -fx-padding: 10 14; }
+.settings-clock.urgent { -fx-text-fill: -q-bad-text; -fx-background-color: -q-bad-soft; }
+.button.settings-resume { -fx-font-size: 16px; -fx-padding: 12 16; }
+.settings-row { -fx-padding: 4 0; }
+.settings-label { -fx-font-size: 15px; -fx-font-weight: bold; }
+.settings-value { -fx-font-family: "Chakra Petch"; -fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: -q-ink-2; -fx-min-width: 44; -fx-alignment: center-right; }
+.slider .track { -fx-background-color: -q-surface-3; -fx-background-radius: 4; -fx-pref-height: 8; -fx-padding: 3; }
+.slider .thumb { -fx-background-color: -q-self; -fx-background-radius: 999; -fx-padding: 9; -fx-border-color: transparent; -fx-border-radius: 999; -fx-border-width: 2; }
+.slider:focused .thumb { -fx-border-color: -q-focus; }
+.segmented .toggle-button { -fx-background-color: -q-surface-2; -fx-text-fill: -q-ink; -fx-border-color: -q-line; -fx-padding: 8 14; }
+.segmented .toggle-button:hover { -fx-background-color: -q-surface-3; }
+.segmented .toggle-button:selected { -fx-background-color: -q-self; -fx-text-fill: -q-on-self; -fx-border-color: transparent; }
+.segmented .toggle-button:focused { -fx-border-color: -q-focus; }
+.settings-check { -fx-font-size: 15px; }

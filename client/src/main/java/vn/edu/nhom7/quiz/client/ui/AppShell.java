@@ -32,9 +32,11 @@ public final class AppShell extends BorderPane implements AutoCloseable {
   private ChallengeDialog challenge;
   private LobbyView lobby;
   private Long selectedQuizCategory;
-  private final boolean reducedMotion = Boolean.getBoolean("quiz.reducedMotion");
+  private final boolean reducedMotionFlag = Boolean.getBoolean("quiz.reducedMotion");
   private final Effects.Layer fx = new Effects.Layer();
   private StackPane inviteHost;
+  private SettingsOverlay settings;
+  private boolean settingsInMatch;
   private UUID celebratedMatch;
 
   public AppShell(ClientStore store, NetworkClient network, UiCommandSink sink) {
@@ -92,12 +94,61 @@ public final class AppShell extends BorderPane implements AutoCloseable {
                 Duration.millis(100),
                 e -> {
                   if (game != null) game.tick();
+                  if (settings != null) settings.tick();
                   if (challenge != null)
                     challenge.tick(System.currentTimeMillis() + network.time.offsetMs());
                 }));
     clock.setCycleCount(Animation.INDEFINITE);
     clock.play();
     getChildren().add(fx);
+    // Esc opens the settings menu from anywhere; views that use Esc themselves consume it first.
+    addEventHandler(
+        javafx.scene.input.KeyEvent.KEY_PRESSED,
+        e -> {
+          if (e.getCode() != javafx.scene.input.KeyCode.ESCAPE) return;
+          if (settings != null) closeSettings();
+          else if (challenge == null || !challenge.incoming()) openSettings();
+          else return;
+          e.consume();
+        });
+  }
+
+  private boolean reducedMotion() {
+    return reducedMotionFlag || Theme.reduceMotion();
+  }
+
+  private static boolean inMatch(ClientState s) {
+    return s.activeMatchId() != null && !s.phase().equals("RESULT");
+  }
+
+  /** Shows the Esc menu over the current screen; during a match it can also forfeit. */
+  public void openSettings() {
+    if (settings != null) return;
+    var s = store.state();
+    settingsInMatch = inMatch(s);
+    settings =
+        new SettingsOverlay(
+            () -> game == null ? -1 : game.secondsLeft(),
+            this::closeSettings,
+            settingsInMatch
+                ? () -> {
+                  closeSettings();
+                  commands.send(
+                      MessageType.EXIT_MATCH,
+                      store.state().activeMatchId(),
+                      null,
+                      new Payloads.ExitMatch());
+                }
+                : null);
+    fx.getChildren().add(settings);
+    Platform.runLater(() -> settings.focus());
+  }
+
+  public void closeSettings() {
+    if (settings == null) return;
+    fx.getChildren().remove(settings);
+    settings = null;
+    if (getCenter() != null) getCenter().requestFocus();
   }
 
   @Override
@@ -121,7 +172,7 @@ public final class AppShell extends BorderPane implements AutoCloseable {
     fx.getChildren().add(host);
     dialog.tick(System.currentTimeMillis() + network.time.offsetMs());
     Platform.runLater(dialog::focusAction);
-    if (reducedMotion) return;
+    if (reducedMotion()) return;
     var in =
         new Timeline(
             new KeyFrame(
@@ -146,7 +197,7 @@ public final class AppShell extends BorderPane implements AutoCloseable {
     inviteHost = null;
     challenge = null;
     if (host == null) return;
-    if (reducedMotion || host.getChildren().isEmpty()) {
+    if (reducedMotion() || host.getChildren().isEmpty()) {
       fx.getChildren().remove(host);
       return;
     }
@@ -173,39 +224,24 @@ public final class AppShell extends BorderPane implements AutoCloseable {
     return null;
   }
 
-  /** Header toggles for background music and sound effects. */
-  private Button soundToggle(boolean music) {
-    boolean on = music ? Sound.musicOn() : Sound.effectsOn();
+  private Button settingsButton() {
     var glyph = new javafx.scene.shape.SVGPath();
     glyph.setContent(
-        music
-            ? "M8 5 L20 2.5 V15.5 A3 3 0 1 1 18 12.7 V7.2 L10 8.9 V18 A3 3 0 1 1 8 15.2 Z"
-            : "M3 9 H7 L12 5 V19 L7 15 H3 Z M15 8.2 A5 5 0 0 1 15 15.8 L16.3 17.2 A7 7 0 0 0 16.3"
-                + " 6.8 Z");
+        "M3 5h18v2H3z M3 11h18v2H3z M3 17h18v2H3z M7 3.5a2.5 2.5 0 1 1 0 5a2.5 2.5 0 1 1 0-5z"
+            + " M15 9.5a2.5 2.5 0 1 1 0 5a2.5 2.5 0 1 1 0-5z M10 15.5a2.5 2.5 0 1 1 0 5a2.5 2.5"
+            + " 0 1 1 0-5z");
     glyph.getStyleClass().add("sound-glyph");
     var icon = new StackPane(glyph);
-    if (!on) {
-      var slash = new javafx.scene.shape.Line(2, 2, 20, 20);
-      slash.getStyleClass().add("sound-slash");
-      icon.getChildren().add(slash);
-    }
     icon.setMinSize(22, 22);
     icon.setPrefSize(22, 22);
     var b = new Button();
     b.setGraphic(icon);
     b.setMinHeight(40);
     b.setMinWidth(Region.USE_PREF_SIZE);
-    b.getStyleClass().addAll("icon-toggle", on ? "on" : "off");
-    String label =
-        music ? (on ? "Tắt nhạc nền" : "Bật nhạc nền") : (on ? "Tắt âm thanh" : "Bật âm thanh");
-    b.setAccessibleText(label);
-    b.setTooltip(new Tooltip(label));
-    b.setOnAction(
-        e -> {
-          if (music) Sound.setMusicOn(!Sound.musicOn());
-          else Sound.setEffectsOn(!Sound.effectsOn());
-          header(store.state());
-        });
+    b.getStyleClass().addAll("icon-toggle", "on");
+    b.setAccessibleText("Cài đặt (Esc)");
+    b.setTooltip(new Tooltip("Cài đặt · Esc"));
+    b.setOnAction(e -> openSettings());
     return b;
   }
 
@@ -393,8 +429,8 @@ public final class AppShell extends BorderPane implements AutoCloseable {
                 "Đăng xuất",
                 () -> commands.send(MessageType.LOGOUT, null, null, new Payloads.Logout())));
     bar.getChildren().add(2, Ui.spacer());
-    bar.getChildren().add(3, soundToggle(true));
-    bar.getChildren().add(4, soundToggle(false));
+    // Sound levels, mute, theme and text size all live in the Esc menu behind this button.
+    bar.getChildren().add(3, settingsButton());
     bar.getStyleClass().add("app-header");
     ((Label) bar.getChildren().get(0)).getStyleClass().add("brand");
     ((Label) bar.getChildren().get(0)).setWrapText(false);
@@ -437,6 +473,11 @@ public final class AppShell extends BorderPane implements AutoCloseable {
 
   public void render(ClientState s) {
     if (!s.error().isBlank()) message.setText(s.error());
+    // A match that ends (or starts) under the menu changes what the menu may offer.
+    if (settings != null && settingsInMatch != inMatch(s)) {
+      closeSettings();
+      openSettings();
+    }
     header(s);
     if (s.profile() == null) {
       setCenter(auth);
@@ -519,11 +560,11 @@ public final class AppShell extends BorderPane implements AutoCloseable {
           // Confetti and the win/lose sound play once per match, not on every rebuild.
           if (s.resultMatchId() != null && !s.resultMatchId().equals(celebratedMatch)) {
             celebratedMatch = s.resultMatchId();
-            Platform.runLater(() -> shown.celebrate(fx, reducedMotion));
+            Platform.runLater(() -> shown.celebrate(fx, reducedMotion()));
           }
         }
         default -> {
-          game = new GameView(s, commands, reducedMotion);
+          game = new GameView(s, commands, reducedMotion());
           setCenter(game);
         }
       }
