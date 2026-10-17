@@ -444,6 +444,12 @@ class InterfaceEvidenceTest {
       }
       add("result-shell", shell(state, false));
       effects(state, reveal, profile);
+      if (open != null) {
+        var locking = new GameView(open, sink, false);
+        cleanup.add(locking::dispose);
+        ((Button) locking.lookup(".answer-tile")).fire();
+        add("fx-lock", locking);
+      }
       if (open != null) lifelines(open, reveal);
       var invalidLogin = new AuthView(sink, (h, p) -> {});
       invalidLogin.connected(true);
@@ -673,6 +679,7 @@ class InterfaceEvidenceTest {
     ((ObjectNode) players.get(0)).put("totalScore", Math.min(a, b));
     ((ObjectNode) players.get(1)).put("totalScore", Math.max(a, b));
     add("fx-result-lose", shell(with(result, MessageType.MATCH_RESULT, lost, Map.of()), false));
+    add("fx-result-win", shell(result, false));
     var messages = new LinkedHashMap<UUID, JsonNode>();
     messages.put(
         UUID.randomUUID(),

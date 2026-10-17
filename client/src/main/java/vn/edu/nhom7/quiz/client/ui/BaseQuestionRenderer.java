@@ -117,8 +117,11 @@ abstract class BaseQuestionRenderer implements QuestionRenderer {
 
   /** Marks {@code tile} as the locked answer and fades the other tiles back. */
   protected void lock(Button tile) {
-    tile.getStyleClass().add("chosen");
+    if (!tile.getStyleClass().contains("chosen")) tile.getStyleClass().add("chosen");
     if (!box.getStyleClass().contains("locked")) box.getStyleClass().add("locked");
+    for (var entry : answerControls.entrySet())
+      if (entry.getValue() == tile && markSlots.get(entry.getKey()) instanceof Pane slot)
+        slot.getChildren().add(chip("ĐÃ KHÓA", "lock-stamp"));
   }
 
   /** Up to four tiles share one row; more options wrap onto further rows of four. */
@@ -202,6 +205,7 @@ abstract class BaseQuestionRenderer implements QuestionRenderer {
         Control control = answerControls.get(id);
         if (control == null) continue;
         if (!correct.contains(id)) control.getStyleClass().add("incorrect");
+        if (outcome.userId() == self) control.getStyleClass().add("own-pick");
         String name = outcome.userId() == self ? "Bạn" : "Đối thủ";
         String avatar = "avatar-01";
         if (players != null)

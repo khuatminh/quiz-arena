@@ -33,9 +33,8 @@ public final class MultipleChoiceRenderer extends BaseQuestionRenderer {
           if (selected.isEmpty()) return;
           answerControls.forEach(
               (id, c) -> {
-                if (selected.contains(id)) c.getStyleClass().add("chosen");
+                if (selected.contains(id) && c instanceof Button tile) lock(tile);
               });
-          if (!box.getStyleClass().contains("locked")) box.getStyleClass().add("locked");
           setControlsEnabled(false);
           answer.accept(AnswerIntentFactory.multiple(selected));
         });

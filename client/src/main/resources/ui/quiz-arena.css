@@ -475,3 +475,11 @@
 .segmented .toggle-button:selected { -fx-background-color: -q-self; -fx-text-fill: -q-on-self; -fx-border-color: transparent; }
 .segmented .toggle-button:focused { -fx-border-color: -q-focus; }
 .settings-check { -fx-font-size: 15px; }
+
+/* ---------- Tiered effects (GĐ4) ---------- */
+.hit-flash { -fx-background-color: #FFFFFF; -fx-background-radius: 18; }
+.answer-tile .answer-chip.lock-stamp {
+  -fx-font-family: "Chakra Petch"; -fx-font-size: 12px; -fx-font-weight: bold; -fx-rotate: -6;
+  -fx-text-fill: #FFFFFF; -fx-background-color: #0E132699; -fx-background-radius: 6;
+  -fx-border-color: #FFFFFF; -fx-border-width: 2; -fx-border-radius: 6; -fx-padding: 1 7;
+}

@@ -359,6 +359,232 @@ final class Effects {
     return holder;
   }
 
+  /**
+   * How hard an event hits, from the effects board: small events never shake or freeze, medium ones
+   * shake a little, pause for a beat and throw a few sparks, large ones do all of it at full
+   * strength. Callers skip every tier when motion is reduced.
+   */
+  enum Tier {
+    SMALL(0, 0, 4),
+    MEDIUM(0.4, 70, 8),
+    LARGE(0.8, 120, 32);
+
+    final double shake;
+    final int hitStopMs, particles;
+
+    Tier(double shake, int hitStopMs, int particles) {
+      this.shake = shake;
+      this.hitStopMs = hitStopMs;
+      this.particles = particles;
+    }
+  }
+
+  static final Color SPARK_GOOD = Color.web("#2BD48C"),
+      SPARK_GOLD = Color.web("#F5C542"),
+      SPARK_HOT = Color.web("#FF8A1F");
+
+  /** A side-to-side shake that dies away; a large tier moves about 11 px at first. */
+  static void shake(Node target, Tier tier, List<Animation> running) {
+    if (tier.shake <= 0) return;
+    double amplitude = 14 * tier.shake;
+    int steps = 8;
+    var shake = new Timeline();
+    for (int i = 0; i <= steps; i++) {
+      double x = i == steps ? 0 : amplitude * (1 - i / (double) steps) * (i % 2 == 0 ? 1 : -1);
+      shake
+          .getKeyFrames()
+          .add(new KeyFrame(Duration.millis(i * 38), new KeyValue(target.translateXProperty(), x)));
+    }
+    shake.setOnFinished(e -> target.setTranslateX(0));
+    run(shake, running, Duration.millis(steps * 38));
+  }
+
+  /** A tiny squash and spring back, for a pressed answer "locking in". */
+  static void squash(Node target, List<Animation> running) {
+    var squash =
+        new Timeline(
+            new KeyFrame(
+                Duration.ZERO,
+                new KeyValue(target.scaleXProperty(), 1),
+                new KeyValue(target.scaleYProperty(), 1)),
+            new KeyFrame(
+                Duration.millis(70),
+                new KeyValue(target.scaleXProperty(), 1.03),
+                new KeyValue(target.scaleYProperty(), 0.92)),
+            new KeyFrame(
+                Duration.millis(260),
+                new KeyValue(target.scaleXProperty(), 1, BACK_OUT),
+                new KeyValue(target.scaleYProperty(), 1, BACK_OUT)));
+    run(squash, running, Duration.millis(260));
+  }
+
+  /** Stamps {@code target} down from large and see-through, like a rubber stamp. */
+  static void stamp(Node target, List<Animation> running) {
+    var stamp =
+        new Timeline(
+            new KeyFrame(
+                Duration.ZERO,
+                new KeyValue(target.scaleXProperty(), 1.9),
+                new KeyValue(target.scaleYProperty(), 1.9),
+                new KeyValue(target.opacityProperty(), 0)),
+            new KeyFrame(
+                Duration.millis(180),
+                new KeyValue(target.scaleXProperty(), 1, Interpolator.EASE_IN),
+                new KeyValue(target.scaleYProperty(), 1, Interpolator.EASE_IN),
+                new KeyValue(target.opacityProperty(), 1)));
+    run(stamp, running, Duration.millis(180));
+  }
+
+  /** Big text slamming down into place, such as the question number. */
+  static void slam(Node target, List<Animation> running) {
+    var slam =
+        new Timeline(
+            new KeyFrame(
+                Duration.ZERO,
+                new KeyValue(target.scaleXProperty(), 1.8),
+                new KeyValue(target.scaleYProperty(), 1.8),
+                new KeyValue(target.opacityProperty(), 0)),
+            new KeyFrame(Duration.millis(120), new KeyValue(target.opacityProperty(), 1)),
+            new KeyFrame(
+                Duration.millis(320),
+                new KeyValue(target.scaleXProperty(), 1, BACK_OUT),
+                new KeyValue(target.scaleYProperty(), 1, BACK_OUT)));
+    run(slam, running, Duration.millis(320));
+  }
+
+  /**
+   * The hit-stop: a white flash held over {@code target} for the tier's pause, then released, with
+   * {@code after} (usually the sparks) starting the moment the pause ends.
+   */
+  static void hitFlash(
+      Pane layer, Node target, Tier tier, List<Animation> running, Runnable after) {
+    var box = within(layer, target);
+    var flash = new Region();
+    flash.getStyleClass().add("hit-flash");
+    flash.setManaged(false);
+    flash.setMouseTransparent(true);
+    flash.resizeRelocate(box.getMinX(), box.getMinY(), box.getWidth(), box.getHeight());
+    layer.getChildren().add(flash);
+    int hold = Math.max(40, tier.hitStopMs);
+    var pulse =
+        new Timeline(
+            new KeyFrame(Duration.ZERO, new KeyValue(flash.opacityProperty(), 0.85)),
+            new KeyFrame(
+                Duration.millis(hold),
+                e -> {
+                  if (after != null) after.run();
+                },
+                new KeyValue(flash.opacityProperty(), 0.85)),
+            new KeyFrame(
+                Duration.millis(hold + 200),
+                new KeyValue(flash.opacityProperty(), 0, Interpolator.EASE_OUT)));
+    pulse.setOnFinished(e -> layer.getChildren().remove(flash));
+    if (preview) {
+      if (after != null) after.run();
+      flash.setOpacity(0.35);
+      return;
+    }
+    run(pulse, running, Duration.millis(hold));
+  }
+
+  /**
+   * Sparks flying out from the middle of {@code from}: a handful for medium, a shower for large.
+   */
+  static void burst(Pane layer, Node from, Tier tier, Color color, List<Animation> running) {
+    var box = within(layer, from);
+    double cx = box.getCenterX(), cy = box.getCenterY();
+    var random = new Random(tier.particles * 31L);
+    double reach = tier == Tier.LARGE ? 220 : 120;
+    for (int i = 0; i < tier.particles; i++) {
+      double angle = 2 * Math.PI * i / tier.particles + random.nextDouble() * 0.6;
+      double distance = reach * (0.55 + random.nextDouble() * 0.45);
+      boolean streak = i % 2 == 0;
+      var spark = new Rectangle(streak ? 3 : 7, streak ? 12 : 7);
+      spark.setArcWidth(streak ? 3 : 7);
+      spark.setArcHeight(streak ? 3 : 7);
+      spark.setFill(i % 3 == 0 ? Color.WHITE : color);
+      spark.setManaged(false);
+      spark.setMouseTransparent(true);
+      spark.setRotate(Math.toDegrees(angle) + 90);
+      spark.relocate(cx, cy);
+      layer.getChildren().add(spark);
+      int duration = 420 + random.nextInt(260);
+      var fly =
+          new Timeline(
+              new KeyFrame(
+                  Duration.millis(duration),
+                  new KeyValue(
+                      spark.translateXProperty(),
+                      Math.cos(angle) * distance,
+                      Interpolator.EASE_OUT),
+                  new KeyValue(
+                      spark.translateYProperty(),
+                      Math.sin(angle) * distance,
+                      Interpolator.EASE_OUT),
+                  new KeyValue(spark.opacityProperty(), 0, Interpolator.EASE_IN),
+                  new KeyValue(spark.scaleXProperty(), 0.4),
+                  new KeyValue(spark.scaleYProperty(), 0.4)));
+      fly.setOnFinished(e -> layer.getChildren().remove(spark));
+      run(fly, running, Duration.millis(duration * 0.45));
+    }
+  }
+
+  /** A ring that races outwards from {@code from} and fades: the large tier's shockwave. */
+  static void shockwave(Pane layer, Node from, Color color, List<Animation> running) {
+    var box = within(layer, from);
+    var ring = new Circle(box.getCenterX(), box.getCenterY(), 24);
+    ring.setFill(Color.TRANSPARENT);
+    ring.setStroke(color);
+    ring.setStrokeWidth(10);
+    ring.setManaged(false);
+    ring.setMouseTransparent(true);
+    layer.getChildren().add(ring);
+    var wave =
+        new Timeline(
+            new KeyFrame(
+                Duration.ZERO,
+                new KeyValue(ring.radiusProperty(), 24),
+                new KeyValue(ring.opacityProperty(), 0.9)),
+            new KeyFrame(
+                Duration.millis(720),
+                new KeyValue(ring.radiusProperty(), 360, Interpolator.EASE_OUT),
+                new KeyValue(ring.strokeWidthProperty(), 1, Interpolator.EASE_OUT),
+                new KeyValue(ring.opacityProperty(), 0, Interpolator.EASE_IN)));
+    wave.setOnFinished(e -> layer.getChildren().remove(ring));
+    run(wave, running, Duration.millis(260));
+  }
+
+  /** Drains the colour out of {@code target} slowly, for a lost match. */
+  static void fade(Node target, List<Animation> running) {
+    var grey = new javafx.scene.effect.ColorAdjust();
+    target.setEffect(grey);
+    var drain =
+        new Timeline(
+            new KeyFrame(
+                Duration.millis(1400),
+                new KeyValue(grey.saturationProperty(), -0.65, Interpolator.EASE_OUT)));
+    drain.setDelay(Duration.millis(400));
+    run(drain, running, Duration.millis(1400));
+  }
+
+  /**
+   * Runs {@code action} once {@code layer} and everything under its host are laid out, so effects
+   * that start from a node's position find it where it is drawn. Runs at once when already laid
+   * out.
+   */
+  static void whenLaidOut(Pane layer, Runnable action) {
+    if (layer instanceof Layer pending
+        && (layer.getScene() == null || layer.isNeedsLayout() || layer.getWidth() <= 0)) {
+      pending.waiting.add(action);
+      layer.requestLayout();
+    } else action.run();
+  }
+
+  /** The bounds of {@code node} in {@code layer}'s coordinates. */
+  private static javafx.geometry.Bounds within(Pane layer, Node node) {
+    return layer.sceneToLocal(node.localToScene(node.getBoundsInLocal()));
+  }
+
   /** Plays an animation, or in preview mode freezes it at {@code peak} so a snapshot shows it. */
   static void run(Animation animation, List<Animation> running, Duration peak) {
     if (running != null) running.add(animation);
@@ -385,6 +611,7 @@ final class Effects {
    */
   static final class Layer extends Pane {
     private final Rectangle clip = new Rectangle();
+    private final java.util.List<Runnable> waiting = new java.util.ArrayList<>();
 
     Layer() {
       setManaged(false);
@@ -398,6 +625,12 @@ final class Effects {
       clip.setWidth(getWidth());
       clip.setHeight(getHeight());
       for (var child : getManagedChildren()) child.resizeRelocate(0, 0, getWidth(), getHeight());
+      // The layer is its host's last child, so by now the rest of the host has its final layout.
+      if (getScene() != null && getWidth() > 0 && !waiting.isEmpty()) {
+        var ready = java.util.List.copyOf(waiting);
+        waiting.clear();
+        ready.forEach(Runnable::run);
+      }
     }
   }
 }

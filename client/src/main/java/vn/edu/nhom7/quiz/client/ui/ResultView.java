@@ -256,6 +256,19 @@ public final class ResultView extends VBox {
     }
     if (reducedMotion || outcome.equals("aborted")) return;
     if (outcome.equals("win")) Effects.confetti(layer, animations);
+    // Large tier: a win lands with a shockwave and a shake; a loss drains the colour away.
+    if (outcome.equals("win") && heroIcon != null) {
+      var icon = heroIcon;
+      Effects.whenLaidOut(
+          layer,
+          () -> {
+            Effects.shockwave(layer, icon, Effects.SPARK_GOLD, animations);
+            Effects.burst(layer, icon, Effects.Tier.LARGE, Effects.SPARK_GOLD, animations);
+            Effects.shake(this, Effects.Tier.LARGE, animations);
+          });
+    }
+    if (outcome.equals("lose") && heroTitle.getParent() != null)
+      Effects.fade(heroTitle.getParent(), animations);
     if (heroIcon != null) {
       if (outcome.equals("lose") && heroIcon.getParent() instanceof StackPane halo) {
         heroIcon = Effects.rainCloud(64, true, animations);

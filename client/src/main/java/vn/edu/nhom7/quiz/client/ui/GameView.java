@@ -196,6 +196,7 @@ public final class GameView extends BorderPane {
                       s.activeMatchId(),
                       s.roundId(),
                       new Payloads.Answer(question.questionId(), a));
+                lockedIn();
               });
           if (renderer instanceof BaseQuestionRenderer base && start != null)
             base.setPlayers(start.path("players"));
@@ -256,7 +257,11 @@ public final class GameView extends BorderPane {
                     () -> scroll.getViewportBounds().getHeight(), scroll.viewportBoundsProperty()));
         setCenter(scroll);
         setBottom(deck);
-        if (!reducedMotion() && s.phase().equals("QUESTION_PREPARE")) enter(stage, 0);
+        if (!reducedMotion() && s.phase().equals("QUESTION_PREPARE")) {
+          enter(stage, 0);
+          // Medium tier: the question's heading slams in before the clock starts.
+          Effects.slam(kicker, animations);
+        }
         if (!reducedMotion() && s.phase().equals("REVEAL"))
           javafx.application.Platform.runLater(() -> celebrate(deck));
       }
@@ -358,10 +363,15 @@ public final class GameView extends BorderPane {
       later.setOnFinished(
           e -> {
             Sound.play(Sound.Effect.STREAK);
-            if (!reducedMotion()) Effects.streakBanner(fx, streak, animations);
+            if (!reducedMotion()) {
+              Effects.streakBanner(fx, streak, animations);
+              Effects.whenLaidOut(fx, this::streakHit);
+            }
           });
-      if (Effects.preview && !reducedMotion()) Effects.streakBanner(fx, streak, animations);
-      else play(later);
+      if (Effects.preview && !reducedMotion()) {
+        Effects.streakBanner(fx, streak, animations);
+        Effects.whenLaidOut(fx, this::streakHit);
+      } else play(later);
     }
   }
 
@@ -834,7 +844,47 @@ public final class GameView extends BorderPane {
   }
 
   /** Reveal: the correct tile pops, a wrong pick shakes, points float in, the race bar moves. */
+  /** Small tier: the locked tile squashes and springs back as its "ĐÃ KHÓA" stamp lands. */
+  private void lockedIn() {
+    if (reducedMotion() || renderer == null) return;
+    for (var tile : renderer.view().lookupAll(".answer-tile.chosen"))
+      Effects.squash(tile, animations);
+    for (var stamp : renderer.view().lookupAll(".lock-stamp")) Effects.stamp(stamp, animations);
+  }
+
+  /**
+   * Large tier for a streak of 3, 5 or 10: the whole screen shakes and sparks fly off the avatar.
+   */
+  private void streakHit() {
+    Effects.shake(this, Effects.Tier.LARGE, animations);
+    var avatar = lookup(".versus-avatar.self");
+    if (avatar != null)
+      Effects.burst(fx, avatar, Effects.Tier.LARGE, Effects.SPARK_HOT, animations);
+  }
+
   private void celebrate(Parent body) {
+    // Medium tier: a right answer freezes for a beat under a white flash, then throws sparks; a
+    // wrong one shakes the answer row.
+    Node own = body.lookup(".own-pick.correct");
+    boolean right = false;
+    JsonNode result = bound.payload(MessageType.QUESTION_RESULT);
+    if (result != null)
+      for (var o : result.path("outcomes"))
+        if (o.path("userId").asLong() == selfId) right = o.path("correct").asBoolean(false);
+    if (right) {
+      Node from = own != null ? own : selfScore;
+      Effects.whenLaidOut(
+          fx,
+          () ->
+              Effects.hitFlash(
+                  fx,
+                  from,
+                  Effects.Tier.MEDIUM,
+                  animations,
+                  () ->
+                      Effects.burst(
+                          fx, from, Effects.Tier.MEDIUM, Effects.SPARK_GOOD, animations)));
+    } else Effects.shake(body, Effects.Tier.MEDIUM, animations);
     for (var node : body.lookupAll(".answer-card")) {
       if (node.getStyleClass().contains("correct")) {
         var pop = new ScaleTransition(Duration.millis(160), node);
