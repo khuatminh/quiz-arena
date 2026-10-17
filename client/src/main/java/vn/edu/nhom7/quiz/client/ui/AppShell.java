@@ -36,6 +36,10 @@ public final class AppShell extends BorderPane implements AutoCloseable {
   private final Effects.Layer fx = new Effects.Layer();
   private StackPane inviteHost;
   private SettingsOverlay settings;
+  private StackPane offline;
+  private String lastHost;
+  private int lastPort;
+  private final PauseTransition toastTimer = new PauseTransition(Duration.seconds(5));
   private boolean settingsInMatch;
   private UUID celebratedMatch;
 
@@ -61,32 +65,35 @@ public final class AppShell extends BorderPane implements AutoCloseable {
           }
         };
     vn.edu.nhom7.quiz.client.assets.RemoteMedia.configure(commands);
-    auth =
-        new AuthView(
-            commands,
-            (host, port) -> {
-              vn.edu.nhom7.quiz.client.assets.RemoteMedia.clear();
-              community = null;
-              lobby = null;
-              store.resetConnection();
-              message.setText("Đang kết nối…");
-              network
-                  .connect(host, port)
-                  .whenComplete(
-                      (v, e) ->
-                          Platform.runLater(
-                              () ->
-                                  message.setText(
-                                      e == null
-                                          ? "Đang xác nhận phiên bản…"
-                                          : "Không thể kết nối tới server")));
-            });
+    auth = new AuthView(commands, this::connect);
     setCenter(auth);
-    message.getStyleClass().add("status-bar");
-    message.setMaxWidth(Double.MAX_VALUE);
+    // Messages are toasts: they float above the bottom edge and clear themselves.
+    message.getStyleClass().add("toast");
+    message.setWrapText(false);
+    message.setMaxWidth(Region.USE_PREF_SIZE);
     message.visibleProperty().bind(message.textProperty().isNotEmpty());
     message.managedProperty().bind(message.visibleProperty());
-    setBottom(message);
+    var toastHost = new StackPane(message);
+    toastHost.setPickOnBounds(false);
+    toastHost.setMouseTransparent(true);
+    StackPane.setAlignment(message, javafx.geometry.Pos.BOTTOM_CENTER);
+    StackPane.setMargin(message, new javafx.geometry.Insets(0, 24, 64, 24));
+    toastTimer.setOnFinished(e -> message.setText(""));
+    message
+        .textProperty()
+        .addListener(
+            (o, before, text) -> {
+              if (text.isEmpty()) return;
+              // Evidence renders keep the toast up until the snapshot.
+              if (Effects.preview) return;
+              toastTimer.playFromStart();
+              if (reducedMotion()) return;
+              var in = new FadeTransition(Duration.millis(160), message);
+              in.setFromValue(0);
+              in.setToValue(1);
+              in.play();
+            });
+    fx.getChildren().add(toastHost);
     widthProperty().addListener((o, b, a) -> updateChatPlacement());
     clock =
         new Timeline(
@@ -111,6 +118,89 @@ public final class AppShell extends BorderPane implements AutoCloseable {
           else return;
           e.consume();
         });
+  }
+
+  /** Connects to {@code host}; the login screen and "Kết nối lại" both start here. */
+  private void connect(String host, int port) {
+    lastHost = host;
+    lastPort = port;
+    vn.edu.nhom7.quiz.client.assets.RemoteMedia.clear();
+    community = null;
+    lobby = null;
+    store.resetConnection();
+    message.setText("Đang kết nối…");
+    network
+        .connect(host, port)
+        .whenComplete(
+            (v, e) ->
+                Platform.runLater(
+                    () ->
+                        message.setText(
+                            e == null
+                                ? "Đang xác nhận phiên bản…"
+                                : "Không thể kết nối tới server")));
+  }
+
+  /**
+   * Covers the screen when the server connection drops after login, so the player sees it at once
+   * instead of a frozen screen, and offers to reconnect (which means signing in again).
+   */
+  private void showOffline(String reason) {
+    hideOffline();
+    boolean inMatch = inMatch(store.state());
+    var card = new VBox(14);
+    card.getStyleClass().add("offline-card");
+    card.setMaxWidth(460);
+    card.setMaxHeight(Region.USE_PREF_SIZE);
+    var kicker = Ui.kicker("MẤT KẾT NỐI");
+    kicker.getStyleClass().add("offline-kicker");
+    var retry =
+        Ui.button(
+            "Kết nối lại",
+            () -> {
+              hideOffline();
+              if (lastHost != null) connect(lastHost, lastPort);
+              else store.resetConnection();
+            });
+    retry.setMaxWidth(Double.MAX_VALUE);
+    retry.setDefaultButton(true);
+    var login =
+        Ui.secondary(
+            "Về màn đăng nhập",
+            () -> {
+              hideOffline();
+              store.resetConnection();
+            });
+    login.setMaxWidth(Double.MAX_VALUE);
+    card.getChildren()
+        .addAll(
+            kicker,
+            Ui.title("Không còn kết nối tới server"),
+            Ui.muted(
+                switch (reason) {
+                  case "Server response timed out" -> "Server không phản hồi kịp.";
+                  case "Connection interrupted" -> "Kết nối bị gián đoạn.";
+                  case "Server disconnected" -> "Server đã đóng kết nối.";
+                  case "Connection or protocol error" -> "Lỗi kết nối hoặc giao thức.";
+                  default -> reason;
+                }),
+            Ui.label(
+                inMatch
+                    ? "Trận đang chơi không tự nối lại được. Kết nối lại rồi đăng nhập để chơi tiếp"
+                        + " các trận mới."
+                    : "Kết nối lại rồi đăng nhập để tiếp tục."),
+            retry,
+            login);
+    offline = new StackPane(card);
+    offline.getStyleClass().add("settings-backdrop");
+    offline.setPickOnBounds(true);
+    fx.getChildren().add(offline);
+    Platform.runLater(retry::requestFocus);
+  }
+
+  private void hideOffline() {
+    if (offline != null) fx.getChildren().remove(offline);
+    offline = null;
   }
 
   private boolean reducedMotion() {
@@ -261,7 +351,11 @@ public final class AppShell extends BorderPane implements AutoCloseable {
 
   public void disconnected(String reason) {
     vn.edu.nhom7.quiz.client.assets.RemoteMedia.clear();
-    message.setText(reason + " · Không tự nối lại trận đấu");
+    // "Disconnected" is our own logout or reconnect, not a lost connection.
+    if (store.state().profile() != null && !reason.equals("Disconnected")) {
+      closeSettings();
+      showOffline(reason);
+    } else message.setText(reason + " · Không tự nối lại trận đấu");
     Sound.music(false);
     hideChallenge();
     auth.connected(false);

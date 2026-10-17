@@ -13,7 +13,7 @@ public final class RankingView extends VBox {
   public RankingView(JsonNode p, UiCommandSink sink) {
     setSpacing(16);
     setPadding(new Insets(28));
-    getChildren().add(Ui.title("Bảng xếp hạng"));
+    getChildren().addAll(Ui.kicker("XẾP HẠNG"), Ui.title("Bảng xếp hạng"));
     if (p == null) {
       getChildren().add(Ui.label("Đang tải…"));
       return;
@@ -32,6 +32,10 @@ public final class RankingView extends VBox {
               e.path("totalMatches").asInt() + "",
               e.path("wins").asInt() + "");
       line.getStyleClass().add("data-row");
+      int rank = e.path("rank").asInt();
+      line.getChildren().get(0).getStyleClass().add("rank-number");
+      if (rank >= 1 && rank <= 3) line.getStyleClass().add("top-" + rank);
+      line.getChildren().get(2).getStyleClass().add("rank-score");
       ((Label) line.getChildren().get(1))
           .setGraphic(
               new vn.edu.nhom7.quiz.client.assets.AssetLoader()
@@ -64,7 +68,7 @@ public final class RankingView extends VBox {
                     null,
                     new Payloads.RankingRequest(page + 1, 20)));
     next.setDisable((long) page * p.path("pageSize").asInt(20) >= p.path("totalItems").asLong());
-    getChildren().add(new HBox(16, prev, Ui.label("Trang " + page), next));
+    getChildren().add(Ui.pager(prev, "Trang " + page, next));
   }
 
   private HBox row(String rank, String name, String score, String matches, String wins) {

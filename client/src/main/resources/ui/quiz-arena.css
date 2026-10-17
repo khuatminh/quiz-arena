@@ -16,7 +16,7 @@
   -q-purple: #A98BFF; -q-on-purple: #160A3A; -q-purple-text: #CFC2FF;
   -q-good: #2BD48C; -q-on-good: #04281A; -q-good-text: #5BE3A6; -q-good-soft: #133A33;
   -q-bad: #FF4D5E; -q-on-bad: #FFFFFF; -q-bad-text: #FF9AA6; -q-bad-soft: #3D1A2A;
-  -q-focus: #FFFFFF; -q-shadow: #04081899; -q-scrim: #070B18B3;
+  -q-focus: #FFFFFF; -q-shadow: #04081899; -q-scrim: #070B18B3; -q-silver: #C9D3EA; -q-bronze: #E0A375;
   /* Answer colours stay the same in both modes: shape + key carry the meaning, not hue. */
   -q-tile-0: #FF8A1F; -q-on-tile-0: #2B1300;
   -q-tile-1: #3B8BFF; -q-on-tile-1: #04162E;
@@ -44,7 +44,8 @@
 .button:hover, .toggle-button:hover { -fx-background-color: derive(-q-self, 12%); }
 .button:pressed { -fx-background-color: derive(-q-self, -14%); }
 .button:focused, .toggle-button:focused { -fx-border-color: -q-focus; }
-.button:disabled { -fx-opacity: .5; }
+/* A disabled button turns grey instead of a muddy half-transparent orange. */
+.button:disabled { -fx-opacity: .7; -fx-background-color: -q-surface-2; -fx-text-fill: -q-ink-3; -fx-border-color: transparent; }
 .button.secondary, .button.nav, .button.topic {
   -fx-background-color: -q-surface-2; -fx-text-fill: -q-ink; -fx-border-color: -q-line;
 }
@@ -483,3 +484,26 @@
   -fx-text-fill: #FFFFFF; -fx-background-color: #0E132699; -fx-background-radius: 6;
   -fx-border-color: #FFFFFF; -fx-border-width: 2; -fx-border-radius: 6; -fx-padding: 1 7;
 }
+
+/* ---------- Remaining screens, toasts, connection loss (GĐ5) ---------- */
+.toast {
+  -fx-background-color: -q-surface-3; -fx-text-fill: -q-ink; -fx-font-size: 14px; -fx-font-weight: bold;
+  -fx-background-radius: 999; -fx-padding: 10 20; -fx-border-color: -q-line-strong; -fx-border-radius: 999;
+  -fx-effect: dropshadow(gaussian, -q-shadow, 16, 0, 0, 4);
+}
+.offline-card {
+  -fx-background-color: -q-surface; -fx-background-radius: 20; -fx-border-color: -q-bad; -fx-border-width: 2; -fx-border-radius: 20;
+  -fx-padding: 26 28; -fx-effect: dropshadow(gaussian, -q-shadow, 30, 0, 0, 8);
+}
+.offline-card .offline-kicker { -fx-text-fill: -q-bad-text; }
+.offline-card .title { -fx-font-size: 22px; }
+.pager { -fx-alignment: center-left; }
+.data-row .rank-number { -fx-font-family: "Chakra Petch"; -fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: -q-ink-2; }
+.data-row.top-1 .rank-number { -fx-text-fill: -q-gold-text; }
+.data-row.top-2 .rank-number { -fx-text-fill: -q-silver; }
+.data-row.top-3 .rank-number { -fx-text-fill: -q-bronze; }
+.data-row.top-1 { -fx-border-color: -q-gold; -fx-border-radius: 12; }
+.data-row .rank-score { -fx-font-family: "Chakra Petch"; -fx-font-size: 18px; -fx-font-weight: bold; }
+.history-score { -fx-font-family: "Chakra Petch"; -fx-font-size: 26px; }
+.badge.outcome-win { -fx-background-color: -q-good-soft; -fx-text-fill: -q-good-text; }
+.badge.outcome-lose { -fx-background-color: -q-bad-soft; -fx-text-fill: -q-bad-text; }

@@ -680,6 +680,12 @@ class InterfaceEvidenceTest {
     ((ObjectNode) players.get(1)).put("totalScore", Math.max(a, b));
     add("fx-result-lose", shell(with(result, MessageType.MATCH_RESULT, lost, Map.of()), false));
     add("fx-result-win", shell(result, false));
+    var offline = shell(result.lobby(), false);
+    offline.disconnected("Connection interrupted");
+    add("offline-overlay", offline);
+    var toast = shell(result.lobby(), false);
+    toast.requestTimeout(MessageType.RANKING_REQUEST);
+    add("toast", toast);
     var messages = new LinkedHashMap<UUID, JsonNode>();
     messages.put(
         UUID.randomUUID(),

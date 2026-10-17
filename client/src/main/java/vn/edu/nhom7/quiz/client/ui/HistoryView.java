@@ -15,6 +15,7 @@ public final class HistoryView extends VBox {
     setPadding(new Insets(28));
     getChildren()
         .addAll(
+            Ui.kicker("LỊCH SỬ"),
             Ui.title("Lịch sử của bạn"),
             Ui.muted("Xem kết quả và ôn lại câu hỏi từ những trận đã lưu."));
     if (detail != null) {
@@ -101,8 +102,18 @@ public final class HistoryView extends VBox {
       HBox.setHgrow(information, Priority.ALWAYS);
       information.setMinWidth(0);
       var score = Ui.title(m.path("ownScore").asInt() + " : " + m.path("opponentScore").asInt());
-      var outcome =
-          new VBox(6, score, Ui.badge(PresentationText.outcome(m.path("outcome").asText())));
+      score.getStyleClass().add("history-score");
+      var result = Ui.badge(PresentationText.outcome(m.path("outcome").asText()));
+      result
+          .getStyleClass()
+          .add(
+              switch (m.path("outcome").asText()) {
+                case "WIN", "WON" -> "outcome-win";
+                case "LOSS", "LOST" -> "outcome-lose";
+                default -> "outcome-other";
+              });
+      var outcome = new VBox(6, score, result);
+      outcome.setAlignment(Pos.CENTER_RIGHT);
       outcome.setMinWidth(120);
       var row =
           new HBox(
@@ -125,8 +136,7 @@ public final class HistoryView extends VBox {
     }
     int page = p.path("page").asInt(1);
     var pagination =
-        new HBox(
-            12,
+        Ui.pager(
             Ui.button(
                 "← Trước",
                 () ->
@@ -135,7 +145,7 @@ public final class HistoryView extends VBox {
                         null,
                         null,
                         new Payloads.HistoryRequest(Math.max(1, page - 1), 20))),
-            Ui.label("Trang " + page),
+            "Trang " + page,
             Ui.button(
                 "Tiếp →",
                 () ->

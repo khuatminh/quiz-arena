@@ -94,6 +94,20 @@ final class Ui {
     return item;
   }
 
+  /** "← Trước · Trang n · Tiếp →", the same on every paged list. */
+  static HBox pager(Button previous, String text, Button next) {
+    var page = label(text);
+    page.getStyleClass().add("page-label");
+    page.setWrapText(false);
+    page.setMinWidth(Region.USE_PREF_SIZE);
+    for (var b : new Button[] {previous, next})
+      if (!b.getStyleClass().contains("secondary")) b.getStyleClass().add("secondary");
+    var row = new HBox(12, previous, page, next);
+    row.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+    row.getStyleClass().add("pager");
+    return row;
+  }
+
   /** A small uppercase heading in the display font. */
   static Label kicker(String text) {
     var l = new Label(text);

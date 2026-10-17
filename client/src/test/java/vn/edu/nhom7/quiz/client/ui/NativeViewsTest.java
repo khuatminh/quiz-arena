@@ -358,6 +358,44 @@ class NativeViewsTest {
         });
   }
 
+  @Test
+  void aLostConnectionAfterLoginCoversTheScreenButLoggingOutDoesNot() throws Exception {
+    fx(
+        () -> {
+          var store = new vn.edu.nhom7.quiz.client.state.ClientStore();
+          var network = new vn.edu.nhom7.quiz.client.network.NetworkClient(e -> {}, reason -> {});
+          var shell = new AppShell(store, network, (type, m, r, p) -> UUID.randomUUID());
+          try {
+            var json = new com.fasterxml.jackson.databind.ObjectMapper();
+            var login =
+                json.createObjectNode()
+                    .set(
+                        "profile",
+                        json.createObjectNode().put("userId", 1).put("displayName", "Minh"));
+            var state =
+                new vn.edu.nhom7.quiz.client.state.ClientStateReducer()
+                    .apply(
+                        vn.edu.nhom7.quiz.client.state.ClientState.initial(),
+                        new Envelope(2, MessageType.LOGIN_RESULT, null, null, null, null, login),
+                        0);
+            var field = store.getClass().getDeclaredField("state");
+            field.setAccessible(true);
+            field.set(store, state);
+            shell.render(state);
+            shell.disconnected("Disconnected");
+            assertNull(shell.lookup(".offline-card"));
+            shell.disconnected("Connection interrupted");
+            assertNotNull(shell.lookup(".offline-card"));
+          } catch (ReflectiveOperationException e) {
+            throw new RuntimeException(e);
+          } finally {
+            shell.close();
+            network.close();
+            store.close();
+          }
+        });
+  }
+
   private static javafx.scene.input.KeyEvent escape() {
     return new javafx.scene.input.KeyEvent(
         javafx.scene.input.KeyEvent.KEY_PRESSED,
