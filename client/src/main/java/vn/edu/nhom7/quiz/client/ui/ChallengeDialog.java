@@ -127,7 +127,7 @@ public final class ChallengeDialog extends VBox {
                 setDisable(true);
               });
       no.setCancelButton(true);
-      no.setPrefWidth(160);
+      no.setMinWidth(Region.USE_PREF_SIZE);
       buttons.addAll(List.of(yes, no));
     } else {
       var cancel =

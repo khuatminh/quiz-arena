@@ -25,9 +25,12 @@ public final class ChatPanel extends VBox {
     scroll = Ui.scroll(messages);
     VBox.setVgrow(scroll, Priority.ALWAYS);
     getChildren()
-        .addAll(Ui.title("Trò chuyện"), Ui.muted("Enter để gửi · Shift+Enter xuống dòng"), scroll);
+        .addAll(
+            Ui.title("Trò chuyện"),
+            Ui.muted("Enter để gửi · Shift+Enter xuống dòng · tối đa 300 ký tự"),
+            scroll);
     input.setPrefRowCount(2);
-    input.setPromptText("Tin nhắn (1–300 ký tự)");
+    input.setPromptText("Nhắn tin…");
     Runnable submit =
         () -> {
           String text = input.getText().strip();

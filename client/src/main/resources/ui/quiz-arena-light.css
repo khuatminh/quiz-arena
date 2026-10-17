@@ -9,7 +9,7 @@
   -q-opp: #2E6FE0; -q-on-opp: #FFFFFF; -q-opp-text: #1F5BC4; -q-opp-soft: #E3EEFF;
   -q-gold: #F5C542; -q-on-gold: #1A1400; -q-gold-text: #8A6200; -q-gold-soft: #FFF6D6;
   -q-purple: #A98BFF; -q-on-purple: #160A3A; -q-purple-text: #5B3CC4;
-  -q-good: #138A55; -q-on-good: #FFFFFF; -q-good-text: #0F7A4A; -q-good-soft: #DDF5EA;
+  -q-good: #0F7A4A; -q-on-good: #FFFFFF; -q-good-text: #0F7A4A; -q-good-soft: #DDF5EA;
   -q-bad: #D2334A; -q-on-bad: #FFFFFF; -q-bad-text: #B42338; -q-bad-soft: #FBE1E5;
   -q-focus: #141A33; -q-shadow: #141A3333; -q-scrim: #141A3373; -q-silver: #5D6A8C; -q-bronze: #A0582A;
 }

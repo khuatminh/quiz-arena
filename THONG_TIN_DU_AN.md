@@ -114,6 +114,8 @@ Sự kiện từ server
 
 Đây là cách quản lý trạng thái theo **store/reducer**, gần với tư duy luồng dữ liệu một chiều. State được xử lý tuần tự trên executor riêng; cập nhật giao diện chuyển sang JavaFX thread bằng `Platform.runLater`.
 
+Giao diện theo phong cách "console arena": màu và cỡ chữ là các token CSS trên `.root` (`quiz-arena.css` cho giao diện tối, `quiz-arena-light.css` chỉ ghi đè token cho giao diện sáng); `Theme` đổi stylesheet và cỡ chữ lúc chạy. Hiệu ứng (rung, chớp, hạt, sóng xung kích) chạy trên một lớp phủ không nhận chuột (`Effects.Layer`) và được tắt khi người chơi bật giảm chuyển động.
+
 ## 4. Cấu trúc mã nguồn
 
 Dự án gồm **3 Maven module**:
@@ -180,6 +182,8 @@ Hai điểm khởi động chính:
 - Xem lịch sử, chi tiết trận và bảng xếp hạng.
 - Tạo quiz, chỉnh sửa bản nháp, sắp xếp câu hỏi, xem trước và xuất bản.
 - Tải ảnh cho câu hỏi và phần giải thích.
+- Ba quyền trợ giúp mỗi trận: x2 điểm, Loại 1 đáp án, 50-50 (phím X, L, N).
+- Chơi được hoàn toàn bằng bàn phím; menu Esc chỉnh âm lượng, cỡ chữ, giao diện sáng/tối và giảm chuyển động.
 
 ### 5.2. Các loại câu hỏi
 

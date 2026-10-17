@@ -15,7 +15,7 @@
   -q-gold: #F5C542; -q-on-gold: #1A1400; -q-gold-text: #F5C542; -q-gold-soft: #3A3218;
   -q-purple: #A98BFF; -q-on-purple: #160A3A; -q-purple-text: #CFC2FF;
   -q-good: #2BD48C; -q-on-good: #04281A; -q-good-text: #5BE3A6; -q-good-soft: #133A33;
-  -q-bad: #FF4D5E; -q-on-bad: #FFFFFF; -q-bad-text: #FF9AA6; -q-bad-soft: #3D1A2A;
+  -q-bad: #FF4D5E; -q-on-bad: #2A0509; -q-bad-text: #FF9AA6; -q-bad-soft: #3D1A2A;
   -q-focus: #FFFFFF; -q-shadow: #04081899; -q-scrim: #070B18B3; -q-silver: #C9D3EA; -q-bronze: #E0A375;
   /* Answer colours stay the same in both modes: shape + key carry the meaning, not hue. */
   -q-tile-0: #FF8A1F; -q-on-tile-0: #2B1300;

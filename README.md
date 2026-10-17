@@ -339,6 +339,16 @@ Tên tài khoản dài 3–24 ký tự, dùng chữ cái không dấu, chữ s�
 | Đúng/sai | Chọn Đúng hoặc Sai; gửi ngay | Trùng giá trị đúng/sai đã đặt |
 | Trả lời ngắn | Nhập nội dung rồi nhấn gửi | Khớp một đáp án được chấp nhận sau chuẩn hóa |
 
+Có thể chơi hoàn toàn bằng bàn phím; thanh phím tắt ở cuối màn trận luôn ghi phím dùng được lúc đó:
+
+| Phím | Tác dụng |
+| --- | --- |
+| 1–6 (hoặc chữ cái của phương án) | Chọn phương án; câu nhiều đáp án thì bật/tắt đánh dấu |
+| Enter | Khóa đáp án đã đánh dấu (câu nhiều đáp án) hoặc gửi câu trả lời ngắn |
+| Tab, các phím mũi tên | Di chuyển giữa các ô đáp án |
+| X · L · N | Mở quyền trợ giúp x2 điểm, Loại 1 đáp án, 50-50 |
+| Esc | Mở menu tạm dừng; nhấn lại để về trận |
+
 Mỗi câu chỉ nhận một câu trả lời hợp lệ của mỗi người. Sau khi gửi, câu trả lời bị khóa; không thể sửa để gửi lại. Nếu trả lời trước, bạn chờ đối thủ hoặc chờ hết giờ rồi cùng xem đáp án.
 
 Trả lời ngắn không phân biệt hoa/thường, bỏ khoảng trắng đầu/cuối và gộp khoảng trắng liên tiếp. **Dấu tiếng Việt vẫn có ý nghĩa**: `Hà Nội` và `ha noi` chỉ đều đúng nếu tác giả khai báo cả hai cách viết.
@@ -349,7 +359,25 @@ Chat trong trận chỉ gửi tới đối thủ cùng trận. Nhấn Enter đ�
 
 Sau câu cuối, app vẫn hiện bảng điểm của câu đó trước khi chuyển tới kết quả chung. Bạn có thể xem lại câu hỏi hoặc yêu cầu tái đấu khi cả hai còn ở phiên kết quả. Phiên này có thời hạn 60 giây. Tái đấu tạo một trận mới, điểm về 0 và cả hai cần sẵn sàng lại.
 
+Ở kết quả trận và trong lịch sử, các câu bạn trả lời sai hoặc hết giờ được mở sẵn; câu đúng thu gọn, bấm vào tiêu đề câu (hoặc Enter) để mở. Nút **Mở tất cả** mở mọi câu cùng lúc.
+
 Mở **Lịch sử** để xem các trận đã lưu của mình. Mở **Xếp hạng** để xem điểm tích lũy từ quiz hệ thống. Khi kết quả còn chờ lưu, lịch sử và xếp hạng có thể chưa cập nhật.
+
+### Menu cài đặt (Esc)
+
+Nhấn Esc hoặc biểu tượng thanh trượt trên thanh tiêu đề để mở menu. Trong trận menu ghi **Tạm dừng** nhưng đồng hồ vẫn chạy, nên menu hiện số giây còn lại của câu đang mở.
+
+| Mục | Lựa chọn |
+| --- | --- |
+| Nhạc nền, Hiệu ứng | Âm lượng 0–100%; kéo về 0% là tắt tiếng |
+| Cỡ chữ | Vừa, Lớn, Rất lớn |
+| Giao diện | Tối (mặc định) hoặc Sáng |
+| Giảm chuyển động | Tắt rung màn hình, chớp sáng và hạt hiệu ứng |
+| Rời trận | Chỉ có trong trận; hỏi lại trước khi rời và bị xử thua |
+
+Các lựa chọn được lưu trên máy và áp dụng ngay. Phím ↑ ↓ di chuyển giữa các mục, ← → chỉnh giá trị.
+
+Khi mất kết nối tới server sau khi đã đăng nhập, app phủ một khung **Mất kết nối** với nút **Kết nối lại** (dùng lại địa chỉ server vừa dùng) và **Về màn đăng nhập**.
 
 ## 7. Logic thi đấu và tính điểm
 
@@ -385,9 +413,9 @@ Mỗi người có ba quyền trợ giúp, mỗi quyền dùng **một lần m�
 
 | Quyền | Phím | Tác dụng | Áp dụng cho |
 | --- | --- | --- | --- |
-| x2 điểm | Q | Nhân đôi điểm câu này: 6, 4 hoặc 2; trả lời sai vẫn 0 điểm | Mọi loại câu |
-| Loại 1 đáp án | W | Server ẩn ngẫu nhiên một phương án sai | Câu một đáp án có từ 3 phương án |
-| 50-50 | E | Server chỉ giữ lại đáp án đúng và một phương án sai | Câu một đáp án có từ 3 phương án |
+| x2 điểm | X | Nhân đôi điểm câu này: 6, 4 hoặc 2; trả lời sai vẫn 0 điểm | Mọi loại câu |
+| Loại 1 đáp án | L | Server ẩn ngẫu nhiên một phương án sai | Câu một đáp án có từ 3 phương án |
+| 50-50 | N | Server chỉ giữ lại đáp án đúng và một phương án sai | Câu một đáp án có từ 3 phương án |
 
 Server dùng thời điểm nhận câu trả lời để xét hạn và tính điểm; đồng hồ trên giao diện chỉ giúp người chơi theo dõi. Độ trễ mạng có thể ảnh hưởng thời điểm server nhận được câu trả lời.
 
@@ -509,6 +537,8 @@ Trên máy có desktop, có thể chạy bộ chụp trạng thái JavaFX:
 ```sh
 mvn install -Dquiz.uiEvidence=target/ui-evidence
 ```
+
+Bộ chụp xuất bốn thư mục: `1280x800`, `1024x720` (cửa sổ nhỏ), `light-1280x800` (giao diện sáng) và `xlarge-1024x720` (cỡ chữ Rất lớn trên cửa sổ nhỏ). Ảnh hiệu ứng (`fx-*`) được chụp ở khung hình đỉnh của hiệu ứng. Ảnh của từng giai đoạn làm lại giao diện nằm trong `docs/design/evidence/huong-d-*`.
 
 Đường dẫn tương đối được giải quyết theo thư mục chạy của module kiểm thử; dùng đường dẫn tuyệt đối nếu muốn tập trung ảnh vào một thư mục cụ thể. Xem [báo cáo giao diện](docs/design/interface-redesign.md) và [manifest ảnh](docs/design/evidence/manifest.json) để đối chiếu các trạng thái.
 

@@ -124,12 +124,32 @@ abstract class BaseQuestionRenderer implements QuestionRenderer {
         slot.getChildren().add(chip("ĐÃ KHÓA", "lock-stamp"));
   }
 
-  /** Up to four tiles share one row; more options wrap onto further rows of four. */
+  /**
+   * Up to four tiles share one row; more options wrap onto further rows. When the deck is too
+   * narrow for four readable tiles (a small window, large text or the chat open) it falls back to
+   * two.
+   */
   protected GridPane tileGrid(List<Button> tiles) {
     var grid = new GridPane();
     grid.setHgap(16);
     grid.setVgap(16);
-    int columns = Math.max(1, Math.min(4, tiles.size()));
+    int most = Math.max(1, Math.min(4, tiles.size()));
+    arrange(grid, tiles, most);
+    grid.widthProperty()
+        .addListener(
+            (o, b, width) -> {
+              int columns = most > 2 && width.doubleValue() < most * MIN_TILE ? 2 : most;
+              if (columns != grid.getColumnConstraints().size()) arrange(grid, tiles, columns);
+            });
+    return grid;
+  }
+
+  /** The narrowest a tile gets before the deck drops to two columns. */
+  private static final double MIN_TILE = 190;
+
+  private static void arrange(GridPane grid, List<Button> tiles, int columns) {
+    grid.getChildren().clear();
+    grid.getColumnConstraints().clear();
     for (int c = 0; c < columns; c++) {
       var column = new ColumnConstraints();
       column.setPercentWidth(100.0 / columns);
@@ -139,7 +159,6 @@ abstract class BaseQuestionRenderer implements QuestionRenderer {
       grid.add(tiles.get(i), i % columns, i / columns);
       GridPane.setFillHeight(tiles.get(i), true);
     }
-    return grid;
   }
 
   public void setControlsEnabled(boolean enabled) {
