@@ -69,6 +69,7 @@ public final class ClientStateReducer {
                         || t == MessageType.MATCH_RESULT
                         || t == MessageType.QUESTION_RESULT
                         || t == MessageType.ROUND_LEADERBOARD
+                        || t == MessageType.ANSWER_STATUS
                         || t == MessageType.CHAT_MESSAGE);
       }
       case MATCH_COUNTDOWN -> phase = "MATCH_COUNTDOWN";
@@ -78,9 +79,21 @@ public final class ClientStateReducer {
         question = p.path("question");
         pending = false;
         accepted = false;
+        data.remove(MessageType.ANSWER_STATUS);
       }
       case ROUND_COUNTDOWN -> phase = "ROUND_COUNTDOWN";
       case QUESTION_OPEN -> phase = "OPEN";
+      case ANSWER_STATUS -> {
+        // Accumulate who has answered this round, so the opponent's status survives our own.
+        var answered = com.fasterxml.jackson.databind.node.JsonNodeFactory.instance.objectNode();
+        var ids = answered.putArray("answeredUserIds");
+        JsonNode previous = data.get(MessageType.ANSWER_STATUS);
+        if (previous != null) previous.path("answeredUserIds").forEach(ids::add);
+        if (p.path("answered").asBoolean()) ids.add(p.path("userId").asLong());
+        answered.setAll((com.fasterxml.jackson.databind.node.ObjectNode) p.deepCopy());
+        answered.set("answeredUserIds", ids);
+        p = answered;
+      }
       case ANSWER_ACK -> {
         pending = false;
         accepted = true;
@@ -89,6 +102,7 @@ public final class ClientStateReducer {
         phase = "REVEAL";
         pending = false;
         accepted = true;
+        p = withStreaks(p, data.get(MessageType.QUESTION_RESULT));
       }
       case ROUND_LEADERBOARD -> phase = "LEADERBOARD";
       case MATCH_RESULT -> {
@@ -109,7 +123,12 @@ public final class ClientStateReducer {
               default -> p.path("phase").asText();
             };
         question = p.get("question");
-        if (p.hasNonNull("latestResult"))
+        JsonNode previousResult = data.get(MessageType.QUESTION_RESULT);
+        // Keep our own copy of the same result, since it carries the streak counts.
+        if (p.hasNonNull("latestResult")
+            && (previousResult == null
+                || previousResult.path("questionId").asLong()
+                    != p.path("latestResult").path("questionId").asLong()))
           data.put(MessageType.QUESTION_RESULT, p.get("latestResult"));
         if (p.hasNonNull("standings")) {
           var leaderboard =
@@ -164,5 +183,27 @@ public final class ClientStateReducer {
         chats,
         error,
         now);
+  }
+
+  /**
+   * Adds {@code streaks}: each player's run of correct answers, counted from the previous result
+   * of this match (results are cleared at MATCH_START). A repeated result keeps the old counts.
+   */
+  static JsonNode withStreaks(JsonNode result, JsonNode previous) {
+    if (!result.isObject()) return result;
+    var copy = (com.fasterxml.jackson.databind.node.ObjectNode) result.deepCopy();
+    var streaks = copy.putObject("streaks");
+    JsonNode before = previous == null ? null : previous.path("streaks");
+    if (previous != null
+        && previous.path("questionId").asLong() == result.path("questionId").asLong()) {
+      before.fields().forEachRemaining(f -> streaks.put(f.getKey(), f.getValue().asInt()));
+      return copy;
+    }
+    for (var outcome : result.path("outcomes")) {
+      String id = outcome.path("userId").asText();
+      int run = before == null ? 0 : before.path(id).asInt(0);
+      streaks.put(id, outcome.path("correct").asBoolean(false) ? run + 1 : 0);
+    }
+    return copy;
   }
 }

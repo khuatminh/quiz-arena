@@ -273,7 +273,7 @@ class InterfaceEvidenceTest {
       JsonNode fixture =
           json.readTree(getClass().getResourceAsStream("/protocol/demo-match-v1.json"));
       var captured = new HashSet<String>();
-      ClientState open = null;
+      ClientState open = null, reveal = null;
       for (JsonNode entry : fixture.path("events")) {
         if (entry.hasNonNull("participantUserId")
             && entry.path("participantUserId").asLong() != 101) continue;
@@ -285,6 +285,7 @@ class InterfaceEvidenceTest {
                     ? ""
                     : "-" + state.question().path("questionType").asText());
         if (state.phase().equals("OPEN") && open == null) open = state;
+        if (state.phase().equals("REVEAL") && reveal == null) reveal = state;
         if (!captured.add(key)) continue;
         if (state.phase().equals("WAITING_READY"))
           add("08-ready", Ui.scroll(new WaitingView(state, sink)));
@@ -386,6 +387,7 @@ class InterfaceEvidenceTest {
         add("game-long-question", shell(longState, true));
       }
       add("result-shell", shell(state, false));
+      effects(state, reveal, profile);
       var invalidLogin = new AuthView(sink, (h, p) -> {});
       invalidLogin.connected(true);
       var primaryLogin = findButtons(invalidLogin, "Đăng nhập");
@@ -548,6 +550,112 @@ class InterfaceEvidenceTest {
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
+  }
+
+  /** Each new effect, frozen at its most visible frame. */
+  private void effects(ClientState result, ClientState reveal, JsonNode self) throws Exception {
+    Effects.preview = true;
+    var challenger =
+        json.createObjectNode()
+            .put("userId", 103)
+            .put("displayName", "Phúc")
+            .put("avatarId", "avatar-02")
+            .put("totalScore", 810);
+    var quiz =
+        json.createObjectNode()
+            .put("quizId", 1)
+            .put("title", "Kiến thức chung")
+            .put("categoryName", "Tổng hợp")
+            .put("coverAssetId", "quiz-cover-general")
+            .put("totalRounds", 10)
+            .put("quizSource", "SYSTEM");
+    var lobby = result;
+    for (boolean incoming : List.of(true, false)) {
+      var shell = shell(result.lobby(), false);
+      ObjectNode invite =
+          json.createObjectNode()
+              .put("challengeId", UUID.randomUUID().toString())
+              .put("targetUserId", 103)
+              .put("expiresAtMs", System.currentTimeMillis() + 18000);
+      invite.set("quiz", quiz);
+      if (incoming) invite.set("challengerProfile", challenger);
+      shell.onEvent(
+          envelope(
+              incoming ? MessageType.CHALLENGE_RECEIVED : MessageType.CHALLENGE_ACK,
+              null, null, null, null, invite));
+      add(incoming ? "fx-invite-incoming" : "fx-invite-outgoing", shell);
+    }
+    if (reveal != null) {
+      for (int streak : List.of(3, 5, 10)) {
+        ObjectNode r = reveal.payload(MessageType.QUESTION_RESULT).deepCopy();
+        r.putObject("streaks").put("101", streak).put("102", streak == 10 ? 4 : streak + 1);
+        var game = new GameView(with(reveal, MessageType.QUESTION_RESULT, r, Map.of()), sink, false);
+        cleanup.add(game::dispose);
+        add("fx-streak-" + streak, game);
+      }
+      ObjectNode wrong = reveal.payload(MessageType.QUESTION_RESULT).deepCopy();
+      for (var o : wrong.path("outcomes"))
+        if (o.path("userId").asLong() == 101)
+          ((ObjectNode) o).put("correct", false).put("answer", "B").put("earnedPoints", 0);
+      wrong.putObject("streaks").put("101", 0).put("102", 6);
+      var game = new GameView(with(reveal, MessageType.QUESTION_RESULT, wrong, Map.of()), sink, false);
+      cleanup.add(game::dispose);
+      add("fx-wrong-flash", game);
+    }
+    ObjectNode lost = result.payload(MessageType.MATCH_RESULT).deepCopy();
+    lost.put("winnerUserId", 102);
+    var players = (ArrayNode) lost.path("players");
+    int a = players.get(0).path("totalScore").asInt(), b = players.get(1).path("totalScore").asInt();
+    ((ObjectNode) players.get(0)).put("totalScore", Math.min(a, b));
+    ((ObjectNode) players.get(1)).put("totalScore", Math.max(a, b));
+    add("fx-result-lose", shell(with(result, MessageType.MATCH_RESULT, lost, Map.of()), false));
+    var messages = new LinkedHashMap<UUID, JsonNode>();
+    messages.put(UUID.randomUUID(),
+        json.createObjectNode().put("displayName", "Tuấn").put("senderUserId", 102).put("text", "Câu này khó ghê"));
+    messages.put(UUID.randomUUID(),
+        json.createObjectNode().put("displayName", "Tuấn").put("senderUserId", 102).put("text", "[sticker:hurry]"));
+    messages.put(UUID.randomUUID(),
+        json.createObjectNode().put("displayName", "Minh").put("senderUserId", 101).put("text", "[sticker:fire]"));
+    var chat = new ChatPanel(t -> {});
+    chat.render(with(reveal == null ? result : reveal, MessageType.CHAT_MESSAGE, null, messages));
+    findButtonByText(chat, "").fire();
+    add("fx-chat-stickers", new HBox(new LobbyView(lobby.lobby(), sink, q -> {}), chat));
+  }
+
+  private Button findButtonByText(Parent p, String text) {
+    for (var n : p.getChildrenUnmodifiable()) {
+      if (n instanceof Button b && b.getStyleClass().contains("sticker-toggle")) return b;
+      if (n instanceof Parent child) {
+        var b = findButtonByText(child, text);
+        if (b != null) return b;
+      }
+    }
+    return null;
+  }
+
+  private ClientState with(
+      ClientState s, MessageType type, JsonNode value, Map<UUID, JsonNode> chats) {
+    var data = new EnumMap<MessageType, JsonNode>(MessageType.class);
+    data.putAll(s.data());
+    if (value != null) data.put(type, value);
+    return new ClientState(
+        s.connectionEpoch(),
+        s.profile(),
+        s.onlineRevision(),
+        s.activeMatchId(),
+        s.resultMatchId(),
+        UUID.randomUUID(),
+        s.lastSeqByMatch(),
+        s.phase(),
+        s.presentationVersion(),
+        s.question(),
+        false,
+        true,
+        data,
+        s.persistenceByMatch(),
+        chats.isEmpty() ? s.chatById() : chats,
+        "",
+        System.nanoTime());
   }
 
   private BorderPane beside(javafx.scene.Node left, javafx.scene.Node center) {

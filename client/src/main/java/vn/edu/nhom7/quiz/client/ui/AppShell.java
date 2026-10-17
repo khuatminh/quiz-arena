@@ -33,6 +33,9 @@ public final class AppShell extends BorderPane implements AutoCloseable {
   private LobbyView lobby;
   private Long selectedQuizCategory;
   private final boolean reducedMotion = Boolean.getBoolean("quiz.reducedMotion");
+  private final Effects.Layer fx = new Effects.Layer();
+  private StackPane inviteHost;
+  private UUID celebratedMatch;
 
   public AppShell(ClientStore store, NetworkClient network, UiCommandSink sink) {
     this.store = store;
@@ -94,6 +97,114 @@ public final class AppShell extends BorderPane implements AutoCloseable {
                 }));
     clock.setCycleCount(Animation.INDEFINITE);
     clock.play();
+    getChildren().add(fx);
+  }
+
+  @Override
+  protected void layoutChildren() {
+    super.layoutChildren();
+    fx.resizeRelocate(0, 0, getWidth(), getHeight());
+    if (getChildren().getLast() != fx) fx.toFront();
+  }
+
+  /** An incoming challenge floats in over a dimmed screen; our own invite docks bottom-right. */
+  private void showChallenge(ChallengeDialog dialog) {
+    if (inviteHost != null) fx.getChildren().remove(inviteHost);
+    boolean incoming = dialog.incoming();
+    var host = new StackPane(dialog);
+    inviteHost = host;
+    host.getStyleClass().add(incoming ? "invite-backdrop" : "invite-dock");
+    host.setPickOnBounds(incoming);
+    StackPane.setAlignment(dialog, incoming ? javafx.geometry.Pos.CENTER : javafx.geometry.Pos.BOTTOM_RIGHT);
+    if (!incoming) StackPane.setMargin(dialog, new javafx.geometry.Insets(0, 24, 56, 0));
+    fx.getChildren().add(host);
+    dialog.tick(System.currentTimeMillis() + network.time.offsetMs());
+    Platform.runLater(dialog::focusAction);
+    if (reducedMotion) return;
+    var in =
+        new Timeline(
+            new KeyFrame(
+                Duration.ZERO,
+                new KeyValue(host.opacityProperty(), 0),
+                new KeyValue(dialog.translateYProperty(), incoming ? -90 : 0),
+                new KeyValue(dialog.translateXProperty(), incoming ? 0 : 460),
+                new KeyValue(dialog.scaleXProperty(), incoming ? 0.86 : 1),
+                new KeyValue(dialog.scaleYProperty(), incoming ? 0.86 : 1)),
+            new KeyFrame(Duration.millis(200), new KeyValue(host.opacityProperty(), 1)),
+            new KeyFrame(
+                Duration.millis(460),
+                new KeyValue(dialog.translateYProperty(), 0, Effects.BACK_OUT),
+                new KeyValue(dialog.translateXProperty(), 0, Effects.BACK_OUT),
+                new KeyValue(dialog.scaleXProperty(), 1, Effects.BACK_OUT),
+                new KeyValue(dialog.scaleYProperty(), 1, Effects.BACK_OUT)));
+    Effects.run(in, null, Duration.millis(460));
+  }
+
+  private void hideChallenge() {
+    var host = inviteHost;
+    inviteHost = null;
+    challenge = null;
+    if (host == null) return;
+    if (reducedMotion || host.getChildren().isEmpty()) {
+      fx.getChildren().remove(host);
+      return;
+    }
+    var dialog = host.getChildren().getFirst();
+    boolean incoming = host.getStyleClass().contains("invite-backdrop");
+    host.setMouseTransparent(true);
+    var out =
+        new Timeline(
+            new KeyFrame(
+                Duration.millis(240),
+                new KeyValue(host.opacityProperty(), 0, Interpolator.EASE_IN),
+                new KeyValue(dialog.translateYProperty(), incoming ? 40 : 0, Interpolator.EASE_IN),
+                new KeyValue(
+                    dialog.translateXProperty(), incoming ? 0 : 460, Interpolator.EASE_IN)));
+    out.setOnFinished(e -> fx.getChildren().remove(host));
+    out.play();
+  }
+
+  private String onlineName(long userId) {
+    JsonNode online = store.state().payload(MessageType.ONLINE_LIST);
+    if (online != null)
+      for (var user : online.path("users"))
+        if (user.path("userId").asLong() == userId) return user.path("displayName").asText();
+    return null;
+  }
+
+  /** Header toggles for background music and sound effects. */
+  private Button soundToggle(boolean music) {
+    boolean on = music ? Sound.musicOn() : Sound.effectsOn();
+    var glyph = new javafx.scene.shape.SVGPath();
+    glyph.setContent(
+        music
+            ? "M8 5 L20 2.5 V15.5 A3 3 0 1 1 18 12.7 V7.2 L10 8.9 V18 A3 3 0 1 1 8 15.2 Z"
+            : "M3 9 H7 L12 5 V19 L7 15 H3 Z M15 8.2 A5 5 0 0 1 15 15.8 L16.3 17.2 A7 7 0 0 0 16.3 6.8 Z");
+    glyph.getStyleClass().add("sound-glyph");
+    var icon = new StackPane(glyph);
+    if (!on) {
+      var slash = new javafx.scene.shape.Line(2, 2, 20, 20);
+      slash.getStyleClass().add("sound-slash");
+      icon.getChildren().add(slash);
+    }
+    icon.setMinSize(22, 22);
+    icon.setPrefSize(22, 22);
+    var b = new Button();
+    b.setGraphic(icon);
+    b.setMinHeight(40);
+    b.setMinWidth(Region.USE_PREF_SIZE);
+    b.getStyleClass().addAll("icon-toggle", on ? "on" : "off");
+    String label =
+        music ? (on ? "Tắt nhạc nền" : "Bật nhạc nền") : (on ? "Tắt âm thanh" : "Bật âm thanh");
+    b.setAccessibleText(label);
+    b.setTooltip(new Tooltip(label));
+    b.setOnAction(
+        e -> {
+          if (music) Sound.setMusicOn(!Sound.musicOn());
+          else Sound.setEffectsOn(!Sound.effectsOn());
+          header(store.state());
+        });
+    return b;
   }
 
   public void requestTimeout(vn.edu.nhom7.quiz.common.protocol.MessageType type) {
@@ -113,6 +224,8 @@ public final class AppShell extends BorderPane implements AutoCloseable {
   public void disconnected(String reason) {
     vn.edu.nhom7.quiz.client.assets.RemoteMedia.clear();
     message.setText(reason + " · Không tự nối lại trận đấu");
+    Sound.music(false);
+    hideChallenge();
     auth.connected(false);
     if (game != null) game.setDisable(true);
   }
@@ -145,14 +258,21 @@ public final class AppShell extends BorderPane implements AutoCloseable {
             new Payloads.MatchSnapshotRequest());
     }
     if (e.type() == MessageType.LOGIN_RESULT) {
+      Sound.music(true);
       commands.send(
           MessageType.QUIZ_LIST_REQUEST, null, null, new Payloads.QuizListRequest(null, 1, 20));
       commands.send(MessageType.ONLINE_LIST_REQUEST, null, null, new Payloads.OnlineListRequest());
     }
     if (e.type() == MessageType.CHALLENGE_ACK || e.type() == MessageType.CHALLENGE_RECEIVED) {
+      boolean incoming = e.type() == MessageType.CHALLENGE_RECEIVED;
       challenge =
-          new ChallengeDialog(e.payload(), e.type() == MessageType.CHALLENGE_RECEIVED, commands);
-      setLeft(challenge);
+          new ChallengeDialog(
+              e.payload(),
+              incoming,
+              commands,
+              incoming ? null : onlineName(e.payload().path("targetUserId").asLong()));
+      showChallenge(challenge);
+      if (incoming) Sound.play(Sound.Effect.INVITE);
     }
     if (e.type() == MessageType.CHALLENGE_CLOSED) {
       String status = e.payload().path("status").asText();
@@ -164,13 +284,13 @@ public final class AppShell extends BorderPane implements AutoCloseable {
             default -> "Lời mời đã đóng.";
           });
     }
-    if (e.type() == MessageType.CHALLENGE_CLOSED || e.type() == MessageType.MATCH_START) {
-      challenge = null;
-      setLeft(null);
-    }
+    if (e.type() == MessageType.CHALLENGE_CLOSED || e.type() == MessageType.MATCH_START)
+      hideChallenge();
     if (e.type() == MessageType.RANKING_INVALIDATED && query.equals("RANKING"))
       commands.send(MessageType.RANKING_REQUEST, null, null, new Payloads.RankingRequest(1, 20));
     if (e.type() == MessageType.LOGOUT_ACK) {
+      Sound.music(false);
+      hideChallenge();
       vn.edu.nhom7.quiz.client.assets.RemoteMedia.clear();
       community = null;
       lobby = null;
@@ -271,6 +391,8 @@ public final class AppShell extends BorderPane implements AutoCloseable {
                 "Đăng xuất",
                 () -> commands.send(MessageType.LOGOUT, null, null, new Payloads.Logout())));
     bar.getChildren().add(2, Ui.spacer());
+    bar.getChildren().add(3, soundToggle(true));
+    bar.getChildren().add(4, soundToggle(false));
     bar.getStyleClass().add("app-header");
     ((Label) bar.getChildren().get(0)).getStyleClass().add("brand");
     ((Label) bar.getChildren().get(1)).setMaxWidth(160);
@@ -387,8 +509,14 @@ public final class AppShell extends BorderPane implements AutoCloseable {
         }
         case "WAITING_READY" -> setCenter(Ui.scroll(new WaitingView(s, commands)));
         case "RESULT" -> {
-          result = new ResultView(s, commands);
-          setCenter(Ui.scroll(result));
+          var shown = new ResultView(s, commands);
+          result = shown;
+          setCenter(Ui.scroll(shown));
+          // Confetti and the win/lose sound play once per match, not on every rebuild.
+          if (s.resultMatchId() != null && !s.resultMatchId().equals(celebratedMatch)) {
+            celebratedMatch = s.resultMatchId();
+            Platform.runLater(() -> shown.celebrate(fx, reducedMotion));
+          }
         }
         default -> {
           game = new GameView(s, commands, reducedMotion);

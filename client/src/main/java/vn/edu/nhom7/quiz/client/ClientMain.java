@@ -47,6 +47,7 @@ public final class ClientMain extends Application {
     gateway = new CommandGateway(network, store, tracker);
     UiCommandSink sink =
         args.containsKey("fixture") ? (type, match, round, payload) -> UUID.randomUUID() : gateway;
+    if (!args.containsKey("evidence")) vn.edu.nhom7.quiz.client.ui.Sound.enable();
     shell = new AppShell(store, network, sink);
     var captured = new HashSet<String>();
     store.subscribe(

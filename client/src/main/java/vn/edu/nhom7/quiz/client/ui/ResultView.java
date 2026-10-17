@@ -11,6 +11,11 @@ import vn.edu.nhom7.quiz.common.protocol.*;
 
 public final class ResultView extends VBox {
   private final Label save = Ui.label("");
+  private final List<javafx.animation.Animation> animations = new ArrayList<>();
+  private final List<Label> scores = new ArrayList<>();
+  private String outcome = "";
+  private Node heroIcon;
+  private Label heroTitle;
 
   public ResultView(ClientState s, UiCommandSink sink) {
     setSpacing(16);
@@ -30,8 +35,30 @@ public final class ResultView extends VBox {
                     : PresentationText.playerName(
                             r.path("players"), r.path("winnerUserId").asLong(), s.selfUserId())
                         + " chiến thắng · Cố lên lần sau!";
-    var hero = new VBox(16, Ui.title(title));
-    hero.getStyleClass().add("result-hero");
+    outcome =
+        r.path("finishReason").asText().equals("ABORTED")
+            ? "aborted"
+            : r.path("winnerUserId").isNull()
+                ? "draw"
+                : r.path("winnerUserId").asLong() == s.selfUserId() ? "win" : "lose";
+    heroTitle = Ui.title(title);
+    heroTitle.getStyleClass().add("result-title");
+    heroIcon =
+        switch (outcome) {
+          case "win" -> Effects.trophy(84);
+          case "lose" -> Effects.rainCloud(84, false, null);
+          case "draw" -> Effects.draw(84);
+          default -> null;
+        };
+    var hero = new VBox(14);
+    if (heroIcon != null) {
+      var halo = new StackPane(heroIcon);
+      halo.getStyleClass().add("result-halo");
+      halo.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+      hero.getChildren().add(halo);
+    }
+    hero.getChildren().add(heroTitle);
+    hero.getStyleClass().addAll("result-hero", outcome);
     hero.getChildren()
         .add(
             Ui.label(
@@ -43,15 +70,32 @@ public final class ResultView extends VBox {
     for (var player : r.path("players")) {
       var score = Ui.title(player.path("totalScore").asInt() + "");
       score.getStyleClass().add("result-score");
+      scores.add(score);
+      boolean winner =
+          !r.path("winnerUserId").isNull()
+              && player.path("userId").asLong() == r.path("winnerUserId").asLong();
+      var avatar =
+          new StackPane(
+              new vn.edu.nhom7.quiz.client.assets.AssetLoader()
+                  .view(player.path("avatarId").asText(), 72));
+      avatar.getStyleClass().add("result-avatar");
+      if (winner) avatar.getStyleClass().add("winner");
+      avatar.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+      var crown = winner ? Effects.crown(30) : new Region();
+      if (!winner) ((Region) crown).setMinHeight(30);
       var tile =
           new VBox(
               8,
-              new vn.edu.nhom7.quiz.client.assets.AssetLoader()
-                  .view(player.path("avatarId").asText(), 72),
-              Ui.label(player.path("displayName").asText()),
+              crown,
+              avatar,
+              Ui.label(
+                  player.path("displayName").asText()
+                      + (player.path("userId").asLong() == s.selfUserId() ? " · Bạn" : "")),
               score,
               Ui.label(player.path("correctCount").asInt() + " câu đúng"));
       tile.setAlignment(Pos.CENTER);
+      tile.getStyleClass().add("result-player");
+      if (winner) tile.getStyleClass().add("winner");
       players.getChildren().add(tile);
     }
     hero.getChildren().addAll(players, save);
@@ -180,6 +224,80 @@ public final class ResultView extends VBox {
       getChildren().add(new ReviewCard(review, r.path("players"), s.selfUserId()));
     }
     render(s);
+  }
+
+  /**
+   * Plays the ending once: confetti and a trophy pop for a win, a rain cloud and a heavier title
+   * drop for a loss, with the matching sound. Scores count up from zero either way.
+   */
+  public void celebrate(Pane layer, boolean reducedMotion) {
+    switch (outcome) {
+      case "win" -> Sound.play(Sound.Effect.WIN);
+      case "lose" -> Sound.play(Sound.Effect.LOSE);
+      case "draw" -> Sound.play(Sound.Effect.CORRECT);
+      default -> {}
+    }
+    if (reducedMotion || outcome.equals("aborted")) return;
+    if (outcome.equals("win")) Effects.confetti(layer, animations);
+    if (heroIcon != null) {
+      if (outcome.equals("lose") && heroIcon.getParent() instanceof StackPane halo) {
+        heroIcon = Effects.rainCloud(84, true, animations);
+        halo.getChildren().setAll(heroIcon);
+      }
+      var pop =
+          new javafx.animation.Timeline(
+              new javafx.animation.KeyFrame(
+                  javafx.util.Duration.ZERO,
+                  new javafx.animation.KeyValue(heroIcon.scaleXProperty(), 0.2),
+                  new javafx.animation.KeyValue(heroIcon.scaleYProperty(), 0.2),
+                  new javafx.animation.KeyValue(heroIcon.rotateProperty(), outcome.equals("win") ? -25 : 0)),
+              new javafx.animation.KeyFrame(
+                  javafx.util.Duration.millis(560),
+                  new javafx.animation.KeyValue(heroIcon.scaleXProperty(), 1, Effects.BACK_OUT),
+                  new javafx.animation.KeyValue(heroIcon.scaleYProperty(), 1, Effects.BACK_OUT),
+                  new javafx.animation.KeyValue(heroIcon.rotateProperty(), 0, Effects.BACK_OUT)));
+      Effects.run(pop, animations, javafx.util.Duration.millis(560));
+    }
+    boolean lost = outcome.equals("lose");
+    var title =
+        new javafx.animation.Timeline(
+            new javafx.animation.KeyFrame(
+                javafx.util.Duration.ZERO,
+                new javafx.animation.KeyValue(heroTitle.translateYProperty(), lost ? -46 : 0),
+                new javafx.animation.KeyValue(heroTitle.scaleXProperty(), lost ? 1 : 0.6),
+                new javafx.animation.KeyValue(heroTitle.scaleYProperty(), lost ? 1 : 0.6),
+                new javafx.animation.KeyValue(heroTitle.opacityProperty(), 0)),
+            new javafx.animation.KeyFrame(
+                javafx.util.Duration.millis(lost ? 760 : 520),
+                new javafx.animation.KeyValue(
+                    heroTitle.translateYProperty(),
+                    0,
+                    lost ? javafx.animation.Interpolator.EASE_OUT : Effects.BACK_OUT),
+                new javafx.animation.KeyValue(heroTitle.scaleXProperty(), 1, Effects.BACK_OUT),
+                new javafx.animation.KeyValue(heroTitle.scaleYProperty(), 1, Effects.BACK_OUT),
+                new javafx.animation.KeyValue(heroTitle.opacityProperty(), 1)));
+    title.setDelay(javafx.util.Duration.millis(140));
+    Effects.run(title, animations, javafx.util.Duration.millis(760));
+    for (var score : scores) {
+      int target = Integer.parseInt(score.getText());
+      var value = new javafx.beans.property.SimpleIntegerProperty(0);
+      value.addListener((o, b, a) -> score.setText(Integer.toString(a.intValue())));
+      score.setText("0");
+      var count =
+          new javafx.animation.Timeline(
+              new javafx.animation.KeyFrame(
+                  javafx.util.Duration.millis(1100),
+                  new javafx.animation.KeyValue(
+                      value, target, javafx.animation.Interpolator.EASE_OUT)));
+      count.setDelay(javafx.util.Duration.millis(250));
+      count.setOnFinished(e -> score.setText(Integer.toString(target)));
+      Effects.run(count, animations, javafx.util.Duration.millis(1350));
+      if (Effects.preview) score.setText(Integer.toString(target));
+    }
+  }
+
+  public void dispose() {
+    animations.forEach(javafx.animation.Animation::stop);
   }
 
   public void render(ClientState s) {

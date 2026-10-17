@@ -70,8 +70,6 @@
 .game-header { -fx-padding: 4 0 20 0; -fx-alignment: center-left; }
 .timer { -fx-background-color: #F5C65A; -fx-text-fill: #183B40; -fx-font-size: 21px; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 9 18; }
 .game-header .timer { -fx-text-fill: #183B40; }
-.game-header .timer.urgent { -fx-background-color: #C8434A; -fx-text-fill: white; }
-.progress-bar.urgent > .bar { -fx-background-color: #E0565B; }
 .challenge-hint { -fx-font-size: 12px; -fx-text-fill: #536B70; }
 .rematch-status { -fx-font-weight: bold; }
 .question-panel { -fx-background-color: #FFFEF9; -fx-background-radius: 20; -fx-padding: 28; }
@@ -117,3 +115,104 @@
 .badge:error { -fx-background-color: #FFF1EF; -fx-text-fill: #A32F35; }
 .question-title.long-question { -fx-font-size: 20px; }
 .waiting-scroll, .waiting-scroll > .viewport { -fx-background-color: #123E43; }
+/* Direction C: versus bar, ring timer and 2x2 answer tiles. */
+.versus-avatar { -fx-background-color: #C8F0DF; -fx-background-radius: 40; -fx-border-color: #75D6AC; -fx-border-width: 3; -fx-border-radius: 40; -fx-padding: 4; }
+.versus-avatar.opponent { -fx-background-color: #FBD58A; -fx-border-color: #F5C65A; }
+.game-surface .versus-name { -fx-text-fill: #BFD3D0; -fx-font-size: 15px; -fx-font-weight: bold; }
+.game-surface .versus-score { -fx-text-fill: #F7FAF6; -fx-font-size: 38px; -fx-font-weight: bold; }
+.game-surface .opponent-status { -fx-text-fill: #BFD3D0; -fx-font-size: 13px; }
+.game-surface .opponent-status.answered { -fx-text-fill: #F5C65A; -fx-font-weight: bold; }
+.game-surface .gain-pill { -fx-background-color: #75D6AC; -fx-text-fill: #0E3337; -fx-background-radius: 999; -fx-padding: 6 12; -fx-font-size: 15px; -fx-font-weight: bold; }
+.game-surface .gain-pill.zero { -fx-background-color: #3B6066; -fx-text-fill: #F7FAF6; }
+.timer-ring-track { -fx-stroke: #24575D; -fx-stroke-width: 7; -fx-fill: transparent; }
+.timer-ring-bar { -fx-stroke: #F5C65A; -fx-stroke-width: 7; -fx-fill: transparent; -fx-stroke-line-cap: round; }
+.urgent .timer-ring-bar { -fx-stroke: #E0565B; }
+.game-surface .ring-label { -fx-text-fill: #F7FAF6; -fx-font-size: 28px; -fx-font-weight: bold; }
+.game-surface .urgent .ring-label { -fx-text-fill: #FF8A8E; }
+.game-surface .round-label { -fx-text-fill: #BFD3D0; -fx-font-size: 13px; -fx-font-weight: bold; }
+.race-track { -fx-background-color: #24575D; -fx-background-radius: 4; }
+.race-self { -fx-background-color: #75D6AC; -fx-background-radius: 4; }
+.race-opponent { -fx-background-color: #F5C65A; -fx-background-radius: 4; }
+.bonus-text { -fx-text-fill: #536B70; -fx-font-size: 13px; -fx-font-weight: bold; }
+.answer-tile { -fx-background-color: white; -fx-border-color: white; -fx-border-width: 3; -fx-background-radius: 16; -fx-border-radius: 16; -fx-padding: 14 20; }
+.answer-tile:hover { -fx-background-color: white; -fx-border-color: #75D6AC; -fx-translate-y: -2; }
+.answer-tile:pressed { -fx-scale-x: .98; -fx-scale-y: .98; }
+.answer-tile:focused { -fx-border-color: #F5C65A; }
+.answer-tile:disabled { -fx-opacity: .9; }
+.answer-tile.chosen { -fx-background-color: #EAF8F1; -fx-border-color: #75D6AC; -fx-opacity: 1; }
+.answer-tile.correct { -fx-background-color: #C8EEDD; -fx-border-color: #087F70; -fx-opacity: 1; }
+.answer-tile.incorrect { -fx-background-color: #F9DCD8; -fx-border-color: #BE4A4E; -fx-opacity: 1; }
+.answer-card.dimmed { -fx-opacity: .55; }
+.tile-text { -fx-font-size: 21px; -fx-font-weight: bold; -fx-text-fill: #183B40; }
+.keycap { -fx-background-radius: 12; -fx-font-size: 19px; -fx-font-weight: bold; -fx-text-fill: white; }
+.keycap-0 { -fx-background-color: #087F70; }
+.keycap-1 { -fx-background-color: #F5C65A; -fx-text-fill: #183B40; }
+.keycap-2 { -fx-background-color: #2F6FB3; }
+.keycap-3 { -fx-background-color: #B4553C; }
+.answer-chip { -fx-background-radius: 999; -fx-padding: 5 10; -fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: white; -fx-graphic-text-gap: 6; }
+.answer-chip.chip-correct { -fx-background-color: #087F70; }
+.answer-chip.chip-wrong { -fx-background-color: #A32F35; }
+/* Children of a locked tile stay fully legible; the tile itself signals the state. */
+.answer-tile .label:disabled { -fx-opacity: 1; }
+/* Effects: streak flames, red flash, floating invite, result celebration, stickers, sound toggles. */
+.streak-badge { -fx-background-radius: 999; -fx-border-radius: 999; -fx-border-width: 2; -fx-padding: 1 9 1 5; }
+.streak-badge.tier-1 { -fx-background-color: #4A3A1E; -fx-border-color: #FF8A1F; }
+.streak-badge.tier-2 { -fx-background-color: #4D2230; -fx-border-color: #E8364F; -fx-effect: dropshadow(gaussian, #E8364F99, 10, .2, 0, 0); }
+.streak-badge.tier-3 { -fx-background-color: #2C2559; -fx-border-color: #7B5CFF; -fx-effect: dropshadow(gaussian, #7B5CFFCC, 16, .35, 0, 0); }
+.streak-count { -fx-font-size: 15px; -fx-font-weight: bold; }
+.streak-badge.tier-1 .streak-count { -fx-text-fill: #FFC27A; }
+.streak-badge.tier-2 .streak-count { -fx-text-fill: #FF9AAA; }
+.streak-badge.tier-3 .streak-count { -fx-text-fill: #CFC2FF; }
+.streak-banner { -fx-background-color: #0E3337F2; -fx-background-radius: 28; -fx-border-radius: 28; -fx-border-width: 3; -fx-padding: 20 36 20 26; }
+.streak-banner.tier-1 { -fx-border-color: #FF8A1F; -fx-effect: dropshadow(gaussian, #FF8A1FAA, 40, .25, 0, 0); }
+.streak-banner.tier-2 { -fx-border-color: #E8364F; -fx-effect: dropshadow(gaussian, #E8364FBB, 46, .3, 0, 0); }
+.streak-banner.tier-3 { -fx-border-color: #7B5CFF; -fx-effect: dropshadow(gaussian, #7B5CFFDD, 56, .4, 0, 0); }
+.streak-banner-title { -fx-font-size: 44px; -fx-font-weight: bold; -fx-text-fill: #FFFFFF; }
+.streak-banner.tier-1 .streak-banner-line { -fx-text-fill: #FFC27A; }
+.streak-banner.tier-2 .streak-banner-line { -fx-text-fill: #FF9AAA; }
+.streak-banner.tier-3 .streak-banner-line { -fx-text-fill: #CFC2FF; }
+.streak-banner-line { -fx-font-size: 17px; -fx-font-weight: bold; }
+.wrong-flash {
+  -fx-background-color: radial-gradient(center 50% 50%, radius 75%, #E8364F00 35%, #E8364F8C 100%), #E8364F1F;
+}
+.invite-backdrop { -fx-background-color: #0C2629A0; }
+.challenge-dialog { -fx-background-color: white; -fx-background-radius: 24; -fx-effect: dropshadow(gaussian, #0A1F2266, 44, 0, 0, 14); }
+.challenge-head { -fx-background-color: #123E43; -fx-background-radius: 24 24 0 0; -fx-padding: 26 30; }
+.challenge-kicker { -fx-text-fill: #F5C65A; -fx-font-size: 13px; -fx-font-weight: bold; }
+.challenge-headline { -fx-text-fill: #F7FAF6; -fx-font-size: 25px; -fx-font-weight: bold; }
+.challenge-dialog.outgoing .challenge-headline { -fx-font-size: 19px; }
+.challenge-dialog.outgoing .challenge-head { -fx-padding: 18 22; }
+.challenge-dialog.outgoing .challenge-body { -fx-padding: 18 22 20 22; }
+.challenge-sub { -fx-text-fill: #BFD3D0; -fx-font-size: 14px; }
+.challenge-avatar { -fx-background-color: #FBD58A; -fx-background-radius: 40; -fx-border-color: #F5C65A; -fx-border-width: 3; -fx-border-radius: 40; }
+.challenge-ring-track { -fx-stroke: #24575D; -fx-stroke-width: 5; -fx-fill: transparent; }
+.challenge-ring-bar { -fx-stroke: #F5C65A; -fx-stroke-width: 5; -fx-fill: transparent; -fx-stroke-line-cap: round; }
+.challenge-dialog.urgent .challenge-ring-bar { -fx-stroke: #FF6B6B; }
+.challenge-seconds { -fx-text-fill: #F7FAF6; -fx-font-size: 19px; -fx-font-weight: bold; }
+.challenge-body { -fx-padding: 22 30 26 30; }
+.challenge-quiz { -fx-padding: 12; -fx-background-radius: 16; -fx-border-radius: 16; -fx-border-color: #DCE6E0; }
+.challenge-quiz-title { -fx-font-size: 18px; -fx-font-weight: bold; }
+.challenge-action { -fx-min-height: 50; -fx-font-size: 16px; }
+.challenge-remaining { -fx-text-fill: #A32F35; -fx-font-weight: bold; }
+.icon-toggle { -fx-padding: 8 9; }
+.sound-glyph { -fx-fill: #224C4B; }
+.icon-toggle.off .sound-glyph { -fx-fill: #8AA3A0; }
+.sound-slash { -fx-stroke: #A32F35; -fx-stroke-width: 2.4; -fx-stroke-line-cap: round; }
+.result-hero.win { -fx-background-color: linear-gradient(to bottom, #0F6A5F, #123E43 75%); }
+.result-hero.lose { -fx-background-color: linear-gradient(to bottom, #2F4B5E, #1C3442 80%); }
+.result-title { -fx-font-size: 34px; }
+.result-hero.win .result-title { -fx-text-fill: #F5C65A; }
+.result-hero.lose .result-title { -fx-text-fill: #DCE8F0; }
+.result-halo { -fx-background-radius: 999; -fx-padding: 18; -fx-background-color: radial-gradient(radius 60%, #F5C65A55, #F5C65A00); }
+.result-hero.lose .result-halo { -fx-background-color: radial-gradient(radius 60%, #8FC3F033, #8FC3F000); }
+.result-hero.draw .result-halo { -fx-background-color: radial-gradient(radius 60%, #75D6AC44, #75D6AC00); }
+.result-avatar { -fx-background-color: #245259; -fx-background-radius: 999; -fx-border-color: #3B6066; -fx-border-width: 3; -fx-border-radius: 999; -fx-padding: 4; }
+.result-avatar.winner { -fx-border-color: #F5C65A; -fx-border-width: 4; -fx-effect: dropshadow(gaussian, #F5C65AAA, 24, .3, 0, 0); }
+.result-player.winner .result-score { -fx-text-fill: #F5C65A; }
+.sticker { -fx-effect: dropshadow(gaussian, #183B4033, 6, 0, 0, 2); }
+.sticker-caption { -fx-text-fill: white; -fx-font-weight: bold; -fx-effect: dropshadow(gaussian, #00000055, 2, .4, 0, 1); }
+.sticker-tray { -fx-background-color: #F4F7F5; -fx-background-radius: 14; -fx-padding: 10; }
+.button.sticker-pick { -fx-background-color: transparent; -fx-padding: 2; -fx-background-radius: 14; -fx-border-radius: 14; }
+.button.sticker-pick:hover { -fx-background-color: #DCEBE4; -fx-translate-y: -2; }
+.button.sticker-toggle { -fx-padding: 8 10; }
+.chat-bubble.sticker-bubble, .chat-bubble.sticker-bubble.mine { -fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 2 0; }

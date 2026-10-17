@@ -384,7 +384,7 @@ class NativeViewsTest {
           var answers = new ArrayList<JsonNode>();
           r.bind(q("TRUE_FALSE"), answers::add);
           r.setControlsEnabled(true);
-          ((Button) ((VBox) r.view()).getChildren().getFirst()).fire();
+          ((Button) r.view().lookup(".answer-tile")).fire();
           assertTrue(answers.getFirst().isBoolean());
         });
   }
@@ -404,6 +404,55 @@ class NativeViewsTest {
           field.setText("  Hà Nội  ");
           ((Button) box.getChildren().getLast()).fire();
           assertEquals("  Hà Nội  ", answers.getFirst().asText());
+        });
+  }
+
+  @Test
+  void revealWithStreaksStillShowsTheAnswerTilesAndFlame() throws Exception {
+    var json = new com.fasterxml.jackson.databind.ObjectMapper();
+    var reducer = new vn.edu.nhom7.quiz.client.state.ClientStateReducer();
+    UUID match = UUID.randomUUID();
+    var state = vn.edu.nhom7.quiz.client.state.ClientState.initial();
+    var profile = json.createObjectNode().put("userId", 101).put("displayName", "Minh");
+    state =
+        reducer.apply(
+            state,
+            new Envelope(
+                1, MessageType.LOGIN_RESULT, null, null, null, null,
+                json.createObjectNode().set("profile", profile)),
+            0);
+    var start = json.createObjectNode().put("totalRounds", 10);
+    start.putArray("players").add(profile).addObject().put("userId", 102).put("displayName", "Tuấn");
+    state = reducer.apply(state, new Envelope(1, MessageType.MATCH_START, null, match, null, 1L, start), 0);
+    long seq = 2;
+    for (int q = 1; q <= 3; q++) {
+      UUID round = UUID.randomUUID();
+      var question = json.createObjectNode();
+      question
+          .putObject("question")
+          .put("questionId", q)
+          .put("questionType", "SINGLE_CHOICE")
+          .put("content", "Thủ đô Việt Nam?")
+          .put("timeLimitMs", 15000)
+          .putArray("options")
+          .add(json.createObjectNode().put("id", "A").put("text", "Hà Nội"))
+          .add(json.createObjectNode().put("id", "B").put("text", "Huế"));
+      state = reducer.apply(state, new Envelope(1, MessageType.QUESTION, null, match, round, seq++, question), 0);
+      var result = json.createObjectNode().put("questionId", q).put("correctAnswer", "A");
+      result.putArray("outcomes").addObject().put("userId", 101).put("answer", "A").put("correct", true).put("earnedPoints", 3);
+      state = reducer.apply(state, new Envelope(1, MessageType.QUESTION_RESULT, null, match, round, seq++, result), 0);
+    }
+    var reveal = state;
+    assertEquals("REVEAL", reveal.phase());
+    fx(
+        () -> {
+          var view = new GameView(reveal, (t, m, r, p) -> UUID.randomUUID(), true);
+          new javafx.scene.Scene(view, 1280, 800);
+          view.applyCss();
+          view.layout();
+          assertNotNull(view.lookup(".answer-tile.correct"));
+          assertNotNull(view.lookup(".streak-badge.tier-1"));
+          view.dispose();
         });
   }
 }

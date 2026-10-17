@@ -1,6 +1,7 @@
 package vn.edu.nhom7.quiz.client.ui;
 
 import java.util.*;
+import javafx.geometry.Pos;
 import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -10,7 +11,13 @@ abstract class BaseQuestionRenderer implements QuestionRenderer {
   protected final VBox box = new VBox(12);
   protected final List<Control> controls = new ArrayList<>();
   protected final Map<String, Control> answerControls = new LinkedHashMap<>();
+  /** Answer tiles carry their own slot for result chips; other controls get chips below them. */
+  protected final Map<String, HBox> markSlots = new HashMap<>();
   private com.fasterxml.jackson.databind.JsonNode players;
+
+  BaseQuestionRenderer() {
+    box.getStyleClass().add("answers");
+  }
 
   public void setPlayers(com.fasterxml.jackson.databind.JsonNode p) {
     players = p;
@@ -32,8 +39,76 @@ abstract class BaseQuestionRenderer implements QuestionRenderer {
     return b;
   }
 
+  /** A large answer tile: coloured key cap, answer text and a slot for result chips. */
+  protected Button tile(String id, String key, String text, int accent, Runnable action) {
+    var cap = new Label(key);
+    cap.getStyleClass().addAll("keycap", "keycap-" + (accent % 4));
+    cap.setMinSize(48, 48);
+    cap.setAlignment(Pos.CENTER);
+    var label = Ui.label(text);
+    label.getStyleClass().add("tile-text");
+    label.setMaxWidth(Double.MAX_VALUE);
+    HBox.setHgrow(label, Priority.ALWAYS);
+    var slot = new HBox(6);
+    slot.setAlignment(Pos.CENTER_RIGHT);
+    var content = new HBox(16, cap, label, slot);
+    content.setAlignment(Pos.CENTER_LEFT);
+    var b = new Button();
+    b.setGraphic(content);
+    b.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+    b.setAccessibleText(key + ". " + text);
+    b.setMaxWidth(Double.MAX_VALUE);
+    b.setMaxHeight(Double.MAX_VALUE);
+    b.setMinHeight(112);
+    b.setAlignment(Pos.CENTER_LEFT);
+    b.getStyleClass().addAll("answer-card", "answer-tile");
+    b.setOnAction(
+        e -> {
+          b.getStyleClass().add("chosen");
+          action.run();
+        });
+    content.prefWidthProperty().bind(b.widthProperty().subtract(48));
+    controls.add(b);
+    answerControls.put(id, b);
+    markSlots.put(id, slot);
+    return b;
+  }
+
+  /** Lays tiles out two per row; extra options simply add rows. */
+  protected GridPane tileGrid(List<Button> tiles) {
+    var grid = new GridPane();
+    grid.setHgap(16);
+    grid.setVgap(16);
+    for (int c = 0; c < 2; c++) {
+      var column = new ColumnConstraints();
+      column.setPercentWidth(50);
+      grid.getColumnConstraints().add(column);
+    }
+    for (int i = 0; i < tiles.size(); i++) {
+      grid.add(tiles.get(i), i % 2, i / 2);
+      GridPane.setFillHeight(tiles.get(i), true);
+    }
+    return grid;
+  }
+
   public void setControlsEnabled(boolean enabled) {
     controls.forEach(c -> c.setDisable(!enabled));
+  }
+
+  private void addMark(String id, Control control, Node chip) {
+    var slot = markSlots.get(id);
+    if (slot != null) {
+      slot.getChildren().add(chip);
+      return;
+    }
+    int index = box.getChildren().indexOf(control);
+    box.getChildren().add(index + 1, chip);
+  }
+
+  private static Label chip(String text, String kind) {
+    var l = new Label(text);
+    l.getStyleClass().addAll("answer-chip", kind);
+    return l;
   }
 
   public void showResult(Payloads.QuestionResult r, long self) {
@@ -47,8 +122,8 @@ abstract class BaseQuestionRenderer implements QuestionRenderer {
       if (correct.contains(entry.getKey())) {
         entry.getValue().getStyleClass().add("correct");
         entry.getValue().setAccessibleText("Đáp án đúng: " + entry.getKey());
-        int correctIndex = box.getChildren().indexOf(entry.getValue());
-        box.getChildren().add(correctIndex + 1, Ui.label("✓ Đáp án đúng"));
+        if (!markSlots.containsKey(entry.getKey()))
+          addMark(entry.getKey(), entry.getValue(), chip("✓ Đáp án đúng", "chip-correct"));
       }
     for (var outcome : r.outcomes()) {
       if (outcome.answer() == null) continue;
@@ -68,24 +143,31 @@ abstract class BaseQuestionRenderer implements QuestionRenderer {
                   player.path("displayName").asText() + (outcome.userId() == self ? " · Bạn" : "");
               avatar = player.path("avatarId").asText();
             }
-        var chip =
-            new javafx.scene.layout.HBox(
-                8,
-                new vn.edu.nhom7.quiz.client.assets.AssetLoader().view(avatar, 28),
-                Ui.label(
-                    name
-                        + " · chọn "
-                        + (id.equals("true") ? "Đúng" : id.equals("false") ? "Sai" : id)
-                        + (Boolean.TRUE.equals(outcome.correct()) ? " ✓" : " ✗")));
-        int index = box.getChildren().indexOf(control);
-        box.getChildren().add(index + 1, chip);
+        boolean right = Boolean.TRUE.equals(outcome.correct());
+        var mark =
+            chip(
+                (right ? "✓ " : "✗ ")
+                    + name
+                    + (markSlots.containsKey(id)
+                        ? ""
+                        : " · chọn "
+                            + (id.equals("true") ? "Đúng" : id.equals("false") ? "Sai" : id)),
+                right ? "chip-correct" : "chip-wrong");
+        mark.setGraphic(new vn.edu.nhom7.quiz.client.assets.AssetLoader().view(avatar, 22));
+        addMark(id, control, mark);
       }
     }
+    // Options nobody chose and that are wrong fade back so the answer stands out.
+    for (var entry : answerControls.entrySet())
+      if (!entry.getValue().getStyleClass().contains("correct")
+          && !entry.getValue().getStyleClass().contains("incorrect"))
+        entry.getValue().getStyleClass().add("dimmed");
   }
 
   protected void clear() {
     box.getChildren().clear();
     controls.clear();
     answerControls.clear();
+    markSlots.clear();
   }
 }
