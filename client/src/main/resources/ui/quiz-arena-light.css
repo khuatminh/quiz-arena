@@ -1,0 +1,15 @@
+/* Light mode for direction D: only the tokens change; every rule lives in quiz-arena.css. */
+.root {
+  -q-bg: #F2F4FA; -q-bg-2: #E6EAF5;
+  -q-surface: #FFFFFF; -q-surface-2: #E8ECF6; -q-surface-3: #D9DFEF;
+  -q-line: #D2D8EA; -q-line-strong: #B9C1DB;
+  -q-ink: #141A33; -q-ink-2: #4A5478; -q-ink-3: #5B6589; -q-ink-dim: #8A93B3;
+  -q-field: #FFFFFF;
+  -q-self: #F07A10; -q-on-self: #2B1300; -q-self-text: #9A4200; -q-self-soft: #FFF1E3;
+  -q-opp: #2E6FE0; -q-on-opp: #FFFFFF; -q-opp-text: #1F5BC4; -q-opp-soft: #E3EEFF;
+  -q-gold: #F5C542; -q-on-gold: #1A1400; -q-gold-text: #8A6200; -q-gold-soft: #FFF6D6;
+  -q-purple: #A98BFF; -q-on-purple: #160A3A; -q-purple-text: #5B3CC4;
+  -q-good: #138A55; -q-on-good: #FFFFFF; -q-good-text: #0F7A4A; -q-good-soft: #DDF5EA;
+  -q-bad: #D2334A; -q-on-bad: #FFFFFF; -q-bad-text: #B42338; -q-bad-soft: #FBE1E5;
+  -q-focus: #141A33; -q-shadow: #141A3333; -q-scrim: #141A3373;
+}

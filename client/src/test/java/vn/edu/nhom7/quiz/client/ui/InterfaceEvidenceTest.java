@@ -29,6 +29,7 @@ class InterfaceEvidenceTest {
   private Scene scene;
   private final List<AutoCloseable> cleanup = new ArrayList<>();
   private final List<Map.Entry<String, Parent>> views = new ArrayList<>();
+  private String variant = "";
 
   private void fx(Runnable r) throws Exception {
     var latch = new CountDownLatch(1);
@@ -61,7 +62,7 @@ class InterfaceEvidenceTest {
         () -> {
           stage = new Stage();
           scene = new Scene(new VBox(), 1280, 800);
-          scene.getStylesheets().add(getClass().getResource("/ui/quiz-arena.css").toExternalForm());
+          Theme.attach(scene);
           stage.setScene(scene);
           stage.show();
           build();
@@ -119,9 +120,35 @@ class InterfaceEvidenceTest {
             }
           }
       }
+      // Light mode at the large size, and the largest text setting at the small size.
+      for (String pass : List.of("light", "xlarge")) {
+        int[] size = pass.equals("light") ? new int[] {1280, 800} : new int[] {1024, 720};
+        fx(
+            () -> {
+              Theme.setMode(pass.equals("light") ? Theme.Mode.LIGHT : Theme.Mode.DARK);
+              Theme.setTextSize(
+                  pass.equals("light") ? Theme.TextSize.NORMAL : Theme.TextSize.XLARGE);
+            });
+        variant = pass + "-";
+        for (var entry : views) {
+          fx(
+              () -> {
+                scene.setRoot(entry.getValue());
+                stage.setWidth(size[0]);
+                stage.setHeight(size[1]);
+                scene.getRoot().applyCss();
+                scene.getRoot().layout();
+              });
+          fx(() -> snapshot(entry.getKey(), size[0], size[1]));
+        }
+      }
     } finally {
+      variant = "";
       fx(
           () -> {
+            Theme.setMode(Theme.Mode.DARK);
+            Theme.setTextSize(Theme.TextSize.NORMAL);
+            Theme.detach(scene);
             stage.close();
             for (var c : cleanup)
               try {
@@ -855,7 +882,8 @@ class InterfaceEvidenceTest {
         for (int x = 0; x < image.getWidth(); x++)
           image.setRGB(x, y, shot.getPixelReader().getArgb(x, y));
       Path file =
-          Path.of(System.getProperty("quiz.uiEvidence"), width + "x" + height, name + ".png");
+          Path.of(
+              System.getProperty("quiz.uiEvidence"), variant + width + "x" + height, name + ".png");
       Files.createDirectories(file.getParent());
       javax.imageio.ImageIO.write(image, "png", file.toFile());
     } catch (Exception e) {

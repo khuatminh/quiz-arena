@@ -59,14 +59,17 @@ public final class ChatPanel extends VBox {
     tray.getStyleClass().add("sticker-tray");
     showTray(false);
     var smile = new Button();
-    smile.setGraphic(
-        Effects.glyph(
-            22,
-            Effects.stroke(
-                "M12 2.5 A9.5 9.5 0 1 1 12 21.5 A9.5 9.5 0 1 1 12 2.5 Z", "#224C4B", 1.8),
-            Effects.fill("M8.6 8.4 A1.3 1.3 0 1 1 8.6 11 A1.3 1.3 0 1 1 8.6 8.4 Z", "#224C4B"),
-            Effects.fill("M15.4 8.4 A1.3 1.3 0 1 1 15.4 11 A1.3 1.3 0 1 1 15.4 8.4 Z", "#224C4B"),
-            Effects.stroke("M7.8 14 C9.6 17.2 14.4 17.2 16.2 14", "#224C4B", 1.8)));
+    var face =
+        new javafx.scene.shape.SVGPath[] {
+          Effects.stroke("M12 2.5 A9.5 9.5 0 1 1 12 21.5 A9.5 9.5 0 1 1 12 2.5 Z", "#EEF1FA", 1.8),
+          Effects.fill("M8.6 8.4 A1.3 1.3 0 1 1 8.6 11 A1.3 1.3 0 1 1 8.6 8.4 Z", "#EEF1FA"),
+          Effects.fill("M15.4 8.4 A1.3 1.3 0 1 1 15.4 11 A1.3 1.3 0 1 1 15.4 8.4 Z", "#EEF1FA"),
+          Effects.stroke("M7.8 14 C9.6 17.2 14.4 17.2 16.2 14", "#EEF1FA", 1.8)
+        };
+    // The stylesheet recolours the face so it follows dark and light mode.
+    for (var part : face)
+      part.getStyleClass().add(part.getStroke() == null ? "ink-glyph" : "ink-stroke");
+    smile.setGraphic(Effects.glyph(22, face));
     smile.getStyleClass().addAll("secondary", "sticker-toggle");
     smile.setMinHeight(40);
     smile.setAccessibleText("Chọn sticker");

@@ -717,10 +717,7 @@ public final class CommunityQuizView extends BorderPane {
       dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
       dialog.getDialogPane().setPrefSize(700, 600);
       dialog.initOwner(getScene().getWindow());
-      dialog
-          .getDialogPane()
-          .getStylesheets()
-          .add(getClass().getResource("/ui/quiz-arena.css").toExternalForm());
+      dialog.getDialogPane().getStylesheets().setAll(Theme.stylesheets());
       body.getStyleClass().add("question-panel");
       dialog.getDialogPane().lookupButton(ButtonType.CLOSE).setAccessibleText("Đóng xem trước");
       ((Button) dialog.getDialogPane().lookupButton(ButtonType.CLOSE)).setText("Đóng");

@@ -74,7 +74,8 @@ public final class ClientMain extends Application {
             shell,
             Integer.parseInt(args.getOrDefault("width", "1280")),
             Integer.parseInt(args.getOrDefault("height", "800")));
-    scene.getStylesheets().add(getClass().getResource("/ui/quiz-arena.css").toExternalForm());
+    if (!args.containsKey("evidence")) Theme.remember();
+    Theme.attach(scene);
     stage.setTitle("Quiz Arena · Đấu trí 1 đối 1");
     stage.setMinWidth(1024);
     stage.setMinHeight(720);

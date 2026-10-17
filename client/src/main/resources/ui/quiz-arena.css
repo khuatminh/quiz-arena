@@ -1,271 +1,321 @@
-/* Native JavaFX theme. Inspiration: the supplied QuizArena storyboard. */
+/*
+ * Quiz Arena, direction D ("console arena").
+ * Every colour is a looked-up token defined on .root; quiz-arena-light.css redefines the
+ * tokens for light mode. Font sizes are in px for the default text size; Theme scales every
+ * one of them for the larger text settings.
+ */
 .root {
-  -fx-font-family: "System"; -fx-font-size: 14px;
-  -fx-base: #FFFFFF; -fx-background: #F4F7F5;
-  -fx-control-inner-background: #FFFFFF; -fx-accent: #087F70;
-  -fx-focus-color: #087F70; -fx-faint-focus-color: transparent;
-  -fx-text-base-color: #183B40; -fx-background-color: #F4F7F5;
+  -q-bg: #0E1326; -q-bg-2: #141A33;
+  -q-surface: #161D38; -q-surface-2: #1E2546; -q-surface-3: #283160;
+  -q-line: #2D3763; -q-line-strong: #4A5584;
+  -q-ink: #EEF1FA; -q-ink-2: #A9B2D3; -q-ink-3: #8E97BC; -q-ink-dim: #6F7AA6;
+  -q-field: #10162D;
+  -q-self: #FF8A1F; -q-on-self: #2B1300; -q-self-text: #FFB070; -q-self-soft: #3A2817;
+  -q-opp: #3B8BFF; -q-on-opp: #04162E; -q-opp-text: #9FD0FF; -q-opp-soft: #172B52;
+  -q-gold: #F5C542; -q-on-gold: #1A1400; -q-gold-text: #F5C542; -q-gold-soft: #3A3218;
+  -q-purple: #A98BFF; -q-on-purple: #160A3A; -q-purple-text: #CFC2FF;
+  -q-good: #2BD48C; -q-on-good: #04281A; -q-good-text: #5BE3A6; -q-good-soft: #133A33;
+  -q-bad: #FF4D5E; -q-on-bad: #FFFFFF; -q-bad-text: #FF9AA6; -q-bad-soft: #3D1A2A;
+  -q-focus: #FFFFFF; -q-shadow: #04081899; -q-scrim: #070B18B3;
+  /* Answer colours stay the same in both modes: shape + key carry the meaning, not hue. */
+  -q-tile-0: #FF8A1F; -q-on-tile-0: #2B1300;
+  -q-tile-1: #3B8BFF; -q-on-tile-1: #04162E;
+  -q-tile-2: #F5C542; -q-on-tile-2: #1A1400;
+  -q-tile-3: #A98BFF; -q-on-tile-3: #160A3A;
+
+  -fx-font-family: "Be Vietnam Pro", "System"; -fx-font-size: 14px;
+  -fx-base: -q-surface-2; -fx-background: -q-bg;
+  -fx-control-inner-background: -q-field; -fx-accent: -q-self;
+  -fx-focus-color: -q-focus; -fx-faint-focus-color: transparent;
+  -fx-text-base-color: -q-ink; -fx-background-color: -q-bg;
+  -fx-selection-bar: -q-surface-3; -fx-selection-bar-non-focused: -q-surface-3;
 }
-.label { -fx-text-fill: #183B40; }
+.label { -fx-text-fill: -q-ink; }
 .title { -fx-font-size: 25px; -fx-font-weight: bold; }
 .subtitle { -fx-font-size: 18px; -fx-font-weight: bold; }
-.muted { -fx-text-fill: #536B70; }
-.brand { -fx-font-size: 23px; -fx-font-weight: bold; -fx-text-fill: #08695E; }
-.display { -fx-font-size: 38px; -fx-font-weight: bold; }
+.muted { -fx-text-fill: -q-ink-2; }
+.brand { -fx-font-family: "Chakra Petch"; -fx-font-size: 23px; -fx-font-weight: bold; -fx-text-fill: -q-self-text; }
+.display { -fx-font-family: "Chakra Petch"; -fx-font-size: 38px; -fx-font-weight: bold; }
 .button, .toggle-button {
-  -fx-background-color: #087F70; -fx-text-fill: white; -fx-background-radius: 10;
+  -fx-background-color: -q-self; -fx-text-fill: -q-on-self; -fx-background-radius: 10;
   -fx-border-color: transparent; -fx-border-radius: 10; -fx-border-width: 2;
   -fx-padding: 10 16; -fx-font-weight: bold; -fx-cursor: hand;
 }
-.button:hover, .toggle-button:hover { -fx-background-color: #06685C; }
-.button:pressed { -fx-background-color: #054E46; }
-.button:focused, .toggle-button:focused { -fx-border-color: #D29F24; }
+.button:hover, .toggle-button:hover { -fx-background-color: derive(-q-self, 12%); }
+.button:pressed { -fx-background-color: derive(-q-self, -14%); }
+.button:focused, .toggle-button:focused { -fx-border-color: -q-focus; }
 .button:disabled { -fx-opacity: .5; }
 .button.secondary, .button.nav, .button.topic {
-  -fx-background-color: #EAF1EE; -fx-text-fill: #224C4B;
+  -fx-background-color: -q-surface-2; -fx-text-fill: -q-ink; -fx-border-color: -q-line;
 }
-.button.secondary:hover, .button.nav:hover, .button.topic:hover { -fx-background-color: #D4E7DE; }
-.button.nav.active, .button.topic.active { -fx-background-color: #087F70; -fx-text-fill: white; }
-.button.danger { -fx-background-color: #FFF1EF; -fx-text-fill: #A32F35; }
-.button.danger:hover { -fx-background-color: #F9DCD8; }
-.app-header { -fx-background-color: white; -fx-border-color: transparent transparent #DCE6E0 transparent; -fx-padding: 12 20; -fx-spacing: 8; -fx-alignment: center-left; }
+.button.secondary:hover, .button.nav:hover, .button.topic:hover { -fx-background-color: -q-surface-3; }
+.button.secondary:focused, .button.nav:focused, .button.topic:focused { -fx-border-color: -q-focus; }
+.button.nav.active, .button.topic.active { -fx-background-color: -q-self; -fx-text-fill: -q-on-self; -fx-border-color: transparent; }
+.button.nav.active:focused, .button.topic.active:focused { -fx-border-color: -q-focus; }
+.button.danger { -fx-background-color: -q-bad-soft; -fx-text-fill: -q-bad-text; -fx-border-color: transparent; }
+.button.danger:hover { -fx-background-color: derive(-q-bad-soft, 12%); }
+.button.danger:focused { -fx-border-color: -q-focus; }
+.app-header { -fx-background-color: -q-bg-2; -fx-border-color: transparent transparent -q-line transparent; -fx-padding: 12 20; -fx-spacing: 8; -fx-alignment: center-left; }
 .app-header .button { -fx-padding: 9 11; -fx-font-size: 13px; }
-.status-bar { -fx-padding: 8 24; -fx-font-size: 12px; -fx-text-fill: #536B70; -fx-background-color: #EAF1EE; }
+.status-bar { -fx-padding: 8 24; -fx-font-size: 12px; -fx-text-fill: -q-ink-2; -fx-background-color: -q-bg-2; }
 .text-field, .text-area, .combo-box-base {
-  -fx-background-color: white; -fx-background-radius: 10; -fx-border-color: #AABEB7;
+  -fx-background-color: -q-field; -fx-background-radius: 10; -fx-border-color: -q-line-strong;
   -fx-border-radius: 10; -fx-border-width: 1; -fx-padding: 9 12;
-  -fx-prompt-text-fill: #657A78; -fx-text-fill: #183B40;
+  -fx-prompt-text-fill: -q-ink-3; -fx-text-fill: -q-ink; -fx-highlight-fill: -q-self; -fx-highlight-text-fill: -q-on-self;
 }
-.text-field:focused, .text-area:focused, .combo-box-base:focused { -fx-border-color: #087F70; -fx-effect: dropshadow(gaussian, #C5E4D7, 5, .4, 0, 0); }
-.text-area .content, .text-area .viewport { -fx-background-color: white; }
+.text-field:focused, .text-area:focused, .combo-box-base:focused { -fx-border-color: -q-self; -fx-border-width: 2; }
+.text-area .content, .text-area .viewport { -fx-background-color: -q-field; }
 .combo-box-base { -fx-padding: 3 6; }
-.check-box { -fx-text-fill: #183B40; -fx-padding: 6 0; }
-.check-box .box { -fx-background-color: white; -fx-border-color: #8DA89C; -fx-border-radius: 4; -fx-background-radius: 4; }
-.check-box:selected .box { -fx-background-color: #087F70; -fx-border-color: #087F70; }
-.check-box:selected .mark { -fx-background-color: white; }
+.combo-box-base > .list-cell { -fx-text-fill: -q-ink; -fx-background-color: transparent; }
+.combo-box-base > .arrow-button > .arrow { -fx-background-color: -q-ink-2; }
+.combo-box-popup > .list-view { -fx-background-color: -q-surface; -fx-border-color: -q-line-strong; -fx-padding: 4; }
+.combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell { -fx-background-color: -q-surface; -fx-text-fill: -q-ink; -fx-padding: 8 10; }
+.combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:hover { -fx-background-color: -q-surface-3; }
+.combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:selected { -fx-background-color: -q-self; -fx-text-fill: -q-on-self; }
+.check-box { -fx-text-fill: -q-ink; -fx-padding: 6 0; }
+.check-box .box { -fx-background-color: -q-field; -fx-border-color: -q-line-strong; -fx-border-radius: 4; -fx-background-radius: 4; }
+.check-box:focused .box { -fx-border-color: -q-focus; -fx-border-width: 2; }
+.check-box:selected .box { -fx-background-color: -q-self; -fx-border-color: -q-self; }
+.check-box:selected .mark { -fx-background-color: -q-on-self; }
 .scroll-pane, .scroll-pane > .viewport { -fx-background-color: transparent; }
 .scroll-pane { -fx-padding: 0; -fx-background-insets: 0; }
+.scroll-pane > .corner { -fx-background-color: transparent; }
+.root.scroll-pane { -fx-background-color: -q-bg; }
 .scroll-bar { -fx-background-color: transparent; -fx-pref-width: 10; -fx-pref-height: 10; }
-.scroll-bar .thumb { -fx-background-color: #ACBFB6; -fx-background-radius: 8; }
+.scroll-bar .thumb { -fx-background-color: -q-line-strong; -fx-background-radius: 8; }
 .scroll-bar .increment-button, .scroll-bar .decrement-button { -fx-padding: 2; -fx-background-color: transparent; }
+.scroll-bar .increment-arrow, .scroll-bar .decrement-arrow { -fx-background-color: transparent; }
 .panel, .quiz-card, .review-card {
-  -fx-background-color: white; -fx-background-radius: 16; -fx-border-color: #DCE6E0; -fx-border-radius: 16; -fx-border-width: 1;
+  -fx-background-color: -q-surface; -fx-background-radius: 16; -fx-border-color: -q-line; -fx-border-radius: 16; -fx-border-width: 1;
 }
 .quiz-card { -fx-padding: 16; -fx-spacing: 10; }
-.quiz-card:hover { -fx-border-color: #87B7A5; -fx-effect: dropshadow(gaussian, #173E4015, 12, 0, 0, 3); }
-.quiz-card.selected { -fx-border-color: #087F70; -fx-border-width: 2; -fx-background-color: #F0FAF5; }
+.quiz-card:hover { -fx-border-color: -q-line-strong; -fx-effect: dropshadow(gaussian, -q-shadow, 12, 0, 0, 3); }
+.quiz-card.selected { -fx-border-color: -q-self; -fx-border-width: 2; -fx-background-color: -q-self-soft; }
 .card-title { -fx-font-size: 19px; -fx-font-weight: bold; }
-.badge { -fx-font-size: 12px; -fx-font-weight: bold; -fx-background-color: #E5F3EB; -fx-text-fill: #146453; -fx-padding: 5 9; -fx-background-radius: 6; }
-.gold-badge { -fx-background-color: #FFF0C6; -fx-text-fill: #79591D; }
-.online-panel { -fx-padding: 20; -fx-background-color: white; -fx-background-radius: 16; -fx-border-color: #DCE6E0; -fx-border-radius: 16; }
-.button.opponent { -fx-background-color: #F4F7F5; -fx-text-fill: #183B40; -fx-alignment: center-left; -fx-padding: 10; }
-.button.opponent.selected { -fx-background-color: #E1F3E9; -fx-border-color: #087F70; }
-.auth-view { -fx-background-color: #EAF2EC; -fx-padding: 28; }
-.auth-art { -fx-background-color: #FFF8E9; -fx-background-radius: 20 0 0 20; -fx-padding: 32; }
-.auth-form { -fx-background-color: white; -fx-background-radius: 0 20 20 0; -fx-padding: 28 32; }
+.badge { -fx-font-size: 12px; -fx-font-weight: bold; -fx-background-color: -q-surface-2; -fx-text-fill: -q-ink-2; -fx-padding: 5 9; -fx-background-radius: 6; }
+.gold-badge { -fx-background-color: -q-gold-soft; -fx-text-fill: -q-gold-text; }
+.online-panel { -fx-padding: 20; -fx-background-color: -q-surface; -fx-background-radius: 16; -fx-border-color: -q-line; -fx-border-radius: 16; }
+.button.opponent { -fx-background-color: -q-surface-2; -fx-text-fill: -q-ink; -fx-alignment: center-left; -fx-padding: 10; }
+.button.opponent:hover { -fx-background-color: -q-surface-3; }
+.button.opponent.selected { -fx-background-color: -q-opp-soft; -fx-border-color: -q-opp; }
+.auth-view { -fx-background-color: -q-bg; -fx-padding: 28; }
+.auth-art { -fx-background-color: -q-bg-2; -fx-background-radius: 20 0 0 20; -fx-border-color: -q-line; -fx-border-width: 1 0 1 1; -fx-border-radius: 20 0 0 20; -fx-padding: 32; }
+.auth-form { -fx-background-color: -q-surface; -fx-background-radius: 0 20 20 0; -fx-border-color: -q-line; -fx-border-width: 1 1 1 0; -fx-border-radius: 0 20 20 0; -fx-padding: 28 32; }
 .auth-tabs .button { -fx-max-width: infinity; }
-.auth-feedback { -fx-text-fill: #A32F35; }
-.game-surface { -fx-background-color: #123E43; -fx-padding: 24; }
-.game-surface > .label, .game-header .label, .game-heading, .game-surface .light-label { -fx-text-fill: #F7FAF6; }
+.auth-feedback { -fx-text-fill: -q-bad-text; }
+.game-surface { -fx-background-color: -q-bg; -fx-padding: 24; }
+.game-surface > .label, .game-header .label, .game-heading, .game-surface .light-label { -fx-text-fill: -q-ink; }
 .game-header { -fx-padding: 4 0 20 0; -fx-alignment: center-left; }
-.timer { -fx-background-color: #F5C65A; -fx-text-fill: #183B40; -fx-font-size: 21px; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 9 18; }
-.game-header .timer { -fx-text-fill: #183B40; }
-.challenge-hint { -fx-font-size: 12px; -fx-text-fill: #536B70; }
+.timer { -fx-font-family: "Chakra Petch"; -fx-background-color: -q-gold; -fx-text-fill: -q-on-gold; -fx-font-size: 21px; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 9 18; }
+.game-header .timer { -fx-text-fill: -q-on-gold; }
+.challenge-hint { -fx-font-size: 12px; -fx-text-fill: -q-ink-2; }
 .rematch-status { -fx-font-weight: bold; }
-.question-panel { -fx-background-color: #FFFEF9; -fx-background-radius: 20; -fx-padding: 28; }
+.question-panel { -fx-background-color: -q-surface; -fx-background-radius: 20; -fx-border-color: -q-line; -fx-border-radius: 20; -fx-padding: 28; }
 .question-title { -fx-font-size: 27px; -fx-font-weight: bold; }
 .answer-card {
-  -fx-background-color: #F0F5F2; -fx-border-color: #C5D6CC; -fx-border-width: 1;
-  -fx-background-radius: 12; -fx-border-radius: 12; -fx-text-fill: #183B40;
+  -fx-background-color: -q-surface-2; -fx-border-color: -q-line; -fx-border-width: 1;
+  -fx-background-radius: 12; -fx-border-radius: 12; -fx-text-fill: -q-ink;
   -fx-font-size: 17px; -fx-padding: 14 18; -fx-alignment: center-left;
 }
-.answer-card:hover { -fx-background-color: #E1F3E9; -fx-border-color: #087F70; }
-.answer-card:focused { -fx-border-color: #087F70; -fx-border-width: 2; }
-.answer-card:selected { -fx-background-color: #CCF0DF; -fx-border-color: #087F70; }
+.answer-card:hover { -fx-background-color: -q-surface-3; -fx-border-color: -q-line-strong; }
+.answer-card:focused { -fx-border-color: -q-focus; -fx-border-width: 2; }
+.answer-card:selected { -fx-background-color: -q-self-soft; -fx-border-color: -q-self; }
 .answer-card:disabled { -fx-opacity: .75; }
-.answer-card.correct { -fx-background-color: #C8EEDD; -fx-border-color: #087F70; -fx-opacity: 1; }
-.answer-card.incorrect { -fx-background-color: #F9DCD8; -fx-border-color: #BE4A4E; -fx-opacity: 1; }
-.reveal-panel { -fx-background-color: #EAF5EE; -fx-background-radius: 12; -fx-padding: 20; }
+.answer-card.correct { -fx-background-color: -q-good-soft; -fx-border-color: -q-good; -fx-opacity: 1; }
+.answer-card.incorrect { -fx-background-color: -q-bad-soft; -fx-border-color: -q-bad; -fx-opacity: 1; }
+.reveal-panel { -fx-background-color: -q-surface-2; -fx-background-radius: 12; -fx-padding: 20; }
 .reveal-panel .title { -fx-font-size: 20px; }
-.leaderboard-row { -fx-background-color: white; -fx-background-radius: 16; -fx-padding: 20; -fx-alignment: center-left; }
-.leaderboard-row .label { -fx-text-fill: #183B40; }
-.waiting-panel { -fx-background-color: #123E43; -fx-alignment: center; -fx-padding: 40; }
-.waiting-panel .label { -fx-text-fill: #F7FAF6; }
-.player-tile { -fx-background-color: #245259; -fx-background-radius: 20; -fx-padding: 24; -fx-alignment: center; }
-.player-tile .label { -fx-text-fill: white; }
-.countdown-number { -fx-font-size: 84px; -fx-font-weight: bold; -fx-text-fill: #F5C65A; }
-.challenge-panel, .detail-panel { -fx-padding: 24; -fx-background-color: white; -fx-border-color: #DCE6E0; -fx-border-width: 0 1 0 0; }
-.result-hero { -fx-background-color: #123E43; -fx-background-radius: 20; -fx-padding: 28; -fx-alignment: center; }
-.result-hero .label { -fx-text-fill: white; }
-.result-score { -fx-font-size: 42px; -fx-font-weight: bold; }
-.table-heading { -fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #536B70; -fx-padding: 12 16; }
-.data-row { -fx-background-color: white; -fx-background-radius: 12; -fx-padding: 14 16; -fx-alignment: center-left; }
-.data-row.self { -fx-background-color: #E1F3E9; -fx-border-color: #6BAE96; -fx-border-radius: 12; }
-.chat-panel { -fx-background-color: white; -fx-padding: 20; -fx-border-color: transparent transparent transparent #DCE6E0; }
-.chat-bubble { -fx-background-color: #EEF5F0; -fx-background-radius: 12; -fx-padding: 12; }
-.chat-bubble.mine { -fx-background-color: #DDF1E6; -fx-border-color: #9CCFB7; -fx-border-radius: 12; }
-.editor-panel { -fx-padding: 24; -fx-background-color: white; -fx-background-radius: 16; -fx-border-color: #DCE6E0; -fx-border-radius: 16; }
-.titled-pane > .title { -fx-font-size: 14px; -fx-background-color: #EEF5F0; -fx-padding: 8; }
-.titled-pane > .content { -fx-background-color: white; -fx-border-color: #DCE6E0; }
-.dialog-pane { -fx-background-color: #F4F7F5; -fx-padding: 20; }
-.tooltip { -fx-background-color: #183B40; -fx-text-fill: white; -fx-background-radius: 8; }
-.progress-bar > .track { -fx-background-color: #2F5A60; -fx-background-radius: 4; }
-.progress-bar > .bar { -fx-background-color: #75D6AC; -fx-background-radius: 4; -fx-background-insets: 0; -fx-padding: 3; }
+.leaderboard-row { -fx-background-color: -q-surface; -fx-background-radius: 16; -fx-border-color: -q-line; -fx-border-radius: 16; -fx-padding: 20; -fx-alignment: center-left; }
+.leaderboard-row .label { -fx-text-fill: -q-ink; }
+.waiting-panel { -fx-background-color: -q-bg; -fx-alignment: center; -fx-padding: 40; }
+.waiting-panel .label { -fx-text-fill: -q-ink; }
+.player-tile { -fx-background-color: -q-surface; -fx-background-radius: 20; -fx-border-color: -q-line; -fx-border-radius: 20; -fx-padding: 24; -fx-alignment: center; }
+.player-tile .label { -fx-text-fill: -q-ink; }
+.countdown-number { -fx-font-family: "Chakra Petch"; -fx-font-size: 84px; -fx-font-weight: bold; -fx-text-fill: -q-gold-text; }
+.challenge-panel, .detail-panel { -fx-padding: 24; -fx-background-color: -q-bg-2; -fx-border-color: -q-line; -fx-border-width: 0 1 0 0; }
+.result-hero { -fx-background-color: -q-surface; -fx-background-radius: 20; -fx-border-color: -q-line; -fx-border-radius: 20; -fx-padding: 28; -fx-alignment: center; }
+.result-hero .label { -fx-text-fill: -q-ink; }
+.result-score { -fx-font-family: "Chakra Petch"; -fx-font-size: 42px; -fx-font-weight: bold; }
+.table-heading { -fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: -q-ink-2; -fx-padding: 12 16; }
+.data-row { -fx-background-color: -q-surface; -fx-background-radius: 12; -fx-padding: 14 16; -fx-alignment: center-left; }
+.data-row.self { -fx-background-color: -q-self-soft; -fx-border-color: -q-self; -fx-border-radius: 12; }
+.chat-panel { -fx-background-color: -q-bg-2; -fx-padding: 20; -fx-border-color: transparent transparent transparent -q-line; }
+.chat-bubble { -fx-background-color: -q-surface-2; -fx-background-radius: 12; -fx-padding: 12; }
+.chat-bubble.mine { -fx-background-color: -q-self-soft; -fx-border-color: -q-self; -fx-border-radius: 12; }
+.editor-panel { -fx-padding: 24; -fx-background-color: -q-surface; -fx-background-radius: 16; -fx-border-color: -q-line; -fx-border-radius: 16; }
+.titled-pane > .title { -fx-font-size: 14px; -fx-background-color: -q-surface-2; -fx-padding: 8; }
+.titled-pane > .title > .text { -fx-fill: -q-ink; }
+.titled-pane > .title > .arrow-button > .arrow { -fx-background-color: -q-ink-2; }
+.titled-pane > .content { -fx-background-color: -q-surface; -fx-border-color: -q-line; }
+.dialog-pane { -fx-background-color: -q-surface; -fx-padding: 20; }
+.dialog-pane > .header-panel { -fx-background-color: -q-bg-2; }
+.dialog-pane > .header-panel .label, .dialog-pane > .content.label { -fx-text-fill: -q-ink; }
+.dialog-pane > .button-bar > .container { -fx-background-color: transparent; }
+.tooltip { -fx-background-color: -q-ink; -fx-text-fill: -q-bg; -fx-background-radius: 8; -fx-font-size: 13px; }
+.progress-bar > .track { -fx-background-color: -q-surface-2; -fx-background-radius: 4; }
+.progress-bar > .bar { -fx-background-color: -q-self; -fx-background-radius: 4; -fx-background-insets: 0; -fx-padding: 3; }
 .score-line { -fx-font-size: 18px; -fx-font-weight: bold; }
-.badge:error { -fx-background-color: #FFF1EF; -fx-text-fill: #A32F35; }
+.badge:error { -fx-background-color: -q-bad-soft; -fx-text-fill: -q-bad-text; }
 .question-title.long-question { -fx-font-size: 20px; }
-.waiting-scroll, .waiting-scroll > .viewport { -fx-background-color: #123E43; }
-/* Direction C: versus bar, ring timer and 2x2 answer tiles. */
-.versus-avatar { -fx-background-color: #C8F0DF; -fx-background-radius: 40; -fx-border-color: #75D6AC; -fx-border-width: 3; -fx-border-radius: 40; -fx-padding: 4; }
-.versus-avatar.opponent { -fx-background-color: #FBD58A; -fx-border-color: #F5C65A; }
-.game-surface .versus-name { -fx-text-fill: #BFD3D0; -fx-font-size: 15px; -fx-font-weight: bold; }
-.game-surface .versus-score { -fx-text-fill: #F7FAF6; -fx-font-size: 38px; -fx-font-weight: bold; }
-.game-surface .opponent-status { -fx-text-fill: #BFD3D0; -fx-font-size: 13px; }
-.game-surface .opponent-status.answered { -fx-text-fill: #F5C65A; -fx-font-weight: bold; }
-.game-surface .gain-pill { -fx-background-color: #75D6AC; -fx-text-fill: #0E3337; -fx-background-radius: 999; -fx-padding: 6 12; -fx-font-size: 15px; -fx-font-weight: bold; }
-.game-surface .gain-pill.zero { -fx-background-color: #3B6066; -fx-text-fill: #F7FAF6; }
-.timer-ring-track { -fx-stroke: #24575D; -fx-stroke-width: 7; -fx-fill: transparent; }
-.timer-ring-bar { -fx-stroke: #F5C65A; -fx-stroke-width: 7; -fx-fill: transparent; -fx-stroke-line-cap: round; }
-.urgent .timer-ring-bar { -fx-stroke: #E0565B; }
-.game-surface .ring-label { -fx-text-fill: #F7FAF6; -fx-font-size: 28px; -fx-font-weight: bold; }
-.game-surface .urgent .ring-label { -fx-text-fill: #FF8A8E; }
-.game-surface .round-label { -fx-text-fill: #BFD3D0; -fx-font-size: 13px; -fx-font-weight: bold; }
-.race-track { -fx-background-color: #24575D; -fx-background-radius: 4; }
-.race-self { -fx-background-color: #75D6AC; -fx-background-radius: 4; }
-.race-opponent { -fx-background-color: #F5C65A; -fx-background-radius: 4; }
-.bonus-text { -fx-text-fill: #536B70; -fx-font-size: 13px; -fx-font-weight: bold; }
-.answer-tile { -fx-background-color: white; -fx-border-color: white; -fx-border-width: 3; -fx-background-radius: 16; -fx-border-radius: 16; -fx-padding: 14 20; }
-.answer-tile:hover { -fx-background-color: white; -fx-border-color: #75D6AC; -fx-translate-y: -2; }
+.waiting-scroll, .waiting-scroll > .viewport { -fx-background-color: -q-bg; }
+
+/* Match screen: versus bar, ring timer and answer tiles. */
+.versus-avatar { -fx-background-color: #FFE3CC; -fx-background-radius: 18; -fx-border-color: -q-self; -fx-border-width: 3; -fx-border-radius: 18; -fx-padding: 4; }
+.versus-avatar.opponent { -fx-background-color: #D6E9FF; -fx-border-color: -q-opp; }
+.game-surface .versus-name { -fx-text-fill: -q-ink; -fx-font-size: 15px; -fx-font-weight: bold; }
+.game-surface .versus-score { -fx-font-family: "Chakra Petch"; -fx-text-fill: -q-ink; -fx-font-size: 38px; -fx-font-weight: bold; }
+.game-surface .opponent-status { -fx-text-fill: -q-ink-2; -fx-font-size: 13px; }
+.game-surface .opponent-status.answered { -fx-text-fill: -q-opp-text; -fx-font-weight: bold; }
+.game-surface .gain-pill { -fx-background-color: -q-good; -fx-text-fill: -q-on-good; -fx-background-radius: 999; -fx-padding: 6 12; -fx-font-size: 15px; -fx-font-weight: bold; }
+.game-surface .gain-pill.zero { -fx-background-color: -q-surface-2; -fx-text-fill: -q-ink; }
+.timer-ring-track { -fx-stroke: -q-surface-2; -fx-stroke-width: 7; -fx-fill: transparent; }
+.timer-ring-bar { -fx-stroke: -q-gold; -fx-stroke-width: 7; -fx-fill: transparent; -fx-stroke-line-cap: round; }
+.urgent .timer-ring-bar { -fx-stroke: -q-bad; }
+.game-surface .ring-label { -fx-font-family: "Chakra Petch"; -fx-text-fill: -q-ink; -fx-font-size: 28px; -fx-font-weight: bold; }
+.game-surface .urgent .ring-label { -fx-text-fill: -q-bad-text; }
+.game-surface .round-label { -fx-font-family: "Chakra Petch"; -fx-text-fill: -q-ink-2; -fx-font-size: 13px; -fx-font-weight: bold; }
+.race-track { -fx-background-color: -q-surface-2; -fx-background-radius: 4; }
+.race-self { -fx-background-color: -q-self; -fx-background-radius: 4; }
+.race-opponent { -fx-background-color: -q-opp; -fx-background-radius: 4; }
+.bonus-text { -fx-text-fill: -q-ink-2; -fx-font-size: 13px; -fx-font-weight: bold; }
+.answer-tile { -fx-background-color: -q-surface-2; -fx-border-color: -q-line; -fx-border-width: 3; -fx-background-radius: 16; -fx-border-radius: 16; -fx-padding: 14 20; }
+.answer-tile:hover { -fx-background-color: -q-surface-3; -fx-border-color: -q-line-strong; -fx-translate-y: -2; }
 .answer-tile:pressed { -fx-scale-x: .98; -fx-scale-y: .98; }
-.answer-tile:focused { -fx-border-color: #F5C65A; }
+.answer-tile:focused { -fx-border-color: -q-focus; }
 .answer-tile:disabled { -fx-opacity: .9; }
-.answer-tile.chosen { -fx-background-color: #EAF8F1; -fx-border-color: #75D6AC; -fx-opacity: 1; }
-.answer-tile.correct { -fx-background-color: #C8EEDD; -fx-border-color: #087F70; -fx-opacity: 1; }
-.answer-tile.incorrect { -fx-background-color: #F9DCD8; -fx-border-color: #BE4A4E; -fx-opacity: 1; }
+.answer-tile.chosen { -fx-background-color: -q-self-soft; -fx-border-color: -q-self; -fx-opacity: 1; }
+.answer-tile.correct { -fx-background-color: -q-good-soft; -fx-border-color: -q-good; -fx-opacity: 1; }
+.answer-tile.incorrect { -fx-background-color: -q-bad-soft; -fx-border-color: -q-bad; -fx-opacity: 1; }
 .answer-card.dimmed { -fx-opacity: .55; }
-.tile-text { -fx-font-size: 21px; -fx-font-weight: bold; -fx-text-fill: #183B40; }
-.keycap { -fx-background-radius: 12; -fx-font-size: 19px; -fx-font-weight: bold; -fx-text-fill: white; }
-.keycap-0 { -fx-background-color: #087F70; }
-.keycap-1 { -fx-background-color: #F5C65A; -fx-text-fill: #183B40; }
-.keycap-2 { -fx-background-color: #2F6FB3; }
-.keycap-3 { -fx-background-color: #B4553C; }
-.answer-chip { -fx-background-radius: 999; -fx-padding: 5 10; -fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: white; -fx-graphic-text-gap: 6; }
-.answer-chip.chip-correct { -fx-background-color: #087F70; }
-.answer-chip.chip-wrong { -fx-background-color: #A32F35; }
+.tile-text { -fx-font-size: 21px; -fx-font-weight: bold; -fx-text-fill: -q-ink; }
+.keycap { -fx-font-family: "Chakra Petch"; -fx-background-radius: 12; -fx-font-size: 19px; -fx-font-weight: bold; }
+.keycap-0 { -fx-background-color: -q-tile-0; -fx-text-fill: -q-on-tile-0; }
+.keycap-1 { -fx-background-color: -q-tile-1; -fx-text-fill: -q-on-tile-1; }
+.keycap-2 { -fx-background-color: -q-tile-2; -fx-text-fill: -q-on-tile-2; }
+.keycap-3 { -fx-background-color: -q-tile-3; -fx-text-fill: -q-on-tile-3; }
+.answer-chip { -fx-background-radius: 999; -fx-padding: 5 10; -fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: -q-ink; -fx-graphic-text-gap: 6; }
+.answer-chip.chip-correct { -fx-background-color: -q-good; -fx-text-fill: -q-on-good; }
+.answer-chip.chip-wrong { -fx-background-color: -q-bad; -fx-text-fill: -q-on-bad; }
 /* Children of a locked tile stay fully legible; the tile itself signals the state. */
 .answer-tile .label:disabled { -fx-opacity: 1; }
+
 /* Effects: streak flames, red flash, floating invite, result celebration, stickers, sound toggles. */
 .streak-badge { -fx-background-radius: 999; -fx-border-radius: 999; -fx-border-width: 2; -fx-padding: 1 9 1 5; }
-.streak-badge.tier-1 { -fx-background-color: #4A3A1E; -fx-border-color: #FF8A1F; }
-.streak-badge.tier-2 { -fx-background-color: #4D2230; -fx-border-color: #E8364F; -fx-effect: dropshadow(gaussian, #E8364F99, 10, .2, 0, 0); }
+.streak-badge.tier-1 { -fx-background-color: -q-self-soft; -fx-border-color: #FF8A1F; }
+.streak-badge.tier-2 { -fx-background-color: -q-bad-soft; -fx-border-color: #E8364F; -fx-effect: dropshadow(gaussian, #E8364F99, 10, .2, 0, 0); }
 .streak-badge.tier-3 { -fx-background-color: #2C2559; -fx-border-color: #7B5CFF; -fx-effect: dropshadow(gaussian, #7B5CFFCC, 16, .35, 0, 0); }
-.streak-count { -fx-font-size: 15px; -fx-font-weight: bold; }
-.streak-badge.tier-1 .streak-count { -fx-text-fill: #FFC27A; }
-.streak-badge.tier-2 .streak-count { -fx-text-fill: #FF9AAA; }
+.streak-count { -fx-font-family: "Chakra Petch"; -fx-font-size: 15px; -fx-font-weight: bold; }
+.streak-badge.tier-1 .streak-count { -fx-text-fill: -q-self-text; }
+.streak-badge.tier-2 .streak-count { -fx-text-fill: -q-bad-text; }
 .streak-badge.tier-3 .streak-count { -fx-text-fill: #CFC2FF; }
-.streak-banner { -fx-background-color: #0E3337F2; -fx-background-radius: 28; -fx-border-radius: 28; -fx-border-width: 3; -fx-padding: 20 36 20 26; }
+.streak-banner { -fx-background-color: #0E1326F2; -fx-background-radius: 28; -fx-border-radius: 28; -fx-border-width: 3; -fx-padding: 20 36 20 26; }
 .streak-banner.tier-1 { -fx-border-color: #FF8A1F; -fx-effect: dropshadow(gaussian, #FF8A1FAA, 40, .25, 0, 0); }
 .streak-banner.tier-2 { -fx-border-color: #E8364F; -fx-effect: dropshadow(gaussian, #E8364FBB, 46, .3, 0, 0); }
 .streak-banner.tier-3 { -fx-border-color: #7B5CFF; -fx-effect: dropshadow(gaussian, #7B5CFFDD, 56, .4, 0, 0); }
-.streak-banner-title { -fx-font-size: 44px; -fx-font-weight: bold; -fx-text-fill: #FFFFFF; }
+.streak-banner-title { -fx-font-family: "Chakra Petch"; -fx-font-size: 44px; -fx-font-weight: bold; -fx-text-fill: #FFFFFF; }
 .streak-banner.tier-1 .streak-banner-line { -fx-text-fill: #FFC27A; }
 .streak-banner.tier-2 .streak-banner-line { -fx-text-fill: #FF9AAA; }
 .streak-banner.tier-3 .streak-banner-line { -fx-text-fill: #CFC2FF; }
 .streak-banner-line { -fx-font-size: 17px; -fx-font-weight: bold; }
 .wrong-flash {
-  -fx-background-color: radial-gradient(center 50% 50%, radius 75%, #E8364F00 40%, #E8364F66 100%), #E8364F14;
+  -fx-background-color: radial-gradient(center 50% 50%, radius 75%, #FF4D5E00 40%, #FF4D5E66 100%), #FF4D5E14;
 }
-.invite-backdrop { -fx-background-color: #0C2629A0; }
-.challenge-dialog { -fx-background-color: white; -fx-background-radius: 24; -fx-effect: dropshadow(gaussian, #0A1F2266, 44, 0, 0, 14); }
-.challenge-head { -fx-background-color: #123E43; -fx-background-radius: 24 24 0 0; -fx-padding: 26 30; }
-.challenge-kicker { -fx-text-fill: #F5C65A; -fx-font-size: 13px; -fx-font-weight: bold; }
-.challenge-headline { -fx-text-fill: #F7FAF6; -fx-font-size: 25px; -fx-font-weight: bold; }
+.invite-backdrop { -fx-background-color: -q-scrim; }
+.challenge-dialog { -fx-background-color: -q-surface; -fx-background-radius: 24; -fx-border-color: -q-line; -fx-border-radius: 24; -fx-effect: dropshadow(gaussian, -q-shadow, 44, 0, 0, 14); }
+.challenge-head { -fx-background-color: -q-bg-2; -fx-background-radius: 24 24 0 0; -fx-padding: 26 30; }
+.challenge-kicker { -fx-font-family: "Chakra Petch"; -fx-text-fill: -q-gold-text; -fx-font-size: 13px; -fx-font-weight: bold; }
+.challenge-headline { -fx-text-fill: -q-ink; -fx-font-size: 25px; -fx-font-weight: bold; }
 .challenge-dialog.outgoing .challenge-headline { -fx-font-size: 19px; }
 .challenge-dialog.outgoing .challenge-head { -fx-padding: 18 22; }
 .challenge-dialog.outgoing .challenge-body { -fx-padding: 18 22 20 22; }
-.challenge-sub { -fx-text-fill: #BFD3D0; -fx-font-size: 14px; }
-.challenge-avatar { -fx-background-color: #FBD58A; -fx-background-radius: 40; -fx-border-color: #F5C65A; -fx-border-width: 3; -fx-border-radius: 40; }
-.challenge-ring-track { -fx-stroke: #24575D; -fx-stroke-width: 5; -fx-fill: transparent; }
-.challenge-ring-bar { -fx-stroke: #F5C65A; -fx-stroke-width: 5; -fx-fill: transparent; -fx-stroke-line-cap: round; }
-.challenge-dialog.urgent .challenge-ring-bar { -fx-stroke: #FF6B6B; }
-.challenge-seconds { -fx-text-fill: #F7FAF6; -fx-font-size: 19px; -fx-font-weight: bold; }
+.challenge-sub { -fx-text-fill: -q-ink-2; -fx-font-size: 14px; }
+.challenge-avatar { -fx-background-color: #D6E9FF; -fx-background-radius: 18; -fx-border-color: -q-opp; -fx-border-width: 3; -fx-border-radius: 18; }
+.challenge-ring-track { -fx-stroke: -q-surface-2; -fx-stroke-width: 5; -fx-fill: transparent; }
+.challenge-ring-bar { -fx-stroke: -q-gold; -fx-stroke-width: 5; -fx-fill: transparent; -fx-stroke-line-cap: round; }
+.challenge-dialog.urgent .challenge-ring-bar { -fx-stroke: -q-bad; }
+.challenge-seconds { -fx-font-family: "Chakra Petch"; -fx-text-fill: -q-ink; -fx-font-size: 19px; -fx-font-weight: bold; }
 .challenge-body { -fx-padding: 22 30 26 30; }
-.challenge-quiz { -fx-padding: 12; -fx-background-radius: 16; -fx-border-radius: 16; -fx-border-color: #DCE6E0; }
+.challenge-quiz { -fx-padding: 12; -fx-background-radius: 16; -fx-border-radius: 16; -fx-border-color: -q-line; }
 .challenge-quiz-title { -fx-font-size: 18px; -fx-font-weight: bold; }
 .challenge-action { -fx-min-height: 50; -fx-font-size: 16px; }
-.challenge-remaining { -fx-text-fill: #A32F35; -fx-font-weight: bold; }
+.challenge-remaining { -fx-text-fill: -q-bad-text; -fx-font-weight: bold; }
 .icon-toggle { -fx-padding: 8 9; }
-.sound-glyph { -fx-fill: #224C4B; }
-.icon-toggle.off .sound-glyph { -fx-fill: #8AA3A0; }
-.sound-slash { -fx-stroke: #A32F35; -fx-stroke-width: 2.4; -fx-stroke-line-cap: round; }
-.result-hero.win { -fx-background-color: linear-gradient(to bottom, #0F6A5F, #123E43 75%); }
-.result-hero.lose { -fx-background-color: linear-gradient(to bottom, #2F4B5E, #1C3442 80%); }
+.button.icon-toggle { -fx-background-color: -q-surface-2; -fx-border-color: -q-line; }
+.button.icon-toggle:hover { -fx-background-color: -q-surface-3; }
+.button.icon-toggle:focused { -fx-border-color: -q-focus; }
+.sound-glyph, .ink-glyph { -fx-fill: -q-ink; }
+.ink-stroke { -fx-stroke: -q-ink; }
+.icon-toggle.off .sound-glyph { -fx-fill: -q-ink-3; }
+.sound-slash { -fx-stroke: -q-bad; -fx-stroke-width: 2.4; -fx-stroke-line-cap: round; }
+.result-hero.win { -fx-background-color: linear-gradient(to bottom, -q-gold-soft, -q-surface 75%); -fx-border-color: -q-gold; }
+.result-hero.lose { -fx-background-color: linear-gradient(to bottom, -q-opp-soft, -q-surface 80%); }
 .result-title { -fx-font-size: 34px; }
-.result-hero.win .result-title { -fx-text-fill: #F5C65A; }
-.result-hero.lose .result-title { -fx-text-fill: #DCE8F0; }
-.result-halo { -fx-background-radius: 999; -fx-padding: 18; -fx-background-color: #F5C65A26, #F5C65A1A; -fx-background-insets: 0, 8; }
-.result-hero.lose .result-halo { -fx-background-color: #8FC3F01A, #8FC3F014; }
-.result-hero.draw .result-halo { -fx-background-color: #75D6AC22, #75D6AC18; }
-.result-avatar { -fx-background-color: #245259; -fx-background-radius: 999; -fx-border-color: #3B6066; -fx-border-width: 3; -fx-border-radius: 999; -fx-padding: 4; }
-.result-avatar.winner { -fx-border-color: #F5C65A; -fx-border-width: 4; -fx-effect: dropshadow(gaussian, #F5C65AAA, 24, .3, 0, 0); }
-.result-player.winner .result-score { -fx-text-fill: #F5C65A; }
-.sticker { -fx-effect: dropshadow(gaussian, #183B4033, 6, 0, 0, 2); }
+.result-hero.win .result-title { -fx-text-fill: -q-gold-text; }
+.result-hero.lose .result-title { -fx-text-fill: -q-opp-text; }
+.result-halo { -fx-background-radius: 999; -fx-padding: 18; -fx-background-color: #F5C54226, #F5C5421A; -fx-background-insets: 0, 8; }
+.result-hero.lose .result-halo { -fx-background-color: #3B8BFF1A, #3B8BFF14; }
+.result-hero.draw .result-halo { -fx-background-color: #A98BFF22, #A98BFF18; }
+.result-avatar { -fx-background-color: -q-surface-2; -fx-background-radius: 999; -fx-border-color: -q-line-strong; -fx-border-width: 3; -fx-border-radius: 999; -fx-padding: 4; }
+.result-avatar.winner { -fx-border-color: -q-gold; -fx-border-width: 4; -fx-effect: dropshadow(gaussian, #F5C542AA, 24, .3, 0, 0); }
+.result-player.winner .result-score { -fx-text-fill: -q-gold-text; }
+.sticker { -fx-effect: dropshadow(gaussian, #0408184D, 6, 0, 0, 2); }
 .sticker-caption { -fx-text-fill: white; -fx-font-weight: bold; -fx-effect: dropshadow(gaussian, #00000055, 2, .4, 0, 1); }
-.sticker-tray { -fx-background-color: #F4F7F5; -fx-background-radius: 14; -fx-padding: 8; }
+.sticker-tray { -fx-background-color: -q-surface; -fx-background-radius: 14; -fx-border-color: -q-line; -fx-border-radius: 14; -fx-padding: 8; }
 .button.sticker-pick { -fx-background-color: transparent; -fx-padding: 2; -fx-background-radius: 14; -fx-border-radius: 14; }
-.button.sticker-pick:hover { -fx-background-color: #DCEBE4; -fx-translate-y: -2; }
+.button.sticker-pick:hover { -fx-background-color: -q-surface-3; -fx-translate-y: -2; }
+.button.sticker-pick:focused { -fx-border-color: -q-focus; }
 .button.sticker-toggle { -fx-padding: 8 10; }
 .chat-bubble.sticker-bubble, .chat-bubble.sticker-bubble.mine { -fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 2 0; }
 
 /* Lifelines (quyền trợ giúp): round icons in the bottom-right corner and a card above them. */
 .button.lifeline {
-  -fx-background-color: #1C4D52; -fx-border-color: #2E6469; -fx-border-width: 3;
+  -fx-background-color: -q-surface; -fx-border-color: -q-line-strong; -fx-border-width: 3;
   -fx-background-radius: 999; -fx-border-radius: 999; -fx-padding: 4;
-  -fx-effect: dropshadow(gaussian, #0A242799, 12, .2, 0, 3);
+  -fx-effect: dropshadow(gaussian, -q-shadow, 12, .2, 0, 3);
 }
-.button.lifeline:hover { -fx-border-color: #75D6AC; -fx-translate-y: -2; }
-.button.lifeline:focused { -fx-border-color: #F5C65A; }
-.button.lifeline.open { -fx-border-color: #F7FAF6; -fx-translate-y: -3; }
-.lifeline-glyph { -fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #0E3337; -fx-min-width: 48; -fx-min-height: 48; -fx-alignment: center; -fx-background-radius: 999; }
-.button.lifeline.lifeline-double_points .lifeline-glyph, .lifeline-pop-icon.lifeline-double_points { -fx-background-color: #F5C65A; }
-.button.lifeline.lifeline-remove_one .lifeline-glyph, .lifeline-pop-icon.lifeline-remove_one { -fx-background-color: #75D6AC; }
-.button.lifeline.lifeline-fifty_fifty .lifeline-glyph, .lifeline-pop-icon.lifeline-fifty_fifty { -fx-background-color: #9FC2FF; }
+.button.lifeline:hover { -fx-border-color: -q-ink-2; -fx-translate-y: -2; }
+.button.lifeline:focused { -fx-border-color: -q-focus; }
+.button.lifeline.open { -fx-border-color: -q-ink; -fx-translate-y: -3; }
+.lifeline-glyph { -fx-font-family: "Chakra Petch"; -fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #0E1326; -fx-min-width: 48; -fx-min-height: 48; -fx-alignment: center; -fx-background-radius: 999; }
+.button.lifeline.lifeline-double_points .lifeline-glyph, .lifeline-pop-icon.lifeline-double_points { -fx-background-color: -q-gold; }
+.button.lifeline.lifeline-remove_one .lifeline-glyph, .lifeline-pop-icon.lifeline-remove_one { -fx-background-color: #2BD4B4; }
+.button.lifeline.lifeline-fifty_fifty .lifeline-glyph, .lifeline-pop-icon.lifeline-fifty_fifty { -fx-background-color: -q-purple; }
 .game-surface .lifeline-key {
-  -fx-background-color: #0E3337; -fx-text-fill: #F7FAF6; -fx-font-size: 11px; -fx-font-weight: bold;
-  -fx-padding: 1 6; -fx-background-radius: 6; -fx-border-color: #4F7F82; -fx-border-radius: 6; -fx-border-width: 1;
+  -fx-font-family: "Chakra Petch"; -fx-background-color: -q-bg; -fx-text-fill: -q-ink; -fx-font-size: 11px; -fx-font-weight: bold;
+  -fx-padding: 1 6; -fx-background-radius: 6; -fx-border-color: -q-line-strong; -fx-border-radius: 6; -fx-border-width: 1;
 }
-.button.lifeline.used, .button.lifeline.unavailable { -fx-background-color: #163D41; -fx-border-color: #1F4C50; -fx-effect: null; }
-.button.lifeline.used .lifeline-glyph, .button.lifeline.unavailable .lifeline-glyph { -fx-background-color: #3B6066; -fx-text-fill: #A9C4C1; }
+.button.lifeline.used, .button.lifeline.unavailable { -fx-background-color: -q-bg-2; -fx-border-color: -q-line; -fx-effect: null; }
+.button.lifeline.used .lifeline-glyph, .button.lifeline.unavailable .lifeline-glyph { -fx-background-color: -q-surface-2; -fx-text-fill: -q-ink-dim; }
 .button.lifeline.used { -fx-border-style: segments(5, 4); }
-.button.lifeline.active { -fx-border-color: #F5C65A; -fx-effect: dropshadow(gaussian, #F5C65ACC, 18, .35, 0, 0); }
+.button.lifeline.active { -fx-border-color: -q-gold; -fx-effect: dropshadow(gaussian, #F5C542CC, 18, .35, 0, 0); }
 .lifeline-pop {
-  -fx-background-color: #FFFEF9; -fx-background-radius: 16; -fx-padding: 14 16 12 16;
-  -fx-effect: dropshadow(gaussian, #0A2427AA, 22, .25, 0, 6);
+  -fx-background-color: -q-surface; -fx-background-radius: 16; -fx-border-color: -q-line-strong; -fx-border-radius: 16; -fx-padding: 14 16 12 16;
+  -fx-effect: dropshadow(gaussian, -q-shadow, 22, .25, 0, 6);
 }
-.lifeline-pop-tail { -fx-fill: #FFFEF9; }
-.lifeline-pop-icon { -fx-background-radius: 999; -fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #0E3337; }
-.lifeline-pop .lifeline-pop-name { -fx-font-size: 17px; -fx-font-weight: bold; -fx-text-fill: #183B40; }
-.lifeline-pop .lifeline-pop-key { -fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #536B70; -fx-border-color: #C9D8D3; -fx-border-radius: 6; -fx-padding: 1 6; }
-.button.lifeline-pop-close { -fx-background-color: transparent; -fx-text-fill: #536B70; -fx-padding: 2 6; -fx-font-size: 13px; }
-.button.lifeline-pop-close:hover { -fx-background-color: #EAF1EE; }
-.lifeline-pop .lifeline-pop-text { -fx-font-size: 14px; -fx-text-fill: #183B40; }
+.lifeline-pop-tail { -fx-fill: -q-surface; -fx-stroke: -q-line-strong; }
+.lifeline-pop-icon { -fx-font-family: "Chakra Petch"; -fx-background-radius: 999; -fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #0E1326; }
+.lifeline-pop .lifeline-pop-name { -fx-font-size: 17px; -fx-font-weight: bold; -fx-text-fill: -q-ink; }
+.lifeline-pop .lifeline-pop-key { -fx-font-family: "Chakra Petch"; -fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: -q-ink-2; -fx-border-color: -q-line-strong; -fx-border-radius: 6; -fx-padding: 1 6; }
+.button.lifeline-pop-close { -fx-background-color: transparent; -fx-text-fill: -q-ink-2; -fx-padding: 2 6; -fx-font-size: 13px; }
+.button.lifeline-pop-close:hover { -fx-background-color: -q-surface-2; }
+.lifeline-pop .lifeline-pop-text { -fx-font-size: 14px; -fx-text-fill: -q-ink; }
 .lifeline-pop .lifeline-pop-status { -fx-font-size: 13px; -fx-font-weight: bold; }
-.lifeline-pop .lifeline-pop-status.ok { -fx-text-fill: #087F70; }
-.lifeline-pop .lifeline-pop-status.blocked { -fx-text-fill: #A3672A; }
-.lifeline-pop .lifeline-pop-rule { -fx-font-size: 12px; -fx-text-fill: #657A78; }
+.lifeline-pop .lifeline-pop-status.ok { -fx-text-fill: -q-good-text; }
+.lifeline-pop .lifeline-pop-status.blocked { -fx-text-fill: -q-gold-text; }
+.lifeline-pop .lifeline-pop-rule { -fx-font-size: 12px; -fx-text-fill: -q-ink-2; }
 .button.lifeline-use { -fx-padding: 10 16; -fx-font-size: 15px; }
-.button.lifeline-use:disabled { -fx-opacity: 1; -fx-background-color: #DDE6E3; -fx-text-fill: #657A78; }
-.answer-tile.eliminated { -fx-background-color: #DDE6E3; -fx-border-color: #DDE6E3; -fx-opacity: .42; }
+.button.lifeline-use:disabled { -fx-opacity: 1; -fx-background-color: -q-surface-2; -fx-text-fill: -q-ink-3; }
+.answer-tile.eliminated { -fx-background-color: -q-bg-2; -fx-border-color: -q-bg-2; -fx-opacity: .42; }
 .answer-tile.eliminated .tile-text { -fx-strikethrough: true; }
 .answer-card.eliminated.dimmed { -fx-opacity: .42; }
-.answer-chip.chip-eliminated { -fx-background-color: #536B70; }
+.answer-chip.chip-eliminated { -fx-background-color: -q-surface-3; -fx-text-fill: -q-ink-2; }
 .game-surface .double-chip {
-  -fx-background-color: #F5C65A; -fx-text-fill: #0E3337; -fx-background-radius: 999;
+  -fx-font-family: "Chakra Petch"; -fx-background-color: -q-gold; -fx-text-fill: -q-on-gold; -fx-background-radius: 999;
   -fx-padding: 1 9; -fx-font-size: 13px; -fx-font-weight: bold;
-  -fx-effect: dropshadow(gaussian, #F5C65AAA, 10, .3, 0, 0);
+  -fx-effect: dropshadow(gaussian, #F5C542AA, 10, .3, 0, 0);
 }
 .game-surface .opponent-lifeline {
-  -fx-background-color: #2C3F6B; -fx-text-fill: #CFE0FF; -fx-background-radius: 999;
+  -fx-background-color: -q-opp-soft; -fx-text-fill: -q-opp-text; -fx-background-radius: 999;
   -fx-padding: 1 9; -fx-font-size: 12px; -fx-font-weight: bold;
 }
-.game-surface .gain-pill.doubled { -fx-background-color: #F5C65A; -fx-effect: dropshadow(gaussian, #F5C65AAA, 12, .3, 0, 0); }
+.game-surface .gain-pill.doubled { -fx-background-color: -q-gold; -fx-text-fill: -q-on-gold; -fx-effect: dropshadow(gaussian, #F5C542AA, 12, .3, 0, 0); }
