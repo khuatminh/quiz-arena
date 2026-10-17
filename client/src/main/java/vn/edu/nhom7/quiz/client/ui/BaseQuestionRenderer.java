@@ -11,8 +11,13 @@ abstract class BaseQuestionRenderer implements QuestionRenderer {
   protected final VBox box = new VBox(12);
   protected final List<Control> controls = new ArrayList<>();
   protected final Map<String, Control> answerControls = new LinkedHashMap<>();
+
   /** Answer tiles carry their own slot for result chips; other controls get chips below them. */
   protected final Map<String, HBox> markSlots = new HashMap<>();
+
+  /** Options a lifeline removed: they stay visible but greyed out and never re-enable. */
+  protected final Set<String> eliminated = new HashSet<>();
+
   private com.fasterxml.jackson.databind.JsonNode players;
 
   BaseQuestionRenderer() {
@@ -53,7 +58,23 @@ abstract class BaseQuestionRenderer implements QuestionRenderer {
     slot.setAlignment(Pos.CENTER_RIGHT);
     var content = new HBox(16, cap, label, slot);
     content.setAlignment(Pos.CENTER_LEFT);
-    var b = new Button();
+    // A plain button measures its graphic without a width, so a wrapping answer was measured one
+    // word per line; measure the content at the width the tile really gets instead.
+    var b =
+        new Button() {
+          @Override
+          public javafx.geometry.Orientation getContentBias() {
+            return javafx.geometry.Orientation.HORIZONTAL;
+          }
+
+          @Override
+          protected double computePrefHeight(double width) {
+            if (width <= 0) return super.computePrefHeight(width);
+            return snappedTopInset()
+                + snappedBottomInset()
+                + content.prefHeight(width - snappedLeftInset() - snappedRightInset());
+          }
+        };
     b.setGraphic(content);
     b.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
     b.setAccessibleText(key + ". " + text);
@@ -93,6 +114,26 @@ abstract class BaseQuestionRenderer implements QuestionRenderer {
 
   public void setControlsEnabled(boolean enabled) {
     controls.forEach(c -> c.setDisable(!enabled));
+    eliminated.forEach(id -> answerControls.get(id).setDisable(true));
+  }
+
+  /**
+   * Greys out options removed by a lifeline. Returns the controls newly removed, so the caller can
+   * animate only those.
+   */
+  public List<Control> eliminate(Collection<String> ids) {
+    List<Control> fresh = new ArrayList<>();
+    for (String id : ids) {
+      Control control = answerControls.get(id);
+      if (control == null || !eliminated.add(id)) continue;
+      control.setDisable(true);
+      control.getStyleClass().add("eliminated");
+      control.setAccessibleText("Đã loại: " + id);
+      var slot = markSlots.get(id);
+      if (slot != null) slot.getChildren().add(chip("Đã loại", "chip-eliminated"));
+      fresh.add(control);
+    }
+    return fresh;
   }
 
   private void addMark(String id, Control control, Node chip) {
@@ -165,6 +206,7 @@ abstract class BaseQuestionRenderer implements QuestionRenderer {
   }
 
   protected void clear() {
+    eliminated.clear();
     box.getChildren().clear();
     controls.clear();
     answerControls.clear();

@@ -33,11 +33,11 @@ public final class MatchWireBudget {
                 "answerTimeMs",
                 15000,
                 "earnedPoints",
-                3,
+                6,
                 "scoreBefore",
-                150,
+                153,
                 "totalScore",
-                30));
+                153));
       reviews.add(
           MatchManager.obj(
               "roundId",
@@ -70,7 +70,7 @@ public final class MatchWireBudget {
                             "avatarId",
                             p.avatarId(),
                             "totalScore",
-                            150,
+                            153,
                             "correctCount",
                             50,
                             "rank",
@@ -115,9 +115,9 @@ public final class MatchWireBudget {
                 "opponentDisplayName",
                 players.getFirst().displayName(),
                 "ownScore",
-                150,
+                153,
                 "opponentScore",
-                150,
+                153,
                 "outcome",
                 "LOSS",
                 "finishReason",

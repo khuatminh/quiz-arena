@@ -388,6 +388,7 @@ class InterfaceEvidenceTest {
       }
       add("result-shell", shell(state, false));
       effects(state, reveal, profile);
+      if (open != null) lifelines(open, reveal);
       var invalidLogin = new AuthView(sink, (h, p) -> {});
       invalidLogin.connected(true);
       var primaryLogin = findButtons(invalidLogin, "Đăng nhập");
@@ -639,6 +640,85 @@ class InterfaceEvidenceTest {
     chat.render(with(reveal == null ? result : reveal, MessageType.CHAT_MESSAGE, null, messages));
     findButtonByText(chat, "").fire();
     add("fx-chat-stickers", new HBox(new LobbyView(lobby.lobby(), sink, q -> {}), chat));
+  }
+
+  /** Lifelines: 50-50 used with the opponent on x2, then x2 on a later question and its reveal. */
+  private void lifelines(ClientState open, ClientState reveal) throws Exception {
+    Effects.preview = true;
+    var question = open.question().deepCopy();
+    long id = question.path("questionId").asLong();
+    ((ObjectNode) question).put("content", "Sông nào dài nhất chảy qua lãnh thổ Việt Nam?");
+    var options = ((ObjectNode) question).putArray("options");
+    var names = List.of("Sông Hồng", "Sông Mê Kông", "Sông Đồng Nai", "Sông Đà");
+    for (int i = 0; i < names.size(); i++)
+      options.addObject().put("id", String.valueOf((char) ('A' + i))).put("text", names.get(i));
+    add("fx-lifeline-ready", new GameView(answering(open, question, Map.of()), sink, false));
+    var fifty = json.createObjectNode().put("questionId", id).put("kind", "FIFTY_FIFTY");
+    fifty.putArray("removedOptionIds").add("A").add("C");
+    fifty.putArray("remaining").add("DOUBLE_POINTS").add("REMOVE_ONE");
+    var status = json.createObjectNode().put("userId", 102).put("questionId", id);
+    status.put("kind", "DOUBLE_POINTS");
+    status.putObject("byUser").set("102", status.deepCopy());
+    var used =
+        answering(
+            open,
+            question,
+            Map.of(MessageType.LIFELINE_RESULT, fifty, MessageType.LIFELINE_STATUS, status));
+    var game = new GameView(used, sink, false);
+    cleanup.add(game::dispose);
+    add("fx-lifeline-fifty", game);
+    var x2 = json.createObjectNode().put("questionId", id).put("kind", "DOUBLE_POINTS");
+    x2.putArray("removedOptionIds");
+    x2.putArray("remaining").add("REMOVE_ONE");
+    game =
+        new GameView(
+            answering(open, question, Map.of(MessageType.LIFELINE_RESULT, x2)), sink, false);
+    cleanup.add(game::dispose);
+    add("fx-lifeline-double", game);
+    if (reveal != null) {
+      ObjectNode r = reveal.payload(MessageType.QUESTION_RESULT).deepCopy();
+      for (var o : r.path("outcomes"))
+        if (o.path("userId").asLong() == 101)
+          ((ObjectNode) o).put("earnedPoints", o.path("earnedPoints").asInt() * 2);
+      ObjectNode doubled = x2.deepCopy().put("questionId", r.path("questionId").asLong());
+      var data = new EnumMap<MessageType, JsonNode>(MessageType.class);
+      data.putAll(reveal.data());
+      data.put(MessageType.QUESTION_RESULT, r);
+      data.put(MessageType.LIFELINE_RESULT, doubled);
+      game = new GameView(copy(reveal, reveal.question(), data, true), sink, false);
+      cleanup.add(game::dispose);
+      add("fx-lifeline-reveal-x2", game);
+    }
+  }
+
+  private ClientState answering(
+      ClientState open, JsonNode question, Map<MessageType, JsonNode> values) {
+    var data = new EnumMap<MessageType, JsonNode>(MessageType.class);
+    data.putAll(open.data());
+    data.putAll(values);
+    return copy(open, question, data, false);
+  }
+
+  private ClientState copy(
+      ClientState s, JsonNode question, Map<MessageType, JsonNode> data, boolean accepted) {
+    return new ClientState(
+        s.connectionEpoch(),
+        s.profile(),
+        s.onlineRevision(),
+        s.activeMatchId(),
+        s.resultMatchId(),
+        UUID.randomUUID(),
+        s.lastSeqByMatch(),
+        s.phase(),
+        s.presentationVersion(),
+        question,
+        false,
+        accepted,
+        new EnumMap<>(data),
+        s.persistenceByMatch(),
+        Map.of(),
+        "",
+        System.nanoTime());
   }
 
   private Button findButtonByText(Parent p, String text) {

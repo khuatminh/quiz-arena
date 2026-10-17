@@ -197,7 +197,7 @@ Hai điểm khởi động chính:
 | Nguồn | Dữ liệu có sẵn | Người dùng tự tạo |
 | Số câu/trận | 10 câu | 1–50 câu |
 | Thứ tự | Chọn ngẫu nhiên theo cơ cấu loại câu | Theo tác giả hoặc xáo trộn |
-| Điểm tối đa | 30 | 150 |
+| Điểm tối đa | 33 (30 + 3 nhờ x2) | 153 |
 | Xếp hạng toàn cục | Có với trận đủ điều kiện | Không cập nhật thống kê xếp hạng |
 
 Dữ liệu mẫu có **3 bộ quiz và 60 câu hỏi**.
@@ -273,11 +273,12 @@ Hai quyết định thiết kế đáng chú ý:
 - **Phiên bản quiz đã xuất bản cố định**, để sửa bản nháp không làm đổi nội dung trận đang chơi.
 - **Lịch sử lưu snapshot câu hỏi**, để phản ánh đúng nội dung ở thời điểm thi đấu.
 
-Schema hiện được nâng cấp lên **phiên bản 3** qua các script:
+Schema hiện được nâng cấp lên **phiên bản 4** qua các script:
 
 1. [001_schema.sql](database/001_schema.sql)
 2. [002_seed.sql](database/002_seed.sql)
 3. [003_community_quizzes.sql](database/003_community_quizzes.sql)
+4. [004_lifelines.sql](database/004_lifelines.sql)
 
 ### 7.2. Lưu kết quả nhất quán
 

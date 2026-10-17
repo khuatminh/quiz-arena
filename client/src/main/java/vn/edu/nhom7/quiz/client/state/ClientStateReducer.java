@@ -70,6 +70,8 @@ public final class ClientStateReducer {
                         || t == MessageType.QUESTION_RESULT
                         || t == MessageType.ROUND_LEADERBOARD
                         || t == MessageType.ANSWER_STATUS
+                        || t == MessageType.LIFELINE_RESULT
+                        || t == MessageType.LIFELINE_STATUS
                         || t == MessageType.CHAT_MESSAGE);
       }
       case MATCH_COUNTDOWN -> phase = "MATCH_COUNTDOWN";
@@ -93,6 +95,21 @@ public final class ClientStateReducer {
         answered.setAll((com.fasterxml.jackson.databind.node.ObjectNode) p.deepCopy());
         answered.set("answeredUserIds", ids);
         p = answered;
+      }
+      case LIFELINE_STATUS -> {
+        // Keep each player's latest lifeline, so our own use doesn't hide the opponent's.
+        var status = com.fasterxml.jackson.databind.node.JsonNodeFactory.instance.objectNode();
+        var byUser = status.putObject("byUser");
+        JsonNode previous = data.get(MessageType.LIFELINE_STATUS);
+        if (previous != null)
+          previous
+              .path("byUser")
+              .fields()
+              .forEachRemaining(f -> byUser.set(f.getKey(), f.getValue()));
+        byUser.set(p.path("userId").asText(), p.deepCopy());
+        status.setAll((com.fasterxml.jackson.databind.node.ObjectNode) p.deepCopy());
+        status.set("byUser", byUser);
+        p = status;
       }
       case ANSWER_ACK -> {
         pending = false;
@@ -140,6 +157,7 @@ public final class ClientStateReducer {
         accepted = p.hasNonNull("acceptedAnswer");
         pending = false;
         round = e.roundId();
+        if (p.has("lifelines")) data.put(MessageType.LIFELINE_RESULT, lifelines(p));
       }
       case RESULT_SESSION_CLOSED -> {
         match = null;
@@ -183,6 +201,20 @@ public final class ClientStateReducer {
         chats,
         error,
         now);
+  }
+
+  /**
+   * Rebuilds the stored lifeline result from a snapshot: the kind used on the current question (or
+   * none) and the kinds left for the rest of the match.
+   */
+  static JsonNode lifelines(JsonNode snapshot) {
+    var state = snapshot.path("lifelines");
+    var node = com.fasterxml.jackson.databind.node.JsonNodeFactory.instance.objectNode();
+    node.put("questionId", snapshot.path("question").path("questionId").asLong(-1));
+    node.put("kind", state.path("active").path(0).asText(""));
+    node.set("removedOptionIds", state.path("removedOptionIds").deepCopy());
+    node.set("remaining", state.path("remaining").deepCopy());
+    return node;
   }
 
   /**

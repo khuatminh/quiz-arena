@@ -479,4 +479,146 @@ class NativeViewsTest {
           view.dispose();
         });
   }
+
+  @Test
+  void lifelinesSendOnceGreyOutRemovedOptionsAndShowTheOpponentsUse() throws Exception {
+    var json = new com.fasterxml.jackson.databind.ObjectMapper();
+    var reducer = new vn.edu.nhom7.quiz.client.state.ClientStateReducer();
+    UUID match = UUID.randomUUID(), round = UUID.randomUUID();
+    var profile = json.createObjectNode().put("userId", 101).put("displayName", "Minh");
+    var start = json.createObjectNode().put("totalRounds", 10);
+    start
+        .putArray("players")
+        .add(profile)
+        .addObject()
+        .put("userId", 102)
+        .put("displayName", "Tuấn");
+    var question = json.createObjectNode();
+    var options =
+        question
+            .putObject("question")
+            .put("questionId", 7)
+            .put("questionType", "SINGLE_CHOICE")
+            .put("content", "Sông nào dài nhất Việt Nam?")
+            .put("timeLimitMs", 15000)
+            .putArray("options");
+    for (String id : List.of("A", "B", "C", "D"))
+      options.addObject().put("id", id).put("text", "Sông " + id);
+    var state = vn.edu.nhom7.quiz.client.state.ClientState.initial();
+    long seq = 1;
+    for (var e :
+        List.of(
+            new Envelope(
+                1,
+                MessageType.LOGIN_RESULT,
+                null,
+                null,
+                null,
+                null,
+                json.createObjectNode().set("profile", profile)),
+            new Envelope(1, MessageType.MATCH_START, null, match, null, seq++, start),
+            new Envelope(1, MessageType.QUESTION, null, match, round, seq++, question),
+            new Envelope(
+                1,
+                MessageType.QUESTION_OPEN,
+                null,
+                match,
+                round,
+                seq++,
+                json.createObjectNode().put("questionId", 7).put("remainingMs", 15000))))
+      state = reducer.apply(state, e, 0);
+    var open = state;
+    var sent = new ArrayList<Object>();
+    UiCommandSink sink =
+        (t, m, r, p) -> {
+          if (t == MessageType.LIFELINE_USE) sent.add(p);
+          return UUID.randomUUID();
+        };
+    var result = json.createObjectNode().put("questionId", 7).put("kind", "FIFTY_FIFTY");
+    result.putArray("removedOptionIds").add("B").add("D");
+    result.putArray("remaining").add("DOUBLE_POINTS").add("REMOVE_ONE");
+    var used =
+        reducer.apply(
+            open,
+            new Envelope(1, MessageType.LIFELINE_RESULT, null, match, round, seq++, result),
+            0);
+    for (long user : List.of(102L, 101L))
+      used =
+          reducer.apply(
+              used,
+              new Envelope(
+                  1,
+                  MessageType.LIFELINE_STATUS,
+                  null,
+                  match,
+                  round,
+                  seq++,
+                  json.createObjectNode()
+                      .put("userId", user)
+                      .put("questionId", 7)
+                      .put("kind", user == 102 ? "DOUBLE_POINTS" : "FIFTY_FIFTY")),
+              0);
+    var after = used;
+    fx(
+        () -> {
+          var view = new GameView(open, sink, true);
+          new javafx.scene.Scene(view, 1280, 800);
+          view.applyCss();
+          view.layout();
+          var buttons = view.lookupAll(".button.lifeline").stream().toList();
+          assertEquals(3, buttons.size());
+          assertTrue(buttons.stream().noneMatch(javafx.scene.Node::isDisabled));
+          ((Button) buttons.get(2)).fire();
+          assertEquals(List.of(new Payloads.LifelineUse(7, "FIFTY_FIFTY")), sent);
+          // Waiting for the server: no second lifeline can be sent.
+          assertTrue(buttons.stream().allMatch(javafx.scene.Node::isDisabled));
+          view.render(after);
+          view.applyCss();
+          var removed = view.lookupAll(".answer-tile.eliminated");
+          assertEquals(2, removed.size());
+          assertTrue(removed.stream().allMatch(javafx.scene.Node::isDisabled));
+          assertTrue(buttons.get(2).getStyleClass().contains("active"));
+          var opponent = (Label) view.lookup(".opponent-lifeline");
+          assertTrue(opponent.isVisible());
+          assertEquals("dùng x2 điểm", opponent.getText());
+          view.dispose();
+        });
+    var next = json.createObjectNode();
+    next.putObject("question")
+        .put("questionId", 8)
+        .put("questionType", "TRUE_FALSE")
+        .put("content", "Hà Nội là thủ đô?")
+        .put("timeLimitMs", 15000)
+        .putArray("options");
+    UUID round2 = UUID.randomUUID();
+    var second =
+        reducer.apply(
+            after, new Envelope(1, MessageType.QUESTION, null, match, round2, seq++, next), 0);
+    second =
+        reducer.apply(
+            second,
+            new Envelope(
+                1,
+                MessageType.QUESTION_OPEN,
+                null,
+                match,
+                round2,
+                seq++,
+                json.createObjectNode().put("questionId", 8).put("remainingMs", 15000)),
+            0);
+    var trueFalse = second;
+    fx(
+        () -> {
+          var view = new GameView(trueFalse, sink, true);
+          new javafx.scene.Scene(view, 1280, 800);
+          view.applyCss();
+          view.layout();
+          var buttons = view.lookupAll(".button.lifeline").stream().toList();
+          assertFalse(buttons.get(0).isDisabled());
+          assertTrue(buttons.get(1).getStyleClass().contains("unavailable"));
+          assertTrue(buttons.get(2).getStyleClass().contains("used"));
+          assertFalse(view.lookup(".opponent-lifeline").isVisible());
+          view.dispose();
+        });
+  }
 }

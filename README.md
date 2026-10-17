@@ -46,7 +46,7 @@ Quiz Arena là ứng dụng desktop bằng Java, cho phép **hai người thi đ
 | Số câu mỗi trận | 10 câu | Toàn bộ 1–50 câu đã xuất bản |
 | Cách chọn câu | Ngẫu nhiên: 4 câu một đáp án, 2 nhiều đáp án, 2 đúng/sai, 2 trả lời ngắn | Theo thứ tự tác giả hoặc xáo trộn nếu bật tùy chọn |
 | Thời gian trả lời | 15 giây/câu | 15 giây/câu |
-| Điểm tối đa | 30 điểm | 3 × số câu, tối đa 150 điểm |
+| Điểm tối đa | 33 điểm (30 + 3 nhờ x2) | 3 × số câu + 3, tối đa 153 điểm |
 | Bảng xếp hạng toàn cục | Có, theo kết quả trận đủ điều kiện | Không cập nhật các bộ đếm xếp hạng |
 | Kết quả và lịch sử riêng | Có | Có, gồm điểm và kết quả thắng/thua/hòa của trận |
 
@@ -164,7 +164,8 @@ quiz-arena/
 ├── database/
 │   ├── 001_schema.sql             # Schema ban đầu
 │   ├── 002_seed.sql               # Danh mục, quiz và câu hỏi mẫu
-│   └── 003_community_quizzes.sql   # Nâng cấp schema cho quiz cộng đồng và ảnh
+│   ├── 003_community_quizzes.sql   # Nâng cấp schema cho quiz cộng đồng và ảnh
+│   └── 004_lifelines.sql          # Nới giới hạn điểm cho quyền trợ giúp x2
 ├── config/
 │   ├── server.properties.example  # Cấu hình mẫu
 │   └── server.local.properties    # Cấu hình riêng, không đưa lên Git
@@ -234,11 +235,12 @@ Nạp schema và dữ liệu mẫu bằng tài khoản quản trị, đúng th�
 mysql -u root -p quiz_arena < database/001_schema.sql
 mysql -u root -p quiz_arena < database/002_seed.sql
 mysql -u root -p quiz_arena < database/003_community_quizzes.sql
+mysql -u root -p quiz_arena < database/004_lifelines.sql
 ```
 
-Trong PowerShell, có thể mở `mysql -u root -p quiz_arena` rồi chạy lần lượt `SOURCE database/001_schema.sql;`, `SOURCE database/002_seed.sql;`, `SOURCE database/003_community_quizzes.sql;` từ thư mục gốc dự án.
+Trong PowerShell, có thể mở `mysql -u root -p quiz_arena` rồi chạy lần lượt `SOURCE database/001_schema.sql;`, `SOURCE database/002_seed.sql;`, `SOURCE database/003_community_quizzes.sql;`, `SOURCE database/004_lifelines.sql;` từ thư mục gốc dự án.
 
-**Nếu đã có database phiên bản cũ:** dừng server, sao lưu database và ảnh, kiểm tra `SELECT version FROM SCHEMA_METADATA;`. Database phiên bản 1 cần chạy migration `003` một lần; database phiên bản 3 đã cập nhật thì không chạy lại migration. Không tạo lại bảng hoặc nạp lại schema ban đầu để nâng cấp dữ liệu đang sử dụng.
+**Nếu đã có database phiên bản cũ:** dừng server, sao lưu database và ảnh, kiểm tra `SELECT version FROM SCHEMA_METADATA;`. Database phiên bản 1 cần chạy migration `003` rồi `004`, mỗi file một lần; database phiên bản 3 chỉ cần chạy `004`; database phiên bản 4 đã cập nhật thì không chạy lại migration. Không tạo lại bảng hoặc nạp lại schema ban đầu để nâng cấp dữ liệu đang sử dụng.
 
 ### 5.4. Cấu hình server
 
@@ -276,7 +278,7 @@ Mở terminal thứ nhất:
 java -jar server/target/quiz-arena-server.jar --config=config/server.local.properties
 ```
 
-Khởi động thành công sẽ có thông báo `Quiz Arena listening on 5555`. Giữ terminal này hoạt động khi sử dụng app. Server kiểm tra schema phiên bản 3, tài nguyên và ngân hàng câu hỏi trước khi nhận kết nối.
+Khởi động thành công sẽ có thông báo `Quiz Arena listening on 5555`. Giữ terminal này hoạt động khi sử dụng app. Server kiểm tra schema phiên bản 4, tài nguyên và ngân hàng câu hỏi trước khi nhận kết nối.
 
 ### 5.6. Tạo tài khoản demo — tùy chọn
 
@@ -376,6 +378,16 @@ Server chuyển sang công bố đáp án ngay khi cả hai đã trả lời, ho
 | Sai hoặc không trả lời kịp | — | 0 |
 
 Ví dụ: trả lời đúng sau 4 giây được 3 điểm; đúng sau 8 giây được 2 điểm; sai sau 2 giây vẫn được 0 điểm. Câu nhiều đáp án không có điểm từng phần.
+
+### Quyền trợ giúp
+
+Mỗi người có ba quyền trợ giúp, mỗi quyền dùng **một lần mỗi trận** và **tối đa một quyền mỗi câu**. Chỉ dùng được khi câu đang mở và mình chưa trả lời; đồng hồ không dừng. Đối thủ thấy thông báo bạn vừa dùng quyền nào, nhưng không thấy phương án bị loại.
+
+| Quyền | Phím | Tác dụng | Áp dụng cho |
+| --- | --- | --- | --- |
+| x2 điểm | Q | Nhân đôi điểm câu này: 6, 4 hoặc 2; trả lời sai vẫn 0 điểm | Mọi loại câu |
+| Loại 1 đáp án | W | Server ẩn ngẫu nhiên một phương án sai | Câu một đáp án có từ 3 phương án |
+| 50-50 | E | Server chỉ giữ lại đáp án đúng và một phương án sai | Câu một đáp án có từ 3 phương án |
 
 Server dùng thời điểm nhận câu trả lời để xét hạn và tính điểm; đồng hồ trên giao diện chỉ giúp người chơi theo dõi. Độ trễ mạng có thể ảnh hưởng thời điểm server nhận được câu trả lời.
 

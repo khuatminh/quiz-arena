@@ -70,6 +70,65 @@ class MatchPersistenceIT {
   }
 
   @Test
+  void doublePointsLifelineSavesSixPointsAndThirtyThreeTotal() {
+    var b = DatabaseFixtures.completed();
+    var rounds = new java.util.ArrayList<vn.edu.nhom7.quiz.server.domain.RoundSummary>();
+    for (var r : b.rounds()) {
+      var outcomes = new java.util.ArrayList<vn.edu.nhom7.quiz.server.domain.StoredAnswerOutcome>();
+      for (var a : r.outcomes()) {
+        boolean doubled = a.userId() == 101 && r.roundIndex() == 1;
+        int shift = a.userId() == 101 ? 3 : 0;
+        outcomes.add(
+            new vn.edu.nhom7.quiz.server.domain.StoredAnswerOutcome(
+                a.userId(),
+                a.answerJson(),
+                a.elapsedNanos(),
+                a.receivedAt(),
+                a.outcome(),
+                a.correct(),
+                doubled ? 6 : a.earnedPoints(),
+                r.roundIndex() == 1 ? a.scoreBefore() : a.scoreBefore() + shift,
+                a.totalScore() + shift,
+                a.requestId()));
+      }
+      rounds.add(
+          new vn.edu.nhom7.quiz.server.domain.RoundSummary(
+              r.roundId(), r.roundIndex(), r.question(), r.revealed(), outcomes));
+    }
+    var p1 = b.player1();
+    var s =
+        new vn.edu.nhom7.quiz.server.domain.MatchSummary(
+            b.matchId(),
+            b.quizId(),
+            b.quizTitle(),
+            new vn.edu.nhom7.quiz.server.domain.ParticipantSummary(
+                p1.userId(),
+                p1.displayName(),
+                p1.avatarId(),
+                p1.totalScore() + 3,
+                p1.correctCount()),
+            b.player2(),
+            b.startedAt(),
+            b.endedAt(),
+            b.finishReason(),
+            b.reasonCode(),
+            b.outcome(),
+            b.completedRounds(),
+            b.openedRounds(),
+            rounds);
+    assertEquals(33, s.player1().totalScore());
+    var repo = new JdbcMatchRepository(TestDatabase.factory());
+    assertEquals(SaveResult.SAVED, repo.save(s));
+    assertEquals(
+        6,
+        DatabaseFixtures.scalar(
+            "SELECT MAX(a.earned_points) FROM MATCH_ANSWERS a JOIN MATCH_QUESTIONS q ON"
+                + " q.round_id=a.round_id WHERE q.match_id='"
+                + s.matchId()
+                + "'"));
+  }
+
+  @Test
   void faultsRollbackAllRowsAndCounters() {
     for (var point : new String[] {"after_round", "after_answers", "after_user"}) {
       var s = DatabaseFixtures.completed();

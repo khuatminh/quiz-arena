@@ -24,6 +24,11 @@ public final class Match {
   final int[] scores = {0, 0}, correct = {0, 0}, previousRanks = {1, 1};
   final Map<Long, Deque<Long>> chatTimes = new HashMap<>();
   final Map<UUID, JsonNode> chats = new HashMap<>();
+
+  /** Lifelines each player has used this match, and the one used on the current question. */
+  final Map<Long, Set<String>> lifelinesUsed = new HashMap<>();
+
+  final Map<Long, Lifeline> roundLifeline = new HashMap<>();
   MatchPhase phase = MatchPhase.WAITING_READY;
   long version, sequence, deadline, startNano, resultDeadline;
   Instant startedAt, endedAt;
@@ -36,6 +41,8 @@ public final class Match {
   Long rematchRequester;
   long rematchExpiry, rematchGeneration;
   boolean rematchLoading;
+
+  record Lifeline(String kind, List<String> removed) {}
 
   record Accepted(
       String answer, long elapsed, Instant received, boolean correct, int points, UUID request) {}

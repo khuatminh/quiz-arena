@@ -18,6 +18,7 @@ public final class Sound {
     WRONG("wrong", 0.6),
     INVITE("invite", 0.8),
     STREAK("streak", 0.75),
+    LIFELINE("lifeline", 0.75),
     WIN("win", 0.8),
     LOSE("lose", 0.65);
 
