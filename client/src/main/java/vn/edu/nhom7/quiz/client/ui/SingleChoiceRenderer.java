@@ -17,17 +17,21 @@ public final class SingleChoiceRenderer extends BaseQuestionRenderer {
     clear();
     var tiles = new ArrayList<Button>();
     int i = 0;
-    for (var o : q.options())
-      tiles.add(
+    for (var o : q.options()) {
+      var tile = new Button[1];
+      tile[0] =
           tile(
               o.id(),
-              o.id(),
+              Integer.toString(i + 1),
               o.text(),
               i++,
               () -> {
+                lock(tile[0]);
                 setControlsEnabled(false);
                 answer.accept(AnswerIntentFactory.single(o.id()));
-              }));
+              });
+      tiles.add(tile[0]);
+    }
     box.getChildren().add(tileGrid(tiles));
   }
 }

@@ -13,7 +13,7 @@ abstract class BaseQuestionRenderer implements QuestionRenderer {
   protected final Map<String, Control> answerControls = new LinkedHashMap<>();
 
   /** Answer tiles carry their own slot for result chips; other controls get chips below them. */
-  protected final Map<String, HBox> markSlots = new HashMap<>();
+  protected final Map<String, Pane> markSlots = new HashMap<>();
 
   /** Options a lifeline removed: they stay visible but greyed out and never re-enable. */
   protected final Set<String> eliminated = new HashSet<>();
@@ -44,20 +44,42 @@ abstract class BaseQuestionRenderer implements QuestionRenderer {
     return b;
   }
 
-  /** A large answer tile: coloured key cap, answer text and a slot for result chips. */
+  /** Shape glyphs for the four answer colours, so an answer never depends on hue alone. */
+  static final String[] SHAPES = {
+    "M12 3L22 20H2Z",
+    "M12 2.5A9.5 9.5 0 1 1 11.99 2.5Z",
+    "M5 3H19Q21 3 21 5V19Q21 21 19 21H5Q3 21 3 19V5Q3 3 5 3Z",
+    "M12 2L22 12L12 22L2 12Z"
+  };
+
+  /** Shape names read out by screen readers, matching {@link #SHAPES}. */
+  static final String[] SHAPE_NAMES = {"tam giác", "tròn", "vuông", "thoi"};
+
+  /** Key badges per answer, so a multiple-choice pick can show its tick there. */
+  protected final Map<String, Label> keyLabels = new HashMap<>();
+
+  /**
+   * A large coloured answer tile: shape glyph and key badge on top, the answer text below with a
+   * slot for result chips. {@code accent} picks the colour and shape.
+   */
   protected Button tile(String id, String key, String text, int accent, Runnable action) {
+    var shape = new javafx.scene.shape.SVGPath();
+    shape.setContent(SHAPES[accent % 4]);
+    shape.getStyleClass().add("tile-shape");
+    var glyph = Effects.glyph(30, shape);
     var cap = new Label(key);
-    cap.getStyleClass().addAll("keycap", "keycap-" + (accent % 4));
-    cap.setMinSize(48, 48);
-    cap.setAlignment(Pos.CENTER);
+    cap.getStyleClass().add("tile-key");
+    cap.setMinWidth(Region.USE_PREF_SIZE);
+    var top = new HBox(glyph, Ui.spacer(), cap);
+    top.setAlignment(Pos.CENTER_LEFT);
     var label = Ui.label(text);
     label.getStyleClass().add("tile-text");
     label.setMaxWidth(Double.MAX_VALUE);
-    HBox.setHgrow(label, Priority.ALWAYS);
-    var slot = new HBox(6);
-    slot.setAlignment(Pos.CENTER_RIGHT);
-    var content = new HBox(16, cap, label, slot);
-    content.setAlignment(Pos.CENTER_LEFT);
+    var slot = new FlowPane(6, 6);
+    var gap = new Region();
+    VBox.setVgrow(gap, Priority.ALWAYS);
+    var content = new VBox(10, top, gap, label, slot);
+    content.setFillWidth(true);
     // A plain button measures its graphic without a width, so a wrapping answer was measured one
     // word per line; measure the content at the width the tile really gets instead.
     var b =
@@ -77,36 +99,41 @@ abstract class BaseQuestionRenderer implements QuestionRenderer {
         };
     b.setGraphic(content);
     b.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
-    b.setAccessibleText(key + ". " + text);
+    b.setAccessibleText("Phím " + key + ", " + SHAPE_NAMES[accent % 4] + ". " + text);
     b.setMaxWidth(Double.MAX_VALUE);
     b.setMaxHeight(Double.MAX_VALUE);
-    b.setMinHeight(112);
-    b.setAlignment(Pos.CENTER_LEFT);
-    b.getStyleClass().addAll("answer-card", "answer-tile");
-    b.setOnAction(
-        e -> {
-          b.getStyleClass().add("chosen");
-          action.run();
-        });
-    content.prefWidthProperty().bind(b.widthProperty().subtract(48));
+    b.setMinHeight(120);
+    b.setAlignment(Pos.TOP_LEFT);
+    b.getStyleClass().addAll("answer-card", "answer-tile", "tile-" + (accent % 4));
+    b.setOnAction(e -> action.run());
+    content.prefWidthProperty().bind(b.widthProperty().subtract(36));
+    slot.prefWrapLengthProperty().bind(content.prefWidthProperty());
     controls.add(b);
     answerControls.put(id, b);
     markSlots.put(id, slot);
+    keyLabels.put(id, cap);
     return b;
   }
 
-  /** Lays tiles out two per row; extra options simply add rows. */
+  /** Marks {@code tile} as the locked answer and fades the other tiles back. */
+  protected void lock(Button tile) {
+    tile.getStyleClass().add("chosen");
+    if (!box.getStyleClass().contains("locked")) box.getStyleClass().add("locked");
+  }
+
+  /** Up to four tiles share one row; more options wrap onto further rows of four. */
   protected GridPane tileGrid(List<Button> tiles) {
     var grid = new GridPane();
     grid.setHgap(16);
     grid.setVgap(16);
-    for (int c = 0; c < 2; c++) {
+    int columns = Math.max(1, Math.min(4, tiles.size()));
+    for (int c = 0; c < columns; c++) {
       var column = new ColumnConstraints();
-      column.setPercentWidth(50);
+      column.setPercentWidth(100.0 / columns);
       grid.getColumnConstraints().add(column);
     }
     for (int i = 0; i < tiles.size(); i++) {
-      grid.add(tiles.get(i), i % 2, i / 2);
+      grid.add(tiles.get(i), i % columns, i / columns);
       GridPane.setFillHeight(tiles.get(i), true);
     }
     return grid;
@@ -137,7 +164,7 @@ abstract class BaseQuestionRenderer implements QuestionRenderer {
   }
 
   private void addMark(String id, Control control, Node chip) {
-    var slot = markSlots.get(id);
+    var slot = (Pane) markSlots.get(id);
     if (slot != null) {
       slot.getChildren().add(chip);
       return;
@@ -211,5 +238,7 @@ abstract class BaseQuestionRenderer implements QuestionRenderer {
     controls.clear();
     answerControls.clear();
     markSlots.clear();
+    keyLabels.clear();
+    box.getStyleClass().remove("locked");
   }
 }

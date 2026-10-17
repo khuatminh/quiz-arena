@@ -16,26 +16,31 @@ public final class TrueFalseRenderer extends BaseQuestionRenderer {
 
   public void bind(Payloads.PublicQuestion q, Consumer<JsonNode> answer) {
     clear();
-    var yes =
+    var tiles = new javafx.scene.control.Button[2];
+    tiles[0] =
         tile(
             "true",
             "1",
             "Đúng",
-            0,
+            1,
             () -> {
+              lock(tiles[0]);
               setControlsEnabled(false);
               answer.accept(AnswerIntentFactory.trueFalse(true));
             });
-    var no =
+    tiles[1] =
         tile(
             "false",
             "2",
             "Sai",
-            3,
+            0,
             () -> {
+              lock(tiles[1]);
               setControlsEnabled(false);
               answer.accept(AnswerIntentFactory.trueFalse(false));
             });
+    var yes = tiles[0];
+    var no = tiles[1];
     box.getChildren().add(tileGrid(List.of(yes, no)));
   }
 }

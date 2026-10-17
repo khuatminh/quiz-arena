@@ -362,13 +362,15 @@ class NativeViewsTest {
           var answers = new ArrayList<JsonNode>();
           r.bind(q("MULTIPLE_CHOICE"), answers::add);
           r.setControlsEnabled(true);
-          var box = (VBox) r.view();
-          var submit = (Button) box.getChildren().getLast();
+          var submit = (Button) r.view().lookup(".lock-answer");
           assertTrue(submit.isDisabled());
-          var first = (CheckBox) box.getChildren().getFirst();
+          var first = (Button) r.view().lookup(".answer-tile");
           first.fire();
           assertFalse(submit.isDisabled());
-          submit.fire();
+          first.fire();
+          assertTrue(submit.isDisabled(), "a second press takes the pick back");
+          r.toggleOption('1');
+          r.submit();
           assertEquals(
               List.of("A"),
               new com.fasterxml.jackson.databind.ObjectMapper()

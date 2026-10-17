@@ -15,16 +15,17 @@ import vn.edu.nhom7.quiz.client.state.*;
 import vn.edu.nhom7.quiz.common.protocol.*;
 
 public final class GameView extends BorderPane {
-  private static final double RING = 36;
+  private static final double TIMER = 104;
   private final Label timer = Ui.label("");
   private final Label notice = Ui.label("");
   private final Label countdown = Ui.label("");
-  private final Label bonus = Ui.label("");
+  private final List<Label> bonusChips = new ArrayList<>();
   private final Label selfScore = Ui.label("0"), opponentScore = Ui.label("0");
   private final Label selfGain = Ui.label(""), opponentGain = Ui.label("");
   private final Label opponentStatus = Ui.label("");
-  private final Arc ringBar = new Arc(0, 0, RING, RING, 90, 0);
+  private final Region drain = new Region();
   private final StackPane ring = new StackPane();
+  private final HBox prompts = new HBox(20);
   private final DoubleProperty selfShare = new SimpleDoubleProperty();
   private final DoubleProperty opponentShare = new SimpleDoubleProperty();
   private final QuestionRenderer renderer;
@@ -86,19 +87,15 @@ public final class GameView extends BorderPane {
     this.sink = sink;
     this.reducedMotion = reducedMotion;
     received = s.receivedNanos();
-    setPadding(new Insets(20, 28, 24, 28));
     getStyleClass().add("game-surface");
     var questionEvent = s.payload(MessageType.QUESTION);
     int roundIndex = questionEvent == null ? 0 : questionEvent.path("roundIndex").asInt();
     JsonNode start = s.payload(MessageType.MATCH_START);
     int totalRounds = start == null ? 10 : start.path("totalRounds").asInt(10);
     maxScore = Math.max(3, totalRounds * 3);
-    setTop(versusBar(s, start, roundIndex, totalRounds));
-    BorderPane.setMargin(getTop(), new Insets(0, 0, 18, 0));
-    timer.getStyleClass().add("ring-label");
+    setTop(hud(s, start, roundIndex, totalRounds));
     countdown.getStyleClass().add("countdown-number");
-    bonus.getStyleClass().add("bonus-text");
-    notice.getStyleClass().add("light-label");
+    notice.getStyleClass().add("self-status");
     JsonNode timing =
         s.payload(
             s.phase().equals("OPEN")
@@ -131,7 +128,11 @@ public final class GameView extends BorderPane {
               s.payload(MessageType.ROUND_LEADERBOARD),
               s.selfUserId(),
               reducedMotion || s.payload(MessageType.MATCH_SNAPSHOT) != null);
-      setCenter(Ui.scroll(leaderboard));
+      var holder = new StackPane(leaderboard);
+      holder.setAlignment(Pos.TOP_CENTER);
+      var scroll = Ui.scroll(holder);
+      scroll.getStyleClass().add("stage-scroll");
+      setCenter(scroll);
     } else if (s.phase().equals("MATCH_COUNTDOWN")) {
       renderer = null;
       var box =
@@ -146,47 +147,44 @@ public final class GameView extends BorderPane {
         renderer = null;
         setCenter(Ui.label("Đang đồng bộ câu hỏi…"));
       } else {
-        var card = new VBox(12);
-        card.getStyleClass().add("question-panel");
+        String type = q.path("questionType").asText();
         String content = q.path("content").asText();
-        var title = Ui.title(content);
+        var title = Ui.label(content);
         title.getStyleClass().add("question-title");
-        if (content.codePointCount(0, content.length()) > 240)
+        title.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
+        if (content.codePointCount(0, content.length()) > 160)
           title.getStyleClass().add("long-question");
-        String hint =
-            switch (q.path("questionType").asText()) {
-              case "MULTIPLE_CHOICE" ->
-                  "Nhiều đáp án · Chọn tất cả phương án đúng, rồi gửi lựa chọn";
-              case "TRUE_FALSE" -> "Đúng / Sai · Phím 1 hoặc 2";
-              case "SHORT_ANSWER" -> "Trả lời ngắn · Nhập đáp án và nhấn Enter để gửi";
-              default -> "Một đáp án · Phím A–D hoặc 1–4";
+        String kind =
+            switch (type) {
+              case "MULTIPLE_CHOICE" -> "NHIỀU ĐÁP ÁN · CHỌN TẤT CẢ Ý ĐÚNG";
+              case "TRUE_FALSE" -> "ĐÚNG HAY SAI";
+              case "SHORT_ANSWER" -> "TRẢ LỜI NGẮN";
+              default -> "MỘT ĐÁP ÁN";
             };
-        if (s.phase().equals("REVEAL"))
-          hint = "Đáp án: " + PresentationText.answer(q, revealAnswer(s));
-        else if (s.phase().equals("QUESTION_PREPARE"))
-          hint = "Đang tải câu hỏi · Thời gian trả lời chưa bắt đầu";
-        else if (s.phase().equals("ROUND_COUNTDOWN"))
-          hint = "Chuẩn bị trả lời · Chờ đồng hồ bắt đầu";
-        var badgeRow = new HBox(12, Ui.badge(hint), Ui.spacer(), bonus);
-        badgeRow.setAlignment(Pos.CENTER_LEFT);
-        card.getChildren().addAll(badgeRow, title);
+        String quiz = start == null ? "" : start.path("quiz").path("title").asText("");
+        var kicker = Ui.label(quiz.isBlank() ? kind : kind + " · " + quiz.toUpperCase(Locale.ROOT));
+        kicker.getStyleClass().add("question-kicker");
+        if (s.phase().equals("REVEAL")) {
+          kicker.setText("ĐÁP ÁN · " + PresentationText.answer(q, revealAnswer(s)));
+          kicker.getStyleClass().add("answer-kicker");
+        } else if (s.phase().equals("QUESTION_PREPARE")) kicker.setText(kind + " · ĐANG TẢI");
+        var stage = new VBox(14, kicker, title);
+        stage.getStyleClass().add("question-stage");
+        stage.setAlignment(Pos.CENTER);
         if (q.hasNonNull("questionAssetId"))
-          card.getChildren().add(new AssetLoader().view(q.path("questionAssetId").asText(), 260));
-        var body = new VBox(16, card);
+          stage.getChildren().add(new AssetLoader().view(q.path("questionAssetId").asText(), 220));
         questionId = q.path("questionId").asLong(-1);
-        lifelineFits =
-            q.path("questionType").asText().equals("SINGLE_CHOICE")
-                && q.path("options").size() >= 3;
+        lifelineFits = type.equals("SINGLE_CHOICE") && q.path("options").size() >= 3;
         buildLifelines();
-        // Room under the last answers so the corner lifeline icons never cover them.
-        body.setPadding(new Insets(0, 0, 84, 0));
         renderer =
-            switch (q.path("questionType").asText()) {
+            switch (type) {
               case "MULTIPLE_CHOICE" -> new MultipleChoiceRenderer();
               case "TRUE_FALSE" -> new TrueFalseRenderer();
               case "SHORT_ANSWER" -> new ShortAnswerRenderer();
               default -> new SingleChoiceRenderer();
             };
+        var deck = new VBox(14);
+        deck.getStyleClass().add("answer-deck");
         try {
           var question = new ObjectMapper().treeToValue(q, Payloads.PublicQuestion.class);
           renderer.bind(
@@ -202,31 +200,65 @@ public final class GameView extends BorderPane {
           if (renderer instanceof BaseQuestionRenderer base && start != null)
             base.setPlayers(start.path("players"));
           renderer.setControlsEnabled(s.canAnswer());
-          if (s.phase().equals("REVEAL"))
+          if (s.phase().equals("REVEAL")) {
+            var result = s.payload(MessageType.QUESTION_RESULT);
             renderer.showResult(
                 new ObjectMapper()
                     // The client adds its own fields (streaks) to the stored result.
                     .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                    .treeToValue(
-                        s.payload(MessageType.QUESTION_RESULT), Payloads.QuestionResult.class),
+                    .treeToValue(result, Payloads.QuestionResult.class),
                 s.selfUserId());
-          body.getChildren().addAll(renderer.view(), notice);
-          if (s.phase().equals("REVEAL"))
-            body.getChildren()
-                .add(
-                    new RevealPanel(
-                        s.payload(MessageType.QUESTION_RESULT),
-                        q,
-                        s.selfUserId(),
-                        start == null ? null : start.path("players")));
+            if (result.hasNonNull("explanation")
+                && !result.path("explanation").asText().isBlank()) {
+              var why = Ui.label(result.path("explanation").asText());
+              why.getStyleClass().add("explanation");
+              why.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
+              stage.getChildren().add(why);
+            }
+            if (result.hasNonNull("explanationAssetId"))
+              stage
+                  .getChildren()
+                  .add(new AssetLoader().view(result.path("explanationAssetId").asText(), 160));
+            // Typed answers have no tiles to carry the players' picks, so list them.
+            if (type.equals("SHORT_ANSWER"))
+              stage
+                  .getChildren()
+                  .add(
+                      new RevealPanel(
+                          result, q, s.selfUserId(), start == null ? null : start.path("players")));
+          }
+          deck.getChildren().add(renderer.view());
         } catch (Exception e) {
-          body.getChildren()
+          deck.getChildren()
               .add(Ui.label("Không thể hiển thị câu hỏi; chờ server kết thúc an toàn."));
         }
-        setCenter(Ui.scroll(body));
-        if (!reducedMotion && s.phase().equals("QUESTION_PREPARE")) enter(card, 0);
+        prompts.getStyleClass().add("prompt-bar");
+        prompts.setAlignment(Pos.CENTER_LEFT);
+        showPrompts(type, s.phase());
+        var bottom = new HBox(16, prompts, Ui.spacer(), dock);
+        bottom.setAlignment(Pos.CENTER_LEFT);
+        // Hints are the first thing to give way on a narrow window; the clip hides the overflow.
+        prompts.setMinWidth(0);
+        var clip = new Rectangle();
+        clip.widthProperty().bind(prompts.widthProperty());
+        clip.heightProperty().bind(prompts.heightProperty());
+        prompts.setClip(clip);
+        dock.setMinWidth(Region.USE_PREF_SIZE);
+        bottom.getStyleClass().add("deck-footer");
+        deck.getChildren().add(bottom);
+        var scroll = Ui.scroll(stage);
+        scroll.getStyleClass().add("stage-scroll");
+        // Centre a short question in the free space, scroll a long one.
+        stage
+            .minHeightProperty()
+            .bind(
+                javafx.beans.binding.Bindings.createDoubleBinding(
+                    () -> scroll.getViewportBounds().getHeight(), scroll.viewportBoundsProperty()));
+        setCenter(scroll);
+        setBottom(deck);
+        if (!reducedMotion && s.phase().equals("QUESTION_PREPARE")) enter(stage, 0);
         if (!reducedMotion && s.phase().equals("REVEAL"))
-          javafx.application.Platform.runLater(() -> celebrate(body));
+          javafx.application.Platform.runLater(() -> celebrate(deck));
       }
     }
     setOnKeyPressed(
@@ -241,6 +273,14 @@ public final class GameView extends BorderPane {
           }
           if (openKind != null && e.getCode() == javafx.scene.input.KeyCode.ENTER) {
             if (!popUse.isDisabled()) popUse.fire();
+            e.consume();
+            return;
+          }
+          if (e.getCode() == javafx.scene.input.KeyCode.ENTER && current.canAnswer()) {
+            if (getScene() != null
+                && getScene().getFocusOwner() instanceof Button b
+                && b.getStyleClass().contains("answer-tile")) b.fire();
+            else if (renderer instanceof MultipleChoiceRenderer multiple) multiple.submit();
             e.consume();
             return;
           }
@@ -263,10 +303,14 @@ public final class GameView extends BorderPane {
           } else if (renderer instanceof TrueFalseRenderer tf && (c == '1' || c == '2')) {
             tf.activate(c - '1');
             e.consume();
+          } else if (renderer instanceof MultipleChoiceRenderer multiple
+              && (Character.isLetter(c) || Character.isDigit(c))) {
+            multiple.toggleOption(c);
+            e.consume();
           }
         });
-    // Above the question area, which was added after the corner icons.
-    if (!lifelineButtons.isEmpty()) List.of(dock, tail, popover).forEach(Node::toFront);
+    // Above the question area, which was added after the card.
+    if (!lifelineButtons.isEmpty()) List.of(tail, popover).forEach(Node::toFront);
     getChildren().add(fx);
     render(s);
     tick();
@@ -279,19 +323,16 @@ public final class GameView extends BorderPane {
   @Override
   protected void layoutChildren() {
     super.layoutChildren();
-    if (!lifelineButtons.isEmpty()) {
-      // The lifeline icons sit in the bottom-right corner; the open card floats above them.
-      double w = dock.prefWidth(-1), h = dock.prefHeight(-1);
-      double right = getWidth() - snappedRightInset(), bottom = getHeight() - 18;
-      dock.resizeRelocate(right - w, bottom - h, w, h);
-      if (openKind != null) {
-        double pw = popover.prefWidth(-1), ph = popover.prefHeight(pw);
-        double top = bottom - h - 14 - ph;
-        popover.resizeRelocate(right - pw, top, pw, ph);
-        var icon = lifelineButtons.get(openKind);
-        double centre = dock.getLayoutX() + icon.getLayoutX() + icon.getWidth() / 2;
-        tail.relocate(centre - 9, top + ph - 1);
-      }
+    if (openKind != null && dock.getScene() != null) {
+      // The card floats above the open icon, right-aligned with the dock.
+      var icon = lifelineButtons.get(openKind);
+      var iconBox = sceneToLocal(icon.localToScene(icon.getBoundsInLocal()));
+      var dockBox = sceneToLocal(dock.localToScene(dock.getBoundsInLocal()));
+      double pw = popover.prefWidth(-1), ph = popover.prefHeight(pw);
+      double right = Math.min(getWidth() - 16, dockBox.getMaxX());
+      double top = iconBox.getMinY() - 14 - ph;
+      popover.resizeRelocate(right - pw, top, pw, ph);
+      tail.relocate(iconBox.getCenterX() - 9, top + ph - 1);
     }
     fx.resizeRelocate(0, 0, getWidth(), getHeight());
     if (getChildren().getLast() != fx) fx.toFront();
@@ -329,8 +370,11 @@ public final class GameView extends BorderPane {
     return result == null ? null : result.path("correctAnswer");
   }
 
-  /** Avatars, scores and timer ring for both players; the local player is always on the left. */
-  private Node versusBar(ClientState s, JsonNode start, int roundIndex, int totalRounds) {
+  /**
+   * The corner HUD: each player's avatar, score and fighting-game score bar on their side, the
+   * timer in the middle. The local player is always on the left.
+   */
+  private Node hud(ClientState s, JsonNode start, int roundIndex, int totalRounds) {
     JsonNode self = null, opponent = null;
     if (start != null)
       for (var p : start.path("players"))
@@ -341,10 +385,11 @@ public final class GameView extends BorderPane {
     var left =
         player(
             self,
-            (self == null ? "Bạn" : self.path("displayName").asText()) + " · Bạn",
+            self == null ? "Bạn" : self.path("displayName").asText(),
             selfScore,
             selfGain,
-            null,
+            notice,
+            selfShare,
             false);
     var right =
         player(
@@ -353,68 +398,61 @@ public final class GameView extends BorderPane {
             opponentScore,
             opponentGain,
             opponentStatus,
+            opponentShare,
             true);
-    // Fixed-size pane so the partial arc stays centred on the track.
-    double c = RING + 6;
-    var track = new Circle(c, c, RING, javafx.scene.paint.Color.TRANSPARENT);
-    track.getStyleClass().add("timer-ring-track");
-    ringBar.setCenterX(c);
-    ringBar.setCenterY(c);
-    ringBar.setType(ArcType.OPEN);
-    ringBar.getStyleClass().add("timer-ring-bar");
-    var dial = new Pane(track, ringBar);
-    dial.setMinSize(2 * c, 2 * c);
-    dial.setMaxSize(2 * c, 2 * c);
-    ring.getChildren().addAll(dial, timer);
-    ring.setMinSize(2 * RING + 12, 2 * RING + 12);
-    ring.setMaxSize(2 * RING + 12, 2 * RING + 12);
-    var round = Ui.label("Câu " + roundIndex + " / " + totalRounds);
+    // The time left drains out of the box from the top.
+    drain.getStyleClass().add("timer-drain");
+    drain.setManaged(false);
+    timer.getStyleClass().add("timer-number");
+    ring.getStyleClass().add("timer-box");
+    ring.getChildren().addAll(drain, timer);
+    ring.setMinSize(TIMER, TIMER);
+    ring.setMaxSize(TIMER, TIMER);
+    ring.setAccessibleRole(AccessibleRole.TEXT);
+    var round = Ui.label("CÂU " + roundIndex + " / " + totalRounds);
     round.getStyleClass().add("round-label");
-    var center = new VBox(6, ring, round);
-    center.setAlignment(Pos.CENTER);
+    var chips = new HBox(6);
+    chips.setAlignment(Pos.CENTER);
+    for (int points = 3; points >= 1; points--) {
+      var chip = Ui.label("×" + points);
+      chip.getStyleClass().add("bonus-chip");
+      bonusChips.add(chip);
+      chips.getChildren().add(chip);
+    }
+    var center = new VBox(6, ring, round, chips);
+    center.setAlignment(Pos.TOP_CENTER);
+    center.setMinWidth(TIMER + 40);
     var grid = new GridPane();
     grid.setHgap(24);
-    var side = new ColumnConstraints();
-    side.setHgrow(Priority.ALWAYS);
-    side.setPercentWidth(40);
-    var middle = new ColumnConstraints();
-    middle.setPercentWidth(20);
+    // Equal growing sides that may shrink to nothing, so the HUD never forces the window wider.
+    var side = new ColumnConstraints(0, 240, Double.MAX_VALUE, Priority.ALWAYS, HPos.LEFT, true);
+    var middle = new ColumnConstraints(TIMER + 40);
     middle.setHalignment(HPos.CENTER);
-    var side2 = new ColumnConstraints();
-    side2.setPercentWidth(40);
-    side2.setHalignment(HPos.RIGHT);
+    var side2 = new ColumnConstraints(0, 240, Double.MAX_VALUE, Priority.ALWAYS, HPos.RIGHT, true);
     grid.getColumnConstraints().addAll(side, middle, side2);
     grid.add(left, 0, 0);
     grid.add(center, 1, 0);
     grid.add(right, 2, 0);
-    var race = new HBox();
-    race.getStyleClass().add("race-track");
-    race.setMinHeight(8);
-    race.setMaxHeight(8);
-    var selfBar = new Region();
-    selfBar.getStyleClass().add("race-self");
-    var opponentBar = new Region();
-    opponentBar.getStyleClass().add("race-opponent");
-    selfBar.prefWidthProperty().bind(race.widthProperty().multiply(selfShare).multiply(0.5));
-    opponentBar
-        .prefWidthProperty()
-        .bind(race.widthProperty().multiply(opponentShare).multiply(0.5));
-    selfBar.minWidthProperty().bind(selfBar.prefWidthProperty());
-    opponentBar.minWidthProperty().bind(opponentBar.prefWidthProperty());
-    race.getChildren().addAll(selfBar, Ui.spacer(), opponentBar);
-    var bar = new VBox(14, grid, race);
-    bar.getStyleClass().add("versus-bar");
-    return bar;
+    GridPane.setValignment(left, VPos.TOP);
+    GridPane.setValignment(right, VPos.TOP);
+    grid.getStyleClass().add("hud");
+    return grid;
   }
 
   private HBox player(
-      JsonNode player, String name, Label score, Label gain, Label status, boolean mirrored) {
+      JsonNode player,
+      String name,
+      Label score,
+      Label gain,
+      Label status,
+      DoubleProperty share,
+      boolean mirrored) {
     var avatar =
         new AssetLoader().view(player == null ? "avatar-01" : player.path("avatarId").asText(), 60);
     var avatarFrame = new StackPane(avatar);
     avatarFrame.getStyleClass().addAll("versus-avatar", mirrored ? "opponent" : "self");
-    avatarFrame.setMinSize(74, 74);
-    avatarFrame.setMaxSize(74, 74);
+    avatarFrame.setMinSize(72, 72);
+    avatarFrame.setMaxSize(72, 72);
     var nameLabel = Ui.label(name);
     nameLabel.getStyleClass().add("versus-name");
     nameLabel.setWrapText(false);
@@ -422,32 +460,90 @@ public final class GameView extends BorderPane {
     var streakSlot = mirrored ? opponentStreak : selfStreak;
     streakSlot.setAlignment(Pos.CENTER);
     streakSlot.setMinWidth(Region.USE_PREF_SIZE);
-    var nameRow =
-        mirrored ? new HBox(8, streakSlot, nameLabel) : new HBox(8, nameLabel, streakSlot);
     var extra = mirrored ? opponentLifeline : selfDouble;
     extra.getStyleClass().add(mirrored ? "opponent-lifeline" : "double-chip");
     extra.setMinWidth(Region.USE_PREF_SIZE);
     extra.setVisible(false);
     extra.managedProperty().bind(extra.visibleProperty());
-    if (mirrored) nameRow.getChildren().addFirst(extra);
-    else nameRow.getChildren().add(extra);
-    nameRow.setAlignment(mirrored ? Pos.CENTER_RIGHT : Pos.CENTER_LEFT);
     score.getStyleClass().add("versus-score");
+    score.setMinWidth(Region.USE_PREF_SIZE);
+    var parts = new ArrayList<Node>(List.of(nameLabel));
+    if (!mirrored) {
+      var you = Ui.label("BẠN");
+      you.getStyleClass().add("you-tag");
+      you.setMinWidth(Region.USE_PREF_SIZE);
+      parts.add(you);
+    }
+    parts.addAll(List.of(streakSlot, extra, Ui.spacer(), score));
+    if (mirrored) java.util.Collections.reverse(parts);
+    var nameRow = new HBox(10, parts.toArray(Node[]::new));
+    nameRow.setAlignment(Pos.CENTER_LEFT);
+    // Fighting-game bar: each player's bar fills from the outside in, towards the timer.
+    var fill = new Region();
+    fill.getStyleClass().addAll("score-fill", mirrored ? "opponent" : "self");
+    var track = new StackPane(fill);
+    track.getStyleClass().add("score-track");
+    track.setMinHeight(16);
+    track.setMaxHeight(16);
+    track.setAlignment(mirrored ? Pos.CENTER_LEFT : Pos.CENTER_RIGHT);
+    fill.maxWidthProperty().bind(track.widthProperty().multiply(share));
+    fill.prefWidthProperty().bind(fill.maxWidthProperty());
+    fill.setMaxHeight(Double.MAX_VALUE);
     gain.getStyleClass().add("gain-pill");
     gain.managedProperty().bind(gain.textProperty().isNotEmpty());
     gain.visibleProperty().bind(gain.managedProperty());
-    var text = new VBox(2, nameRow, score);
-    text.setAlignment(mirrored ? Pos.CENTER_RIGHT : Pos.CENTER_LEFT);
-    if (status != null) {
-      status.getStyleClass().add("opponent-status");
-      status.managedProperty().bind(status.textProperty().isNotEmpty());
-      status.visibleProperty().bind(status.managedProperty());
-      text.getChildren().add(1, status);
-    }
-    var row =
-        mirrored ? new HBox(16, gain, text, avatarFrame) : new HBox(16, avatarFrame, text, gain);
-    row.setAlignment(mirrored ? Pos.CENTER_RIGHT : Pos.CENTER_LEFT);
+    status.getStyleClass().add("opponent-status");
+    status.setMinWidth(0);
+    var caption =
+        mirrored ? new HBox(8, gain, Ui.spacer(), status) : new HBox(8, status, Ui.spacer(), gain);
+    caption.setAlignment(Pos.CENTER_LEFT);
+    caption.setMinHeight(26);
+    var text = new VBox(8, nameRow, track, caption);
+    HBox.setHgrow(text, Priority.ALWAYS);
+    var row = mirrored ? new HBox(16, text, avatarFrame) : new HBox(16, avatarFrame, text);
+    row.setAlignment(Pos.TOP_LEFT);
+    row.setMinWidth(0);
+    text.setMinWidth(0);
+    nameRow.setMinWidth(0);
     return row;
+  }
+
+  /** The keyboard hints along the bottom, matching what the keys do in this phase. */
+  private void showPrompts(String type, String phase) {
+    prompts.getChildren().clear();
+    if (phase.equals("REVEAL")) {
+      prompts.getChildren().add(prompt(null, "Câu tiếp theo sẽ tự bắt đầu"));
+      return;
+    }
+    int options = renderer instanceof BaseQuestionRenderer base ? base.answerControls.size() : 0;
+    switch (type) {
+      case "SHORT_ANSWER" -> prompts.getChildren().add(prompt("Enter", "Gửi câu trả lời"));
+      case "TRUE_FALSE" -> prompts.getChildren().add(prompt("1 / 2", "Đúng / Sai"));
+      case "MULTIPLE_CHOICE" ->
+          prompts
+              .getChildren()
+              .addAll(prompt("1–" + options, "Đánh dấu"), prompt("Enter", "Khóa đáp án"));
+      default ->
+          prompts.getChildren().addAll(prompt("1–" + options, "Chọn"), prompt("Tab", "Di chuyển"));
+    }
+    if (!lifelineButtons.isEmpty()) prompts.getChildren().add(prompt("X · L · N", "Trợ giúp"));
+  }
+
+  private static HBox prompt(String keys, String action) {
+    var text = Ui.label(action);
+    text.getStyleClass().add("prompt-text");
+    text.setWrapText(false);
+    var item = new HBox(8, text);
+    if (keys != null) {
+      var cap = Ui.label(keys);
+      cap.getStyleClass().add("prompt-key");
+      cap.setWrapText(false);
+      cap.setMinWidth(Region.USE_PREF_SIZE);
+      item.getChildren().addFirst(cap);
+    }
+    item.setAlignment(Pos.CENTER_LEFT);
+    item.setMinWidth(Region.USE_PREF_SIZE);
+    return item;
   }
 
   public void render(ClientState s) {
@@ -458,9 +554,10 @@ public final class GameView extends BorderPane {
         !s.phase().equals("OPEN")
             ? ""
             : s.accepted()
-                ? "✓ Đã nhận câu trả lời · chờ kết quả"
-                : s.ownPending() ? "Đang chờ server xác nhận…" : "");
-    notice.setManaged(!notice.getText().isEmpty());
+                ? "✓ Đã khóa đáp án · chờ kết quả"
+                : s.ownPending() ? "Đang gửi đáp án…" : "");
+    notice.getStyleClass().remove("answered");
+    if (s.accepted() && s.phase().equals("OPEN")) notice.getStyleClass().add("answered");
     var totals = new HashMap<Long, Integer>();
     JsonNode standings = s.payload(MessageType.ROUND_LEADERBOARD);
     if (standings != null)
@@ -491,7 +588,7 @@ public final class GameView extends BorderPane {
       for (var id : answered.path("answeredUserIds"))
         if (id.asLong() == opponentId) opponentAnswered = true;
     opponentStatus.setText(
-        !s.phase().equals("OPEN") ? "" : opponentAnswered ? "✓ đã trả lời" : "đang suy nghĩ…");
+        !s.phase().equals("OPEN") ? "" : opponentAnswered ? "✓ Đã khóa đáp án" : "Đang suy nghĩ…");
     opponentStatus.getStyleClass().remove("answered");
     if (opponentAnswered) opponentStatus.getStyleClass().add("answered");
     int mine = streak(s, selfId), theirs = streak(s, opponentId);
@@ -551,7 +648,7 @@ public final class GameView extends BorderPane {
     popover.setPrefWidth(330);
     popover.setFillWidth(true);
     tail.getStyleClass().add("lifeline-pop-tail");
-    for (Node n : List.of(dock, tail, popover)) {
+    for (Node n : List.of(tail, popover)) {
       n.setManaged(false);
       getChildren().add(n);
     }
@@ -812,14 +909,24 @@ public final class GameView extends BorderPane {
     long left = remainingAt(remaining, received, System.nanoTime());
     boolean open = bound.phase().equals("OPEN");
     int points = left >= 10000 ? 3 : left >= 5000 ? 2 : 1;
-    bonus.setText(
-        open && left > 0
-            ? doubled
-                ? "Thưởng hiện tại: " + points * 2 + " điểm · x2"
-                : "Thưởng hiện tại: " + points + " điểm"
-            : "");
-    timer.setText(
-        bound.phase().equals("REVEAL") ? "✓" : left > 0 ? Long.toString((left + 999) / 1000) : "…");
+    for (int i = 0; i < bonusChips.size(); i++) {
+      var chip = bonusChips.get(i);
+      int value = (3 - i) * (doubled ? 2 : 1);
+      chip.setText("×" + value);
+      boolean on = open && left > 0 && 3 - i == points;
+      if (on != chip.getStyleClass().contains("on"))
+        if (on) chip.getStyleClass().add("on");
+        else chip.getStyleClass().remove("on");
+      chip.setVisible(open);
+    }
+    String seconds = left > 0 ? String.format("%02d", (left + 999) / 1000) : "00";
+    timer.setText(bound.phase().equals("REVEAL") ? "✓" : left > 0 ? seconds : "··");
+    // Outside the answering time the box counts down to the next step in quieter colours.
+    if (open == ring.getStyleClass().contains("idle"))
+      if (open) ring.getStyleClass().remove("idle");
+      else ring.getStyleClass().add("idle");
+    ring.setAccessibleText(
+        bound.phase().equals("OPEN") ? "Còn " + ((left + 999) / 1000) + " giây" : "Chưa tính giờ");
     String count = left > 0 ? Long.toString((left + 999) / 1000) : "Sẵn sàng";
     if (!count.equals(lastCountdown)) {
       lastCountdown = count;
@@ -833,7 +940,9 @@ public final class GameView extends BorderPane {
         play(pop);
       }
     }
-    ringBar.setLength(remaining <= 0 ? 0 : -360 * Math.min(1, (double) left / remaining));
+    double share = !open || remaining <= 0 ? 0 : Math.min(1, (double) left / remaining);
+    double inner = TIMER - 8;
+    drain.resizeRelocate(4, 4 + inner * (1 - share), inner, inner * share);
     boolean urgent = open && left > 0 && left <= 5000;
     long second = (left + 999) / 1000;
     if (urgent && second != lastTickSecond) {
