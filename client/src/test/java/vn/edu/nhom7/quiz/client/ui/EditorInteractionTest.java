@@ -164,6 +164,8 @@ class EditorInteractionTest {
             view.restore(new LobbyView.Selection(5, 202));
             assertEquals(new LobbyView.Selection(5, 202), view.selection());
             assertFalse(((Button) field(view, "challenge")).isDisabled());
+            assertEquals(2, view.lookupAll(".lobby-step.done").size());
+            assertEquals(1, view.lookupAll(".lobby-step.current").size());
             var library = (VBox) ((ScrollPane) view.getCenter()).getContent();
             var search =
                 (TextField)

@@ -18,8 +18,9 @@ public final class ResultView extends VBox {
   private Label heroTitle;
 
   public ResultView(ClientState s, UiCommandSink sink) {
-    setSpacing(16);
+    setSpacing(14);
     setPadding(new Insets(28));
+    getStyleClass().add("result-view");
     JsonNode r = s.payload(MessageType.MATCH_RESULT);
     if (r == null) {
       getChildren().add(Ui.title("Kết quả trận đấu"));
@@ -45,12 +46,12 @@ public final class ResultView extends VBox {
     heroTitle.getStyleClass().add("result-title");
     heroIcon =
         switch (outcome) {
-          case "win" -> Effects.trophy(84);
-          case "lose" -> Effects.rainCloud(84, false, null);
-          case "draw" -> Effects.draw(84);
+          case "win" -> Effects.trophy(64);
+          case "lose" -> Effects.rainCloud(64, false, null);
+          case "draw" -> Effects.draw(64);
           default -> null;
         };
-    var hero = new VBox(14);
+    var hero = new VBox(8);
     if (heroIcon != null) {
       var halo = new StackPane(heroIcon);
       halo.getStyleClass().add("result-halo");
@@ -77,7 +78,7 @@ public final class ResultView extends VBox {
       var avatar =
           new StackPane(
               new vn.edu.nhom7.quiz.client.assets.AssetLoader()
-                  .view(player.path("avatarId").asText(), 72));
+                  .view(player.path("avatarId").asText(), 60));
       avatar.getStyleClass().add("result-avatar");
       if (winner) avatar.getStyleClass().add("winner");
       avatar.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
@@ -85,7 +86,7 @@ public final class ResultView extends VBox {
       if (!winner) ((Region) crown).setMinHeight(30);
       var tile =
           new VBox(
-              8,
+              4,
               crown,
               avatar,
               Ui.label(
@@ -164,34 +165,39 @@ public final class ResultView extends VBox {
     rematch.setVisible(!incoming);
     rematch.setManaged(!incoming);
     reject.getStyleClass().add("secondary");
-    getChildren()
-        .addAll(
-            rematchNote,
-            new FlowPane(
-                12,
-                12,
-                rematch,
-                accept,
-                reject,
-                Ui.button(
-                    "Về sảnh",
-                    () ->
-                        sink.send(
-                            MessageType.EXIT_MATCH,
-                            s.activeMatchId(),
-                            null,
-                            new Payloads.ExitMatch()))),
-            Ui.title("Xem lại câu hỏi"));
-    getChildren()
-        .add(
-            Ui.label(
-                r.path("totalRounds").asInt(10)
-                    + " câu · tối đa "
-                    + (r.path("totalRounds").asInt(10) * 3)
-                    + " điểm · "
-                    + (r.path("ranked").asBoolean(true)
-                        ? "Tính hạng"
-                        : "Cộng đồng · Không tính hạng")));
+    var home =
+        Ui.secondary(
+            "Về sảnh",
+            () ->
+                sink.send(
+                    MessageType.EXIT_MATCH, s.activeMatchId(), null, new Payloads.ExitMatch()));
+    var actions = new FlowPane(12, 12, rematch, accept, reject, home);
+    actions.setAlignment(Pos.CENTER);
+    actions.getStyleClass().add("result-actions");
+    var reviewTitle = Ui.title("Xem lại câu hỏi");
+    var reviewMeta =
+        Ui.muted(
+            r.path("totalRounds").asInt(10)
+                + " câu · tối đa "
+                + (r.path("totalRounds").asInt(10) * 3)
+                + " điểm · "
+                + (r.path("ranked").asBoolean(true) ? "Tính hạng" : "Cộng đồng · Không tính hạng")
+                + " · câu sai được mở sẵn");
+    var reviewHeading = new VBox(4, reviewTitle, reviewMeta);
+    reviewHeading.setMinWidth(0);
+    HBox.setHgrow(reviewHeading, Priority.ALWAYS);
+    var cards = new ArrayList<ReviewCard>();
+    var toggleAll = Ui.secondary("Mở tất cả", () -> {});
+    toggleAll.setOnAction(
+        e -> {
+          boolean open = cards.stream().anyMatch(c -> !c.expanded());
+          cards.forEach(c -> c.setExpanded(open));
+          toggleAll.setText(open ? "Thu gọn tất cả" : "Mở tất cả");
+        });
+    var reviewHeader = new HBox(12, reviewHeading, toggleAll);
+    reviewHeader.setAlignment(Pos.BOTTOM_LEFT);
+    reviewHeader.getStyleClass().add("review-section-header");
+    getChildren().addAll(rematchNote, actions, reviewHeader);
     JsonNode pageData = s.payload(MessageType.LIVE_REVIEW);
     int page = pageData == null ? r.path("reviewPage").asInt(1) : pageData.path("page").asInt(1);
     long total =
@@ -200,7 +206,7 @@ public final class ResultView extends VBox {
             : pageData.path("totalItems").asLong();
     final java.util.UUID reviewMatch = s.resultMatchId();
     Button previous =
-        Ui.button(
+        Ui.secondary(
             "← Trước",
             () ->
                 sink.send(
@@ -209,7 +215,7 @@ public final class ResultView extends VBox {
                     null,
                     new Payloads.LiveReviewRequest(page - 1)));
     Button next =
-        Ui.button(
+        Ui.secondary(
             "Tiếp →",
             () ->
                 sink.send(
@@ -219,10 +225,21 @@ public final class ResultView extends VBox {
                     new Payloads.LiveReviewRequest(page + 1)));
     previous.setDisable(page <= 1 || detached);
     next.setDisable(page * Payloads.REVIEW_PAGE_SIZE >= total || detached);
-    getChildren().add(new HBox(12, previous, Ui.label("Trang " + page), next));
     for (var review : (pageData == null ? r.path("review") : pageData.path("review"))) {
-      getChildren().add(new ReviewCard(review, r.path("players"), s.selfUserId()));
+      var card = new ReviewCard(review, r.path("players"), s.selfUserId());
+      cards.add(card);
+      getChildren().add(card);
     }
+    toggleAll.setVisible(!cards.isEmpty());
+    toggleAll.setManaged(!cards.isEmpty());
+    if (cards.stream().allMatch(ReviewCard::expanded) && !cards.isEmpty())
+      toggleAll.setText("Thu gọn tất cả");
+    var pageLabel = Ui.label("Trang " + page);
+    pageLabel.getStyleClass().add("page-label");
+    var pager = new HBox(12, previous, pageLabel, next);
+    pager.setAlignment(Pos.CENTER_LEFT);
+    pager.getStyleClass().add("pager");
+    getChildren().add(pager);
     render(s);
   }
 
@@ -241,7 +258,7 @@ public final class ResultView extends VBox {
     if (outcome.equals("win")) Effects.confetti(layer, animations);
     if (heroIcon != null) {
       if (outcome.equals("lose") && heroIcon.getParent() instanceof StackPane halo) {
-        heroIcon = Effects.rainCloud(84, true, animations);
+        heroIcon = Effects.rainCloud(64, true, animations);
         halo.getChildren().setAll(heroIcon);
       }
       var pop =

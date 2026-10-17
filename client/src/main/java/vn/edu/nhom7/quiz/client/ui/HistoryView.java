@@ -30,7 +30,7 @@ public final class HistoryView extends VBox {
                           ? "Tính hạng"
                           : "Cộng đồng · Không tính hạng")));
       Button previous =
-          Ui.button(
+          Ui.secondary(
               "← Câu trước",
               () ->
                   sink.send(
@@ -40,7 +40,7 @@ public final class HistoryView extends VBox {
                       new Payloads.MatchDetailRequest(
                           UUID.fromString(summary.path("matchId").asText()), detailPage - 1)));
       Button next =
-          Ui.button(
+          Ui.secondary(
               "Câu tiếp →",
               () ->
                   sink.send(
@@ -51,24 +51,28 @@ public final class HistoryView extends VBox {
                           UUID.fromString(summary.path("matchId").asText()), detailPage + 1)));
       previous.setDisable(detailPage <= 1);
       next.setDisable(detailPage * Payloads.REVIEW_PAGE_SIZE >= total);
-      getChildren().add(new HBox(10, previous, Ui.label("Trang câu " + detailPage), next));
+      var pageLabel = Ui.label("Trang câu " + detailPage);
+      pageLabel.getStyleClass().add("page-label");
+      var pager = new HBox(10, previous, pageLabel, next);
+      pager.setAlignment(Pos.CENTER_LEFT);
+      getChildren().add(pager);
       var reviewPanel = new VBox(14);
       reviewPanel.getStyleClass().add("editor-panel");
       getChildren().add(reviewPanel);
       for (var q : detail.path("review")) {
         var players = com.fasterxml.jackson.databind.node.JsonNodeFactory.instance.arrayNode();
+        long self = -1;
         for (var outcome : q.path("outcomes")) {
           long id = outcome.path("userId").asLong();
-          players
-              .addObject()
-              .put("userId", id)
-              .put(
-                  "displayName",
-                  id == summary.path("opponentUserId").asLong()
-                      ? summary.path("opponentName").asText("Đối thủ")
-                      : "Bạn");
+          // Only the opponent is named; the review card calls the viewer "Bạn".
+          if (id != summary.path("opponentUserId").asLong()) self = id;
+          else
+            players
+                .addObject()
+                .put("userId", id)
+                .put("displayName", summary.path("opponentName").asText("Đối thủ"));
         }
-        reviewPanel.getChildren().add(new ReviewCard(q, players, -1));
+        reviewPanel.getChildren().add(new ReviewCard(q, players, self));
       }
     }
     if (p == null) {

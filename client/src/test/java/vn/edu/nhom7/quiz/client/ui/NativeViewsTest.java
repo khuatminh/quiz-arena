@@ -483,6 +483,38 @@ class NativeViewsTest {
   }
 
   @Test
+  void reviewOpensMissedQuestionsAndFoldsTheRest() throws Exception {
+    var json = new com.fasterxml.jackson.databind.ObjectMapper();
+    fx(
+        () -> {
+          var cards = new ArrayList<ReviewCard>();
+          for (boolean correct : List.of(true, false)) {
+            var review = json.createObjectNode().put("roundIndex", 1).put("revealed", true);
+            review
+                .putObject("question")
+                .put("content", "Thủ đô Việt Nam?")
+                .putArray("options")
+                .add(json.createObjectNode().put("id", "A").put("text", "Hà Nội"))
+                .add(json.createObjectNode().put("id", "B").put("text", "Huế"));
+            review.put("correctAnswer", "A");
+            review
+                .putArray("outcomes")
+                .addObject()
+                .put("userId", 101)
+                .put("answer", correct ? "A" : "B")
+                .put("correct", correct)
+                .put("earnedPoints", correct ? 3 : 0);
+            cards.add(new ReviewCard(review, null, 101));
+          }
+          assertFalse(cards.get(0).expanded());
+          assertTrue(cards.get(1).expanded());
+          assertNotNull(cards.get(1).lookup(".answer-card.incorrect"));
+          cards.get(0).setExpanded(true);
+          assertTrue(cards.get(0).expanded());
+        });
+  }
+
+  @Test
   void lifelinesSendOnceGreyOutRemovedOptionsAndShowTheOpponentsUse() throws Exception {
     var json = new com.fasterxml.jackson.databind.ObjectMapper();
     var reducer = new vn.edu.nhom7.quiz.client.state.ClientStateReducer();

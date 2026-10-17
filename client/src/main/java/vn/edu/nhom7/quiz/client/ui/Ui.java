@@ -76,6 +76,31 @@ final class Ui {
         .orElse(false);
   }
 
+  /** One item of a keyboard hint bar: a keycap and what it does. */
+  static HBox prompt(String keys, String action) {
+    var text = label(action);
+    text.getStyleClass().add("prompt-text");
+    text.setWrapText(false);
+    var item = new HBox(8, text);
+    if (keys != null) {
+      var cap = label(keys);
+      cap.getStyleClass().add("prompt-key");
+      cap.setWrapText(false);
+      cap.setMinWidth(Region.USE_PREF_SIZE);
+      item.getChildren().addFirst(cap);
+    }
+    item.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+    item.setMinWidth(Region.USE_PREF_SIZE);
+    return item;
+  }
+
+  /** A small uppercase heading in the display font. */
+  static Label kicker(String text) {
+    var l = new Label(text);
+    l.getStyleClass().add("kicker");
+    return l;
+  }
+
   static Region spacer() {
     var r = new Region();
     HBox.setHgrow(r, Priority.ALWAYS);

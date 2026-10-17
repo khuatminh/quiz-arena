@@ -316,9 +316,28 @@ class InterfaceEvidenceTest {
         if (!captured.add(key)) continue;
         if (state.phase().equals("WAITING_READY"))
           add("08-ready", Ui.scroll(new WaitingView(state, sink)));
-        else if (state.phase().equals("RESULT"))
+        else if (state.phase().equals("RESULT")) {
           add("16-result", Ui.scroll(new ResultView(state, sink)));
-        else {
+          // The same result with two misses, so the review opens those questions.
+          ObjectNode missed = state.payload(MessageType.MATCH_RESULT).deepCopy();
+          for (int i : new int[] {1, 3})
+            for (var o : missed.path("review").get(i).path("outcomes"))
+              if (o.path("userId").asLong() == 101)
+                ((ObjectNode) o).put("correct", false).put("answer", "B").put("earnedPoints", 0);
+          var data = new EnumMap<MessageType, JsonNode>(MessageType.class);
+          data.putAll(state.data());
+          data.put(MessageType.MATCH_RESULT, missed);
+          var missedScroll =
+              Ui.scroll(new ResultView(copy(state, state.question(), data, false), sink));
+          add("result-review-missed", missedScroll);
+          var reviewCards = new VBox(12);
+          reviewCards.setPadding(new javafx.geometry.Insets(28));
+          for (int i = 0; i < 4; i++)
+            reviewCards
+                .getChildren()
+                .add(new ReviewCard(missed.path("review").get(i), missed.path("players"), 101));
+          add("result-review-cards", Ui.scroll(reviewCards));
+        } else {
           var game = new GameView(state, sink, true);
           cleanup.add(game::dispose);
           add("game-" + key.toLowerCase(), game);

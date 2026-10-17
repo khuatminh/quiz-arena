@@ -181,7 +181,7 @@ public final class AppShell extends BorderPane implements AutoCloseable {
         music
             ? "M8 5 L20 2.5 V15.5 A3 3 0 1 1 18 12.7 V7.2 L10 8.9 V18 A3 3 0 1 1 8 15.2 Z"
             : "M3 9 H7 L12 5 V19 L7 15 H3 Z M15 8.2 A5 5 0 0 1 15 15.8 L16.3 17.2 A7 7 0 0 0 16.3"
-                  + " 6.8 Z");
+                + " 6.8 Z");
     glyph.getStyleClass().add("sound-glyph");
     var icon = new StackPane(glyph);
     if (!on) {
@@ -397,6 +397,8 @@ public final class AppShell extends BorderPane implements AutoCloseable {
     bar.getChildren().add(4, soundToggle(false));
     bar.getStyleClass().add("app-header");
     ((Label) bar.getChildren().get(0)).getStyleClass().add("brand");
+    ((Label) bar.getChildren().get(0)).setWrapText(false);
+    ((Label) bar.getChildren().get(0)).setMinWidth(Region.USE_PREF_SIZE);
     ((Label) bar.getChildren().get(1)).setMaxWidth(160);
     ((Label) bar.getChildren().get(1)).setWrapText(false);
     HBox.setHgrow(bar.getChildren().get(1), Priority.ALWAYS);

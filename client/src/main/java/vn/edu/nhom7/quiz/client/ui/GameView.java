@@ -512,38 +512,23 @@ public final class GameView extends BorderPane {
   private void showPrompts(String type, String phase) {
     prompts.getChildren().clear();
     if (phase.equals("REVEAL")) {
-      prompts.getChildren().add(prompt(null, "Câu tiếp theo sẽ tự bắt đầu"));
+      prompts.getChildren().add(Ui.prompt(null, "Câu tiếp theo sẽ tự bắt đầu"));
       return;
     }
     int options = renderer instanceof BaseQuestionRenderer base ? base.answerControls.size() : 0;
     switch (type) {
-      case "SHORT_ANSWER" -> prompts.getChildren().add(prompt("Enter", "Gửi câu trả lời"));
-      case "TRUE_FALSE" -> prompts.getChildren().add(prompt("1 / 2", "Đúng / Sai"));
+      case "SHORT_ANSWER" -> prompts.getChildren().add(Ui.prompt("Enter", "Gửi câu trả lời"));
+      case "TRUE_FALSE" -> prompts.getChildren().add(Ui.prompt("1 / 2", "Đúng / Sai"));
       case "MULTIPLE_CHOICE" ->
           prompts
               .getChildren()
-              .addAll(prompt("1–" + options, "Đánh dấu"), prompt("Enter", "Khóa đáp án"));
+              .addAll(Ui.prompt("1–" + options, "Đánh dấu"), Ui.prompt("Enter", "Khóa đáp án"));
       default ->
-          prompts.getChildren().addAll(prompt("1–" + options, "Chọn"), prompt("Tab", "Di chuyển"));
+          prompts
+              .getChildren()
+              .addAll(Ui.prompt("1–" + options, "Chọn"), Ui.prompt("Tab", "Di chuyển"));
     }
-    if (!lifelineButtons.isEmpty()) prompts.getChildren().add(prompt("X · L · N", "Trợ giúp"));
-  }
-
-  private static HBox prompt(String keys, String action) {
-    var text = Ui.label(action);
-    text.getStyleClass().add("prompt-text");
-    text.setWrapText(false);
-    var item = new HBox(8, text);
-    if (keys != null) {
-      var cap = Ui.label(keys);
-      cap.getStyleClass().add("prompt-key");
-      cap.setWrapText(false);
-      cap.setMinWidth(Region.USE_PREF_SIZE);
-      item.getChildren().addFirst(cap);
-    }
-    item.setAlignment(Pos.CENTER_LEFT);
-    item.setMinWidth(Region.USE_PREF_SIZE);
-    return item;
+    if (!lifelineButtons.isEmpty()) prompts.getChildren().add(Ui.prompt("X · L · N", "Trợ giúp"));
   }
 
   public void render(ClientState s) {

@@ -138,7 +138,7 @@
 .player-tile .label { -fx-text-fill: -q-ink; }
 .countdown-number { -fx-font-family: "Chakra Petch"; -fx-font-size: 84px; -fx-font-weight: bold; -fx-text-fill: -q-gold-text; }
 .challenge-panel, .detail-panel { -fx-padding: 24; -fx-background-color: -q-bg-2; -fx-border-color: -q-line; -fx-border-width: 0 1 0 0; }
-.result-hero { -fx-background-color: -q-surface; -fx-background-radius: 20; -fx-border-color: -q-line; -fx-border-radius: 20; -fx-padding: 28; -fx-alignment: center; }
+.result-hero { -fx-background-color: -q-surface; -fx-background-radius: 20; -fx-border-color: -q-line; -fx-border-radius: 20; -fx-padding: 20 28; -fx-alignment: center; }
 .result-hero .label { -fx-text-fill: -q-ink; }
 .result-score { -fx-font-family: "Chakra Petch"; -fx-font-size: 42px; -fx-font-weight: bold; }
 .table-heading { -fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: -q-ink-2; -fx-padding: 12 16; }
@@ -322,7 +322,7 @@
 .result-title { -fx-font-size: 34px; }
 .result-hero.win .result-title { -fx-text-fill: -q-gold-text; }
 .result-hero.lose .result-title { -fx-text-fill: -q-opp-text; }
-.result-halo { -fx-background-radius: 999; -fx-padding: 18; -fx-background-color: #F5C54226, #F5C5421A; -fx-background-insets: 0, 8; }
+.result-halo { -fx-background-radius: 999; -fx-padding: 12; -fx-background-color: #F5C54226, #F5C5421A; -fx-background-insets: 0, 8; }
 .result-hero.lose .result-halo { -fx-background-color: #3B8BFF1A, #3B8BFF14; }
 .result-hero.draw .result-halo { -fx-background-color: #A98BFF22, #A98BFF18; }
 .result-avatar { -fx-background-color: -q-surface-2; -fx-background-radius: 999; -fx-border-color: -q-line-strong; -fx-border-width: 3; -fx-border-radius: 999; -fx-padding: 4; }
@@ -387,3 +387,67 @@
   -fx-padding: 1 9; -fx-font-size: 12px; -fx-font-weight: bold;
 }
 .game-surface .gain-pill.doubled { -fx-background-color: -q-gold; -fx-text-fill: -q-on-gold; -fx-effect: dropshadow(gaussian, #F5C542AA, 12, .3, 0, 0); }
+
+/* ---------- Lobby menu (GĐ2) ---------- */
+.kicker { -fx-font-family: "Chakra Petch"; -fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: -q-ink-3; }
+.lobby-steps { -fx-padding: 12 18; -fx-background-color: -q-surface; -fx-background-radius: 14; -fx-border-color: -q-line; -fx-border-radius: 14; }
+.lobby-step .step-number {
+  -fx-font-family: "Chakra Petch"; -fx-font-size: 14px; -fx-font-weight: bold; -fx-alignment: center;
+  -fx-min-width: 30; -fx-pref-width: 30; -fx-min-height: 30; -fx-pref-height: 30;
+  -fx-background-radius: 999; -fx-border-radius: 999; -fx-background-color: -q-surface-2; -fx-text-fill: -q-ink-3; -fx-border-color: -q-line-strong;
+}
+.lobby-step .step-text { -fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: -q-ink-3; }
+.lobby-step.current .step-number { -fx-background-color: -q-self; -fx-text-fill: -q-on-self; -fx-border-color: transparent; }
+.lobby-step.current .step-text { -fx-text-fill: -q-ink; }
+.lobby-step.done .step-number { -fx-background-color: -q-good-soft; -fx-text-fill: -q-good-text; -fx-border-color: -q-good; }
+.lobby-step.done .step-text { -fx-text-fill: -q-ink-2; }
+.step-line { -fx-background-color: -q-line-strong; -fx-min-height: 2; -fx-pref-height: 2; }
+.quiz-card { -fx-cursor: hand; }
+.quiz-card.unavailable { -fx-opacity: .6; -fx-cursor: default; }
+.quiz-cover { -fx-background-color: -q-surface-2; -fx-background-radius: 10; }
+.quiz-card .button { -fx-background-color: -q-surface-2; -fx-text-fill: -q-ink; -fx-border-color: -q-line; }
+.quiz-card .button:hover { -fx-background-color: -q-surface-3; }
+.quiz-card .button:focused { -fx-border-color: -q-focus; }
+.quiz-card.selected .button { -fx-background-color: -q-self; -fx-text-fill: -q-on-self; -fx-border-color: transparent; }
+.quiz-card.selected .button:focused { -fx-border-color: -q-focus; }
+.online-count { -fx-font-size: 20px; -fx-font-weight: bold; }
+.button.opponent { -fx-background-radius: 12; -fx-border-radius: 12; -fx-border-color: transparent; -fx-padding: 8 10; }
+.button.opponent:focused { -fx-border-color: -q-focus; }
+.button.opponent .opponent-name { -fx-font-size: 15px; -fx-font-weight: bold; }
+.button.opponent .opponent-meta { -fx-font-size: 12px; -fx-font-weight: normal; -fx-text-fill: -q-ink-3; }
+.button.opponent .opponent-meta.free { -fx-text-fill: -q-good-text; }
+.button.challenge-button { -fx-font-size: 15px; -fx-padding: 12 16; }
+.page-label { -fx-font-family: "Chakra Petch"; -fx-font-weight: bold; -fx-text-fill: -q-ink-2; }
+.lobby .prompt-bar { -fx-padding: 10 4 0 4; -fx-border-color: -q-line transparent transparent transparent; }
+
+/* ---------- Ready room ---------- */
+.waiting-kicker { -fx-text-fill: -q-gold-text; }
+.player-tile.self { -fx-border-color: -q-self; -fx-border-width: 2; }
+.player-tile.opponent { -fx-border-color: -q-opp; -fx-border-width: 2; }
+.waiting-avatar { -fx-background-color: -q-surface-2; -fx-background-radius: 999; -fx-border-radius: 999; -fx-border-width: 3; -fx-padding: 4; }
+.player-tile.self .waiting-avatar { -fx-border-color: -q-self; }
+.player-tile.opponent .waiting-avatar { -fx-border-color: -q-opp; }
+.player-tile .waiting-name { -fx-font-size: 22px; }
+.player-tile .role-tag { -fx-font-family: "Chakra Petch"; -fx-font-size: 12px; -fx-font-weight: bold; -fx-padding: 2 8; -fx-background-radius: 6; }
+.player-tile.self .role-tag { -fx-background-color: -q-self; -fx-text-fill: -q-on-self; }
+.player-tile.opponent .role-tag { -fx-background-color: -q-opp; -fx-text-fill: -q-on-opp; }
+.player-tile .ready-chip { -fx-font-size: 13px; -fx-font-weight: bold; -fx-padding: 5 12; -fx-background-radius: 999; -fx-background-color: -q-surface-2; -fx-text-fill: -q-ink-3; }
+.player-tile .ready-chip.ready { -fx-background-color: -q-good-soft; -fx-text-fill: -q-good-text; }
+.versus-mark { -fx-font-family: "Chakra Petch"; -fx-font-size: 34px; -fx-font-weight: bold; -fx-text-fill: -q-gold-text; }
+.waiting-panel .waiting-notice { -fx-text-fill: -q-ink-2; }
+.button.ready-button { -fx-font-size: 16px; -fx-padding: 12 28; }
+
+/* ---------- Result and review ---------- */
+.review-section-header { -fx-padding: 14 0 2 0; }
+.review-card { -fx-padding: 0; }
+.review-card.open { -fx-border-color: -q-line-strong; }
+.review-header { -fx-padding: 14 18; -fx-cursor: hand; -fx-background-radius: 16; -fx-border-radius: 16; -fx-border-color: transparent; -fx-border-width: 2; }
+.review-header:hover { -fx-background-color: -q-surface-2; }
+.review-header:focused { -fx-border-color: -q-focus; }
+.review-question { -fx-font-size: 16px; -fx-font-weight: bold; }
+.review-chevron { -fx-font-size: 16px; -fx-text-fill: -q-ink-3; }
+.review-result { -fx-font-family: "Chakra Petch"; -fx-font-size: 13px; -fx-font-weight: bold; -fx-padding: 3 10; -fx-background-radius: 999; }
+.review-result.right { -fx-background-color: -q-good-soft; -fx-text-fill: -q-good-text; }
+.review-result.wrong { -fx-background-color: -q-bad-soft; -fx-text-fill: -q-bad-text; }
+.review-result.neutral { -fx-background-color: -q-surface-2; -fx-text-fill: -q-ink-3; }
+.review-body .answer-card { -fx-font-size: 15px; -fx-padding: 10 14; }
