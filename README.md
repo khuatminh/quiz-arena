@@ -544,6 +544,7 @@ Kết quả chưa lưu nằm trong RAM. Nếu server bị tắt cưỡng bức h
 
 | Tài liệu | Nội dung |
 | --- | --- |
+| [Hướng dẫn chạy và kết nối với người khác](docs/operations/huong-dan-chay-va-ket-noi.md) | Chạy trên Windows, mở cổng TCP, chơi qua LAN, ghép trận và xử lý lỗi |
 | [Thiết lập database](docs/operations/database-setup.md) | Quyền MySQL, schema, migration và tài khoản demo |
 | [Kiến trúc mạng](docs/architecture/network-explanation.md) | TCP, đồng thời, hàng đợi, truyền ảnh và vòng đời trận |
 | [Giao thức](docs/protocol/protocol-v1.md) | Cấu trúc thông điệp và quy tắc giao tiếp |
