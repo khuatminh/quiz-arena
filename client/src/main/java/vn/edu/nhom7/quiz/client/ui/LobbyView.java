@@ -12,6 +12,7 @@ import vn.edu.nhom7.quiz.common.protocol.*;
 public final class LobbyView extends BorderPane {
   private JsonNode selectedQuiz, selectedOpponent;
   private Button challenge;
+  private final Label hint = Ui.label("");
   private final List<VBox> cards = new ArrayList<>();
   private final List<Button> opponents = new ArrayList<>();
   private final ClientState state;
@@ -45,6 +46,7 @@ public final class LobbyView extends BorderPane {
         if (((JsonNode) button.getUserData()).path("userId").asLong() == selection.opponent())
           button.getStyleClass().add("selected");
     challenge.setDisable(!canChallenge(selectedQuiz, selectedOpponent, state.selfUserId(), false));
+    refreshHint();
   }
 
   public LobbyView(
@@ -222,13 +224,19 @@ public final class LobbyView extends BorderPane {
                         selectedOpponent.path("userId").asLong(),
                         selectedQuiz.path("quizId").asLong()));
                 challenge.setDisable(true);
+                refreshHint();
               }
             });
     challenge.setDisable(true);
+    refreshHint();
+    hint.getStyleClass().add("challenge-hint");
+    hint.setMinHeight(Region.USE_PREF_SIZE);
     JsonNode users = state.payload(MessageType.ONLINE_LIST);
+    boolean anyoneElse = false;
     if (users != null)
       for (var user : users.path("users")) {
         if (user.path("userId").asLong() == state.selfUserId()) continue;
+        anyoneElse = true;
         var b =
             Ui.button(
                 user.path("displayName").asText()
@@ -244,6 +252,7 @@ public final class LobbyView extends BorderPane {
                       row.getStyleClass().add("selected");
                   challenge.setDisable(
                       !canChallenge(selectedQuiz, user, state.selfUserId(), false));
+                  refreshHint();
                 });
         b.setMaxWidth(Double.MAX_VALUE);
         b.setMinWidth(0);
@@ -257,9 +266,14 @@ public final class LobbyView extends BorderPane {
         opponents.add(b);
         online.getChildren().add(b);
       }
+    if (!anyoneElse)
+      online
+          .getChildren()
+          .add(Ui.muted("Chưa có người chơi nào khác trực tuyến. Nhấn Tải lại sau ít phút."));
     var controls =
         new VBox(
             10,
+            hint,
             challenge,
             Ui.button(
                 "Tải lại",
@@ -289,6 +303,23 @@ public final class LobbyView extends BorderPane {
   public void selectQuiz(JsonNode q) {
     selectedQuiz = q;
     challenge.setDisable(!canChallenge(q, selectedOpponent, 0, false));
+    refreshHint();
+  }
+
+  private void refreshHint() {
+    hint.setText(
+        selectedQuiz == null && selectedOpponent == null
+            ? "Chọn quiz và đối thủ để thách đấu."
+            : selectedQuiz == null
+                ? "Còn thiếu: chọn một quiz."
+                : selectedOpponent == null
+                    ? "Còn thiếu: chọn một đối thủ."
+                    : challenge.isDisabled()
+                        ? "Đã gửi lời thách đấu."
+                        : "Sẵn sàng: "
+                            + selectedQuiz.path("title").asText()
+                            + " · đấu với "
+                            + selectedOpponent.path("displayName").asText());
   }
 
   public static boolean canChallenge(JsonNode q, JsonNode opponent, long self, boolean pending) {

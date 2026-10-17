@@ -27,7 +27,9 @@ public final class ResultView extends VBox {
                 ? "Hòa!"
                 : r.path("winnerUserId").asLong() == s.selfUserId()
                     ? "Bạn chiến thắng!"
-                    : "Trận đấu đã kết thúc";
+                    : PresentationText.playerName(
+                            r.path("players"), r.path("winnerUserId").asLong(), s.selfUserId())
+                        + " chiến thắng · Cố lên lần sau!";
     var hero = new VBox(16, Ui.title(title));
     hero.getStyleClass().add("result-hero");
     hero.getChildren()
@@ -82,11 +84,45 @@ public final class ResultView extends VBox {
                     null,
                     new Payloads.RematchResponse(false)));
     boolean detached = !s.resultAttached();
-    rematch.setDisable(detached);
-    accept.setDisable(detached || s.payload(MessageType.REMATCH_STATUS) == null);
-    reject.setDisable(accept.isDisabled());
+    // Only the invited player may answer a rematch; the requester just waits.
+    JsonNode rematchStatus = s.payload(MessageType.REMATCH_STATUS);
+    String rematchState = rematchStatus == null ? "" : rematchStatus.path("status").asText();
+    boolean pending = rematchState.equals("PENDING");
+    boolean ownRequest =
+        pending && rematchStatus.path("requesterUserId").asLong() == s.selfUserId();
+    boolean incoming = pending && !ownRequest && !detached;
+    var rematchNote = Ui.label("");
+    rematchNote.getStyleClass().add("rematch-status");
+    rematchNote.setText(
+        detached
+            ? ""
+            : ownRequest
+                ? "Đã gửi lời mời đấu lại · đang chờ đối thủ trả lời"
+                : incoming
+                    ? PresentationText.playerName(
+                            r.path("players"),
+                            rematchStatus.path("requesterUserId").asLong(),
+                            s.selfUserId())
+                        + " muốn đấu lại!"
+                    : switch (rematchState) {
+                      case "REJECTED" -> "Lời mời đấu lại đã bị từ chối.";
+                      case "EXPIRED" -> "Lời mời đấu lại đã hết hạn.";
+                      case "INVALIDATED" -> "Không thể đấu lại trận này nữa.";
+                      default -> "";
+                    });
+    rematchNote.managedProperty().bind(rematchNote.textProperty().isNotEmpty());
+    rematchNote.visibleProperty().bind(rematchNote.managedProperty());
+    rematch.setDisable(detached || pending);
+    for (var b : List.of(accept, reject)) {
+      b.setVisible(incoming);
+      b.setManaged(incoming);
+    }
+    rematch.setVisible(!incoming);
+    rematch.setManaged(!incoming);
+    reject.getStyleClass().add("secondary");
     getChildren()
         .addAll(
+            rematchNote,
             new FlowPane(
                 12,
                 12,

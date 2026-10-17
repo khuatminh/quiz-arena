@@ -11,6 +11,10 @@ import vn.edu.nhom7.quiz.common.protocol.*;
 
 public final class RevealPanel extends VBox {
   public RevealPanel(JsonNode p, JsonNode question, long self) {
+    this(p, question, self, null);
+  }
+
+  public RevealPanel(JsonNode p, JsonNode question, long self, JsonNode players) {
     setSpacing(12);
     getStyleClass().add("reveal-panel");
     setPadding(new Insets(20));
@@ -33,7 +37,7 @@ public final class RevealPanel extends VBox {
       getChildren()
           .add(
               Ui.label(
-                  (o.path("userId").asLong() == self ? "Bạn" : "Đối thủ")
+                  PresentationText.playerName(players, o.path("userId").asLong(), self)
                       + " · "
                       + value
                       + " · "

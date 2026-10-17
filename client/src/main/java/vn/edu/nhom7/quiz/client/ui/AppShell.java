@@ -236,7 +236,7 @@ public final class AppShell extends BorderPane implements AutoCloseable {
                     visible = "";
                     refreshQuizzes();
                     store.leaveResult();
-                  } else
+                  } else if (s.phase().equals("RESULT") || Ui.confirmLeaveMatch(this))
                     commands.send(
                         MessageType.EXIT_MATCH, s.activeMatchId(), null, new Payloads.ExitMatch());
                 }),
@@ -287,9 +287,19 @@ public final class AppShell extends BorderPane implements AutoCloseable {
         if (active) b.getStyleClass().add("active");
         if (b.getText().equals("Đăng xuất")) b.getStyleClass().add("danger");
         if (s.activeMatchId() != null && b.getText().equals("Sảnh")) {
-          b.setText("Rời trận");
           b.getStyleClass().remove("active");
-          b.getStyleClass().add("danger");
+          // On the result screen leaving is harmless, so it stays a plain "back to lobby".
+          if (!s.phase().equals("RESULT")) {
+            b.setText("Rời trận");
+            b.getStyleClass().add("danger");
+          }
+        }
+        // Chat only exists during a match and on its result screen.
+        if (b.getText().equals("Chat")
+            && s.activeMatchId() == null
+            && !s.phase().equals("RESULT_DETACHED")) {
+          b.setVisible(false);
+          b.setManaged(false);
         }
         if (s.activeMatchId() != null
             && java.util.Set.of("Quiz của tôi", "Xếp hạng", "Lịch sử").contains(b.getText()))

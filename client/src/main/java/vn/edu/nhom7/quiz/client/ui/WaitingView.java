@@ -56,12 +56,14 @@ public final class WaitingView extends VBox {
             ready,
             Ui.secondary(
                 "Rời trận",
-                () ->
+                () -> {
+                  if (Ui.confirmLeaveMatch(this))
                     sink.send(
                         MessageType.EXIT_MATCH,
                         s.activeMatchId(),
                         null,
-                        new Payloads.ExitMatch())));
+                        new Payloads.ExitMatch());
+                }));
     render(s);
   }
 

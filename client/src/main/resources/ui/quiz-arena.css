@@ -70,6 +70,10 @@
 .game-header { -fx-padding: 4 0 20 0; -fx-alignment: center-left; }
 .timer { -fx-background-color: #F5C65A; -fx-text-fill: #183B40; -fx-font-size: 21px; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 9 18; }
 .game-header .timer { -fx-text-fill: #183B40; }
+.game-header .timer.urgent { -fx-background-color: #C8434A; -fx-text-fill: white; }
+.progress-bar.urgent > .bar { -fx-background-color: #E0565B; }
+.challenge-hint { -fx-font-size: 12px; -fx-text-fill: #536B70; }
+.rematch-status { -fx-font-weight: bold; }
 .question-panel { -fx-background-color: #FFFEF9; -fx-background-radius: 20; -fx-padding: 28; }
 .question-title { -fx-font-size: 27px; -fx-font-weight: bold; }
 .answer-card {
@@ -101,6 +105,7 @@
 .data-row.self { -fx-background-color: #E1F3E9; -fx-border-color: #6BAE96; -fx-border-radius: 12; }
 .chat-panel { -fx-background-color: white; -fx-padding: 20; -fx-border-color: transparent transparent transparent #DCE6E0; }
 .chat-bubble { -fx-background-color: #EEF5F0; -fx-background-radius: 12; -fx-padding: 12; }
+.chat-bubble.mine { -fx-background-color: #DDF1E6; -fx-border-color: #9CCFB7; -fx-border-radius: 12; }
 .editor-panel { -fx-padding: 24; -fx-background-color: white; -fx-background-radius: 16; -fx-border-color: #DCE6E0; -fx-border-radius: 16; }
 .titled-pane > .title { -fx-font-size: 14px; -fx-background-color: #EEF5F0; -fx-padding: 8; }
 .titled-pane > .content { -fx-background-color: white; -fx-border-color: #DCE6E0; }

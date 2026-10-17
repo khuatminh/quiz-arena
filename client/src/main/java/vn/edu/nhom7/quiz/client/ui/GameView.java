@@ -154,7 +154,14 @@ public final class GameView extends BorderPane {
           box.getChildren().addAll(renderer.view(), notice);
           if (s.phase().equals("REVEAL"))
             box.getChildren()
-                .add(new RevealPanel(s.payload(MessageType.QUESTION_RESULT), q, s.selfUserId()));
+                .add(
+                    new RevealPanel(
+                        s.payload(MessageType.QUESTION_RESULT),
+                        q,
+                        s.selfUserId(),
+                        s.payload(MessageType.MATCH_START) == null
+                            ? null
+                            : s.payload(MessageType.MATCH_START).path("players")));
         } catch (Exception e) {
           box.getChildren()
               .add(Ui.label("Không thể hiển thị câu hỏi; chờ server kết thúc an toàn."));
@@ -219,6 +226,13 @@ public final class GameView extends BorderPane {
                     : left > 0 ? "Thưởng dự kiến: 1 điểm" : "")
             : "");
     timer.setText(left > 0 ? ((left + 999) / 1000) + " giây" : "Đang chuyển…");
+    boolean urgent = bound.phase().equals("OPEN") && left > 0 && left <= 5000;
+    if (urgent != timer.getStyleClass().contains("urgent")) {
+      if (urgent) timer.getStyleClass().add("urgent");
+      else timer.getStyleClass().remove("urgent");
+      progress.getStyleClass().remove("urgent");
+      if (urgent) progress.getStyleClass().add("urgent");
+    }
     countdown.setText(left > 0 ? Long.toString((left + 999) / 1000) : "Sẵn sàng");
     progress.setProgress(remaining <= 0 ? 0 : Math.min(1, (double) left / remaining));
     if (left == 0 && bound.phase().equals("OPEN") && renderer != null)

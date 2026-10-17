@@ -56,6 +56,26 @@ final class Ui {
     return v;
   }
 
+  /** Leaving before the result is a forfeit on the server, so ask first. */
+  static boolean confirmLeaveMatch(javafx.scene.Node owner) {
+    var alert =
+        new Alert(
+            Alert.AlertType.CONFIRMATION,
+            "Nếu rời trận bây giờ, bạn sẽ bị xử thua và trận đấu kết thúc cho cả hai người.",
+            new ButtonType("Rời trận", ButtonBar.ButtonData.OK_DONE),
+            new ButtonType("Ở lại", ButtonBar.ButtonData.CANCEL_CLOSE));
+    alert.setTitle("Rời trận?");
+    alert.setHeaderText("Bạn chắc chắn muốn rời trận?");
+    if (owner != null && owner.getScene() != null) {
+      alert.initOwner(owner.getScene().getWindow());
+      alert.getDialogPane().getStylesheets().addAll(owner.getScene().getStylesheets());
+    }
+    return alert
+        .showAndWait()
+        .map(b -> b.getButtonData() == ButtonBar.ButtonData.OK_DONE)
+        .orElse(false);
+  }
+
   static Region spacer() {
     var r = new Region();
     HBox.setHgrow(r, Priority.ALWAYS);
