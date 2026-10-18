@@ -434,4 +434,101 @@ class MatchEngineTest {
     assertThrows(ProtocolException.class, () -> manager.activate(prepared));
     assertFalse(manager.find(prepared.id).isPresent());
   }
+
+  Envelope last(String type) {
+    return events.stream()
+        .filter(e -> e.type() == MessageType.valueOf(type))
+        .reduce((a, b) -> b)
+        .orElseThrow();
+  }
+
+  String rejected(int player, String kind) {
+    return assertThrows(
+            ProtocolException.class,
+            () ->
+                command(
+                    player,
+                    "LIFELINE_USE",
+                    "questionId",
+                    match.question().questionId(),
+                    "kind",
+                    kind))
+        .code();
+  }
+
+  @Test
+  void fiftyFiftyKeepsTheKeyAndOneWrongOptionForTheCallerOnly() {
+    start();
+    open();
+    long question = match.question().questionId();
+    int before = events.size();
+    command(0, "LIFELINE_USE", "questionId", question, "kind", "FIFTY_FIFTY");
+    var result = last("LIFELINE_RESULT");
+    assertEquals(match.roundId, result.roundId());
+    var removed = result.payload().path("removedOptionIds");
+    // Three options: the key "A" stays with one wrong option.
+    assertEquals(1, removed.size());
+    assertNotEquals("A", removed.get(0).asText());
+    assertEquals(
+        List.of("DOUBLE_POINTS", "REMOVE_ONE"),
+        MatchManager.JSON.convertValue(result.payload().path("remaining"), List.class));
+    var added = events.subList(before, events.size());
+    assertEquals(1, added.stream().filter(e -> e.type() == MessageType.LIFELINE_RESULT).count());
+    assertEquals(2, added.stream().filter(e -> e.type() == MessageType.LIFELINE_STATUS).count());
+    assertFalse(last("LIFELINE_STATUS").payload().has("removedOptionIds"));
+    assertEquals("LIFELINE_LIMIT", rejected(0, "DOUBLE_POINTS"));
+    command(0, "MATCH_SNAPSHOT_REQUEST");
+    var lifelines = last("MATCH_SNAPSHOT").payload().path("lifelines");
+    assertEquals("FIFTY_FIFTY", lifelines.path("active").get(0).asText());
+    assertEquals(removed, lifelines.path("removedOptionIds"));
+    command(1, "MATCH_SNAPSHOT_REQUEST");
+    var opponent = last("MATCH_SNAPSHOT").payload().path("lifelines");
+    assertEquals(3, opponent.path("remaining").size());
+    assertEquals(0, opponent.path("removedOptionIds").size());
+  }
+
+  @Test
+  void doublePointsDoublesOneQuestionAndEachLifelineIsSpentOncePerMatch() {
+    start();
+    open();
+    long question = match.question().questionId();
+    command(0, "LIFELINE_USE", "questionId", question, "kind", "DOUBLE_POINTS");
+    command(0, "ANSWER", "questionId", question, "answer", "A");
+    command(1, "ANSWER", "questionId", question, "answer", "A");
+    var outcomes = last("QUESTION_RESULT").payload().path("outcomes");
+    assertEquals(6, outcomes.get(0).path("earnedPoints").asInt());
+    assertEquals(3, outcomes.get(1).path("earnedPoints").asInt());
+    scheduler.advance(Duration.ofSeconds(5));
+    open();
+    assertEquals("LIFELINE_USED", rejected(0, "DOUBLE_POINTS"));
+    command(0, "LIFELINE_USE", "questionId", match.question().questionId(), "kind", "REMOVE_ONE");
+    var removed = last("LIFELINE_RESULT").payload().path("removedOptionIds");
+    assertEquals(1, removed.size());
+    assertNotEquals("A", removed.get(0).asText());
+    command(0, "ANSWER", "questionId", match.question().questionId(), "answer", "B");
+    command(1, "ANSWER", "questionId", match.question().questionId(), "answer", "A");
+    assertEquals(
+        0, last("QUESTION_RESULT").payload().path("outcomes").get(0).path("earnedPoints").asInt());
+  }
+
+  @Test
+  void lifelinesNeedAnOpenUnansweredQuestionAndOptionsToRemove() {
+    start();
+    assertEquals("INVALID_STATE", rejected(0, "DOUBLE_POINTS"));
+    open();
+    assertEquals("INVALID_LIFELINE", rejected(0, "SKIP"));
+    command(1, "ANSWER", "questionId", match.question().questionId(), "answer", "A");
+    assertEquals("INVALID_STATE", rejected(1, "DOUBLE_POINTS"));
+    // Rounds 5-8 are multiple choice and true/false: x2 only.
+    for (int round = 1; round < 7; round++) {
+      scheduler.advance(Duration.ofSeconds(20));
+      open();
+    }
+    assertEquals(QuestionType.TRUE_FALSE, match.question().questionType());
+    assertEquals("LIFELINE_UNAVAILABLE", rejected(0, "FIFTY_FIFTY"));
+    assertEquals("LIFELINE_UNAVAILABLE", rejected(0, "REMOVE_ONE"));
+    command(
+        0, "LIFELINE_USE", "questionId", match.question().questionId(), "kind", "DOUBLE_POINTS");
+    assertEquals("DOUBLE_POINTS", last("LIFELINE_STATUS").payload().path("kind").asText());
+  }
 }

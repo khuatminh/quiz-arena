@@ -5,15 +5,24 @@ import java.util.*;
 import javafx.geometry.*;
 import javafx.scene.*;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import vn.edu.nhom7.quiz.client.state.*;
 import vn.edu.nhom7.quiz.common.protocol.*;
 
+/**
+ * The lobby as a game menu: three steps across the top (pick a quiz, pick an opponent, send the
+ * challenge), quiz cards in the middle, players online on the right and a key hint bar below.
+ */
 public final class LobbyView extends BorderPane {
   private JsonNode selectedQuiz, selectedOpponent;
   private Button challenge;
+  private final Label hint = Ui.label("");
   private final List<VBox> cards = new ArrayList<>();
+  private final List<Button> picks = new ArrayList<>();
   private final List<Button> opponents = new ArrayList<>();
+  private final List<HBox> steps = new ArrayList<>();
   private final ClientState state;
 
   record Selection(long quiz, long opponent) {}
@@ -45,6 +54,7 @@ public final class LobbyView extends BorderPane {
         if (((JsonNode) button.getUserData()).path("userId").asLong() == selection.opponent())
           button.getStyleClass().add("selected");
     challenge.setDisable(!canChallenge(selectedQuiz, selectedOpponent, state.selfUserId(), false));
+    refreshHint();
   }
 
   public LobbyView(
@@ -58,8 +68,21 @@ public final class LobbyView extends BorderPane {
       java.util.function.Consumer<JsonNode> detail,
       Long categoryId) {
     this.state = state;
-    setPadding(new Insets(24));
-    var library = new VBox(18, Ui.title("Khám phá bộ câu hỏi"));
+    getStyleClass().add("lobby");
+    setPadding(new Insets(20, 24, 12, 24));
+    var stepRow =
+        new HBox(
+            12,
+            step(1, "Chọn bộ câu hỏi"),
+            stepLine(),
+            step(2, "Chọn đối thủ"),
+            stepLine(),
+            step(3, "Gửi lời mời"));
+    stepRow.getStyleClass().add("lobby-steps");
+    stepRow.setAlignment(Pos.CENTER_LEFT);
+    BorderPane.setMargin(stepRow, new Insets(0, 0, 18, 0));
+    setTop(stepRow);
+    var library = new VBox(16, Ui.title("Khám phá bộ câu hỏi"));
     var topics = new HBox(10);
     topics
         .getChildren()
@@ -107,57 +130,14 @@ public final class LobbyView extends BorderPane {
     var search = new TextField();
     search.setPromptText("Tìm tên quiz trên trang này…");
     search.setAccessibleText("Tìm quiz trên trang hiện tại");
-    library
-        .getChildren()
-        .addAll(Ui.muted("Chọn một quiz, sau đó chọn người chơi để gửi lời thách đấu."), search);
+    library.getChildren().add(search);
     var grid = new TilePane(16, 16);
-    grid.setPrefColumns(2);
+    grid.setPrefColumns(3);
     grid.setMinWidth(0);
+    grid.getStyleClass().add("quiz-grid");
     if (list == null || list.path("items").isEmpty())
       grid.getChildren().add(Ui.label("Chưa có bộ câu hỏi. Nhấn tải lại để kiểm tra."));
-    else
-      for (var q : list.path("items")) {
-        var cover =
-            new vn.edu.nhom7.quiz.client.assets.AssetLoader()
-                .view(q.path("coverAssetId").asText("placeholder"), 235);
-        cover.setFitHeight(145);
-        var card =
-            Ui.stack(
-                cover,
-                Ui.label(q.path("title").asText()),
-                Ui.label(
-                    q.path("categoryName").asText()
-                        + " · "
-                        + q.path("totalRounds").asInt(10)
-                        + " câu · "
-                        + (q.path("availability").asText().equals("AVAILABLE")
-                            ? "Sẵn sàng"
-                            : "Chưa khả dụng")));
-        if (q.path("quizSource").asText().equals("COMMUNITY"))
-          card.getChildren()
-              .add(Ui.label("Cộng đồng · Không tính hạng · " + q.path("authorName").asText()));
-        card.getStyleClass().add("quiz-card");
-        card.setPrefWidth(250);
-        card.setMaxWidth(250);
-        card.setMinHeight(Region.USE_PREF_SIZE);
-        ((Label) card.getChildren().get(1)).getStyleClass().add("card-title");
-        cards.add(card);
-        card.getProperties().put("quizId", q.path("quizId").asLong());
-        card.setUserData(q.path("title").asText().toLowerCase(java.util.Locale.ROOT));
-        var select =
-            Ui.button(
-                "Chọn bộ câu hỏi",
-                () -> {
-                  selectedQuiz = q;
-                  grid.getChildren().forEach(n -> n.getStyleClass().remove("selected"));
-                  card.getStyleClass().add("selected");
-                  detail.accept(q);
-                });
-        select.setDisable(!q.path("availability").asText().equals("AVAILABLE"));
-        select.setMaxWidth(Double.MAX_VALUE);
-        card.getChildren().add(select);
-        grid.getChildren().add(card);
-      }
+    else for (var q : list.path("items")) grid.getChildren().add(card(q, detail));
     var noResults = Ui.muted("Không tìm thấy quiz trên trang này. Thử tên khác hoặc chuyển trang.");
     noResults.setVisible(false);
     noResults.setManaged(false);
@@ -181,7 +161,7 @@ public final class LobbyView extends BorderPane {
     int pageSize = list == null ? 20 : Math.max(1, list.path("pageSize").asInt(20));
     long total = list == null ? 0 : list.path("totalItems").asLong();
     var previous =
-        Ui.button(
+        Ui.secondary(
             "← Trước",
             () ->
                 sink.send(
@@ -190,7 +170,7 @@ public final class LobbyView extends BorderPane {
                     null,
                     new Payloads.QuizListRequest(categoryId, page - 1, pageSize)));
     var next =
-        Ui.button(
+        Ui.secondary(
             "Tiếp →",
             () ->
                 sink.send(
@@ -200,15 +180,27 @@ public final class LobbyView extends BorderPane {
                     new Payloads.QuizListRequest(categoryId, page + 1, pageSize)));
     previous.setDisable(page <= 1);
     next.setDisable((long) page * pageSize >= total);
-    library.getChildren().add(new HBox(12, previous, Ui.label("Trang " + page), next));
+    var pageLabel = Ui.label("Trang " + page);
+    pageLabel.getStyleClass().add("page-label");
+    var pager = new HBox(12, previous, pageLabel, next);
+    pager.setAlignment(Pos.CENTER_LEFT);
+    pager.getStyleClass().add("pager");
+    library.getChildren().add(pager);
     var libraryScroll = Ui.scroll(library);
+    libraryScroll.setMinHeight(0);
     setCenter(libraryScroll);
     javafx.application.Platform.runLater(() -> libraryScroll.setVvalue(0));
-    var online = new VBox(14, Ui.title("Cùng đấu trí"), Ui.muted("Chọn một đối thủ đang rảnh"));
-    online.setPrefWidth(260);
-    online.setMinWidth(250);
+
+    JsonNode users = state.payload(MessageType.ONLINE_LIST);
+    int free = 0;
+    if (users != null)
+      for (var user : users.path("users"))
+        if (user.path("userId").asLong() != state.selfUserId()
+            && user.path("status").asText().equals("FREE")) free++;
+    var freeCount = Ui.label(free + " người rảnh");
+    freeCount.getStyleClass().add("online-count");
+    var online = new VBox(10, Ui.kicker("ĐANG TRỰC TUYẾN"), freeCount);
     online.getStyleClass().add("online-panel");
-    BorderPane.setMargin(online, new Insets(0, 0, 0, 24));
     challenge =
         Ui.button(
             "Gửi lời thách đấu",
@@ -222,73 +214,260 @@ public final class LobbyView extends BorderPane {
                         selectedOpponent.path("userId").asLong(),
                         selectedQuiz.path("quizId").asLong()));
                 challenge.setDisable(true);
+                refreshHint();
               }
             });
+    challenge.getStyleClass().add("challenge-button");
     challenge.setDisable(true);
-    JsonNode users = state.payload(MessageType.ONLINE_LIST);
+    hint.getStyleClass().add("challenge-hint");
+    hint.setMinHeight(Region.USE_PREF_SIZE);
+    boolean anyoneElse = false;
     if (users != null)
       for (var user : users.path("users")) {
         if (user.path("userId").asLong() == state.selfUserId()) continue;
-        var b =
-            Ui.button(
-                user.path("displayName").asText()
-                    + " · "
-                    + (user.path("status").asText().equals("FREE") ? "Sẵn sàng" : "Đang bận")
-                    + " · "
-                    + user.path("totalScore").asLong(),
-                () -> {
-                  selectedOpponent = user;
-                  for (var node : online.getChildren()) node.getStyleClass().remove("selected");
-                  for (var node : online.getChildren())
-                    if (node instanceof Button row && row.getUserData() == user)
-                      row.getStyleClass().add("selected");
-                  challenge.setDisable(
-                      !canChallenge(selectedQuiz, user, state.selfUserId(), false));
-                });
-        b.setMaxWidth(Double.MAX_VALUE);
-        b.setMinWidth(0);
-        b.setWrapText(true);
-        b.setUserData(user);
-        b.getStyleClass().add("opponent");
-        b.setGraphic(
-            new vn.edu.nhom7.quiz.client.assets.AssetLoader()
-                .view(user.path("avatarId").asText(), 36));
-        b.setDisable(!user.path("status").asText().equals("FREE"));
-        opponents.add(b);
-        online.getChildren().add(b);
+        anyoneElse = true;
+        online.getChildren().add(opponent(user, online));
       }
-    var controls =
-        new VBox(
-            10,
-            challenge,
-            Ui.button(
-                "Tải lại",
-                () -> {
-                  sink.send(
-                      MessageType.QUIZ_LIST_REQUEST,
-                      null,
-                      null,
-                      new Payloads.QuizListRequest(categoryId, page, pageSize));
-                  sink.send(
-                      MessageType.ONLINE_LIST_REQUEST,
-                      null,
-                      null,
-                      new Payloads.OnlineListRequest());
-                }));
+    if (!anyoneElse)
+      online
+          .getChildren()
+          .add(Ui.muted("Chưa có người chơi nào khác trực tuyến. Nhấn Tải lại sau ít phút."));
+    var reload =
+        Ui.secondary(
+            "Tải lại",
+            () -> {
+              sink.send(
+                  MessageType.QUIZ_LIST_REQUEST,
+                  null,
+                  null,
+                  new Payloads.QuizListRequest(categoryId, page, pageSize));
+              sink.send(
+                  MessageType.ONLINE_LIST_REQUEST, null, null, new Payloads.OnlineListRequest());
+            });
+    reload.setMaxWidth(Double.MAX_VALUE);
+    var controls = new VBox(10, hint, challenge, reload);
     challenge.setMaxWidth(Double.MAX_VALUE);
+    challenge.setMinHeight(Region.USE_PREF_SIZE);
+    reload.setMinHeight(Region.USE_PREF_SIZE);
+    controls.getStyleClass().add("challenge-controls");
     var onlineScroll = Ui.scroll(online);
+    onlineScroll.setMinHeight(0);
     VBox.setVgrow(onlineScroll, Priority.ALWAYS);
-    controls.setPadding(new Insets(12, 20, 0, 20));
-    var sidebar = new VBox(onlineScroll, controls);
+    var sidebar = new VBox(12, onlineScroll, controls);
     sidebar.setPrefWidth(284);
     sidebar.setMinWidth(284);
+    sidebar.setMaxWidth(284);
+    sidebar.setMinHeight(0);
     BorderPane.setMargin(sidebar, new Insets(0, 0, 0, 20));
     setRight(sidebar);
+
+    var prompts =
+        new HBox(
+            20,
+            Ui.prompt("← →", "Đổi bộ câu hỏi"),
+            Ui.prompt("↑ ↓", "Đổi đối thủ"),
+            Ui.prompt("Enter", "Chọn"),
+            Ui.prompt("Tab", "Sang vùng khác"));
+    prompts.getStyleClass().add("prompt-bar");
+    prompts.setAlignment(Pos.CENTER_LEFT);
+    prompts.setMinWidth(0);
+    var clip = new javafx.scene.shape.Rectangle();
+    clip.widthProperty().bind(prompts.widthProperty());
+    clip.heightProperty().bind(prompts.heightProperty());
+    prompts.setClip(clip);
+    BorderPane.setMargin(prompts, new Insets(12, 0, 0, 0));
+    setBottom(prompts);
+    addEventFilter(KeyEvent.KEY_PRESSED, this::onKey);
+    refreshHint();
+  }
+
+  private VBox card(JsonNode q, java.util.function.Consumer<JsonNode> detail) {
+    boolean available = q.path("availability").asText().equals("AVAILABLE");
+    var cover =
+        new vn.edu.nhom7.quiz.client.assets.AssetLoader()
+            .view(q.path("coverAssetId").asText("placeholder"), 226);
+    cover.setFitHeight(132);
+    var coverBox = new StackPane(cover);
+    coverBox.getStyleClass().add("quiz-cover");
+    if (q.path("quizSource").asText().equals("COMMUNITY")) {
+      var community = Ui.badge("Cộng đồng");
+      StackPane.setAlignment(community, Pos.TOP_LEFT);
+      StackPane.setMargin(community, new Insets(8));
+      coverBox.getChildren().add(community);
+    }
+    var title = Ui.label(q.path("title").asText());
+    title.getStyleClass().add("card-title");
+    var meta =
+        Ui.muted(
+            q.path("categoryName").asText()
+                + " · "
+                + q.path("totalRounds").asInt(10)
+                + " câu · "
+                + (q.path("quizSource").asText().equals("COMMUNITY")
+                    ? "Không tính hạng · " + q.path("authorName").asText()
+                    : "Tính hạng"));
+    var card = new VBox(10, coverBox, title, meta);
+    card.getStyleClass().add("quiz-card");
+    card.setPrefWidth(258);
+    card.setMaxWidth(258);
+    card.setMinHeight(Region.USE_PREF_SIZE);
+    cards.add(card);
+    card.getProperties().put("quizId", q.path("quizId").asLong());
+    card.setUserData(q.path("title").asText().toLowerCase(java.util.Locale.ROOT));
+    var spacer = new Region();
+    VBox.setVgrow(spacer, Priority.ALWAYS);
+    var pick = Ui.button(available ? "Chọn" : "Chưa khả dụng", () -> {});
+    pick.setOnAction(
+        e -> {
+          selectedQuiz = q;
+          cards.forEach(n -> n.getStyleClass().remove("selected"));
+          card.getStyleClass().add("selected");
+          detail.accept(q);
+          refreshHint();
+        });
+    pick.setDisable(!available);
+    pick.setMaxWidth(Double.MAX_VALUE);
+    pick.setAccessibleText("Chọn bộ câu hỏi " + q.path("title").asText());
+    pick.getProperties().put("card", card);
+    picks.add(pick);
+    card.getChildren().addAll(spacer, pick);
+    if (available) card.setOnMouseClicked(e -> pick.fire());
+    else card.getStyleClass().add("unavailable");
+    return card;
+  }
+
+  private Button opponent(JsonNode user, VBox online) {
+    boolean free = user.path("status").asText().equals("FREE");
+    var name = Ui.label(user.path("displayName").asText());
+    name.getStyleClass().add("opponent-name");
+    var meta =
+        Ui.label(
+            (free ? "Sẵn sàng" : "Đang bận") + " · " + user.path("totalScore").asLong() + " điểm");
+    meta.getStyleClass().addAll("opponent-meta", free ? "free" : "busy");
+    // Wrapping labels inside a button graphic get no width to wrap against and grow very tall.
+    name.setWrapText(false);
+    meta.setWrapText(false);
+    var text = new VBox(2, name, meta);
+    text.setMinWidth(0);
+    var avatar =
+        new vn.edu.nhom7.quiz.client.assets.AssetLoader().view(user.path("avatarId").asText(), 36);
+    var row = new HBox(10, avatar, text);
+    row.setAlignment(Pos.CENTER_LEFT);
+    var b = new Button();
+    b.setGraphic(row);
+    b.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+    b.setAccessibleText(
+        user.path("displayName").asText() + ", " + (free ? "sẵn sàng" : "đang bận"));
+    b.setOnAction(
+        e -> {
+          selectedOpponent = user;
+          for (var node : online.getChildren()) node.getStyleClass().remove("selected");
+          b.getStyleClass().add("selected");
+          challenge.setDisable(!canChallenge(selectedQuiz, user, state.selfUserId(), false));
+          refreshHint();
+        });
+    b.setMaxWidth(Double.MAX_VALUE);
+    b.setMinWidth(0);
+    b.setUserData(user);
+    b.getStyleClass().add("opponent");
+    b.setDisable(!free);
+    opponents.add(b);
+    return b;
+  }
+
+  private HBox step(int number, String text) {
+    var badge = Ui.label(Integer.toString(number));
+    badge.getStyleClass().add("step-number");
+    badge.setWrapText(false);
+    badge.setMinWidth(Region.USE_PREF_SIZE);
+    var label = Ui.label(text);
+    label.getStyleClass().add("step-text");
+    label.setWrapText(false);
+    var step = new HBox(10, badge, label);
+    step.getStyleClass().add("lobby-step");
+    step.setAlignment(Pos.CENTER_LEFT);
+    step.setMinWidth(0);
+    steps.add(step);
+    return step;
+  }
+
+  private static Region stepLine() {
+    var line = new Region();
+    line.getStyleClass().add("step-line");
+    line.setPrefWidth(48);
+    line.setMinWidth(12);
+    line.setMaxHeight(2);
+    HBox.setHgrow(line, Priority.SOMETIMES);
+    return line;
+  }
+
+  /** Arrow keys move between quiz cards and between players; Enter picks what has focus. */
+  private void onKey(KeyEvent e) {
+    if (!(getScene() != null && getScene().getFocusOwner() instanceof Button focused)) return;
+    if (e.getCode() == KeyCode.ENTER) {
+      if (!focused.isDisabled()) focused.fire();
+      e.consume();
+      return;
+    }
+    List<Button> group = picks.contains(focused) ? picks : opponents;
+    if (!group.contains(focused)) return;
+    int direction =
+        switch (e.getCode()) {
+          case LEFT -> group == picks ? -1 : 0;
+          case RIGHT -> group == picks ? 1 : 0;
+          case UP -> group == opponents ? -1 : 0;
+          case DOWN -> group == opponents ? 1 : 0;
+          default -> 0;
+        };
+    if (direction == 0) return;
+    e.consume();
+    int i = group.indexOf(focused);
+    for (int n = 1; n < group.size(); n++) {
+      var candidate = group.get(Math.floorMod(i + direction * n, group.size()));
+      var owner = candidate.getProperties().get("card");
+      if (!candidate.isDisabled() && (owner == null || ((Node) owner).isManaged())) {
+        candidate.requestFocus();
+        return;
+      }
+    }
   }
 
   public void selectQuiz(JsonNode q) {
     selectedQuiz = q;
     challenge.setDisable(!canChallenge(q, selectedOpponent, 0, false));
+    refreshHint();
+  }
+
+  private void refreshHint() {
+    hint.setText(
+        selectedQuiz == null && selectedOpponent == null
+            ? "Chọn quiz và đối thủ để thách đấu."
+            : selectedQuiz == null
+                ? "Còn thiếu: chọn một quiz."
+                : selectedOpponent == null
+                    ? "Còn thiếu: chọn một đối thủ."
+                    : challenge.isDisabled()
+                        ? "Đã gửi lời thách đấu."
+                        : "Sẵn sàng: "
+                            + selectedQuiz.path("title").asText()
+                            + " · đấu với "
+                            + selectedOpponent.path("displayName").asText());
+    boolean sent = selectedQuiz != null && selectedOpponent != null && challenge.isDisabled();
+    boolean[] done = {selectedQuiz != null, selectedOpponent != null, sent};
+    int current = selectedQuiz == null ? 0 : selectedOpponent == null ? 1 : sent ? -1 : 2;
+    for (int i = 0; i < steps.size(); i++) {
+      var step = steps.get(i);
+      step.getStyleClass().removeAll("done", "current");
+      if (done[i]) step.getStyleClass().add("done");
+      else if (i == current) step.getStyleClass().add("current");
+      ((Label) step.getChildren().getFirst()).setText(done[i] ? "✓" : Integer.toString(i + 1));
+    }
+    for (var pick : picks)
+      if (!pick.isDisabled()) {
+        boolean chosen =
+            ((Node) pick.getProperties().get("card")).getStyleClass().contains("selected");
+        pick.setText(chosen ? "✓ Đã chọn" : "Chọn");
+      }
   }
 
   public static boolean canChallenge(JsonNode q, JsonNode opponent, long self, boolean pending) {

@@ -217,15 +217,14 @@ public final class CommunityQuizView extends BorderPane {
       }
       main.getChildren()
           .add(
-              new HBox(
-                  10,
+              Ui.pager(
                   Ui.button(
                       "← Trước",
                       () -> {
                         page = Math.max(1, page - 1);
                         showList();
                       }),
-                  Ui.label("Trang " + page),
+                  "Trang " + page,
                   Ui.button(
                       "Tiếp →",
                       () -> {
@@ -237,7 +236,7 @@ public final class CommunityQuizView extends BorderPane {
       ((Button) pagination.getChildren().get(2))
           .setDisable((long) page * d.path("pageSize").asInt(20) >= d.path("total").asLong());
       for (var node : main.getChildren())
-        if (node instanceof HBox row) {
+        if (node instanceof HBox row && !row.getStyleClass().contains("pager")) {
           row.getStyleClass().add("data-row");
           if (!row.getChildren().isEmpty() && row.getChildren().getFirst() instanceof Label label) {
             label.setMaxWidth(Double.MAX_VALUE);
@@ -717,10 +716,7 @@ public final class CommunityQuizView extends BorderPane {
       dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
       dialog.getDialogPane().setPrefSize(700, 600);
       dialog.initOwner(getScene().getWindow());
-      dialog
-          .getDialogPane()
-          .getStylesheets()
-          .add(getClass().getResource("/ui/quiz-arena.css").toExternalForm());
+      dialog.getDialogPane().getStylesheets().setAll(Theme.stylesheets());
       body.getStyleClass().add("question-panel");
       dialog.getDialogPane().lookupButton(ButtonType.CLOSE).setAccessibleText("Đóng xem trước");
       ((Button) dialog.getDialogPane().lookupButton(ButtonType.CLOSE)).setText("Đóng");

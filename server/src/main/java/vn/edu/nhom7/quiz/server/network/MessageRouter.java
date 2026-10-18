@@ -120,6 +120,7 @@ public final class MessageRouter {
         case MATCH_READY,
             QUESTION_READY,
             ANSWER,
+            LIFELINE_USE,
             CHAT,
             REMATCH_REQUEST,
             REMATCH_RESPONSE,

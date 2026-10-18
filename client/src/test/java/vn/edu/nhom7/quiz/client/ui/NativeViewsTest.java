@@ -320,6 +320,102 @@ class NativeViewsTest {
         });
   }
 
+  @Test
+  void escOpensTheSettingsMenuAndItsChoicesRestyleTheApp() throws Exception {
+    fx(
+        () -> {
+          var store = new vn.edu.nhom7.quiz.client.state.ClientStore();
+          var network = new vn.edu.nhom7.quiz.client.network.NetworkClient(e -> {}, reason -> {});
+          var shell = new AppShell(store, network, (type, m, r, p) -> UUID.randomUUID());
+          var scene = new javafx.scene.Scene(shell, 1280, 800);
+          Theme.attach(scene);
+          try {
+            shell.fireEvent(escape());
+            shell.applyCss();
+            shell.layout();
+            var menu = shell.lookup(".settings-backdrop");
+            assertNotNull(menu);
+            // Outside a match there is nothing to forfeit.
+            assertTrue(
+                menu.lookupAll(".button").stream()
+                    .noneMatch(n -> ((Button) n).getText().startsWith("Rời trận")));
+            choice(menu, "Lớn").fire();
+            choice(menu, "Sáng").fire();
+            assertEquals(Theme.TextSize.LARGE, Theme.textSize());
+            assertEquals(Theme.Mode.LIGHT, Theme.mode());
+            assertEquals(Theme.stylesheets(), scene.getStylesheets());
+            assertEquals(3, scene.getStylesheets().size());
+            menu.fireEvent(escape());
+            assertNull(shell.lookup(".settings-backdrop"));
+          } finally {
+            Theme.setTextSize(Theme.TextSize.NORMAL);
+            Theme.setMode(Theme.Mode.DARK);
+            Theme.detach(scene);
+            shell.close();
+            network.close();
+            store.close();
+          }
+        });
+  }
+
+  @Test
+  void aLostConnectionAfterLoginCoversTheScreenButLoggingOutDoesNot() throws Exception {
+    fx(
+        () -> {
+          var store = new vn.edu.nhom7.quiz.client.state.ClientStore();
+          var network = new vn.edu.nhom7.quiz.client.network.NetworkClient(e -> {}, reason -> {});
+          var shell = new AppShell(store, network, (type, m, r, p) -> UUID.randomUUID());
+          try {
+            var json = new com.fasterxml.jackson.databind.ObjectMapper();
+            var login =
+                json.createObjectNode()
+                    .set(
+                        "profile",
+                        json.createObjectNode().put("userId", 1).put("displayName", "Minh"));
+            var state =
+                new vn.edu.nhom7.quiz.client.state.ClientStateReducer()
+                    .apply(
+                        vn.edu.nhom7.quiz.client.state.ClientState.initial(),
+                        new Envelope(2, MessageType.LOGIN_RESULT, null, null, null, null, login),
+                        0);
+            var field = store.getClass().getDeclaredField("state");
+            field.setAccessible(true);
+            field.set(store, state);
+            shell.render(state);
+            shell.disconnected("Disconnected");
+            assertNull(shell.lookup(".offline-card"));
+            shell.disconnected("Connection interrupted");
+            assertNotNull(shell.lookup(".offline-card"));
+          } catch (ReflectiveOperationException e) {
+            throw new RuntimeException(e);
+          } finally {
+            shell.close();
+            network.close();
+            store.close();
+          }
+        });
+  }
+
+  private static javafx.scene.input.KeyEvent escape() {
+    return new javafx.scene.input.KeyEvent(
+        javafx.scene.input.KeyEvent.KEY_PRESSED,
+        "",
+        "",
+        javafx.scene.input.KeyCode.ESCAPE,
+        false,
+        false,
+        false,
+        false);
+  }
+
+  private static ToggleButton choice(javafx.scene.Node menu, String text) {
+    return menu.lookupAll(".toggle-button").stream()
+        .map(n -> (ToggleButton) n)
+        .filter(b -> b.getText().equals(text))
+        .findFirst()
+        .orElseThrow();
+  }
+
   private Button headerButton(AppShell shell, String text) {
     return ((HBox) shell.getTop())
         .getChildren().stream()
@@ -362,13 +458,15 @@ class NativeViewsTest {
           var answers = new ArrayList<JsonNode>();
           r.bind(q("MULTIPLE_CHOICE"), answers::add);
           r.setControlsEnabled(true);
-          var box = (VBox) r.view();
-          var submit = (Button) box.getChildren().getLast();
+          var submit = (Button) r.view().lookup(".lock-answer");
           assertTrue(submit.isDisabled());
-          var first = (CheckBox) box.getChildren().getFirst();
+          var first = (Button) r.view().lookup(".answer-tile");
           first.fire();
           assertFalse(submit.isDisabled());
-          submit.fire();
+          first.fire();
+          assertTrue(submit.isDisabled(), "a second press takes the pick back");
+          r.toggleOption('1');
+          r.submit();
           assertEquals(
               List.of("A"),
               new com.fasterxml.jackson.databind.ObjectMapper()
@@ -384,7 +482,7 @@ class NativeViewsTest {
           var answers = new ArrayList<JsonNode>();
           r.bind(q("TRUE_FALSE"), answers::add);
           r.setControlsEnabled(true);
-          ((Button) ((VBox) r.view()).getChildren().getFirst()).fire();
+          ((Button) r.view().lookup(".answer-tile")).fire();
           assertTrue(answers.getFirst().isBoolean());
         });
   }
@@ -404,6 +502,266 @@ class NativeViewsTest {
           field.setText("  Hà Nội  ");
           ((Button) box.getChildren().getLast()).fire();
           assertEquals("  Hà Nội  ", answers.getFirst().asText());
+        });
+  }
+
+  @Test
+  void revealWithStreaksStillShowsTheAnswerTilesAndFlame() throws Exception {
+    var json = new com.fasterxml.jackson.databind.ObjectMapper();
+    var reducer = new vn.edu.nhom7.quiz.client.state.ClientStateReducer();
+    UUID match = UUID.randomUUID();
+    var state = vn.edu.nhom7.quiz.client.state.ClientState.initial();
+    var profile = json.createObjectNode().put("userId", 101).put("displayName", "Minh");
+    state =
+        reducer.apply(
+            state,
+            new Envelope(
+                1,
+                MessageType.LOGIN_RESULT,
+                null,
+                null,
+                null,
+                null,
+                json.createObjectNode().set("profile", profile)),
+            0);
+    var start = json.createObjectNode().put("totalRounds", 10);
+    start
+        .putArray("players")
+        .add(profile)
+        .addObject()
+        .put("userId", 102)
+        .put("displayName", "Tuấn");
+    state =
+        reducer.apply(
+            state, new Envelope(1, MessageType.MATCH_START, null, match, null, 1L, start), 0);
+    long seq = 2;
+    for (int q = 1; q <= 3; q++) {
+      UUID round = UUID.randomUUID();
+      var question = json.createObjectNode();
+      question
+          .putObject("question")
+          .put("questionId", q)
+          .put("questionType", "SINGLE_CHOICE")
+          .put("content", "Thủ đô Việt Nam?")
+          .put("timeLimitMs", 15000)
+          .putArray("options")
+          .add(json.createObjectNode().put("id", "A").put("text", "Hà Nội"))
+          .add(json.createObjectNode().put("id", "B").put("text", "Huế"));
+      state =
+          reducer.apply(
+              state, new Envelope(1, MessageType.QUESTION, null, match, round, seq++, question), 0);
+      var result = json.createObjectNode().put("questionId", q).put("correctAnswer", "A");
+      result
+          .putArray("outcomes")
+          .addObject()
+          .put("userId", 101)
+          .put("answer", "A")
+          .put("correct", true)
+          .put("earnedPoints", 3);
+      state =
+          reducer.apply(
+              state,
+              new Envelope(1, MessageType.QUESTION_RESULT, null, match, round, seq++, result),
+              0);
+    }
+    var reveal = state;
+    assertEquals("REVEAL", reveal.phase());
+    fx(
+        () -> {
+          var view = new GameView(reveal, (t, m, r, p) -> UUID.randomUUID(), true);
+          new javafx.scene.Scene(view, 1280, 800);
+          view.applyCss();
+          view.layout();
+          assertNotNull(view.lookup(".answer-tile.correct"));
+          assertNotNull(view.lookup(".streak-badge.tier-1"));
+          view.dispose();
+        });
+  }
+
+  @Test
+  void reviewOpensMissedQuestionsAndFoldsTheRest() throws Exception {
+    var json = new com.fasterxml.jackson.databind.ObjectMapper();
+    fx(
+        () -> {
+          var cards = new ArrayList<ReviewCard>();
+          for (boolean correct : List.of(true, false)) {
+            var review = json.createObjectNode().put("roundIndex", 1).put("revealed", true);
+            review
+                .putObject("question")
+                .put("content", "Thủ đô Việt Nam?")
+                .putArray("options")
+                .add(json.createObjectNode().put("id", "A").put("text", "Hà Nội"))
+                .add(json.createObjectNode().put("id", "B").put("text", "Huế"));
+            review.put("correctAnswer", "A");
+            review
+                .putArray("outcomes")
+                .addObject()
+                .put("userId", 101)
+                .put("answer", correct ? "A" : "B")
+                .put("correct", correct)
+                .put("earnedPoints", correct ? 3 : 0);
+            cards.add(new ReviewCard(review, null, 101));
+          }
+          assertFalse(cards.get(0).expanded());
+          assertTrue(cards.get(1).expanded());
+          assertNotNull(cards.get(1).lookup(".answer-card.incorrect"));
+          cards.get(0).setExpanded(true);
+          assertTrue(cards.get(0).expanded());
+        });
+  }
+
+  @Test
+  void lifelinesSendOnceGreyOutRemovedOptionsAndShowTheOpponentsUse() throws Exception {
+    var json = new com.fasterxml.jackson.databind.ObjectMapper();
+    var reducer = new vn.edu.nhom7.quiz.client.state.ClientStateReducer();
+    UUID match = UUID.randomUUID(), round = UUID.randomUUID();
+    var profile = json.createObjectNode().put("userId", 101).put("displayName", "Minh");
+    var start = json.createObjectNode().put("totalRounds", 10);
+    start
+        .putArray("players")
+        .add(profile)
+        .addObject()
+        .put("userId", 102)
+        .put("displayName", "Tuấn");
+    var question = json.createObjectNode();
+    var options =
+        question
+            .putObject("question")
+            .put("questionId", 7)
+            .put("questionType", "SINGLE_CHOICE")
+            .put("content", "Sông nào dài nhất Việt Nam?")
+            .put("timeLimitMs", 15000)
+            .putArray("options");
+    for (String id : List.of("A", "B", "C", "D"))
+      options.addObject().put("id", id).put("text", "Sông " + id);
+    var state = vn.edu.nhom7.quiz.client.state.ClientState.initial();
+    long seq = 1;
+    for (var e :
+        List.of(
+            new Envelope(
+                1,
+                MessageType.LOGIN_RESULT,
+                null,
+                null,
+                null,
+                null,
+                json.createObjectNode().set("profile", profile)),
+            new Envelope(1, MessageType.MATCH_START, null, match, null, seq++, start),
+            new Envelope(1, MessageType.QUESTION, null, match, round, seq++, question),
+            new Envelope(
+                1,
+                MessageType.QUESTION_OPEN,
+                null,
+                match,
+                round,
+                seq++,
+                json.createObjectNode().put("questionId", 7).put("remainingMs", 15000))))
+      state = reducer.apply(state, e, 0);
+    var open = state;
+    var sent = new ArrayList<Object>();
+    UiCommandSink sink =
+        (t, m, r, p) -> {
+          if (t == MessageType.LIFELINE_USE) sent.add(p);
+          return UUID.randomUUID();
+        };
+    var result = json.createObjectNode().put("questionId", 7).put("kind", "FIFTY_FIFTY");
+    result.putArray("removedOptionIds").add("B").add("D");
+    result.putArray("remaining").add("DOUBLE_POINTS").add("REMOVE_ONE");
+    var used =
+        reducer.apply(
+            open,
+            new Envelope(1, MessageType.LIFELINE_RESULT, null, match, round, seq++, result),
+            0);
+    for (long user : List.of(102L, 101L))
+      used =
+          reducer.apply(
+              used,
+              new Envelope(
+                  1,
+                  MessageType.LIFELINE_STATUS,
+                  null,
+                  match,
+                  round,
+                  seq++,
+                  json.createObjectNode()
+                      .put("userId", user)
+                      .put("questionId", 7)
+                      .put("kind", user == 102 ? "DOUBLE_POINTS" : "FIFTY_FIFTY")),
+              0);
+    var after = used;
+    fx(
+        () -> {
+          var view = new GameView(open, sink, true);
+          new javafx.scene.Scene(view, 1280, 800);
+          view.applyCss();
+          view.layout();
+          var buttons = view.lookupAll(".button.lifeline").stream().toList();
+          assertEquals(3, buttons.size());
+          assertTrue(buttons.stream().noneMatch(javafx.scene.Node::isDisabled));
+          var card = view.lookup(".lifeline-pop");
+          var use = (Button) view.lookup(".lifeline-use");
+          assertFalse(card.isVisible());
+          // The icon only opens the card; the card's button spends the lifeline.
+          ((Button) buttons.get(2)).fire();
+          assertTrue(card.isVisible());
+          assertTrue(sent.isEmpty());
+          use.fire();
+          assertEquals(List.of(new Payloads.LifelineUse(7, "FIFTY_FIFTY")), sent);
+          assertFalse(card.isVisible());
+          // Waiting for the server: no second lifeline can be sent.
+          ((Button) buttons.get(0)).fire();
+          assertTrue(use.isDisabled());
+          view.render(after);
+          view.applyCss();
+          var removed = view.lookupAll(".answer-tile.eliminated");
+          assertEquals(2, removed.size());
+          assertTrue(removed.stream().allMatch(javafx.scene.Node::isDisabled));
+          assertTrue(buttons.get(2).getStyleClass().contains("active"));
+          var opponent = (Label) view.lookup(".opponent-lifeline");
+          assertTrue(opponent.isVisible());
+          assertEquals("dùng x2 điểm", opponent.getText());
+          view.dispose();
+        });
+    var next = json.createObjectNode();
+    next.putObject("question")
+        .put("questionId", 8)
+        .put("questionType", "TRUE_FALSE")
+        .put("content", "Hà Nội là thủ đô?")
+        .put("timeLimitMs", 15000)
+        .putArray("options");
+    UUID round2 = UUID.randomUUID();
+    var second =
+        reducer.apply(
+            after, new Envelope(1, MessageType.QUESTION, null, match, round2, seq++, next), 0);
+    second =
+        reducer.apply(
+            second,
+            new Envelope(
+                1,
+                MessageType.QUESTION_OPEN,
+                null,
+                match,
+                round2,
+                seq++,
+                json.createObjectNode().put("questionId", 8).put("remainingMs", 15000)),
+            0);
+    var trueFalse = second;
+    fx(
+        () -> {
+          var view = new GameView(trueFalse, sink, true);
+          new javafx.scene.Scene(view, 1280, 800);
+          view.applyCss();
+          view.layout();
+          var buttons = view.lookupAll(".button.lifeline").stream().toList();
+          assertFalse(buttons.get(0).isDisabled());
+          assertTrue(buttons.get(1).getStyleClass().contains("unavailable"));
+          assertTrue(buttons.get(2).getStyleClass().contains("used"));
+          assertFalse(view.lookup(".opponent-lifeline").isVisible());
+          ((Button) buttons.get(1)).fire();
+          assertTrue(view.lookup(".lifeline-use").isDisabled());
+          ((Button) buttons.get(0)).fire();
+          assertFalse(view.lookup(".lifeline-use").isDisabled());
+          view.dispose();
         });
   }
 }

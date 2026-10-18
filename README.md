@@ -46,7 +46,7 @@ Quiz Arena là ứng dụng desktop bằng Java, cho phép **hai người thi đ
 | Số câu mỗi trận | 10 câu | Toàn bộ 1–50 câu đã xuất bản |
 | Cách chọn câu | Ngẫu nhiên: 4 câu một đáp án, 2 nhiều đáp án, 2 đúng/sai, 2 trả lời ngắn | Theo thứ tự tác giả hoặc xáo trộn nếu bật tùy chọn |
 | Thời gian trả lời | 15 giây/câu | 15 giây/câu |
-| Điểm tối đa | 30 điểm | 3 × số câu, tối đa 150 điểm |
+| Điểm tối đa | 33 điểm (30 + 3 nhờ x2) | 3 × số câu + 3, tối đa 153 điểm |
 | Bảng xếp hạng toàn cục | Có, theo kết quả trận đủ điều kiện | Không cập nhật các bộ đếm xếp hạng |
 | Kết quả và lịch sử riêng | Có | Có, gồm điểm và kết quả thắng/thua/hòa của trận |
 
@@ -164,7 +164,8 @@ quiz-arena/
 ├── database/
 │   ├── 001_schema.sql             # Schema ban đầu
 │   ├── 002_seed.sql               # Danh mục, quiz và câu hỏi mẫu
-│   └── 003_community_quizzes.sql   # Nâng cấp schema cho quiz cộng đồng và ảnh
+│   ├── 003_community_quizzes.sql   # Nâng cấp schema cho quiz cộng đồng và ảnh
+│   └── 004_lifelines.sql          # Nới giới hạn điểm cho quyền trợ giúp x2
 ├── config/
 │   ├── server.properties.example  # Cấu hình mẫu
 │   └── server.local.properties    # Cấu hình riêng, không đưa lên Git
@@ -234,11 +235,12 @@ Nạp schema và dữ liệu mẫu bằng tài khoản quản trị, đúng th�
 mysql -u root -p quiz_arena < database/001_schema.sql
 mysql -u root -p quiz_arena < database/002_seed.sql
 mysql -u root -p quiz_arena < database/003_community_quizzes.sql
+mysql -u root -p quiz_arena < database/004_lifelines.sql
 ```
 
-Trong PowerShell, có thể mở `mysql -u root -p quiz_arena` rồi chạy lần lượt `SOURCE database/001_schema.sql;`, `SOURCE database/002_seed.sql;`, `SOURCE database/003_community_quizzes.sql;` từ thư mục gốc dự án.
+Trong PowerShell, có thể mở `mysql -u root -p quiz_arena` rồi chạy lần lượt `SOURCE database/001_schema.sql;`, `SOURCE database/002_seed.sql;`, `SOURCE database/003_community_quizzes.sql;`, `SOURCE database/004_lifelines.sql;` từ thư mục gốc dự án.
 
-**Nếu đã có database phiên bản cũ:** dừng server, sao lưu database và ảnh, kiểm tra `SELECT version FROM SCHEMA_METADATA;`. Database phiên bản 1 cần chạy migration `003` một lần; database phiên bản 3 đã cập nhật thì không chạy lại migration. Không tạo lại bảng hoặc nạp lại schema ban đầu để nâng cấp dữ liệu đang sử dụng.
+**Nếu đã có database phiên bản cũ:** dừng server, sao lưu database và ảnh, kiểm tra `SELECT version FROM SCHEMA_METADATA;`. Database phiên bản 1 cần chạy migration `003` rồi `004`, mỗi file một lần; database phiên bản 3 chỉ cần chạy `004`; database phiên bản 4 đã cập nhật thì không chạy lại migration. Không tạo lại bảng hoặc nạp lại schema ban đầu để nâng cấp dữ liệu đang sử dụng.
 
 ### 5.4. Cấu hình server
 
@@ -276,7 +278,7 @@ Mở terminal thứ nhất:
 java -jar server/target/quiz-arena-server.jar --config=config/server.local.properties
 ```
 
-Khởi động thành công sẽ có thông báo `Quiz Arena listening on 5555`. Giữ terminal này hoạt động khi sử dụng app. Server kiểm tra schema phiên bản 3, tài nguyên và ngân hàng câu hỏi trước khi nhận kết nối.
+Khởi động thành công sẽ có thông báo `Quiz Arena listening on 5555`. Giữ terminal này hoạt động khi sử dụng app. Server kiểm tra schema phiên bản 4, tài nguyên và ngân hàng câu hỏi trước khi nhận kết nối.
 
 ### 5.6. Tạo tài khoản demo — tùy chọn
 
@@ -337,6 +339,16 @@ Tên tài khoản dài 3–24 ký tự, dùng chữ cái không dấu, chữ s�
 | Đúng/sai | Chọn Đúng hoặc Sai; gửi ngay | Trùng giá trị đúng/sai đã đặt |
 | Trả lời ngắn | Nhập nội dung rồi nhấn gửi | Khớp một đáp án được chấp nhận sau chuẩn hóa |
 
+Có thể chơi hoàn toàn bằng bàn phím; thanh phím tắt ở cuối màn trận luôn ghi phím dùng được lúc đó:
+
+| Phím | Tác dụng |
+| --- | --- |
+| 1–6 (hoặc chữ cái của phương án) | Chọn phương án; câu nhiều đáp án thì bật/tắt đánh dấu |
+| Enter | Khóa đáp án đã đánh dấu (câu nhiều đáp án) hoặc gửi câu trả lời ngắn |
+| Tab, các phím mũi tên | Di chuyển giữa các ô đáp án |
+| X · L · N | Mở quyền trợ giúp x2 điểm, Loại 1 đáp án, 50-50 |
+| Esc | Mở menu tạm dừng; nhấn lại để về trận |
+
 Mỗi câu chỉ nhận một câu trả lời hợp lệ của mỗi người. Sau khi gửi, câu trả lời bị khóa; không thể sửa để gửi lại. Nếu trả lời trước, bạn chờ đối thủ hoặc chờ hết giờ rồi cùng xem đáp án.
 
 Trả lời ngắn không phân biệt hoa/thường, bỏ khoảng trắng đầu/cuối và gộp khoảng trắng liên tiếp. **Dấu tiếng Việt vẫn có ý nghĩa**: `Hà Nội` và `ha noi` chỉ đều đúng nếu tác giả khai báo cả hai cách viết.
@@ -347,7 +359,25 @@ Chat trong trận chỉ gửi tới đối thủ cùng trận. Nhấn Enter đ�
 
 Sau câu cuối, app vẫn hiện bảng điểm của câu đó trước khi chuyển tới kết quả chung. Bạn có thể xem lại câu hỏi hoặc yêu cầu tái đấu khi cả hai còn ở phiên kết quả. Phiên này có thời hạn 60 giây. Tái đấu tạo một trận mới, điểm về 0 và cả hai cần sẵn sàng lại.
 
+Ở kết quả trận và trong lịch sử, các câu bạn trả lời sai hoặc hết giờ được mở sẵn; câu đúng thu gọn, bấm vào tiêu đề câu (hoặc Enter) để mở. Nút **Mở tất cả** mở mọi câu cùng lúc.
+
 Mở **Lịch sử** để xem các trận đã lưu của mình. Mở **Xếp hạng** để xem điểm tích lũy từ quiz hệ thống. Khi kết quả còn chờ lưu, lịch sử và xếp hạng có thể chưa cập nhật.
+
+### Menu cài đặt (Esc)
+
+Nhấn Esc hoặc biểu tượng thanh trượt trên thanh tiêu đề để mở menu. Trong trận menu ghi **Tạm dừng** nhưng đồng hồ vẫn chạy, nên menu hiện số giây còn lại của câu đang mở.
+
+| Mục | Lựa chọn |
+| --- | --- |
+| Nhạc nền, Hiệu ứng | Âm lượng 0–100%; kéo về 0% là tắt tiếng |
+| Cỡ chữ | Vừa, Lớn, Rất lớn |
+| Giao diện | Tối (mặc định) hoặc Sáng |
+| Giảm chuyển động | Tắt rung màn hình, chớp sáng và hạt hiệu ứng |
+| Rời trận | Chỉ có trong trận; hỏi lại trước khi rời và bị xử thua |
+
+Các lựa chọn được lưu trên máy và áp dụng ngay. Phím ↑ ↓ di chuyển giữa các mục, ← → chỉnh giá trị.
+
+Khi mất kết nối tới server sau khi đã đăng nhập, app phủ một khung **Mất kết nối** với nút **Kết nối lại** (dùng lại địa chỉ server vừa dùng) và **Về màn đăng nhập**.
 
 ## 7. Logic thi đấu và tính điểm
 
@@ -376,6 +406,16 @@ Server chuyển sang công bố đáp án ngay khi cả hai đã trả lời, ho
 | Sai hoặc không trả lời kịp | — | 0 |
 
 Ví dụ: trả lời đúng sau 4 giây được 3 điểm; đúng sau 8 giây được 2 điểm; sai sau 2 giây vẫn được 0 điểm. Câu nhiều đáp án không có điểm từng phần.
+
+### Quyền trợ giúp
+
+Mỗi người có ba quyền trợ giúp, mỗi quyền dùng **một lần mỗi trận** và **tối đa một quyền mỗi câu**. Chỉ dùng được khi câu đang mở và mình chưa trả lời; đồng hồ không dừng. Ba biểu tượng trợ giúp nằm ở góc dưới bên phải màn trận đấu: bấm vào biểu tượng (hoặc nhấn phím của nó) để mở khung mô tả, rồi chọn **Sử dụng** hoặc nhấn Enter; Esc để đóng. Đối thủ thấy thông báo bạn vừa dùng quyền nào, nhưng không thấy phương án bị loại.
+
+| Quyền | Phím | Tác dụng | Áp dụng cho |
+| --- | --- | --- | --- |
+| x2 điểm | X | Nhân đôi điểm câu này: 6, 4 hoặc 2; trả lời sai vẫn 0 điểm | Mọi loại câu |
+| Loại 1 đáp án | L | Server ẩn ngẫu nhiên một phương án sai | Câu một đáp án có từ 3 phương án |
+| 50-50 | N | Server chỉ giữ lại đáp án đúng và một phương án sai | Câu một đáp án có từ 3 phương án |
 
 Server dùng thời điểm nhận câu trả lời để xét hạn và tính điểm; đồng hồ trên giao diện chỉ giúp người chơi theo dõi. Độ trễ mạng có thể ảnh hưởng thời điểm server nhận được câu trả lời.
 
@@ -498,6 +538,8 @@ Trên máy có desktop, có thể chạy bộ chụp trạng thái JavaFX:
 mvn install -Dquiz.uiEvidence=target/ui-evidence
 ```
 
+Bộ chụp xuất bốn thư mục: `1280x800`, `1024x720` (cửa sổ nhỏ), `light-1280x800` (giao diện sáng) và `xlarge-1024x720` (cỡ chữ Rất lớn trên cửa sổ nhỏ). Ảnh hiệu ứng (`fx-*`) được chụp ở khung hình đỉnh của hiệu ứng. Ảnh của từng giai đoạn làm lại giao diện nằm trong `docs/design/evidence/huong-d-*`.
+
 Đường dẫn tương đối được giải quyết theo thư mục chạy của module kiểm thử; dùng đường dẫn tuyệt đối nếu muốn tập trung ảnh vào một thư mục cụ thể. Xem [báo cáo giao diện](docs/design/interface-redesign.md) và [manifest ảnh](docs/design/evidence/manifest.json) để đối chiếu các trạng thái.
 
 Các số liệu kiểm thử trong tài liệu là kết quả của lần chạy được ghi nhận ở đó; không thay thế việc chạy lại khi thay đổi mã nguồn.
@@ -544,6 +586,7 @@ Kết quả chưa lưu nằm trong RAM. Nếu server bị tắt cưỡng bức h
 
 | Tài liệu | Nội dung |
 | --- | --- |
+| [Hướng dẫn chạy và kết nối với người khác](docs/operations/huong-dan-chay-va-ket-noi.md) | Chạy trên Windows, mở cổng TCP, chơi qua LAN, ghép trận và xử lý lỗi |
 | [Thiết lập database](docs/operations/database-setup.md) | Quyền MySQL, schema, migration và tài khoản demo |
 | [Kiến trúc mạng](docs/architecture/network-explanation.md) | TCP, đồng thời, hàng đợi, truyền ảnh và vòng đời trận |
 | [Giao thức](docs/protocol/protocol-v1.md) | Cấu trúc thông điệp và quy tắc giao tiếp |

@@ -49,7 +49,7 @@ public final class SchemaVerifier {
       try (var p = c.prepareStatement("SELECT version,asset_pack_version FROM SCHEMA_METADATA");
           var r = p.executeQuery()) {
         if (!r.next()
-            || r.getInt(1) != 3
+            || r.getInt(1) != 4
             || !r.getString(2)
                 .equals(vn.edu.nhom7.quiz.common.assets.AssetRegistry.loadDefault().version()))
           throw new SQLException("Schema version mismatch");
@@ -57,7 +57,8 @@ public final class SchemaVerifier {
     } catch (SQLException e) {
       throw new IllegalStateException(
           "Database schema unavailable or incompatible; apply database/001_schema.sql and"
-              + " database/002_seed.sql and database/003_community_quizzes.sql");
+              + " database/002_seed.sql, database/003_community_quizzes.sql and"
+              + " database/004_lifelines.sql");
     }
   }
 }

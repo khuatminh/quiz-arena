@@ -384,7 +384,7 @@ public final class JdbcMatchRepository {
         if (before != a.scoreBefore()
             || a.totalScore() != before + a.earnedPoints()
             || a.earnedPoints() < 0
-            || a.earnedPoints() > 3)
+            || a.earnedPoints() > 6)
           throw new IllegalArgumentException("Inconsistent score projection");
         totals.put(a.userId(), a.totalScore());
         if (Boolean.TRUE.equals(a.correct())) counts.merge(a.userId(), 1, Integer::sum);

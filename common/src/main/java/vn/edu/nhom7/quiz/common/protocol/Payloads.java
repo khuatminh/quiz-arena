@@ -96,6 +96,23 @@ public final class Payloads {
 
   public record AnswerStatus(long userId, boolean answered) {}
 
+  /** Lifeline kinds: each can be used once per match, and at most one per question. */
+  public static final List<String> LIFELINES =
+      List.of("DOUBLE_POINTS", "REMOVE_ONE", "FIFTY_FIFTY");
+
+  public record LifelineUse(long questionId, String kind) {}
+
+  /** Private reply: the options hidden for the caller and the kinds still unused. */
+  public record LifelineResult(
+      long questionId, String kind, List<String> removedOptionIds, List<String> remaining) {}
+
+  /** Sent to both players so the opponent sees which lifeline was used. */
+  public record LifelineStatus(long userId, long questionId, String kind) {}
+
+  /** The caller's lifelines in a snapshot; {@code active} holds this question's kind, if any. */
+  public record LifelineState(
+      List<String> remaining, List<String> active, List<String> removedOptionIds) {}
+
   public record QuestionResult(
       long questionId,
       JsonNode correctAnswer,
@@ -189,7 +206,8 @@ public final class Payloads {
       JsonNode acceptedAnswer,
       List<Long> answeredUserIds,
       QuestionResult latestResult,
-      List<Standing> standings) {}
+      List<Standing> standings,
+      LifelineState lifelines) {}
 
   public record RankingRequest(int page, int pageSize) {}
 

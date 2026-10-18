@@ -2076,7 +2076,8 @@
       "phaseRemainingMs",
       "quiz",
       "players",
-      "answeredUserIds"
+      "answeredUserIds",
+      "lifelines"
     ],
     "optionalFields": [
       "question",
@@ -2160,7 +2161,20 @@
           "phaseEndsAtMs": 1,
           "serverTimeMs": 1
         },
-        "standings": null
+        "standings": null,
+        "lifelines": {
+          "remaining": [
+            "DOUBLE_POINTS",
+            "REMOVE_ONE"
+          ],
+          "active": [
+            "FIFTY_FIFTY"
+          ],
+          "removedOptionIds": [
+            "B",
+            "C"
+          ]
+        }
       }
     },
     "invalid": {
@@ -2238,7 +2252,20 @@
           "serverTimeMs": 1
         },
         "standings": null,
-        "unexpected": true
+        "unexpected": true,
+        "lifelines": {
+          "remaining": [
+            "DOUBLE_POINTS",
+            "REMOVE_ONE"
+          ],
+          "active": [
+            "FIFTY_FIFTY"
+          ],
+          "removedOptionIds": [
+            "B",
+            "C"
+          ]
+        }
       }
     }
   },
@@ -3166,6 +3193,132 @@
         "page": 1,
         "totalItems": 0,
         "review": [],
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "LIFELINE_USE",
+    "direction": "C_TO_S",
+    "phase": "AUTHENTICATED",
+    "requiredFields": [
+      "questionId",
+      "kind"
+    ],
+    "optionalFields": [],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "LIFELINE_USE",
+      "requestId": "00000000-0000-0000-0000-000000000001",
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "questionId": 1,
+        "kind": "FIFTY_FIFTY"
+      }
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "LIFELINE_USE",
+      "requestId": "00000000-0000-0000-0000-000000000001",
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "questionId": 1,
+        "kind": "FIFTY_FIFTY",
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "LIFELINE_RESULT",
+    "direction": "S_TO_C",
+    "phase": "AUTHENTICATED",
+    "requiredFields": [
+      "questionId",
+      "kind",
+      "removedOptionIds",
+      "remaining"
+    ],
+    "optionalFields": [],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "LIFELINE_RESULT",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "questionId": 1,
+        "kind": "FIFTY_FIFTY",
+        "removedOptionIds": [
+          "B",
+          "C"
+        ],
+        "remaining": [
+          "DOUBLE_POINTS",
+          "REMOVE_ONE"
+        ]
+      }
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "LIFELINE_RESULT",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "questionId": 1,
+        "kind": "FIFTY_FIFTY",
+        "removedOptionIds": [
+          "B",
+          "C"
+        ],
+        "remaining": [
+          "DOUBLE_POINTS",
+          "REMOVE_ONE"
+        ],
+        "unexpected": true
+      }
+    }
+  },
+  {
+    "type": "LIFELINE_STATUS",
+    "direction": "S_TO_C",
+    "phase": "AUTHENTICATED",
+    "requiredFields": [
+      "userId",
+      "questionId",
+      "kind"
+    ],
+    "optionalFields": [],
+    "valid": {
+      "protocolVersion": 1,
+      "type": "LIFELINE_STATUS",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "userId": 1,
+        "questionId": 1,
+        "kind": "FIFTY_FIFTY"
+      }
+    },
+    "invalid": {
+      "protocolVersion": 1,
+      "type": "LIFELINE_STATUS",
+      "requestId": null,
+      "matchId": null,
+      "roundId": null,
+      "eventSeq": null,
+      "payload": {
+        "userId": 1,
+        "questionId": 1,
+        "kind": "FIFTY_FIFTY",
         "unexpected": true
       }
     }

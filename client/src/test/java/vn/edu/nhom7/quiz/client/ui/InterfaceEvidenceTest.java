@@ -29,6 +29,7 @@ class InterfaceEvidenceTest {
   private Scene scene;
   private final List<AutoCloseable> cleanup = new ArrayList<>();
   private final List<Map.Entry<String, Parent>> views = new ArrayList<>();
+  private String variant = "";
 
   private void fx(Runnable r) throws Exception {
     var latch = new CountDownLatch(1);
@@ -61,7 +62,7 @@ class InterfaceEvidenceTest {
         () -> {
           stage = new Stage();
           scene = new Scene(new VBox(), 1280, 800);
-          scene.getStylesheets().add(getClass().getResource("/ui/quiz-arena.css").toExternalForm());
+          Theme.attach(scene);
           stage.setScene(scene);
           stage.show();
           build();
@@ -119,9 +120,35 @@ class InterfaceEvidenceTest {
             }
           }
       }
+      // Light mode at the large size, and the largest text setting at the small size.
+      for (String pass : List.of("light", "xlarge")) {
+        int[] size = pass.equals("light") ? new int[] {1280, 800} : new int[] {1024, 720};
+        fx(
+            () -> {
+              Theme.setMode(pass.equals("light") ? Theme.Mode.LIGHT : Theme.Mode.DARK);
+              Theme.setTextSize(
+                  pass.equals("light") ? Theme.TextSize.NORMAL : Theme.TextSize.XLARGE);
+            });
+        variant = pass + "-";
+        for (var entry : views) {
+          fx(
+              () -> {
+                scene.setRoot(entry.getValue());
+                stage.setWidth(size[0]);
+                stage.setHeight(size[1]);
+                scene.getRoot().applyCss();
+                scene.getRoot().layout();
+              });
+          fx(() -> snapshot(entry.getKey(), size[0], size[1]));
+        }
+      }
     } finally {
+      variant = "";
       fx(
           () -> {
+            Theme.setMode(Theme.Mode.DARK);
+            Theme.setTextSize(Theme.TextSize.NORMAL);
+            Theme.detach(scene);
             stage.close();
             for (var c : cleanup)
               try {
@@ -273,7 +300,7 @@ class InterfaceEvidenceTest {
       JsonNode fixture =
           json.readTree(getClass().getResourceAsStream("/protocol/demo-match-v1.json"));
       var captured = new HashSet<String>();
-      ClientState open = null;
+      ClientState open = null, reveal = null;
       for (JsonNode entry : fixture.path("events")) {
         if (entry.hasNonNull("participantUserId")
             && entry.path("participantUserId").asLong() != 101) continue;
@@ -285,18 +312,48 @@ class InterfaceEvidenceTest {
                     ? ""
                     : "-" + state.question().path("questionType").asText());
         if (state.phase().equals("OPEN") && open == null) open = state;
+        if (state.phase().equals("REVEAL") && reveal == null) reveal = state;
         if (!captured.add(key)) continue;
         if (state.phase().equals("WAITING_READY"))
           add("08-ready", Ui.scroll(new WaitingView(state, sink)));
-        else if (state.phase().equals("RESULT"))
+        else if (state.phase().equals("RESULT")) {
           add("16-result", Ui.scroll(new ResultView(state, sink)));
-        else {
+          // The same result with two misses, so the review opens those questions.
+          ObjectNode missed = state.payload(MessageType.MATCH_RESULT).deepCopy();
+          for (int i : new int[] {1, 3})
+            for (var o : missed.path("review").get(i).path("outcomes"))
+              if (o.path("userId").asLong() == 101)
+                ((ObjectNode) o).put("correct", false).put("answer", "B").put("earnedPoints", 0);
+          var data = new EnumMap<MessageType, JsonNode>(MessageType.class);
+          data.putAll(state.data());
+          data.put(MessageType.MATCH_RESULT, missed);
+          var missedScroll =
+              Ui.scroll(new ResultView(copy(state, state.question(), data, false), sink));
+          add("result-review-missed", missedScroll);
+          var reviewCards = new VBox(12);
+          reviewCards.setPadding(new javafx.geometry.Insets(28));
+          for (int i = 0; i < 4; i++)
+            reviewCards
+                .getChildren()
+                .add(new ReviewCard(missed.path("review").get(i), missed.path("players"), 101));
+          add("result-review-cards", Ui.scroll(reviewCards));
+        } else {
           var game = new GameView(state, sink, true);
           cleanup.add(game::dispose);
           add("game-" + key.toLowerCase(), game);
         }
       }
       if (open != null) {
+        var paused = new GameView(open, sink, true);
+        cleanup.add(paused::dispose);
+        add(
+            "pause-overlay",
+            new StackPane(paused, new SettingsOverlay(() -> 7, () -> {}, () -> {})));
+        add(
+            "settings-overlay",
+            new StackPane(
+                new LobbyView(state.lobby(), sink, q -> {}),
+                new SettingsOverlay(() -> -1, () -> {}, null)));
         ObjectNode pictureQuestion = open.question().deepCopy();
         pictureQuestion.put("content", "Quan sát hình ảnh. Thủ đô của Việt Nam là gì?");
         pictureQuestion.put("questionAssetId", "question-sample");
@@ -386,6 +443,14 @@ class InterfaceEvidenceTest {
         add("game-long-question", shell(longState, true));
       }
       add("result-shell", shell(state, false));
+      effects(state, reveal, profile);
+      if (open != null) {
+        var locking = new GameView(open, sink, false);
+        cleanup.add(locking::dispose);
+        ((Button) locking.lookup(".answer-tile")).fire();
+        add("fx-lock", locking);
+      }
+      if (open != null) lifelines(open, reveal);
       var invalidLogin = new AuthView(sink, (h, p) -> {});
       invalidLogin.connected(true);
       var primaryLogin = findButtons(invalidLogin, "Đăng nhập");
@@ -550,6 +615,225 @@ class InterfaceEvidenceTest {
     }
   }
 
+  /** Each new effect, frozen at its most visible frame. */
+  private void effects(ClientState result, ClientState reveal, JsonNode self) throws Exception {
+    Effects.preview = true;
+    var challenger =
+        json.createObjectNode()
+            .put("userId", 103)
+            .put("displayName", "Phúc")
+            .put("avatarId", "avatar-02")
+            .put("totalScore", 810);
+    var quiz =
+        json.createObjectNode()
+            .put("quizId", 1)
+            .put("title", "Kiến thức chung")
+            .put("categoryName", "Tổng hợp")
+            .put("coverAssetId", "quiz-cover-general")
+            .put("totalRounds", 10)
+            .put("quizSource", "SYSTEM");
+    var lobby = result;
+    for (boolean incoming : List.of(true, false)) {
+      var shell = shell(result.lobby(), false);
+      ObjectNode invite =
+          json.createObjectNode()
+              .put("challengeId", UUID.randomUUID().toString())
+              .put("targetUserId", 103)
+              .put("expiresAtMs", System.currentTimeMillis() + 18000);
+      invite.set("quiz", quiz);
+      if (incoming) invite.set("challengerProfile", challenger);
+      shell.onEvent(
+          envelope(
+              incoming ? MessageType.CHALLENGE_RECEIVED : MessageType.CHALLENGE_ACK,
+              null,
+              null,
+              null,
+              null,
+              invite));
+      add(incoming ? "fx-invite-incoming" : "fx-invite-outgoing", shell);
+    }
+    if (reveal != null) {
+      for (int streak : List.of(3, 5, 10)) {
+        ObjectNode r = reveal.payload(MessageType.QUESTION_RESULT).deepCopy();
+        r.putObject("streaks").put("101", streak).put("102", streak == 10 ? 4 : streak + 1);
+        var game =
+            new GameView(with(reveal, MessageType.QUESTION_RESULT, r, Map.of()), sink, false);
+        cleanup.add(game::dispose);
+        add("fx-streak-" + streak, game);
+      }
+      ObjectNode wrong = reveal.payload(MessageType.QUESTION_RESULT).deepCopy();
+      for (var o : wrong.path("outcomes"))
+        if (o.path("userId").asLong() == 101)
+          ((ObjectNode) o).put("correct", false).put("answer", "B").put("earnedPoints", 0);
+      wrong.putObject("streaks").put("101", 0).put("102", 6);
+      var game =
+          new GameView(with(reveal, MessageType.QUESTION_RESULT, wrong, Map.of()), sink, false);
+      cleanup.add(game::dispose);
+      add("fx-wrong-flash", game);
+    }
+    ObjectNode lost = result.payload(MessageType.MATCH_RESULT).deepCopy();
+    lost.put("winnerUserId", 102);
+    var players = (ArrayNode) lost.path("players");
+    int a = players.get(0).path("totalScore").asInt(),
+        b = players.get(1).path("totalScore").asInt();
+    ((ObjectNode) players.get(0)).put("totalScore", Math.min(a, b));
+    ((ObjectNode) players.get(1)).put("totalScore", Math.max(a, b));
+    add("fx-result-lose", shell(with(result, MessageType.MATCH_RESULT, lost, Map.of()), false));
+    add("fx-result-win", shell(result, false));
+    var offline = shell(result.lobby(), false);
+    offline.disconnected("Connection interrupted");
+    add("offline-overlay", offline);
+    var toast = shell(result.lobby(), false);
+    toast.requestTimeout(MessageType.RANKING_REQUEST);
+    add("toast", toast);
+    var messages = new LinkedHashMap<UUID, JsonNode>();
+    messages.put(
+        UUID.randomUUID(),
+        json.createObjectNode()
+            .put("displayName", "Tuấn")
+            .put("senderUserId", 102)
+            .put("text", "Câu này khó ghê"));
+    messages.put(
+        UUID.randomUUID(),
+        json.createObjectNode()
+            .put("displayName", "Tuấn")
+            .put("senderUserId", 102)
+            .put("text", "[sticker:hurry]"));
+    messages.put(
+        UUID.randomUUID(),
+        json.createObjectNode()
+            .put("displayName", "Minh")
+            .put("senderUserId", 101)
+            .put("text", "[sticker:fire]"));
+    var chat = new ChatPanel(t -> {});
+    chat.render(with(reveal == null ? result : reveal, MessageType.CHAT_MESSAGE, null, messages));
+    findButtonByText(chat, "").fire();
+    add("fx-chat-stickers", new HBox(new LobbyView(lobby.lobby(), sink, q -> {}), chat));
+  }
+
+  /** Lifelines: 50-50 used with the opponent on x2, then x2 on a later question and its reveal. */
+  private void lifelines(ClientState open, ClientState reveal) throws Exception {
+    Effects.preview = true;
+    var question = open.question().deepCopy();
+    long id = question.path("questionId").asLong();
+    ((ObjectNode) question).put("content", "Sông nào dài nhất chảy qua lãnh thổ Việt Nam?");
+    var options = ((ObjectNode) question).putArray("options");
+    var names = List.of("Sông Hồng", "Sông Mê Kông", "Sông Đồng Nai", "Sông Đà");
+    for (int i = 0; i < names.size(); i++)
+      options.addObject().put("id", String.valueOf((char) ('A' + i))).put("text", names.get(i));
+    add("fx-lifeline-ready", new GameView(answering(open, question, Map.of()), sink, false));
+    var card = new GameView(answering(open, question, Map.of()), sink, false);
+    cleanup.add(card::dispose);
+    card.openLifeline("FIFTY_FIFTY");
+    add("fx-lifeline-card", card);
+    var x2Card = new GameView(answering(open, question, Map.of()), sink, false);
+    cleanup.add(x2Card::dispose);
+    x2Card.openLifeline("DOUBLE_POINTS");
+    add("fx-lifeline-card-x2", x2Card);
+    var fifty = json.createObjectNode().put("questionId", id).put("kind", "FIFTY_FIFTY");
+    fifty.putArray("removedOptionIds").add("A").add("C");
+    fifty.putArray("remaining").add("DOUBLE_POINTS").add("REMOVE_ONE");
+    var status = json.createObjectNode().put("userId", 102).put("questionId", id);
+    status.put("kind", "DOUBLE_POINTS");
+    status.putObject("byUser").set("102", status.deepCopy());
+    var used =
+        answering(
+            open,
+            question,
+            Map.of(MessageType.LIFELINE_RESULT, fifty, MessageType.LIFELINE_STATUS, status));
+    var game = new GameView(used, sink, false);
+    cleanup.add(game::dispose);
+    add("fx-lifeline-fifty", game);
+    var x2 = json.createObjectNode().put("questionId", id).put("kind", "DOUBLE_POINTS");
+    x2.putArray("removedOptionIds");
+    x2.putArray("remaining").add("REMOVE_ONE");
+    game =
+        new GameView(
+            answering(open, question, Map.of(MessageType.LIFELINE_RESULT, x2)), sink, false);
+    cleanup.add(game::dispose);
+    add("fx-lifeline-double", game);
+    if (reveal != null) {
+      ObjectNode r = reveal.payload(MessageType.QUESTION_RESULT).deepCopy();
+      for (var o : r.path("outcomes"))
+        if (o.path("userId").asLong() == 101)
+          ((ObjectNode) o).put("earnedPoints", o.path("earnedPoints").asInt() * 2);
+      ObjectNode doubled = x2.deepCopy().put("questionId", r.path("questionId").asLong());
+      var data = new EnumMap<MessageType, JsonNode>(MessageType.class);
+      data.putAll(reveal.data());
+      data.put(MessageType.QUESTION_RESULT, r);
+      data.put(MessageType.LIFELINE_RESULT, doubled);
+      game = new GameView(copy(reveal, reveal.question(), data, true), sink, false);
+      cleanup.add(game::dispose);
+      add("fx-lifeline-reveal-x2", game);
+    }
+  }
+
+  private ClientState answering(
+      ClientState open, JsonNode question, Map<MessageType, JsonNode> values) {
+    var data = new EnumMap<MessageType, JsonNode>(MessageType.class);
+    data.putAll(open.data());
+    data.putAll(values);
+    return copy(open, question, data, false);
+  }
+
+  private ClientState copy(
+      ClientState s, JsonNode question, Map<MessageType, JsonNode> data, boolean accepted) {
+    return new ClientState(
+        s.connectionEpoch(),
+        s.profile(),
+        s.onlineRevision(),
+        s.activeMatchId(),
+        s.resultMatchId(),
+        UUID.randomUUID(),
+        s.lastSeqByMatch(),
+        s.phase(),
+        s.presentationVersion(),
+        question,
+        false,
+        accepted,
+        new EnumMap<>(data),
+        s.persistenceByMatch(),
+        Map.of(),
+        "",
+        System.nanoTime());
+  }
+
+  private Button findButtonByText(Parent p, String text) {
+    for (var n : p.getChildrenUnmodifiable()) {
+      if (n instanceof Button b && b.getStyleClass().contains("sticker-toggle")) return b;
+      if (n instanceof Parent child) {
+        var b = findButtonByText(child, text);
+        if (b != null) return b;
+      }
+    }
+    return null;
+  }
+
+  private ClientState with(
+      ClientState s, MessageType type, JsonNode value, Map<UUID, JsonNode> chats) {
+    var data = new EnumMap<MessageType, JsonNode>(MessageType.class);
+    data.putAll(s.data());
+    if (value != null) data.put(type, value);
+    return new ClientState(
+        s.connectionEpoch(),
+        s.profile(),
+        s.onlineRevision(),
+        s.activeMatchId(),
+        s.resultMatchId(),
+        UUID.randomUUID(),
+        s.lastSeqByMatch(),
+        s.phase(),
+        s.presentationVersion(),
+        s.question(),
+        false,
+        true,
+        data,
+        s.persistenceByMatch(),
+        chats.isEmpty() ? s.chatById() : chats,
+        "",
+        System.nanoTime());
+  }
+
   private BorderPane beside(javafx.scene.Node left, javafx.scene.Node center) {
     var pane = new BorderPane();
     pane.setLeft(left);
@@ -640,7 +924,8 @@ class InterfaceEvidenceTest {
         for (int x = 0; x < image.getWidth(); x++)
           image.setRGB(x, y, shot.getPixelReader().getArgb(x, y));
       Path file =
-          Path.of(System.getProperty("quiz.uiEvidence"), width + "x" + height, name + ".png");
+          Path.of(
+              System.getProperty("quiz.uiEvidence"), variant + width + "x" + height, name + ".png");
       Files.createDirectories(file.getParent());
       javax.imageio.ImageIO.write(image, "png", file.toFile());
     } catch (Exception e) {

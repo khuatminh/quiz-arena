@@ -159,6 +159,7 @@ public final class MatchManager implements MatchGateway {
               }
             }
             case "ANSWER" -> answer(m, caller, command);
+            case "LIFELINE_USE" -> lifeline(m, caller, command);
             case "CHAT" -> chat(m, caller, command);
             case "EXIT_MATCH" -> exit(m, caller, ReasonCode.USER_EXIT, command.requestId());
             case "MATCH_SNAPSHOT_REQUEST" ->
@@ -317,6 +318,7 @@ public final class MatchManager implements MatchGateway {
     m.index++;
     m.roundId = UUID.randomUUID();
     m.accepted.clear();
+    m.roundLifeline.clear();
     m.questionReady.clear();
     phase(m, MatchPhase.QUESTION_PREPARING, 30);
     emit(
@@ -362,18 +364,94 @@ public final class MatchManager implements MatchGateway {
     JsonNode a = c.payload().get("answer");
     boolean correct = evaluator.evaluate(m.question(), a);
     long elapsed = received - m.startNano;
+    var lifeline = m.roundLifeline.get(caller.userId());
+    int multiplier = lifeline != null && lifeline.kind().equals("DOUBLE_POINTS") ? 2 : 1;
     Match.Accepted accepted =
         new Match.Accepted(
             a.toString(),
             elapsed,
             clock.instant(),
             correct,
-            ScoreCalculator.calculate(correct, elapsed),
+            ScoreCalculator.calculate(correct, elapsed) * multiplier,
             c.requestId());
     m.accepted.put(caller.userId(), accepted);
     ack(m, caller, c.requestId(), accepted);
     emit(m, "ANSWER_STATUS", null, null, obj("userId", caller.userId(), "answered", true));
     if (m.accepted.size() == 2) closeRound(m);
+  }
+
+  /**
+   * Lifelines, once each per match and at most one per question, before the caller answers.
+   * DOUBLE_POINTS doubles this question's points (a wrong answer still scores 0). REMOVE_ONE hides
+   * one wrong option and FIFTY_FIFTY keeps the key and one wrong option; both need a single-choice
+   * question with at least three options.
+   */
+  void lifeline(Match m, SessionContext caller, Envelope c) {
+    long received = clock.nanoTime();
+    round(m, c, c.payload());
+    String kind = c.payload().path("kind").asText();
+    if (!Payloads.LIFELINES.contains(kind))
+      throw new ProtocolException("INVALID_LIFELINE", "Unknown lifeline");
+    if (m.phase != MatchPhase.ANSWERING
+        || received > m.deadline
+        || m.accepted.containsKey(caller.userId()))
+      throw new ProtocolException("INVALID_STATE", "Lifelines need an open, unanswered question");
+    Set<String> used = m.lifelinesUsed.computeIfAbsent(caller.userId(), k -> new HashSet<>());
+    if (used.contains(kind)) throw new ProtocolException("LIFELINE_USED", "Lifeline already used");
+    if (m.roundLifeline.containsKey(caller.userId()))
+      throw new ProtocolException("LIFELINE_LIMIT", "One lifeline per question");
+    QuestionSnapshot q = m.question();
+    List<String> removed = List.of();
+    if (!kind.equals("DOUBLE_POINTS")) {
+      if (q.questionType() != QuestionType.SINGLE_CHOICE || q.options().size() < 3)
+        throw new ProtocolException(
+            "LIFELINE_UNAVAILABLE", "Needs a single-choice question with three or more options");
+      String key = correctAnswer(q).asText();
+      List<String> wrong = new ArrayList<>();
+      for (var o : q.options()) if (!o.id().equals(key)) wrong.add(o.id());
+      Collections.shuffle(wrong, ThreadLocalRandom.current());
+      Set<String> hidden =
+          new HashSet<>(wrong.subList(0, kind.equals("REMOVE_ONE") ? 1 : wrong.size() - 1));
+      removed = q.options().stream().map(Payloads.Option::id).filter(hidden::contains).toList();
+    }
+    used.add(kind);
+    m.roundLifeline.put(caller.userId(), new Match.Lifeline(kind, removed));
+    emit(
+        m,
+        "LIFELINE_RESULT",
+        c.requestId(),
+        caller.connectionId(),
+        obj(
+            "questionId",
+            q.questionId(),
+            "kind",
+            kind,
+            "removedOptionIds",
+            removed,
+            "remaining",
+            remainingLifelines(m, caller.userId())));
+    emit(
+        m,
+        "LIFELINE_STATUS",
+        null,
+        null,
+        obj("userId", caller.userId(), "questionId", q.questionId(), "kind", kind));
+  }
+
+  static List<String> remainingLifelines(Match m, long user) {
+    Set<String> used = m.lifelinesUsed.getOrDefault(user, Set.of());
+    return Payloads.LIFELINES.stream().filter(k -> !used.contains(k)).toList();
+  }
+
+  JsonNode lifelineState(Match m, long user) {
+    var current = m.roundLifeline.get(user);
+    return obj(
+        "remaining",
+        remainingLifelines(m, user),
+        "active",
+        current == null ? List.of() : List.of(current.kind()),
+        "removedOptionIds",
+        current == null ? List.of() : current.removed());
   }
 
   void ack(Match m, SessionContext caller, UUID request, Match.Accepted a) {
@@ -733,7 +811,9 @@ public final class MatchManager implements MatchGateway {
             ? m.latestResult
             : null,
         "standings",
-        m.standings);
+        m.standings,
+        "lifelines",
+        lifelineState(m, user));
   }
 
   ParticipantSummary participant(Match m, int i) {
@@ -864,7 +944,9 @@ public final class MatchManager implements MatchGateway {
                     "ANSWER_STATUS",
                     "QUESTION_RESULT",
                     "ROUND_LEADERBOARD",
-                    "MATCH_SNAPSHOT")
+                    "MATCH_SNAPSHOT",
+                    "LIFELINE_RESULT",
+                    "LIFELINE_STATUS")
                 .contains(type)
             ? m.roundId
             : null;

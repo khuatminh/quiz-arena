@@ -69,6 +69,9 @@ public final class ClientStateReducer {
                         || t == MessageType.MATCH_RESULT
                         || t == MessageType.QUESTION_RESULT
                         || t == MessageType.ROUND_LEADERBOARD
+                        || t == MessageType.ANSWER_STATUS
+                        || t == MessageType.LIFELINE_RESULT
+                        || t == MessageType.LIFELINE_STATUS
                         || t == MessageType.CHAT_MESSAGE);
       }
       case MATCH_COUNTDOWN -> phase = "MATCH_COUNTDOWN";
@@ -78,9 +81,36 @@ public final class ClientStateReducer {
         question = p.path("question");
         pending = false;
         accepted = false;
+        data.remove(MessageType.ANSWER_STATUS);
       }
       case ROUND_COUNTDOWN -> phase = "ROUND_COUNTDOWN";
       case QUESTION_OPEN -> phase = "OPEN";
+      case ANSWER_STATUS -> {
+        // Accumulate who has answered this round, so the opponent's status survives our own.
+        var answered = com.fasterxml.jackson.databind.node.JsonNodeFactory.instance.objectNode();
+        var ids = answered.putArray("answeredUserIds");
+        JsonNode previous = data.get(MessageType.ANSWER_STATUS);
+        if (previous != null) previous.path("answeredUserIds").forEach(ids::add);
+        if (p.path("answered").asBoolean()) ids.add(p.path("userId").asLong());
+        answered.setAll((com.fasterxml.jackson.databind.node.ObjectNode) p.deepCopy());
+        answered.set("answeredUserIds", ids);
+        p = answered;
+      }
+      case LIFELINE_STATUS -> {
+        // Keep each player's latest lifeline, so our own use doesn't hide the opponent's.
+        var status = com.fasterxml.jackson.databind.node.JsonNodeFactory.instance.objectNode();
+        var byUser = status.putObject("byUser");
+        JsonNode previous = data.get(MessageType.LIFELINE_STATUS);
+        if (previous != null)
+          previous
+              .path("byUser")
+              .fields()
+              .forEachRemaining(f -> byUser.set(f.getKey(), f.getValue()));
+        byUser.set(p.path("userId").asText(), p.deepCopy());
+        status.setAll((com.fasterxml.jackson.databind.node.ObjectNode) p.deepCopy());
+        status.set("byUser", byUser);
+        p = status;
+      }
       case ANSWER_ACK -> {
         pending = false;
         accepted = true;
@@ -89,6 +119,7 @@ public final class ClientStateReducer {
         phase = "REVEAL";
         pending = false;
         accepted = true;
+        p = withStreaks(p, data.get(MessageType.QUESTION_RESULT));
       }
       case ROUND_LEADERBOARD -> phase = "LEADERBOARD";
       case MATCH_RESULT -> {
@@ -109,7 +140,12 @@ public final class ClientStateReducer {
               default -> p.path("phase").asText();
             };
         question = p.get("question");
-        if (p.hasNonNull("latestResult"))
+        JsonNode previousResult = data.get(MessageType.QUESTION_RESULT);
+        // Keep our own copy of the same result, since it carries the streak counts.
+        if (p.hasNonNull("latestResult")
+            && (previousResult == null
+                || previousResult.path("questionId").asLong()
+                    != p.path("latestResult").path("questionId").asLong()))
           data.put(MessageType.QUESTION_RESULT, p.get("latestResult"));
         if (p.hasNonNull("standings")) {
           var leaderboard =
@@ -121,6 +157,7 @@ public final class ClientStateReducer {
         accepted = p.hasNonNull("acceptedAnswer");
         pending = false;
         round = e.roundId();
+        if (p.has("lifelines")) data.put(MessageType.LIFELINE_RESULT, lifelines(p));
       }
       case RESULT_SESSION_CLOSED -> {
         match = null;
@@ -164,5 +201,41 @@ public final class ClientStateReducer {
         chats,
         error,
         now);
+  }
+
+  /**
+   * Rebuilds the stored lifeline result from a snapshot: the kind used on the current question (or
+   * none) and the kinds left for the rest of the match.
+   */
+  static JsonNode lifelines(JsonNode snapshot) {
+    var state = snapshot.path("lifelines");
+    var node = com.fasterxml.jackson.databind.node.JsonNodeFactory.instance.objectNode();
+    node.put("questionId", snapshot.path("question").path("questionId").asLong(-1));
+    node.put("kind", state.path("active").path(0).asText(""));
+    node.set("removedOptionIds", state.path("removedOptionIds").deepCopy());
+    node.set("remaining", state.path("remaining").deepCopy());
+    return node;
+  }
+
+  /**
+   * Adds {@code streaks}: each player's run of correct answers, counted from the previous result of
+   * this match (results are cleared at MATCH_START). A repeated result keeps the old counts.
+   */
+  static JsonNode withStreaks(JsonNode result, JsonNode previous) {
+    if (!result.isObject()) return result;
+    var copy = (com.fasterxml.jackson.databind.node.ObjectNode) result.deepCopy();
+    var streaks = copy.putObject("streaks");
+    JsonNode before = previous == null ? null : previous.path("streaks");
+    if (previous != null
+        && previous.path("questionId").asLong() == result.path("questionId").asLong()) {
+      before.fields().forEachRemaining(f -> streaks.put(f.getKey(), f.getValue().asInt()));
+      return copy;
+    }
+    for (var outcome : result.path("outcomes")) {
+      String id = outcome.path("userId").asText();
+      int run = before == null ? 0 : before.path(id).asInt(0);
+      streaks.put(id, outcome.path("correct").asBoolean(false) ? run + 1 : 0);
+    }
+    return copy;
   }
 }

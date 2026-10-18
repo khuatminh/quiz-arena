@@ -77,6 +77,9 @@ public final class PayloadRegistry {
           Map.entry(MessageType.MEDIA_CHUNK, MediaPayloads.MediaChunk.class),
           Map.entry(MessageType.LIVE_REVIEW_REQUEST, Payloads.LiveReviewRequest.class),
           Map.entry(MessageType.LIVE_REVIEW, Payloads.LiveReview.class),
+          Map.entry(MessageType.LIFELINE_USE, Payloads.LifelineUse.class),
+          Map.entry(MessageType.LIFELINE_RESULT, Payloads.LifelineResult.class),
+          Map.entry(MessageType.LIFELINE_STATUS, Payloads.LifelineStatus.class),
           Map.entry(MessageType.ERROR, Payloads.Error.class));
   private static final Set<MessageType> CLIENT =
       EnumSet.of(
@@ -100,6 +103,7 @@ public final class PayloadRegistry {
           MessageType.MATCH_READY,
           MessageType.QUESTION_READY,
           MessageType.ANSWER,
+          MessageType.LIFELINE_USE,
           MessageType.CHAT,
           MessageType.REMATCH_REQUEST,
           MessageType.REMATCH_RESPONSE,
