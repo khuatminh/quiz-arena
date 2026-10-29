@@ -51,6 +51,27 @@ public record ClientState(
     return activeMatchId != null && !data.containsKey(MessageType.RESULT_SESSION_CLOSED);
   }
 
+  public ClientState reconnected() {
+    return new ClientState(
+        connectionEpoch + 1,
+        null,
+        -1,
+        null,
+        null,
+        null,
+        Map.of(),
+        "AUTH",
+        presentationVersion + 1,
+        null,
+        false,
+        false,
+        Map.of(),
+        persistenceByMatch,
+        Map.of(),
+        "",
+        0);
+  }
+
   public ClientState lobby() {
     return new ClientState(
         connectionEpoch,
@@ -73,27 +94,14 @@ public record ClientState(
   }
 
   public ClientState clearPending() {
-    return new ClientState(
-        connectionEpoch,
-        profile,
-        onlineRevision,
-        activeMatchId,
-        resultMatchId,
-        roundId,
-        lastSeqByMatch,
-        phase,
-        presentationVersion,
-        question,
-        false,
-        accepted,
-        data,
-        persistenceByMatch,
-        chatById,
-        error,
-        receivedNanos);
+    return withAnswerStatus(false, accepted);
   }
 
   public ClientState pending() {
+    return withAnswerStatus(true, false);
+  }
+
+  private ClientState withAnswerStatus(boolean pending, boolean answerAccepted) {
     return new ClientState(
         connectionEpoch,
         profile,
@@ -105,8 +113,8 @@ public record ClientState(
         phase,
         presentationVersion,
         question,
-        true,
-        false,
+        pending,
+        answerAccepted,
         data,
         persistenceByMatch,
         chatById,

@@ -517,7 +517,7 @@ Các bài kiểm thử bao phủ giao thức, xử lý khung TCP, tài khoản, 
 
 ### Kiểm thử tích hợp MySQL
 
-Tạo database và tài khoản **riêng cho kiểm thử**, tên database phải kết thúc bằng `_test`. Áp dụng ba script SQL theo thứ tự như khi cài mới. Tài khoản kiểm thử cần đủ quyền trên database kiểm thử theo [hướng dẫn database](docs/operations/database-setup.md).
+Tạo database và tài khoản **riêng cho kiểm thử**, tên database phải kết thúc bằng `_test`. Áp dụng bốn script SQL theo thứ tự như khi cài mới. Tài khoản kiểm thử cần đủ quyền trên database kiểm thử theo [hướng dẫn database](docs/operations/database-setup.md).
 
 Ví dụ trên macOS/Linux:
 
@@ -553,7 +553,7 @@ Các số liệu kiểm thử trong tài liệu là kết quả của lần ch�
 | `mysql` không được nhận diện | Thêm thư mục `bin` của MySQL vào `PATH`, hoặc dùng đường dẫn đầy đủ tới chương trình |
 | Server báo không kết nối được database | Kiểm tra MySQL đang chạy, host, cổng, tên schema, tài khoản và mật khẩu |
 | `Access denied` từ MySQL | Kiểm tra mật khẩu và quyền của user trên đúng database; biến môi trường có thể đang ghi đè file cấu hình |
-| Server báo schema không đúng phiên bản | Kiểm tra `SCHEMA_METADATA`; nâng cấp bằng migration `003` sau khi sao lưu nếu đang ở bản cũ |
+| Server báo schema không đúng phiên bản | Kiểm tra `SCHEMA_METADATA`; nâng cấp lần lượt bằng migration `003`, `004` sau khi sao lưu nếu đang ở bản cũ |
 | Không bind được cổng server | Kiểm tra server khác đang chạy; dừng tiến trình đúng hoặc đổi `server.port` và cổng kết nối của client |
 | Client không kết nối được | Chạy server trước; kiểm tra host, cổng, firewall; khi dùng LAN không nhập `localhost` của máy chơi |
 | Kết nối bị từ chối do phiên bản | Build và chạy client/server cùng phiên bản mã nguồn hiện tại |
@@ -588,6 +588,7 @@ Kết quả chưa lưu nằm trong RAM. Nếu server bị tắt cưỡng bức h
 | --- | --- |
 | [Hướng dẫn chạy và kết nối với người khác](docs/operations/huong-dan-chay-va-ket-noi.md) | Chạy trên Windows, mở cổng TCP, chơi qua LAN, ghép trận và xử lý lỗi |
 | [Thiết lập database](docs/operations/database-setup.md) | Quyền MySQL, schema, migration và tài khoản demo |
+| [Kiến trúc sau refactor](docs/architecture/refactoring.md) | Trách nhiệm từng lớp, cách chạy kiểm chứng và bằng chứng trước/sau |
 | [Kiến trúc mạng](docs/architecture/network-explanation.md) | TCP, đồng thời, hàng đợi, truyền ảnh và vòng đời trận |
 | [Giao thức](docs/protocol/protocol-v1.md) | Cấu trúc thông điệp và quy tắc giao tiếp |
 | [Vận hành lưu kết quả](docs/operations/persistence-runbook.md) | Transaction, thử lại, phục hồi khi database lỗi |

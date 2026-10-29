@@ -20,67 +20,36 @@ public final class ClientStore implements AutoCloseable {
     return state;
   }
 
-  public void subscribe(Consumer<ClientState> l) {
-    listener = l;
+  public void subscribe(Consumer<ClientState> subscriber) {
+    listener = subscriber;
   }
 
-  public void accept(Envelope e) {
-    long received = System.nanoTime();
-    executor.execute(
-        () -> {
-          state = reducer.apply(state, e, received);
-          listener.accept(state);
-        });
+  public void accept(Envelope event) {
+    long receivedNanos = System.nanoTime();
+    update(current -> reducer.apply(current, event, receivedNanos));
   }
 
   public void leaveResult() {
-    executor.execute(
-        () -> {
-          state = state.lobby();
-          listener.accept(state);
-        });
+    update(ClientState::lobby);
   }
 
   public void resetConnection() {
-    executor.execute(
-        () -> {
-          var old = state;
-          var fresh = ClientState.initial();
-          state =
-              new ClientState(
-                  old.connectionEpoch() + 1,
-                  null,
-                  -1,
-                  null,
-                  null,
-                  null,
-                  java.util.Map.of(),
-                  "AUTH",
-                  old.presentationVersion() + 1,
-                  null,
-                  false,
-                  false,
-                  java.util.Map.of(),
-                  old.persistenceByMatch(),
-                  java.util.Map.of(),
-                  "",
-                  0);
-          listener.accept(state);
-        });
+    update(ClientState::reconnected);
   }
 
   public void cancelAnswerPending() {
-    executor.execute(
-        () -> {
-          state = state.clearPending();
-          listener.accept(state);
-        });
+    update(ClientState::clearPending);
   }
 
   public void markAnswerPending() {
+    update(ClientState::pending);
+  }
+
+  /** Serializes every transition and notifies only after the new immutable state is installed. */
+  private void update(UnaryOperator<ClientState> transition) {
     executor.execute(
         () -> {
-          state = state.pending();
+          state = transition.apply(state);
           listener.accept(state);
         });
   }

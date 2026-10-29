@@ -76,7 +76,7 @@ class RematchCoordinatorTest {
             match.id,
             null,
             null,
-            MatchManager.obj(fields)));
+            MatchPayloads.obj(fields)));
   }
 
   @Test

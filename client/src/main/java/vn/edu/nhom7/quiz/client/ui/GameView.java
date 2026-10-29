@@ -42,74 +42,41 @@ public final class GameView extends BorderPane {
   private int shownSelfStreak = -1, shownOpponentStreak = -1;
   private long lastTickSecond = -1;
   private final Effects.Layer fx = new Effects.Layer();
-  private final Map<String, Button> lifelineButtons = new LinkedHashMap<>();
-  private final HBox dock = new HBox(12);
-  private final VBox popover = new VBox(10);
-  private final Polygon tail = new Polygon(0, 0, 18, 0, 9, 10);
-  private final Label popIcon = Ui.label(""), popName = Ui.label(""), popKey = Ui.label("");
-  private final Label popText = Ui.label(""), popStatus = Ui.label("");
-  private final Button popUse = new Button("Sử dụng");
-  private String openKind;
-  private final Label selfDouble = Ui.label("x2");
-  private final Label opponentLifeline = Ui.label("");
-  private final UiCommandSink sink;
+  private final LifelineDock lifelines;
   private ClientState current;
-  private long questionId = -1;
-  private boolean lifelineFits, lifelinePending, doubled;
-  private String errorAtSend = "";
 
   /** The round whose reveal already played its sounds and effects, so rebuilds stay quiet. */
   static UUID revealedRound;
 
-  /** Lifeline uses already announced with sound and motion, as round id plus user id. */
-  static final Set<String> announcedLifelines = new HashSet<>();
-
-  static final Map<String, String[]> LIFELINE_TEXT =
-      Map.of(
-          "DOUBLE_POINTS",
-          new String[] {
-            "×2",
-            "x2 điểm",
-            "Nhân đôi điểm của câu này: trả lời đúng được 6, 4 hoặc 2 điểm. Trả lời sai vẫn 0"
-                + " điểm.",
-            "X"
-          },
-          "REMOVE_ONE",
-          new String[] {
-            "−1", "Loại 1 đáp án", "Ẩn ngẫu nhiên một phương án sai, giúp bạn chọn dễ hơn.", "L"
-          },
-          "FIFTY_FIFTY",
-          new String[] {"½", "50-50", "Chỉ giữ lại đáp án đúng và một phương án sai.", "N"});
-
-  public GameView(ClientState s, UiCommandSink sink, boolean reducedMotion) {
-    bound = s;
-    current = s;
-    this.sink = sink;
+  public GameView(ClientState state, UiCommandSink sink, boolean reducedMotion) {
+    bound = state;
+    current = state;
+    lifelines = new LifelineDock(sink, state, this::reducedMotion, animations, this::requestLayout);
     this.reducedMotionFlag = reducedMotion;
-    received = s.receivedNanos();
+    received = state.receivedNanos();
     getStyleClass().add("game-surface");
-    var questionEvent = s.payload(MessageType.QUESTION);
+    var questionEvent = state.payload(MessageType.QUESTION);
     int roundIndex = questionEvent == null ? 0 : questionEvent.path("roundIndex").asInt();
-    JsonNode start = s.payload(MessageType.MATCH_START);
+    JsonNode start = state.payload(MessageType.MATCH_START);
     int totalRounds = start == null ? 10 : start.path("totalRounds").asInt(10);
     maxScore = Math.max(3, totalRounds * 3);
-    setTop(hud(s, start, roundIndex, totalRounds));
+    setTop(hud(state, start, roundIndex, totalRounds));
     countdown.getStyleClass().add("countdown-number");
     notice.getStyleClass().add("self-status");
     JsonNode timing =
-        s.payload(
-            s.phase().equals("OPEN")
+        state.payload(
+            state.phase().equals("OPEN")
                 ? MessageType.QUESTION_OPEN
-                : s.phase().equals("ROUND_COUNTDOWN")
+                : state.phase().equals("ROUND_COUNTDOWN")
                     ? MessageType.ROUND_COUNTDOWN
-                    : s.phase().equals("MATCH_COUNTDOWN")
+                    : state.phase().equals("MATCH_COUNTDOWN")
                         ? MessageType.MATCH_COUNTDOWN
-                        : s.phase().equals("REVEAL")
+                        : state.phase().equals("REVEAL")
                             ? MessageType.QUESTION_RESULT
                             : MessageType.ROUND_LEADERBOARD);
     remaining =
-        s.payload(MessageType.MATCH_SNAPSHOT) != null
-            ? s.payload(MessageType.MATCH_SNAPSHOT).path("phaseRemainingMs").asLong()
+        state.payload(MessageType.MATCH_SNAPSHOT) != null
+            ? state.payload(MessageType.MATCH_SNAPSHOT).path("phaseRemainingMs").asLong()
             : timing == null
                 ? 0
                 : timing
@@ -121,19 +88,19 @@ public final class GameView extends BorderPane {
                                 timing.path("phaseEndsAtMs").asLong()
                                     - timing.path("serverTimeMs").asLong())
                             : timing.path("durationMs").asLong());
-    if (s.phase().equals("LEADERBOARD")) {
+    if (state.phase().equals("LEADERBOARD")) {
       renderer = null;
       leaderboard =
           new LeaderboardPanel(
-              s.payload(MessageType.ROUND_LEADERBOARD),
-              s.selfUserId(),
-              reducedMotion() || s.payload(MessageType.MATCH_SNAPSHOT) != null);
+              state.payload(MessageType.ROUND_LEADERBOARD),
+              state.selfUserId(),
+              reducedMotion() || state.payload(MessageType.MATCH_SNAPSHOT) != null);
       var holder = new StackPane(leaderboard);
       holder.setAlignment(Pos.TOP_CENTER);
       var scroll = Ui.scroll(holder);
       scroll.getStyleClass().add("stage-scroll");
       setCenter(scroll);
-    } else if (s.phase().equals("MATCH_COUNTDOWN")) {
+    } else if (state.phase().equals("MATCH_COUNTDOWN")) {
       renderer = null;
       var box =
           new VBox(
@@ -142,101 +109,21 @@ public final class GameView extends BorderPane {
       box.getStyleClass().add("waiting-panel");
       setCenter(box);
     } else {
-      JsonNode q = s.question();
-      if (q == null || q.isNull()) {
+      JsonNode question = state.question();
+      if (question == null || question.isNull()) {
         renderer = null;
         setCenter(Ui.label("Đang đồng bộ câu hỏi…"));
       } else {
-        String type = q.path("questionType").asText();
-        String content = q.path("content").asText();
-        var title = Ui.label(content);
-        title.getStyleClass().add("question-title");
-        title.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
-        if (content.codePointCount(0, content.length()) > 160)
-          title.getStyleClass().add("long-question");
-        String kind =
-            switch (type) {
-              case "MULTIPLE_CHOICE" -> "NHIỀU ĐÁP ÁN · CHỌN TẤT CẢ Ý ĐÚNG";
-              case "TRUE_FALSE" -> "ĐÚNG HAY SAI";
-              case "SHORT_ANSWER" -> "TRẢ LỜI NGẮN";
-              default -> "MỘT ĐÁP ÁN";
-            };
-        String quiz = start == null ? "" : start.path("quiz").path("title").asText("");
-        var kicker = Ui.label(quiz.isBlank() ? kind : kind + " · " + quiz.toUpperCase(Locale.ROOT));
-        kicker.getStyleClass().add("question-kicker");
-        if (s.phase().equals("REVEAL")) {
-          kicker.setText("ĐÁP ÁN · " + PresentationText.answer(q, revealAnswer(s)));
-          kicker.getStyleClass().add("answer-kicker");
-        } else if (s.phase().equals("QUESTION_PREPARE")) kicker.setText(kind + " · ĐANG TẢI");
-        var stage = new VBox(14, kicker, title);
-        stage.getStyleClass().add("question-stage");
-        stage.setAlignment(Pos.CENTER);
-        if (q.hasNonNull("questionAssetId"))
-          stage.getChildren().add(new AssetLoader().view(q.path("questionAssetId").asText(), 220));
-        questionId = q.path("questionId").asLong(-1);
-        lifelineFits = type.equals("SINGLE_CHOICE") && q.path("options").size() >= 3;
-        buildLifelines();
-        renderer =
-            switch (type) {
-              case "MULTIPLE_CHOICE" -> new MultipleChoiceRenderer();
-              case "TRUE_FALSE" -> new TrueFalseRenderer();
-              case "SHORT_ANSWER" -> new ShortAnswerRenderer();
-              default -> new SingleChoiceRenderer();
-            };
-        var deck = new VBox(14);
-        deck.getStyleClass().add("answer-deck");
-        try {
-          var question = new ObjectMapper().treeToValue(q, Payloads.PublicQuestion.class);
-          renderer.bind(
-              question,
-              a -> {
-                if (s.canAnswer())
-                  sink.send(
-                      MessageType.ANSWER,
-                      s.activeMatchId(),
-                      s.roundId(),
-                      new Payloads.Answer(question.questionId(), a));
-                lockedIn();
-              });
-          if (renderer instanceof BaseQuestionRenderer base && start != null)
-            base.setPlayers(start.path("players"));
-          renderer.setControlsEnabled(s.canAnswer());
-          if (s.phase().equals("REVEAL")) {
-            var result = s.payload(MessageType.QUESTION_RESULT);
-            renderer.showResult(
-                new ObjectMapper()
-                    // The client adds its own fields (streaks) to the stored result.
-                    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                    .treeToValue(result, Payloads.QuestionResult.class),
-                s.selfUserId());
-            if (result.hasNonNull("explanation")
-                && !result.path("explanation").asText().isBlank()) {
-              var why = Ui.label(result.path("explanation").asText());
-              why.getStyleClass().add("explanation");
-              why.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
-              stage.getChildren().add(why);
-            }
-            if (result.hasNonNull("explanationAssetId"))
-              stage
-                  .getChildren()
-                  .add(new AssetLoader().view(result.path("explanationAssetId").asText(), 160));
-            // Typed answers have no tiles to carry the players' picks, so list them.
-            if (type.equals("SHORT_ANSWER"))
-              stage
-                  .getChildren()
-                  .add(
-                      new RevealPanel(
-                          result, q, s.selfUserId(), start == null ? null : start.path("players")));
-          }
-          deck.getChildren().add(renderer.view());
-        } catch (Exception e) {
-          deck.getChildren()
-              .add(Ui.label("Không thể hiển thị câu hỏi; chờ server kết thúc an toàn."));
-        }
+        String type = question.path("questionType").asText();
+        var content = new QuestionContent(state, sink, this::lockedIn);
+        renderer = content.renderer;
+        var stage = content.stage;
+        var deck = content.deck;
+        lifelines.bind(question, renderer, selfId, opponentId);
         prompts.getStyleClass().add("prompt-bar");
         prompts.setAlignment(Pos.CENTER_LEFT);
-        showPrompts(type, s.phase());
-        var bottom = new HBox(16, prompts, Ui.spacer(), dock);
+        showPrompts(type, state.phase());
+        var bottom = new HBox(16, prompts, Ui.spacer(), lifelines);
         bottom.setAlignment(Pos.CENTER_LEFT);
         // Hints are the first thing to give way on a narrow window; the clip hides the overflow.
         prompts.setMinWidth(0);
@@ -244,7 +131,7 @@ public final class GameView extends BorderPane {
         clip.widthProperty().bind(prompts.widthProperty());
         clip.heightProperty().bind(prompts.heightProperty());
         prompts.setClip(clip);
-        dock.setMinWidth(Region.USE_PREF_SIZE);
+        lifelines.setMinWidth(Region.USE_PREF_SIZE);
         bottom.getStyleClass().add("deck-footer");
         deck.getChildren().add(bottom);
         var scroll = Ui.scroll(stage);
@@ -257,12 +144,12 @@ public final class GameView extends BorderPane {
                     () -> scroll.getViewportBounds().getHeight(), scroll.viewportBoundsProperty()));
         setCenter(scroll);
         setBottom(deck);
-        if (!reducedMotion() && s.phase().equals("QUESTION_PREPARE")) {
+        if (!reducedMotion() && state.phase().equals("QUESTION_PREPARE")) {
           enter(stage, 0);
           // Medium tier: the question's heading slams in before the clock starts.
-          Effects.slam(kicker, animations);
+          Effects.slam(content.kicker, animations);
         }
-        if (!reducedMotion() && s.phase().equals("REVEAL"))
+        if (!reducedMotion() && state.phase().equals("REVEAL"))
           javafx.application.Platform.runLater(() -> celebrate(deck));
       }
     }
@@ -271,13 +158,7 @@ public final class GameView extends BorderPane {
           if (getScene() != null
               && getScene().getFocusOwner() instanceof javafx.scene.control.TextInputControl)
             return;
-          if (openKind != null && e.getCode() == javafx.scene.input.KeyCode.ESCAPE) {
-            closeLifeline();
-            e.consume();
-            return;
-          }
-          if (openKind != null && e.getCode() == javafx.scene.input.KeyCode.ENTER) {
-            if (!popUse.isDisabled()) popUse.fire();
+          if (lifelines.handleKey(e)) {
             e.consume();
             return;
           }
@@ -293,13 +174,6 @@ public final class GameView extends BorderPane {
           if (key.length() != 1) key = e.getText();
           if (key == null || key.length() != 1) return;
           char c = key.charAt(0);
-          for (var entry : LIFELINE_TEXT.entrySet())
-            if (Character.toUpperCase(c) == entry.getValue()[3].charAt(0)
-                && lifelineButtons.containsKey(entry.getKey())) {
-              lifelineButtons.get(entry.getKey()).fire();
-              e.consume();
-              return;
-            }
           if (!current.canAnswer()) return;
           if (renderer instanceof SingleChoiceRenderer single
               && (Character.isLetter(c) || Character.isDigit(c))) {
@@ -315,49 +189,41 @@ public final class GameView extends BorderPane {
           }
         });
     // Above the question area, which was added after the card.
-    if (!lifelineButtons.isEmpty()) List.of(tail, popover).forEach(Node::toFront);
+    getChildren().addAll(lifelines.overlays());
     getChildren().add(fx);
-    render(s);
+    render(state);
     tick();
-    if (s.phase().equals("REVEAL") && s.roundId() != null && !s.roundId().equals(revealedRound)) {
-      revealedRound = s.roundId();
-      javafx.application.Platform.runLater(() -> revealFeedback(s));
+    if (state.phase().equals("REVEAL")
+        && state.roundId() != null
+        && !state.roundId().equals(revealedRound)) {
+      revealedRound = state.roundId();
+      javafx.application.Platform.runLater(() -> revealFeedback(state));
     }
   }
 
   @Override
   protected void layoutChildren() {
     super.layoutChildren();
-    if (openKind != null && dock.getScene() != null) {
-      // The card floats above the open icon, right-aligned with the dock.
-      var icon = lifelineButtons.get(openKind);
-      var iconBox = sceneToLocal(icon.localToScene(icon.getBoundsInLocal()));
-      var dockBox = sceneToLocal(dock.localToScene(dock.getBoundsInLocal()));
-      double pw = popover.prefWidth(-1), ph = popover.prefHeight(pw);
-      double right = Math.min(getWidth() - 16, dockBox.getMaxX());
-      double top = iconBox.getMinY() - 14 - ph;
-      popover.resizeRelocate(right - pw, top, pw, ph);
-      tail.relocate(iconBox.getCenterX() - 9, top + ph - 1);
-    }
+    lifelines.layoutOverlay(this);
     fx.resizeRelocate(0, 0, getWidth(), getHeight());
     if (getChildren().getLast() != fx) fx.toFront();
   }
 
-  static int streak(ClientState s, long userId) {
-    JsonNode result = s.payload(MessageType.QUESTION_RESULT);
+  static int streak(ClientState state, long userId) {
+    JsonNode result = state.payload(MessageType.QUESTION_RESULT);
     return result == null ? 0 : result.path("streaks").path(Long.toString(userId)).asInt(0);
   }
 
   /** Right/wrong sound, a red flash on a miss and the streak banner at 3, 5 and 10. */
-  private void revealFeedback(ClientState s) {
+  private void revealFeedback(ClientState state) {
     boolean right = false;
-    JsonNode result = s.payload(MessageType.QUESTION_RESULT);
+    JsonNode result = state.payload(MessageType.QUESTION_RESULT);
     if (result != null)
       for (var o : result.path("outcomes"))
         if (o.path("userId").asLong() == selfId) right = o.path("correct").asBoolean(false);
     Sound.play(right ? Sound.Effect.CORRECT : Sound.Effect.WRONG);
     if (!right && !reducedMotion()) Effects.wrongFlash(fx, animations);
-    int streak = streak(s, selfId);
+    int streak = streak(state, selfId);
     if (right && (streak == 3 || streak == 5 || streak == 10)) {
       var later = new PauseTransition(Duration.millis(Effects.preview ? 0 : 260));
       later.setOnFinished(
@@ -375,22 +241,17 @@ public final class GameView extends BorderPane {
     }
   }
 
-  private static JsonNode revealAnswer(ClientState s) {
-    var result = s.payload(MessageType.QUESTION_RESULT);
-    return result == null ? null : result.path("correctAnswer");
-  }
-
   /**
    * The corner HUD: each player's avatar, score and fighting-game score bar on their side, the
    * timer in the middle. The local player is always on the left.
    */
-  private Node hud(ClientState s, JsonNode start, int roundIndex, int totalRounds) {
+  private Node hud(ClientState state, JsonNode start, int roundIndex, int totalRounds) {
     JsonNode self = null, opponent = null;
     if (start != null)
       for (var p : start.path("players"))
-        if (p.path("userId").asLong() == s.selfUserId()) self = p;
+        if (p.path("userId").asLong() == state.selfUserId()) self = p;
         else opponent = p;
-    selfId = self == null ? s.selfUserId() : self.path("userId").asLong();
+    selfId = self == null ? state.selfUserId() : self.path("userId").asLong();
     opponentId = opponent == null ? -1 : opponent.path("userId").asLong();
     var left =
         player(
@@ -470,7 +331,7 @@ public final class GameView extends BorderPane {
     var streakSlot = mirrored ? opponentStreak : selfStreak;
     streakSlot.setAlignment(Pos.CENTER);
     streakSlot.setMinWidth(Region.USE_PREF_SIZE);
-    var extra = mirrored ? opponentLifeline : selfDouble;
+    var extra = mirrored ? lifelines.opponentIndicator() : lifelines.selfIndicator();
     extra.getStyleClass().add(mirrored ? "opponent-lifeline" : "double-chip");
     extra.setMinWidth(Region.USE_PREF_SIZE);
     extra.setVisible(false);
@@ -538,31 +399,31 @@ public final class GameView extends BorderPane {
               .getChildren()
               .addAll(Ui.prompt("1–" + options, "Chọn"), Ui.prompt("Tab", "Di chuyển"));
     }
-    if (!lifelineButtons.isEmpty()) prompts.getChildren().add(Ui.prompt("X · L · N", "Trợ giúp"));
+    if (lifelines.hasQuestion()) prompts.getChildren().add(Ui.prompt("X · L · N", "Trợ giúp"));
     prompts.getChildren().add(Ui.prompt("Esc", "Tạm dừng"));
   }
 
-  public void render(ClientState s) {
-    current = s;
-    if (renderer != null) renderer.setControlsEnabled(s.canAnswer());
-    renderLifelines(s);
+  public void render(ClientState state) {
+    current = state;
+    if (renderer != null) renderer.setControlsEnabled(state.canAnswer());
+    lifelines.render(state);
     notice.setText(
-        !s.phase().equals("OPEN")
+        !state.phase().equals("OPEN")
             ? ""
-            : s.accepted()
+            : state.accepted()
                 ? "✓ Đã khóa đáp án · chờ kết quả"
-                : s.ownPending() ? "Đang gửi đáp án…" : "");
+                : state.ownPending() ? "Đang gửi đáp án…" : "");
     notice.getStyleClass().remove("answered");
-    if (s.accepted() && s.phase().equals("OPEN")) notice.getStyleClass().add("answered");
+    if (state.accepted() && state.phase().equals("OPEN")) notice.getStyleClass().add("answered");
     var totals = new HashMap<Long, Integer>();
-    JsonNode standings = s.payload(MessageType.ROUND_LEADERBOARD);
+    JsonNode standings = state.payload(MessageType.ROUND_LEADERBOARD);
     if (standings != null)
       for (var st : standings.path("standings"))
         totals.put(st.path("userId").asLong(), st.path("totalScore").asInt());
     var gains = new HashMap<Long, Integer>();
-    JsonNode result = s.payload(MessageType.QUESTION_RESULT);
+    JsonNode result = state.payload(MessageType.QUESTION_RESULT);
     // During the reveal the round's points are known but not yet in the standings.
-    if (s.phase().equals("REVEAL") && result != null)
+    if (state.phase().equals("REVEAL") && result != null)
       for (var o : result.path("outcomes"))
         gains.put(o.path("userId").asLong(), o.path("earnedPoints").asInt());
     int self = totals.getOrDefault(selfId, 0) + gains.getOrDefault(selfId, 0);
@@ -575,241 +436,27 @@ public final class GameView extends BorderPane {
     if (gains.getOrDefault(opponentId, 1) == 0) opponentGain.getStyleClass().add("zero");
     selfGain.getStyleClass().removeAll("zero", "doubled");
     if (gains.getOrDefault(selfId, 1) == 0) selfGain.getStyleClass().add("zero");
-    else if (doubled) selfGain.getStyleClass().add("doubled");
+    else if (lifelines.doubled()) selfGain.getStyleClass().add("doubled");
     selfShare.set(Math.min(1, (double) self / maxScore));
     opponentShare.set(Math.min(1, (double) opponent / maxScore));
     boolean opponentAnswered = false;
-    JsonNode answered = s.payload(MessageType.ANSWER_STATUS);
+    JsonNode answered = state.payload(MessageType.ANSWER_STATUS);
     if (answered != null)
       for (var id : answered.path("answeredUserIds"))
         if (id.asLong() == opponentId) opponentAnswered = true;
     opponentStatus.setText(
-        !s.phase().equals("OPEN") ? "" : opponentAnswered ? "✓ Đã khóa đáp án" : "Đang suy nghĩ…");
+        !state.phase().equals("OPEN")
+            ? ""
+            : opponentAnswered ? "✓ Đã khóa đáp án" : "Đang suy nghĩ…");
     opponentStatus.getStyleClass().remove("answered");
     if (opponentAnswered) opponentStatus.getStyleClass().add("answered");
-    int mine = streak(s, selfId), theirs = streak(s, opponentId);
+    int mine = streak(state, selfId), theirs = streak(state, opponentId);
     if (mine != shownSelfStreak) showStreak(selfStreak, shownSelfStreak = mine);
     if (theirs != shownOpponentStreak) showStreak(opponentStreak, shownOpponentStreak = theirs);
   }
 
-  /**
-   * Lifeline icons in the bottom-right corner. Clicking one (or its key) opens a small card above
-   * it with what the lifeline does and a "Sử dụng" button.
-   */
-  private void buildLifelines() {
-    dock.getStyleClass().add("lifeline-dock");
-    dock.setAlignment(Pos.CENTER_RIGHT);
-    for (String kind : Payloads.LIFELINES) {
-      String[] text = LIFELINE_TEXT.get(kind);
-      var glyph = Ui.label(text[0]);
-      glyph.getStyleClass().add("lifeline-glyph");
-      var cap = Ui.label(text[3]);
-      cap.getStyleClass().add("lifeline-key");
-      StackPane.setAlignment(cap, Pos.BOTTOM_RIGHT);
-      cap.setTranslateX(6);
-      cap.setTranslateY(6);
-      var face = new StackPane(glyph, cap);
-      face.setMinSize(56, 56);
-      face.setMaxSize(56, 56);
-      var b = new Button();
-      b.setGraphic(face);
-      b.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
-      b.setAccessibleText(text[1] + ". Phím " + text[3]);
-      b.getStyleClass().addAll("lifeline", "lifeline-" + kind.toLowerCase(Locale.ROOT));
-      b.setTooltip(new Tooltip(text[1] + " · phím " + text[3]));
-      b.setOnAction(e -> toggleLifeline(kind));
-      lifelineButtons.put(kind, b);
-      dock.getChildren().add(b);
-    }
-    popIcon.getStyleClass().add("lifeline-pop-icon");
-    popIcon.setMinSize(40, 40);
-    popIcon.setAlignment(Pos.CENTER);
-    popName.getStyleClass().add("lifeline-pop-name");
-    popKey.getStyleClass().add("lifeline-pop-key");
-    var close = new Button("✕");
-    close.getStyleClass().add("lifeline-pop-close");
-    close.setAccessibleText("Đóng");
-    close.setOnAction(e -> closeLifeline());
-    var header = new HBox(10, popIcon, popName, Ui.spacer(), popKey, close);
-    header.setAlignment(Pos.CENTER_LEFT);
-    popText.getStyleClass().add("lifeline-pop-text");
-    popStatus.getStyleClass().add("lifeline-pop-status");
-    var rule = Ui.label("Mỗi quyền dùng 1 lần mỗi trận, tối đa 1 quyền mỗi câu.");
-    rule.getStyleClass().add("lifeline-pop-rule");
-    popUse.getStyleClass().add("lifeline-use");
-    popUse.setMaxWidth(Double.MAX_VALUE);
-    popUse.setOnAction(e -> useLifeline(openKind));
-    popover.getChildren().addAll(header, popText, popStatus, popUse, rule);
-    popover.getStyleClass().add("lifeline-pop");
-    popover.setPrefWidth(330);
-    popover.setFillWidth(true);
-    tail.getStyleClass().add("lifeline-pop-tail");
-    for (Node n : List.of(tail, popover)) {
-      n.setManaged(false);
-      getChildren().add(n);
-    }
-    popover.setVisible(false);
-    tail.setVisible(false);
-  }
-
-  private void toggleLifeline(String kind) {
-    if (kind.equals(openKind)) closeLifeline();
-    else openLifeline(kind);
-  }
-
   void openLifeline(String kind) {
-    if (!lifelineButtons.containsKey(kind)) return;
-    openKind = kind;
-    String[] text = LIFELINE_TEXT.get(kind);
-    popIcon.setText(text[0]);
-    popIcon
-        .getStyleClass()
-        .removeIf(c -> c.startsWith("lifeline-") && !c.equals("lifeline-pop-icon"));
-    popIcon.getStyleClass().add("lifeline-" + kind.toLowerCase(Locale.ROOT));
-    popName.setText(text[1]);
-    popKey.setText("Phím " + text[3]);
-    popText.setText(text[2]);
-    lifelineButtons.forEach((k, b) -> b.getStyleClass().remove("open"));
-    lifelineButtons.get(kind).getStyleClass().add("open");
-    popover.setVisible(true);
-    tail.setVisible(true);
-    renderLifelines(current);
-    requestLayout();
-    if (!reducedMotion()) {
-      popover.setScaleX(0.85);
-      popover.setScaleY(0.85);
-      popover.setOpacity(0);
-      var grow = new ScaleTransition(Duration.millis(180), popover);
-      grow.setToX(1);
-      grow.setToY(1);
-      grow.setInterpolator(Effects.BACK_OUT);
-      var fade = new FadeTransition(Duration.millis(140), popover);
-      fade.setToValue(1);
-      Effects.run(new ParallelTransition(grow, fade), animations, Duration.millis(180));
-    }
-  }
-
-  private void closeLifeline() {
-    openKind = null;
-    lifelineButtons.forEach((k, b) -> b.getStyleClass().remove("open"));
-    popover.setVisible(false);
-    tail.setVisible(false);
-  }
-
-  private void useLifeline(String kind) {
-    if (kind == null || !current.canAnswer() || lifelinePending || questionId < 0) return;
-    lifelinePending = true;
-    errorAtSend = current.error();
-    try {
-      sink.send(
-          MessageType.LIFELINE_USE,
-          current.activeMatchId(),
-          current.roundId(),
-          new Payloads.LifelineUse(questionId, kind));
-      closeLifeline();
-    } catch (RuntimeException failure) {
-      lifelinePending = false;
-    }
-    renderLifelines(current);
-  }
-
-  static List<String> texts(JsonNode array) {
-    var values = new ArrayList<String>();
-    array.forEach(n -> values.add(n.asText()));
-    return values;
-  }
-
-  /** Button states, removed options, the x2 chip and the opponent's lifeline notice. */
-  private void renderLifelines(ClientState s) {
-    JsonNode result = s.payload(MessageType.LIFELINE_RESULT);
-    boolean thisQuestion = result != null && result.path("questionId").asLong() == questionId;
-    String active = thisQuestion ? result.path("kind").asText("") : "";
-    if (thisQuestion || (!s.error().isBlank() && !s.error().equals(errorAtSend)))
-      lifelinePending = false;
-    List<String> remaining = result == null ? Payloads.LIFELINES : texts(result.path("remaining"));
-    for (var entry : lifelineButtons.entrySet()) {
-      String kind = entry.getKey();
-      Button b = entry.getValue();
-      boolean used = !remaining.contains(kind), isActive = kind.equals(active);
-      boolean fits = kind.equals("DOUBLE_POINTS") || lifelineFits;
-      b.getStyleClass().removeAll("used", "active", "unavailable");
-      if (isActive) b.getStyleClass().add("active");
-      else if (used) b.getStyleClass().add("used");
-      else if (!fits) b.getStyleClass().add("unavailable");
-      if (!kind.equals(openKind)) continue;
-      String why =
-          isActive
-              ? kind.equals("DOUBLE_POINTS")
-                  ? s.phase().equals("OPEN") ? "Đang nhân đôi câu này" : "Đã nhân đôi câu này"
-                  : "Đã loại phương án ở câu này"
-              : used
-                  ? "Đã dùng trong trận này"
-                  : !fits
-                      ? "Chỉ dùng cho câu một đáp án có từ 3 phương án"
-                      : !active.isEmpty()
-                          ? "Câu này đã dùng một quyền trợ giúp"
-                          : s.accepted() || s.ownPending()
-                              ? "Bạn đã trả lời câu này"
-                              : !s.phase().equals("OPEN")
-                                  ? "Dùng được khi câu hỏi bắt đầu tính giờ"
-                                  : lifelinePending ? "Đang gửi…" : "Còn 1 lần trong trận";
-      boolean usable = s.canAnswer() && !used && fits && active.isEmpty() && !lifelinePending;
-      popStatus.setText(why);
-      popStatus.getStyleClass().removeAll("ok", "blocked");
-      popStatus.getStyleClass().add(usable || isActive ? "ok" : "blocked");
-      popUse.setDisable(!usable);
-      popUse.setText(usable ? "Sử dụng · Enter" : isActive ? "Đang dùng" : "Sử dụng");
-    }
-    doubled = active.equals("DOUBLE_POINTS");
-    selfDouble.setVisible(doubled);
-    String key = s.roundId() + ":" + selfId;
-    boolean fresh = !active.isEmpty() && announcedLifelines.add(key);
-    if (fresh) Sound.play(Sound.Effect.LIFELINE);
-    if (doubled && fresh && !reducedMotion()) pop(selfDouble);
-    if (thisQuestion && renderer instanceof BaseQuestionRenderer base) {
-      var removed = base.eliminate(texts(result.path("removedOptionIds")));
-      if (fresh && !reducedMotion()) removed.forEach(this::crumble);
-    }
-    var status = s.payload(MessageType.LIFELINE_STATUS);
-    var theirs = status == null ? null : status.path("byUser").get(Long.toString(opponentId));
-    boolean shown = theirs != null && theirs.path("questionId").asLong() == questionId;
-    opponentLifeline.setText(
-        shown ? "dùng " + LIFELINE_TEXT.get(theirs.path("kind").asText("DOUBLE_POINTS"))[1] : "");
-    boolean wasShown = opponentLifeline.isVisible();
-    opponentLifeline.setVisible(shown);
-    if (shown
-        && !wasShown
-        && announcedLifelines.add(s.roundId() + ":" + opponentId)
-        && !reducedMotion()) pop(opponentLifeline);
-  }
-
-  private void pop(Node node) {
-    var pop = new ScaleTransition(Duration.millis(380), node);
-    pop.setFromX(0.2);
-    pop.setFromY(0.2);
-    pop.setToX(1);
-    pop.setToY(1);
-    pop.setInterpolator(Effects.BACK_OUT);
-    Effects.run(pop, animations, Duration.millis(380));
-  }
-
-  /** A removed option shudders, shrinks a little and fades back. */
-  private void crumble(Node tile) {
-    var shake = new TranslateTransition(Duration.millis(60), tile);
-    shake.setFromX(0);
-    shake.setByX(7);
-    shake.setAutoReverse(true);
-    shake.setCycleCount(4);
-    var shrink = new ScaleTransition(Duration.millis(280), tile);
-    shrink.setFromX(1);
-    shrink.setFromY(1);
-    shrink.setToX(0.96);
-    shrink.setToY(0.96);
-    var fade = new FadeTransition(Duration.millis(280), tile);
-    fade.setFromValue(1);
-    fade.setToValue(0.45);
-    var all = new SequentialTransition(shake, new ParallelTransition(shrink, fade));
-    Effects.run(all, animations, Duration.millis(520));
+    lifelines.openLifeline(kind);
   }
 
   /** Flame badge from three correct answers in a row; its colour climbs at 5 and at 10. */
@@ -843,7 +490,6 @@ public final class GameView extends BorderPane {
     play(both);
   }
 
-  /** Reveal: the correct tile pops, a wrong pick shakes, points float in, the race bar moves. */
   /** Small tier: the locked tile squashes and springs back as its "ĐÃ KHÓA" stamp lands. */
   private void lockedIn() {
     if (reducedMotion() || renderer == null) return;
@@ -959,7 +605,7 @@ public final class GameView extends BorderPane {
     int points = left >= 10000 ? 3 : left >= 5000 ? 2 : 1;
     for (int i = 0; i < bonusChips.size(); i++) {
       var chip = bonusChips.get(i);
-      int value = (3 - i) * (doubled ? 2 : 1);
+      int value = (3 - i) * (lifelines.doubled() ? 2 : 1);
       chip.setText("×" + value);
       boolean on = open && left > 0 && 3 - i == points;
       if (on != chip.getStyleClass().contains("on"))

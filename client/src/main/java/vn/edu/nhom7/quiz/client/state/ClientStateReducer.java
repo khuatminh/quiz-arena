@@ -5,112 +5,93 @@ import java.util.*;
 import vn.edu.nhom7.quiz.common.protocol.*;
 
 public final class ClientStateReducer {
-  public ClientState apply(ClientState s, Envelope e, long now) {
-    var seq = new HashMap<>(s.lastSeqByMatch());
-    if (e.matchId() != null && e.eventSeq() != null) {
-      Long last = seq.get(e.matchId());
-      if (last != null && e.eventSeq() <= last) return s;
-      seq.put(e.matchId(), e.eventSeq());
+  private static final Set<MessageType> MATCH_LOCAL_EVENTS =
+      Set.of(
+          MessageType.READY_STATUS,
+          MessageType.RESULT_SESSION_CLOSED,
+          MessageType.REMATCH_STATUS,
+          MessageType.LIVE_REVIEW,
+          MessageType.MATCH_RESULT,
+          MessageType.QUESTION_RESULT,
+          MessageType.ROUND_LEADERBOARD,
+          MessageType.ANSWER_STATUS,
+          MessageType.LIFELINE_RESULT,
+          MessageType.LIFELINE_STATUS,
+          MessageType.CHAT_MESSAGE);
+
+  public ClientState apply(ClientState state, Envelope event, long receivedNanos) {
+    var sequences = new HashMap<>(state.lastSeqByMatch());
+    if (event.matchId() != null && event.eventSeq() != null) {
+      Long last = sequences.get(event.matchId());
+      if (last != null && event.eventSeq() <= last) return state;
+      sequences.put(event.matchId(), event.eventSeq());
     }
     var data = new EnumMap<MessageType, JsonNode>(MessageType.class);
-    data.putAll(s.data());
-    var saves = new HashMap<>(s.persistenceByMatch());
-    var chats = new LinkedHashMap<>(s.chatById());
-    var p = e.payload();
-    String phase = s.phase(), error = "";
-    JsonNode profile = s.profile(), question = s.question();
-    UUID match = s.activeMatchId(), resultMatch = s.resultMatchId(), round = s.roundId();
-    long revision = s.onlineRevision(), pv = s.presentationVersion();
-    boolean pending = s.ownPending(), accepted = s.accepted();
-    if (e.type() == MessageType.ONLINE_LIST) {
-      long r = p.path("revision").asLong();
-      if (r <= revision) return s;
-      revision = r;
+    data.putAll(state.data());
+    var persistence = new HashMap<>(state.persistenceByMatch());
+    var chatMessages = new LinkedHashMap<>(state.chatById());
+    var payload = event.payload();
+    String phase = state.phase(), error = "";
+    JsonNode profile = state.profile(), question = state.question();
+    UUID activeMatchId = state.activeMatchId(),
+        resultMatchId = state.resultMatchId(),
+        roundId = state.roundId();
+    long onlineRevision = state.onlineRevision(), presentationVersion = state.presentationVersion();
+    boolean pending = state.ownPending(), accepted = state.accepted();
+    if (event.type() == MessageType.ONLINE_LIST) {
+      long r = payload.path("revision").asLong();
+      if (r <= onlineRevision) return state;
+      onlineRevision = r;
     }
-    if (e.type() == MessageType.MATCH_SAVE_STATUS) {
-      saves.put(e.matchId(), p.path("status").asText());
-    } else if (e.matchId() != null
-        && match != null
-        && !e.matchId().equals(match)
-        && e.type() != MessageType.MATCH_START) return s;
-    switch (e.type()) {
+    if (event.type() == MessageType.MATCH_SAVE_STATUS) {
+      persistence.put(event.matchId(), payload.path("status").asText());
+    } else if (event.matchId() != null
+        && activeMatchId != null
+        && !event.matchId().equals(activeMatchId)
+        && event.type() != MessageType.MATCH_START) return state;
+    switch (event.type()) {
       case LOGIN_RESULT -> {
-        profile = p.path("profile");
+        profile = payload.path("profile");
         phase = "LOBBY";
-        match = null;
-        round = null;
+        activeMatchId = null;
+        roundId = null;
         question = null;
         pending = false;
         accepted = false;
-        chats.clear();
+        chatMessages.clear();
       }
-      case PROFILE -> profile = p;
+      case PROFILE -> profile = payload;
       case LOGOUT_ACK -> {
         profile = null;
         phase = "AUTH";
-        match = null;
+        activeMatchId = null;
       }
       case MATCH_START -> {
-        match = e.matchId();
-        resultMatch = null;
-        round = null;
+        activeMatchId = event.matchId();
+        resultMatchId = null;
+        roundId = null;
         phase = "WAITING_READY";
         question = null;
         pending = false;
         accepted = false;
-        chats.clear();
-        data.keySet()
-            .removeIf(
-                t ->
-                    t == MessageType.READY_STATUS
-                        || t == MessageType.RESULT_SESSION_CLOSED
-                        || t == MessageType.REMATCH_STATUS
-                        || t == MessageType.LIVE_REVIEW
-                        || t == MessageType.MATCH_RESULT
-                        || t == MessageType.QUESTION_RESULT
-                        || t == MessageType.ROUND_LEADERBOARD
-                        || t == MessageType.ANSWER_STATUS
-                        || t == MessageType.LIFELINE_RESULT
-                        || t == MessageType.LIFELINE_STATUS
-                        || t == MessageType.CHAT_MESSAGE);
+        chatMessages.clear();
+        data.keySet().removeAll(MATCH_LOCAL_EVENTS);
       }
       case MATCH_COUNTDOWN -> phase = "MATCH_COUNTDOWN";
       case QUESTION -> {
         phase = "QUESTION_PREPARE";
-        round = e.roundId();
-        question = p.path("question");
+        roundId = event.roundId();
+        question = payload.path("question");
         pending = false;
         accepted = false;
         data.remove(MessageType.ANSWER_STATUS);
       }
       case ROUND_COUNTDOWN -> phase = "ROUND_COUNTDOWN";
       case QUESTION_OPEN -> phase = "OPEN";
-      case ANSWER_STATUS -> {
-        // Accumulate who has answered this round, so the opponent's status survives our own.
-        var answered = com.fasterxml.jackson.databind.node.JsonNodeFactory.instance.objectNode();
-        var ids = answered.putArray("answeredUserIds");
-        JsonNode previous = data.get(MessageType.ANSWER_STATUS);
-        if (previous != null) previous.path("answeredUserIds").forEach(ids::add);
-        if (p.path("answered").asBoolean()) ids.add(p.path("userId").asLong());
-        answered.setAll((com.fasterxml.jackson.databind.node.ObjectNode) p.deepCopy());
-        answered.set("answeredUserIds", ids);
-        p = answered;
-      }
-      case LIFELINE_STATUS -> {
-        // Keep each player's latest lifeline, so our own use doesn't hide the opponent's.
-        var status = com.fasterxml.jackson.databind.node.JsonNodeFactory.instance.objectNode();
-        var byUser = status.putObject("byUser");
-        JsonNode previous = data.get(MessageType.LIFELINE_STATUS);
-        if (previous != null)
-          previous
-              .path("byUser")
-              .fields()
-              .forEachRemaining(f -> byUser.set(f.getKey(), f.getValue()));
-        byUser.set(p.path("userId").asText(), p.deepCopy());
-        status.setAll((com.fasterxml.jackson.databind.node.ObjectNode) p.deepCopy());
-        status.set("byUser", byUser);
-        p = status;
-      }
+      case ANSWER_STATUS ->
+          payload = MatchEventData.answeredStatus(payload, data.get(MessageType.ANSWER_STATUS));
+      case LIFELINE_STATUS ->
+          payload = MatchEventData.lifelineStatus(payload, data.get(MessageType.LIFELINE_STATUS));
       case ANSWER_ACK -> {
         pending = false;
         accepted = true;
@@ -119,123 +100,88 @@ public final class ClientStateReducer {
         phase = "REVEAL";
         pending = false;
         accepted = true;
-        p = withStreaks(p, data.get(MessageType.QUESTION_RESULT));
+        payload = MatchEventData.withStreaks(payload, data.get(MessageType.QUESTION_RESULT));
       }
       case ROUND_LEADERBOARD -> phase = "LEADERBOARD";
       case MATCH_RESULT -> {
         phase = "RESULT";
-        resultMatch = e.matchId();
+        resultMatchId = event.matchId();
         pending = false;
-        saves.put(e.matchId(), p.path("persistenceStatus").asText());
+        persistence.put(event.matchId(), payload.path("persistenceStatus").asText());
       }
       case CHAT_MESSAGE -> {
-        UUID id = UUID.fromString(p.path("chatMessageId").asText());
-        chats.putIfAbsent(id, p);
+        UUID id = UUID.fromString(payload.path("chatMessageId").asText());
+        chatMessages.putIfAbsent(id, payload);
       }
       case MATCH_SNAPSHOT -> {
         phase =
-            switch (p.path("phase").asText()) {
+            switch (payload.path("phase").asText()) {
               case "ANSWERING" -> "OPEN";
               case "QUESTION_PREPARING" -> "QUESTION_PREPARE";
-              default -> p.path("phase").asText();
+              default -> payload.path("phase").asText();
             };
-        question = p.get("question");
+        question = payload.get("question");
         JsonNode previousResult = data.get(MessageType.QUESTION_RESULT);
         // Keep our own copy of the same result, since it carries the streak counts.
-        if (p.hasNonNull("latestResult")
+        if (payload.hasNonNull("latestResult")
             && (previousResult == null
                 || previousResult.path("questionId").asLong()
-                    != p.path("latestResult").path("questionId").asLong()))
-          data.put(MessageType.QUESTION_RESULT, p.get("latestResult"));
-        if (p.hasNonNull("standings")) {
+                    != payload.path("latestResult").path("questionId").asLong()))
+          data.put(MessageType.QUESTION_RESULT, payload.get("latestResult"));
+        if (payload.hasNonNull("standings")) {
           var leaderboard =
               com.fasterxml.jackson.databind.node.JsonNodeFactory.instance.objectNode();
-          leaderboard.set("standings", p.get("standings"));
-          leaderboard.put("roundIndex", p.path("roundIndex").asInt());
+          leaderboard.set("standings", payload.get("standings"));
+          leaderboard.put("roundIndex", payload.path("roundIndex").asInt());
           data.put(MessageType.ROUND_LEADERBOARD, leaderboard);
         }
-        accepted = p.hasNonNull("acceptedAnswer");
+        accepted = payload.hasNonNull("acceptedAnswer");
         pending = false;
-        round = e.roundId();
-        if (p.has("lifelines")) data.put(MessageType.LIFELINE_RESULT, lifelines(p));
+        roundId = event.roundId();
+        if (payload.has("lifelines"))
+          data.put(MessageType.LIFELINE_RESULT, MatchEventData.lifelines(payload));
       }
       case RESULT_SESSION_CLOSED -> {
-        match = null;
+        activeMatchId = null;
         phase = "RESULT_DETACHED";
         pending = false;
       }
       case EXIT_ACK -> {
         phase = "LOBBY";
-        match = null;
-        round = null;
+        activeMatchId = null;
+        roundId = null;
       }
       case ERROR -> {
-        error = p.path("code").asText() + ": " + p.path("message").asText();
-        if (p.path("code").asText().equals("INVALID_ANSWER") && phase.equals("OPEN"))
+        error = payload.path("code").asText() + ": " + payload.path("message").asText();
+        if (payload.path("code").asText().equals("INVALID_ANSWER") && phase.equals("OPEN"))
           pending = false;
       }
       default -> {}
     }
-    if (!phase.equals(s.phase())
-        || e.type() == MessageType.MATCH_START
-        || e.type() == MessageType.MATCH_SNAPSHOT) pv++;
-    if (e.matchId() != null
-        && e.type() != MessageType.MATCH_SNAPSHOT
-        && e.type() != MessageType.MATCH_SAVE_STATUS) data.remove(MessageType.MATCH_SNAPSHOT);
-    data.put(e.type(), p);
+    if (!phase.equals(state.phase())
+        || event.type() == MessageType.MATCH_START
+        || event.type() == MessageType.MATCH_SNAPSHOT) presentationVersion++;
+    if (event.matchId() != null
+        && event.type() != MessageType.MATCH_SNAPSHOT
+        && event.type() != MessageType.MATCH_SAVE_STATUS) data.remove(MessageType.MATCH_SNAPSHOT);
+    data.put(event.type(), payload);
     return new ClientState(
-        s.connectionEpoch(),
+        state.connectionEpoch(),
         profile,
-        revision,
-        match,
-        resultMatch,
-        round,
-        seq,
+        onlineRevision,
+        activeMatchId,
+        resultMatchId,
+        roundId,
+        sequences,
         phase,
-        pv,
+        presentationVersion,
         question,
         pending,
         accepted,
         data,
-        saves,
-        chats,
+        persistence,
+        chatMessages,
         error,
-        now);
-  }
-
-  /**
-   * Rebuilds the stored lifeline result from a snapshot: the kind used on the current question (or
-   * none) and the kinds left for the rest of the match.
-   */
-  static JsonNode lifelines(JsonNode snapshot) {
-    var state = snapshot.path("lifelines");
-    var node = com.fasterxml.jackson.databind.node.JsonNodeFactory.instance.objectNode();
-    node.put("questionId", snapshot.path("question").path("questionId").asLong(-1));
-    node.put("kind", state.path("active").path(0).asText(""));
-    node.set("removedOptionIds", state.path("removedOptionIds").deepCopy());
-    node.set("remaining", state.path("remaining").deepCopy());
-    return node;
-  }
-
-  /**
-   * Adds {@code streaks}: each player's run of correct answers, counted from the previous result of
-   * this match (results are cleared at MATCH_START). A repeated result keeps the old counts.
-   */
-  static JsonNode withStreaks(JsonNode result, JsonNode previous) {
-    if (!result.isObject()) return result;
-    var copy = (com.fasterxml.jackson.databind.node.ObjectNode) result.deepCopy();
-    var streaks = copy.putObject("streaks");
-    JsonNode before = previous == null ? null : previous.path("streaks");
-    if (previous != null
-        && previous.path("questionId").asLong() == result.path("questionId").asLong()) {
-      before.fields().forEachRemaining(f -> streaks.put(f.getKey(), f.getValue().asInt()));
-      return copy;
-    }
-    for (var outcome : result.path("outcomes")) {
-      String id = outcome.path("userId").asText();
-      int run = before == null ? 0 : before.path(id).asInt(0);
-      streaks.put(id, outcome.path("correct").asBoolean(false) ? run + 1 : 0);
-    }
-    return copy;
+        receivedNanos);
   }
 }

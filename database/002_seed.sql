@@ -1,4 +1,6 @@
 -- Idempotent fixed IDs. Public bank contains 60 Vietnamese sample questions.
+-- Explicit UTF-8 for CLI imports, including Docker's initialization entrypoint.
+SET NAMES utf8mb4;
 INSERT IGNORE INTO CATEGORIES VALUES(1,'Khoa học',1,TRUE);
 INSERT IGNORE INTO QUIZZES VALUES(1,1,'Khoa học cơ bản','20 câu hỏi luyện tập đối kháng',NULL,TRUE,UTC_TIMESTAMP(3),UTC_TIMESTAMP(3));
 INSERT IGNORE INTO QUESTIONS VALUES(101,1,'SINGLE_CHOICE','Câu 1: 1 cộng 1 bằng bao nhiêu?','[{"id": "A", "text": "2"}, {"id": "B", "text": "1"}]','{"value": "A"}','Lời giải: áp dụng kiến thức cơ bản và đọc kỹ yêu cầu.',NULL,NULL,TRUE,UTC_TIMESTAMP(3),UTC_TIMESTAMP(3));

@@ -2,6 +2,7 @@ package vn.edu.nhom7.quiz.server.match;
 
 import com.fasterxml.jackson.databind.*;
 import java.util.*;
+import vn.edu.nhom7.quiz.common.net.FrameCodec;
 import vn.edu.nhom7.quiz.common.protocol.*;
 import vn.edu.nhom7.quiz.server.domain.*;
 
@@ -21,7 +22,7 @@ public final class MatchWireBudget {
       List<JsonNode> outcomes = new ArrayList<>();
       for (var p : players)
         outcomes.add(
-            MatchManager.obj(
+            MatchPayloads.obj(
                 "userId",
                 p.userId(),
                 "answer",
@@ -39,15 +40,15 @@ public final class MatchWireBudget {
                 "totalScore",
                 153));
       reviews.add(
-          MatchManager.obj(
+          MatchPayloads.obj(
               "roundId",
               uuid,
               "roundIndex",
               index + 1,
               "question",
-              MatchManager.publicQuestion(q),
+              MatchPayloads.publicQuestion(q),
               "correctAnswer",
-              MatchManager.correctAnswer(q),
+              MatchPayloads.correctAnswer(q),
               "explanation",
               q.explanation(),
               "explanationAssetId",
@@ -62,7 +63,7 @@ public final class MatchWireBudget {
             .map(
                 p ->
                     (JsonNode)
-                        MatchManager.obj(
+                        MatchPayloads.obj(
                             "userId",
                             p.userId(),
                             "displayName",
@@ -80,7 +81,7 @@ public final class MatchWireBudget {
     // headers deliberately
     // overestimate either message, including maximum-length timestamps and identifiers.
     JsonNode payload =
-        MatchManager.obj(
+        MatchPayloads.obj(
             "finishReason",
             "COMPLETED",
             "reasonCode",
@@ -103,7 +104,7 @@ public final class MatchWireBudget {
             "resultExpiresAtMs",
             Long.MAX_VALUE,
             "summary",
-            MatchManager.obj(
+            MatchPayloads.obj(
                 "matchId",
                 uuid,
                 "quizId",
@@ -130,25 +131,25 @@ public final class MatchWireBudget {
                 Long.MAX_VALUE));
     var envelope =
         new Envelope(1, MessageType.MATCH_RESULT, uuid, uuid, uuid, Long.MAX_VALUE, payload);
-    if (bytes(MatchManager.JSON.valueToTree(envelope)) > 65_536)
+    if (bytes(MatchPayloads.JSON.valueToTree(envelope)) > FrameCodec.MAX_FRAME_BYTES)
       throw new ProtocolException(
           "QUIZ_UNAVAILABLE", "Quiz review exceeds the protocol frame budget");
   }
 
   private static JsonNode largestAnswer(QuestionSnapshot q) {
     return switch (q.questionType()) {
-      case TRUE_FALSE -> MatchManager.JSON.valueToTree(false);
+      case TRUE_FALSE -> MatchPayloads.JSON.valueToTree(false);
       case MULTIPLE_CHOICE ->
-          MatchManager.JSON.valueToTree(q.options().stream().map(Payloads.Option::id).toList());
+          MatchPayloads.JSON.valueToTree(q.options().stream().map(Payloads.Option::id).toList());
       case SINGLE_CHOICE ->
           q.options().stream()
-              .<JsonNode>map(o -> MatchManager.JSON.valueToTree(o.id()))
+              .<JsonNode>map(o -> MatchPayloads.JSON.valueToTree(o.id()))
               .max(Comparator.comparingInt(MatchWireBudget::bytes))
               .orElseThrow();
       case SHORT_ANSWER -> {
-        var emoji = MatchManager.JSON.valueToTree("😀".repeat(120));
-        var controls = MatchManager.JSON.valueToTree("\u0000".repeat(120));
-        var surrogates = MatchManager.JSON.valueToTree("\ud800".repeat(120));
+        var emoji = MatchPayloads.JSON.valueToTree("😀".repeat(120));
+        var controls = MatchPayloads.JSON.valueToTree("\u0000".repeat(120));
+        var surrogates = MatchPayloads.JSON.valueToTree("\ud800".repeat(120));
         yield List.of(emoji, controls, surrogates).stream()
             .max(Comparator.comparingInt(MatchWireBudget::bytes))
             .orElseThrow();
@@ -158,7 +159,7 @@ public final class MatchWireBudget {
 
   private static int bytes(JsonNode node) {
     try {
-      return MatchManager.JSON.writeValueAsBytes(node).length;
+      return MatchPayloads.JSON.writeValueAsBytes(node).length;
     } catch (Exception e) {
       throw new IllegalStateException("Unable to size public review", e);
     }

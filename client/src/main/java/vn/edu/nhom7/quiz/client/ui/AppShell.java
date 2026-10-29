@@ -18,9 +18,10 @@ public final class AppShell extends BorderPane implements AutoCloseable {
   private final NetworkClient network;
   private final UiCommandSink commands;
   private final AuthView auth;
-  private final Label message = Ui.label("");
+  private final ToastOverlay toast = new ToastOverlay(this::reducedMotion);
+  private final Label message = toast.message();
   private final Timeline clock;
-  private final Set<UUID> readyRounds = new HashSet<>();
+  private final QuestionPreparation preparation;
   private String visible = "", query = "";
   private boolean showChat;
   private long presentation = -1, onlineRevision = -1;
@@ -39,7 +40,6 @@ public final class AppShell extends BorderPane implements AutoCloseable {
   private StackPane offline;
   private String lastHost;
   private int lastPort;
-  private final PauseTransition toastTimer = new PauseTransition(Duration.seconds(5));
   private boolean settingsInMatch;
   private UUID celebratedMatch;
 
@@ -65,35 +65,10 @@ public final class AppShell extends BorderPane implements AutoCloseable {
           }
         };
     vn.edu.nhom7.quiz.client.assets.RemoteMedia.configure(commands);
+    preparation = new QuestionPreparation(store, commands, message::setText);
     auth = new AuthView(commands, this::connect);
     setCenter(auth);
-    // Messages are toasts: they float above the bottom edge and clear themselves.
-    message.getStyleClass().add("toast");
-    message.setWrapText(false);
-    message.setMaxWidth(Region.USE_PREF_SIZE);
-    message.visibleProperty().bind(message.textProperty().isNotEmpty());
-    message.managedProperty().bind(message.visibleProperty());
-    var toastHost = new StackPane(message);
-    toastHost.setPickOnBounds(false);
-    toastHost.setMouseTransparent(true);
-    StackPane.setAlignment(message, javafx.geometry.Pos.BOTTOM_CENTER);
-    StackPane.setMargin(message, new javafx.geometry.Insets(0, 24, 64, 24));
-    toastTimer.setOnFinished(e -> message.setText(""));
-    message
-        .textProperty()
-        .addListener(
-            (o, before, text) -> {
-              if (text.isEmpty()) return;
-              // Evidence renders keep the toast up until the snapshot.
-              if (Effects.preview) return;
-              toastTimer.playFromStart();
-              if (reducedMotion()) return;
-              var in = new FadeTransition(Duration.millis(160), message);
-              in.setFromValue(0);
-              in.setToValue(1);
-              in.play();
-            });
-    fx.getChildren().add(toastHost);
+    fx.getChildren().add(toast);
     widthProperty().addListener((o, b, a) -> updateChatPlacement());
     clock =
         new Timeline(
@@ -207,15 +182,15 @@ public final class AppShell extends BorderPane implements AutoCloseable {
     return reducedMotionFlag || Theme.reduceMotion();
   }
 
-  private static boolean inMatch(ClientState s) {
-    return s.activeMatchId() != null && !s.phase().equals("RESULT");
+  private static boolean inMatch(ClientState state) {
+    return state.activeMatchId() != null && !state.phase().equals("RESULT");
   }
 
   /** Shows the Esc menu over the current screen; during a match it can also forfeit. */
   public void openSettings() {
     if (settings != null) return;
-    var s = store.state();
-    settingsInMatch = inMatch(s);
+    var state = store.state();
+    settingsInMatch = inMatch(state);
     settings =
         new SettingsOverlay(
             () -> game == null ? -1 : game.secondsLeft(),
@@ -410,9 +385,11 @@ public final class AppShell extends BorderPane implements AutoCloseable {
       String status = e.payload().path("status").asText();
       message.setText(
           switch (status) {
+            case "ACCEPTED" -> "Lời mời đã được chấp nhận.";
             case "EXPIRED" -> "Lời mời đã hết hạn. Bạn có thể gửi lời mời mới.";
             case "REJECTED" -> "Đối thủ đã từ chối lời mời.";
             case "CANCELLED" -> "Lời mời đã được hủy.";
+            case "INVALIDATED" -> "Không thể bắt đầu trận. Vui lòng gửi lời mời mới.";
             default -> "Lời mời đã đóng.";
           });
     }
@@ -426,7 +403,7 @@ public final class AppShell extends BorderPane implements AutoCloseable {
       vn.edu.nhom7.quiz.client.assets.RemoteMedia.clear();
       community = null;
       lobby = null;
-      readyRounds.clear();
+      preparation.clear();
       selectedQuizCategory = null;
       query = "";
       visible = "";
@@ -443,270 +420,189 @@ public final class AppShell extends BorderPane implements AutoCloseable {
         new Payloads.QuizListRequest(selectedQuizCategory, 1, 20));
   }
 
-  private void header(ClientState s) {
-    if (s.profile() == null) {
+  private void header(ClientState state) {
+    if (state.profile() == null) {
       setTop(null);
       return;
     }
-    Button myQuizzes =
-        Ui.button(
-            "Quiz của tôi",
-            () -> {
-              if (s.activeMatchId() != null) return;
-              query = "COMMUNITY";
-              if (community == null)
-                community =
-                    new CommunityQuizView(
-                        commands,
-                        s.payload(MessageType.QUIZ_LIST) == null
-                            ? null
-                            : s.payload(MessageType.QUIZ_LIST).path("categories"));
-              visible = "";
-              setLeft(null);
-              render(s);
-            });
-    JsonNode quizList = s.payload(MessageType.QUIZ_LIST);
-    myQuizzes.setDisable(
-        s.activeMatchId() != null
-            || quizList == null
-            || !quizList.path("categories").isArray()
-            || quizList.path("categories").isEmpty());
-    var bar =
-        new HBox(
-            16,
-            Ui.title("QUIZ ARENA"),
-            Ui.label(
-                s.profile().path("displayName").asText()
-                    + " · "
-                    + s.profile().path("totalScore").asLong()
-                    + " điểm"),
-            Ui.button(
-                "Sảnh",
-                () -> {
-                  if (s.activeMatchId() == null) {
-                    query = "";
-                    visible = "";
-                    refreshQuizzes();
-                    store.leaveResult();
-                  } else if (s.phase().equals("RESULT") || Ui.confirmLeaveMatch(this))
-                    commands.send(
-                        MessageType.EXIT_MATCH, s.activeMatchId(), null, new Payloads.ExitMatch());
-                }),
-            myQuizzes,
-            Ui.button(
-                "Xếp hạng",
-                () -> {
-                  if (s.activeMatchId() != null) return;
-                  query = "RANKING";
-                  visible = "";
-                  commands.send(
-                      MessageType.RANKING_REQUEST, null, null, new Payloads.RankingRequest(1, 20));
-                  render(s);
-                }),
-            Ui.button(
-                "Lịch sử",
-                () -> {
-                  if (s.activeMatchId() != null) return;
-                  query = "HISTORY";
-                  visible = "";
-                  commands.send(
-                      MessageType.HISTORY_REQUEST, null, null, new Payloads.HistoryRequest(1, 20));
-                  render(s);
-                }),
-            Ui.button(
-                "Chat",
+    setTop(
+        new NavigationBar(
+            state,
+            query,
+            settingsButton(),
+            new NavigationBar.Actions(
+                () -> showLobby(state),
+                () -> showCommunity(state),
+                () -> showQuery(state, "RANKING"),
+                () -> showQuery(state, "HISTORY"),
                 () -> {
                   showChat = !showChat;
                   updateChatPlacement();
-                }),
-            Ui.button(
-                "Đăng xuất",
-                () -> commands.send(MessageType.LOGOUT, null, null, new Payloads.Logout())));
-    bar.getChildren().add(2, Ui.spacer());
-    // Sound levels, mute, theme and text size all live in the Esc menu behind this button.
-    bar.getChildren().add(3, settingsButton());
-    bar.getStyleClass().add("app-header");
-    ((Label) bar.getChildren().get(0)).getStyleClass().add("brand");
-    ((Label) bar.getChildren().get(0)).setWrapText(false);
-    ((Label) bar.getChildren().get(0)).setMinWidth(Region.USE_PREF_SIZE);
-    ((Label) bar.getChildren().get(1)).setMaxWidth(160);
-    ((Label) bar.getChildren().get(1)).setWrapText(false);
-    HBox.setHgrow(bar.getChildren().get(1), Priority.ALWAYS);
-    for (var node : bar.getChildren()) {
-      if (node instanceof Button b) {
-        b.getStyleClass().add("nav");
-        boolean active =
-            (b.getText().equals("Sảnh") && query.isEmpty())
-                || (b.getText().equals("Quiz của tôi") && query.equals("COMMUNITY"))
-                || (b.getText().equals("Xếp hạng") && query.equals("RANKING"))
-                || (b.getText().equals("Lịch sử") && query.equals("HISTORY"));
-        if (active) b.getStyleClass().add("active");
-        if (b.getText().equals("Đăng xuất")) b.getStyleClass().add("danger");
-        if (s.activeMatchId() != null && b.getText().equals("Sảnh")) {
-          b.getStyleClass().remove("active");
-          // On the result screen leaving is harmless, so it stays a plain "back to lobby".
-          if (!s.phase().equals("RESULT")) {
-            b.setText("Rời trận");
-            b.getStyleClass().add("danger");
-          }
-        }
-        // Chat only exists during a match and on its result screen.
-        if (b.getText().equals("Chat")
-            && s.activeMatchId() == null
-            && !s.phase().equals("RESULT_DETACHED")) {
-          b.setVisible(false);
-          b.setManaged(false);
-        }
-        if (s.activeMatchId() != null
-            && java.util.Set.of("Quiz của tôi", "Xếp hạng", "Lịch sử").contains(b.getText()))
-          b.setDisable(true);
-      }
-    }
-    setTop(bar);
+                },
+                () -> commands.send(MessageType.LOGOUT, null, null, new Payloads.Logout()))));
   }
 
-  public void render(ClientState s) {
-    if (!s.error().isBlank()) message.setText(s.error());
+  private void showLobby(ClientState state) {
+    if (state.activeMatchId() == null) {
+      query = "";
+      visible = "";
+      refreshQuizzes();
+      store.leaveResult();
+    } else if (state.phase().equals("RESULT") || Ui.confirmLeaveMatch(this)) {
+      commands.send(MessageType.EXIT_MATCH, state.activeMatchId(), null, new Payloads.ExitMatch());
+    }
+  }
+
+  private void showCommunity(ClientState state) {
+    if (state.activeMatchId() != null) return;
+    query = "COMMUNITY";
+    if (community == null) {
+      JsonNode quizzes = state.payload(MessageType.QUIZ_LIST);
+      community =
+          new CommunityQuizView(commands, quizzes == null ? null : quizzes.path("categories"));
+    }
+    visible = "";
+    setLeft(null);
+    render(state);
+  }
+
+  private void showQuery(ClientState state, String destination) {
+    if (state.activeMatchId() != null) return;
+    query = destination;
+    visible = "";
+    if (destination.equals("RANKING")) {
+      commands.send(MessageType.RANKING_REQUEST, null, null, new Payloads.RankingRequest(1, 20));
+    } else {
+      commands.send(MessageType.HISTORY_REQUEST, null, null, new Payloads.HistoryRequest(1, 20));
+    }
+    render(state);
+  }
+
+  public void render(ClientState state) {
+    if (!state.error().isBlank()) message.setText(state.error());
     // A match that ends (or starts) under the menu changes what the menu may offer.
-    if (settings != null && settingsInMatch != inMatch(s)) {
+    if (settings != null && settingsInMatch != inMatch(state)) {
       closeSettings();
       openSettings();
     }
-    header(s);
-    if (s.profile() == null) {
+    header(state);
+    if (state.profile() == null) {
       setCenter(auth);
       setRight(null);
       return;
     }
-    String view =
-        s.activeMatchId() == null
-            ? (query.isEmpty() ? (s.phase().equals("RESULT_DETACHED") ? "RESULT" : "LOBBY") : query)
-            : s.phase();
-    boolean rebuild = !view.equals(visible) || presentation != s.presentationVersion();
+    String view = currentView(state);
+    if (shouldRebuild(state, view)) rebuildView(state, view);
+    if (getCenter() instanceof ScrollPane scroll
+        && scroll.getContent() instanceof WaitingView waiting) waiting.render(state);
+    if (game != null) game.render(state);
+    if (result != null) result.render(state);
+    if (chat != null) chat.render(state);
+  }
+
+  private String currentView(ClientState state) {
+    return state.activeMatchId() == null
+        ? (query.isEmpty() ? (state.phase().equals("RESULT_DETACHED") ? "RESULT" : "LOBBY") : query)
+        : state.phase();
+  }
+
+  private boolean shouldRebuild(ClientState state, String view) {
+    boolean rebuild = !view.equals(visible) || presentation != state.presentationVersion();
     if (view.equals("LOBBY"))
       rebuild |=
-          s.onlineRevision() != onlineRevision
-              || !Objects.equals(lastQuiz, s.payload(MessageType.QUIZ_LIST));
+          state.onlineRevision() != onlineRevision
+              || !Objects.equals(lastQuiz, state.payload(MessageType.QUIZ_LIST));
     if (view.equals("RANKING"))
-      rebuild |= !Objects.equals(lastRanking, s.payload(MessageType.RANKING));
+      rebuild |= !Objects.equals(lastRanking, state.payload(MessageType.RANKING));
     if (view.equals("HISTORY"))
       rebuild |=
-          !Objects.equals(lastHistory, s.payload(MessageType.HISTORY))
-              || !Objects.equals(lastDetail, s.payload(MessageType.MATCH_DETAIL));
+          !Objects.equals(lastHistory, state.payload(MessageType.HISTORY))
+              || !Objects.equals(lastDetail, state.payload(MessageType.MATCH_DETAIL));
     if (view.equals("RESULT"))
       rebuild |=
-          !Objects.equals(lastReview, s.payload(MessageType.LIVE_REVIEW))
-              || !Objects.equals(lastRematch, s.payload(MessageType.REMATCH_STATUS))
-              || s.data().containsKey(MessageType.RESULT_SESSION_CLOSED);
-    if (rebuild) {
-      visible = view;
-      presentation = s.presentationVersion();
-      onlineRevision = s.onlineRevision();
-      lastQuiz = s.payload(MessageType.QUIZ_LIST);
-      lastRanking = s.payload(MessageType.RANKING);
-      lastHistory = s.payload(MessageType.HISTORY);
-      lastDetail = s.payload(MessageType.MATCH_DETAIL);
-      lastRematch = s.payload(MessageType.REMATCH_STATUS);
-      lastReview = s.payload(MessageType.LIVE_REVIEW);
-      if (game != null) game.dispose();
-      game = null;
-      result = null;
-      switch (view) {
-        case "LOBBY" -> {
-          chat = null;
-          setRight(null);
-          var selection = lobby == null ? null : lobby.selection();
-          lobby =
-              new LobbyView(
-                  s,
-                  commands,
-                  q -> {
-                    lobby.selectQuiz(q);
-                    var detail = new QuizDetailView(q, commands);
-                    var close = Ui.button("Đóng", () -> setLeft(null));
-                    detail.getChildren().add(close);
-                    setLeft(detail);
-                  },
-                  selectedQuizCategory);
-          lobby.restore(selection);
-          if (selection != null
-              && lobby.selection().quiz() == 0
-              && getLeft() instanceof QuizDetailView) setLeft(null);
-          setCenter(lobby);
-        }
-        case "COMMUNITY" -> {
-          setRight(null);
-          setCenter(community);
-        }
-        case "RANKING" -> {
-          setRight(null);
-          setCenter(Ui.scroll(new RankingView(lastRanking, commands)));
-        }
-        case "HISTORY" -> {
-          setRight(null);
-          setCenter(Ui.scroll(new HistoryView(lastHistory, lastDetail, commands)));
-        }
-        case "WAITING_READY" -> setCenter(Ui.scroll(new WaitingView(s, commands)));
-        case "RESULT" -> {
-          var shown = new ResultView(s, commands);
-          result = shown;
-          setCenter(Ui.scroll(shown));
-          // Confetti and the win/lose sound play once per match, not on every rebuild.
-          if (s.resultMatchId() != null && !s.resultMatchId().equals(celebratedMatch)) {
-            celebratedMatch = s.resultMatchId();
-            Platform.runLater(() -> shown.celebrate(fx, reducedMotion()));
-          }
-        }
-        default -> {
-          game = new GameView(s, commands, reducedMotion());
-          setCenter(game);
+          !Objects.equals(lastReview, state.payload(MessageType.LIVE_REVIEW))
+              || !Objects.equals(lastRematch, state.payload(MessageType.REMATCH_STATUS))
+              || state.data().containsKey(MessageType.RESULT_SESSION_CLOSED);
+    return rebuild;
+  }
+
+  private void rebuildView(ClientState state, String view) {
+    visible = view;
+    presentation = state.presentationVersion();
+    onlineRevision = state.onlineRevision();
+    lastQuiz = state.payload(MessageType.QUIZ_LIST);
+    lastRanking = state.payload(MessageType.RANKING);
+    lastHistory = state.payload(MessageType.HISTORY);
+    lastDetail = state.payload(MessageType.MATCH_DETAIL);
+    lastRematch = state.payload(MessageType.REMATCH_STATUS);
+    lastReview = state.payload(MessageType.LIVE_REVIEW);
+    if (game != null) game.dispose();
+    game = null;
+    result = null;
+    switch (view) {
+      case "LOBBY" -> {
+        chat = null;
+        setRight(null);
+        var selection = lobby == null ? null : lobby.selection();
+        lobby =
+            new LobbyView(
+                state,
+                commands,
+                question -> {
+                  lobby.selectQuiz(question);
+                  var detail = new QuizDetailView(question, commands);
+                  var close = Ui.button("Đóng", () -> setLeft(null));
+                  detail.getChildren().add(close);
+                  setLeft(detail);
+                },
+                selectedQuizCategory);
+        lobby.restore(selection);
+        if (selection != null
+            && lobby.selection().quiz() == 0
+            && getLeft() instanceof QuizDetailView) setLeft(null);
+        setCenter(lobby);
+      }
+      case "COMMUNITY" -> {
+        setRight(null);
+        setCenter(community);
+      }
+      case "RANKING" -> {
+        setRight(null);
+        setCenter(Ui.scroll(new RankingView(lastRanking, commands)));
+      }
+      case "HISTORY" -> {
+        setRight(null);
+        setCenter(Ui.scroll(new HistoryView(lastHistory, lastDetail, commands)));
+      }
+      case "WAITING_READY" -> setCenter(Ui.scroll(new WaitingView(state, commands)));
+      case "RESULT" -> {
+        var shown = new ResultView(state, commands);
+        result = shown;
+        setCenter(Ui.scroll(shown));
+        // Confetti and the win/lose sound play once per match, not on every rebuild.
+        if (state.resultMatchId() != null && !state.resultMatchId().equals(celebratedMatch)) {
+          celebratedMatch = state.resultMatchId();
+          Platform.runLater(() -> shown.celebrate(fx, reducedMotion()));
         }
       }
-      if (s.activeMatchId() != null || view.equals("RESULT")) {
-        if (chat == null)
-          chat =
-              new ChatPanel(
-                  text ->
-                      commands.send(
-                          MessageType.CHAT,
-                          store.state().activeMatchId(),
-                          null,
-                          new Payloads.Chat(text)));
-        updateChatPlacement();
-      }
-      if (view.equals("QUESTION_PREPARE")
-          && s.roundId() != null
-          && readyRounds.add(s.roundId())
-          && s.question() != null) {
-        var prepared =
-            s.question().hasNonNull("questionAssetId")
-                ? new vn.edu.nhom7.quiz.client.assets.AssetLoader()
-                    .load(s.question().path("questionAssetId").asText())
-                : java.util.concurrent.CompletableFuture.completedFuture(null);
-        prepared.whenComplete(
-            (image, error) ->
-                Platform.runLater(
-                    () -> {
-                      if (!Objects.equals(store.state().roundId(), s.roundId())
-                          || !Objects.equals(store.state().activeMatchId(), s.activeMatchId()))
-                        return;
-                      if (error != null) {
-                        message.setText(
-                            "Không thể tải/giải mã ảnh câu hỏi. Đang chờ server hủy trận an toàn.");
-                      } else
-                        commands.send(
-                            MessageType.QUESTION_READY,
-                            s.activeMatchId(),
-                            s.roundId(),
-                            new Payloads.QuestionReady(s.question().path("questionId").asLong()));
-                    }));
+      default -> {
+        game = new GameView(state, commands, reducedMotion());
+        setCenter(game);
       }
     }
-    if (getCenter() instanceof ScrollPane scroll
-        && scroll.getContent() instanceof WaitingView waiting) waiting.render(s);
-    if (game != null) game.render(s);
-    if (result != null) result.render(s);
-    if (chat != null) chat.render(s);
+    if (state.activeMatchId() != null || view.equals("RESULT")) {
+      if (chat == null)
+        chat =
+            new ChatPanel(
+                text ->
+                    commands.send(
+                        MessageType.CHAT,
+                        store.state().activeMatchId(),
+                        null,
+                        new Payloads.Chat(text)));
+      updateChatPlacement();
+    }
+    preparation.prepare(state);
   }
 
   private void updateChatPlacement() {
@@ -717,6 +613,7 @@ public final class AppShell extends BorderPane implements AutoCloseable {
 
   public void close() {
     clock.stop();
+    toast.close();
     if (game != null) game.dispose();
   }
 }

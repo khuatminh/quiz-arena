@@ -17,31 +17,38 @@ public final class ResultView extends VBox {
   private Node heroIcon;
   private Label heroTitle;
 
-  public ResultView(ClientState s, UiCommandSink sink) {
+  public ResultView(ClientState state, UiCommandSink sink) {
     setSpacing(14);
     setPadding(new Insets(28));
     getStyleClass().add("result-view");
-    JsonNode r = s.payload(MessageType.MATCH_RESULT);
+    JsonNode r = state.payload(MessageType.MATCH_RESULT);
     if (r == null) {
       getChildren().add(Ui.title("Kết quả trận đấu"));
       return;
     }
+    appendHero(state, r);
+    appendRematchActions(state, r, sink);
+    appendReview(state, r, sink);
+    render(state);
+  }
+
+  private void appendHero(ClientState state, JsonNode r) {
     String title =
         r.path("finishReason").asText().equals("ABORTED")
             ? "Trận đấu bị hủy"
             : r.path("winnerUserId").isNull()
                 ? "Hòa!"
-                : r.path("winnerUserId").asLong() == s.selfUserId()
+                : r.path("winnerUserId").asLong() == state.selfUserId()
                     ? "Bạn chiến thắng!"
                     : PresentationText.playerName(
-                            r.path("players"), r.path("winnerUserId").asLong(), s.selfUserId())
+                            r.path("players"), r.path("winnerUserId").asLong(), state.selfUserId())
                         + " chiến thắng · Cố lên lần sau!";
     outcome =
         r.path("finishReason").asText().equals("ABORTED")
             ? "aborted"
             : r.path("winnerUserId").isNull()
                 ? "draw"
-                : r.path("winnerUserId").asLong() == s.selfUserId() ? "win" : "lose";
+                : r.path("winnerUserId").asLong() == state.selfUserId() ? "win" : "lose";
     heroTitle = Ui.title(title);
     heroTitle.getStyleClass().add("result-title");
     heroIcon =
@@ -91,7 +98,7 @@ public final class ResultView extends VBox {
               avatar,
               Ui.label(
                   player.path("displayName").asText()
-                      + (player.path("userId").asLong() == s.selfUserId() ? " · Bạn" : "")),
+                      + (player.path("userId").asLong() == state.selfUserId() ? " · Bạn" : "")),
               score,
               Ui.label(player.path("correctCount").asInt() + " câu đúng"));
       tile.setAlignment(Pos.CENTER);
@@ -101,13 +108,16 @@ public final class ResultView extends VBox {
     }
     hero.getChildren().addAll(players, save);
     getChildren().add(hero);
+  }
+
+  private void appendRematchActions(ClientState state, JsonNode r, UiCommandSink sink) {
     var rematch =
         Ui.button(
             "Đấu lại",
             () ->
                 sink.send(
                     MessageType.REMATCH_REQUEST,
-                    s.activeMatchId(),
+                    state.activeMatchId(),
                     null,
                     new Payloads.RematchRequest()));
     var accept =
@@ -116,7 +126,7 @@ public final class ResultView extends VBox {
             () ->
                 sink.send(
                     MessageType.REMATCH_RESPONSE,
-                    s.activeMatchId(),
+                    state.activeMatchId(),
                     null,
                     new Payloads.RematchResponse(true)));
     var reject =
@@ -125,16 +135,16 @@ public final class ResultView extends VBox {
             () ->
                 sink.send(
                     MessageType.REMATCH_RESPONSE,
-                    s.activeMatchId(),
+                    state.activeMatchId(),
                     null,
                     new Payloads.RematchResponse(false)));
-    boolean detached = !s.resultAttached();
+    boolean detached = !state.resultAttached();
     // Only the invited player may answer a rematch; the requester just waits.
-    JsonNode rematchStatus = s.payload(MessageType.REMATCH_STATUS);
+    JsonNode rematchStatus = state.payload(MessageType.REMATCH_STATUS);
     String rematchState = rematchStatus == null ? "" : rematchStatus.path("status").asText();
     boolean pending = rematchState.equals("PENDING");
     boolean ownRequest =
-        pending && rematchStatus.path("requesterUserId").asLong() == s.selfUserId();
+        pending && rematchStatus.path("requesterUserId").asLong() == state.selfUserId();
     boolean incoming = pending && !ownRequest && !detached;
     var rematchNote = Ui.label("");
     rematchNote.getStyleClass().add("rematch-status");
@@ -147,7 +157,7 @@ public final class ResultView extends VBox {
                     ? PresentationText.playerName(
                             r.path("players"),
                             rematchStatus.path("requesterUserId").asLong(),
-                            s.selfUserId())
+                            state.selfUserId())
                         + " muốn đấu lại!"
                     : switch (rematchState) {
                       case "REJECTED" -> "Lời mời đấu lại đã bị từ chối.";
@@ -170,10 +180,15 @@ public final class ResultView extends VBox {
             "Về sảnh",
             () ->
                 sink.send(
-                    MessageType.EXIT_MATCH, s.activeMatchId(), null, new Payloads.ExitMatch()));
+                    MessageType.EXIT_MATCH, state.activeMatchId(), null, new Payloads.ExitMatch()));
     var actions = new FlowPane(12, 12, rematch, accept, reject, home);
     actions.setAlignment(Pos.CENTER);
     actions.getStyleClass().add("result-actions");
+    getChildren().addAll(rematchNote, actions);
+  }
+
+  private void appendReview(ClientState state, JsonNode r, UiCommandSink sink) {
+    boolean detached = !state.resultAttached();
     var reviewTitle = Ui.title("Xem lại câu hỏi");
     var reviewMeta =
         Ui.muted(
@@ -197,14 +212,14 @@ public final class ResultView extends VBox {
     var reviewHeader = new HBox(12, reviewHeading, toggleAll);
     reviewHeader.setAlignment(Pos.BOTTOM_LEFT);
     reviewHeader.getStyleClass().add("review-section-header");
-    getChildren().addAll(rematchNote, actions, reviewHeader);
-    JsonNode pageData = s.payload(MessageType.LIVE_REVIEW);
+    getChildren().add(reviewHeader);
+    JsonNode pageData = state.payload(MessageType.LIVE_REVIEW);
     int page = pageData == null ? r.path("reviewPage").asInt(1) : pageData.path("page").asInt(1);
     long total =
         pageData == null
             ? r.path("reviewTotalItems").asLong(r.path("review").size())
             : pageData.path("totalItems").asLong();
-    final java.util.UUID reviewMatch = s.resultMatchId();
+    final java.util.UUID reviewMatch = state.resultMatchId();
     Button previous =
         Ui.secondary(
             "← Trước",
@@ -226,7 +241,7 @@ public final class ResultView extends VBox {
     previous.setDisable(page <= 1 || detached);
     next.setDisable(page * Payloads.REVIEW_PAGE_SIZE >= total || detached);
     for (var review : (pageData == null ? r.path("review") : pageData.path("review"))) {
-      var card = new ReviewCard(review, r.path("players"), s.selfUserId());
+      var card = new ReviewCard(review, r.path("players"), state.selfUserId());
       cards.add(card);
       getChildren().add(card);
     }
@@ -240,7 +255,6 @@ public final class ResultView extends VBox {
     pager.setAlignment(Pos.CENTER_LEFT);
     pager.getStyleClass().add("pager");
     getChildren().add(pager);
-    render(s);
   }
 
   /**
@@ -331,9 +345,9 @@ public final class ResultView extends VBox {
     animations.forEach(javafx.animation.Animation::stop);
   }
 
-  public void render(ClientState s) {
+  public void render(ClientState state) {
     save.setText(
-        switch (s.persistenceByMatch().getOrDefault(s.resultMatchId(), "PENDING")) {
+        switch (state.persistenceByMatch().getOrDefault(state.resultMatchId(), "PENDING")) {
           case "SAVED" -> "✓ Kết quả đã được lưu";
           case "FAILED" -> "Lưu chưa thành công · server có thể thử lại";
           default -> "Đang lưu kết quả…";

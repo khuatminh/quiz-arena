@@ -1,0 +1,577 @@
+{
+  "date": "2026-10-29",
+  "timezone": "Asia/Ho_Chi_Minh",
+  "base_revision": "06d2a422fa7f8007b15dd96a1bdfc23ecb729bdf",
+  "branch": "codex/refactor-project",
+  "source_state": "uncommitted changes; see source-manifest.sha256",
+  "command": "./scripts/verify.sh -Pmysql-it -Dquiz.uiEvidence=<absolute-output-directory>",
+  "test_database": "isolated MySQL 8.4.7 at 127.0.0.1:13307/quiz_refactor_test",
+  "totals": {
+    "tests": 331,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "suites": [
+    {
+      "module": "common",
+      "kind": "surefire",
+      "suite": "vn.edu.nhom7.quiz.common.BuildSmokeTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "common",
+      "kind": "surefire",
+      "suite": "vn.edu.nhom7.quiz.common.assets.AssetRegistryTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "common",
+      "kind": "surefire",
+      "suite": "vn.edu.nhom7.quiz.common.net.FrameDecoderTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "common",
+      "kind": "surefire",
+      "suite": "vn.edu.nhom7.quiz.common.protocol.CommunityProtocolTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "common",
+      "kind": "surefire",
+      "suite": "vn.edu.nhom7.quiz.common.protocol.ProtocolCatalogueTest",
+      "tests": 144,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "common",
+      "kind": "surefire",
+      "suite": "vn.edu.nhom7.quiz.common.protocol.ProtocolContractTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "server",
+      "kind": "surefire",
+      "suite": "vn.edu.nhom7.quiz.server.auth.AccountValidatorTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "server",
+      "kind": "surefire",
+      "suite": "vn.edu.nhom7.quiz.server.auth.PasswordHasherTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "server",
+      "kind": "surefire",
+      "suite": "vn.edu.nhom7.quiz.server.challenge.ChallengeManagerTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "server",
+      "kind": "surefire",
+      "suite": "vn.edu.nhom7.quiz.server.db.ServerConfigTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "server",
+      "kind": "surefire",
+      "suite": "vn.edu.nhom7.quiz.server.match.AnswerEvaluatorTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "server",
+      "kind": "surefire",
+      "suite": "vn.edu.nhom7.quiz.server.match.MatchEngineTest",
+      "tests": 19,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "server",
+      "kind": "surefire",
+      "suite": "vn.edu.nhom7.quiz.server.match.MatchTerminationTest",
+      "tests": 22,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "server",
+      "kind": "surefire",
+      "suite": "vn.edu.nhom7.quiz.server.match.MatchWireBudgetTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "server",
+      "kind": "surefire",
+      "suite": "vn.edu.nhom7.quiz.server.match.RematchCoordinatorTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "server",
+      "kind": "surefire",
+      "suite": "vn.edu.nhom7.quiz.server.match.ScoreCalculatorTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "server",
+      "kind": "surefire",
+      "suite": "vn.edu.nhom7.quiz.server.media.MediaServiceTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "server",
+      "kind": "surefire",
+      "suite": "vn.edu.nhom7.quiz.server.network.HeartbeatTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "server",
+      "kind": "surefire",
+      "suite": "vn.edu.nhom7.quiz.server.network.RequestCacheTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "server",
+      "kind": "surefire",
+      "suite": "vn.edu.nhom7.quiz.server.network.SocketServerTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "server",
+      "kind": "surefire",
+      "suite": "vn.edu.nhom7.quiz.server.persistence.PersistenceServiceTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "server",
+      "kind": "surefire",
+      "suite": "vn.edu.nhom7.quiz.server.quiz.QuestionValidatorTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "server",
+      "kind": "surefire",
+      "suite": "vn.edu.nhom7.quiz.server.session.OnlinePresenceTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "server",
+      "kind": "surefire",
+      "suite": "vn.edu.nhom7.quiz.server.session.SessionRegistryTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "server",
+      "kind": "surefire",
+      "suite": "vn.edu.nhom7.quiz.server.support.TestSupportTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "server",
+      "kind": "failsafe",
+      "suite": "vn.edu.nhom7.quiz.server.auth.UserRepositoryIT",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "server",
+      "kind": "failsafe",
+      "suite": "vn.edu.nhom7.quiz.server.db.SchemaIT",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "server",
+      "kind": "failsafe",
+      "suite": "vn.edu.nhom7.quiz.server.db.StartupChecksIT",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "server",
+      "kind": "failsafe",
+      "suite": "vn.edu.nhom7.quiz.server.persistence.MatchPersistenceIT",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "server",
+      "kind": "failsafe",
+      "suite": "vn.edu.nhom7.quiz.server.query.RankingHistoryIT",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "server",
+      "kind": "failsafe",
+      "suite": "vn.edu.nhom7.quiz.server.quiz.CommunityQuizServiceIT",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "server",
+      "kind": "failsafe",
+      "suite": "vn.edu.nhom7.quiz.server.quiz.QuizRepositoryIT",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "server",
+      "kind": "failsafe",
+      "suite": "vn.edu.nhom7.quiz.server.system.CommunityWorkflowIT",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "server",
+      "kind": "failsafe",
+      "suite": "vn.edu.nhom7.quiz.server.system.ConcurrentMatchesIT",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "server",
+      "kind": "failsafe",
+      "suite": "vn.edu.nhom7.quiz.server.system.DatabaseOutageIT",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "server",
+      "kind": "failsafe",
+      "suite": "vn.edu.nhom7.quiz.server.system.LobbyFlowIT",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "server",
+      "kind": "failsafe",
+      "suite": "vn.edu.nhom7.quiz.server.system.ProtocolRoutingIT",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "server",
+      "kind": "failsafe",
+      "suite": "vn.edu.nhom7.quiz.server.system.TenRoundMatchIT",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "client",
+      "kind": "surefire",
+      "suite": "vn.edu.nhom7.quiz.client.assets.AssetRegistryTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "client",
+      "kind": "surefire",
+      "suite": "vn.edu.nhom7.quiz.client.assets.RemoteMediaTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "client",
+      "kind": "surefire",
+      "suite": "vn.edu.nhom7.quiz.client.network.NetworkClientTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "client",
+      "kind": "surefire",
+      "suite": "vn.edu.nhom7.quiz.client.network.RequestTimeoutMonitorTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "client",
+      "kind": "surefire",
+      "suite": "vn.edu.nhom7.quiz.client.network.RequestTrackerTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "client",
+      "kind": "surefire",
+      "suite": "vn.edu.nhom7.quiz.client.network.ServerTimeEstimatorTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "client",
+      "kind": "surefire",
+      "suite": "vn.edu.nhom7.quiz.client.state.AnswerPendingTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "client",
+      "kind": "surefire",
+      "suite": "vn.edu.nhom7.quiz.client.state.ChatResultStateTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "client",
+      "kind": "surefire",
+      "suite": "vn.edu.nhom7.quiz.client.state.ClientStateReducerTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "client",
+      "kind": "surefire",
+      "suite": "vn.edu.nhom7.quiz.client.state.GamePhaseStateTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "client",
+      "kind": "surefire",
+      "suite": "vn.edu.nhom7.quiz.client.state.LifelineStateTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "client",
+      "kind": "surefire",
+      "suite": "vn.edu.nhom7.quiz.client.state.ResultSessionTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "client",
+      "kind": "surefire",
+      "suite": "vn.edu.nhom7.quiz.client.state.ResyncStateTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "client",
+      "kind": "surefire",
+      "suite": "vn.edu.nhom7.quiz.client.state.StreakStateTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "client",
+      "kind": "surefire",
+      "suite": "vn.edu.nhom7.quiz.client.ui.AnswerIntentFactoryTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "client",
+      "kind": "surefire",
+      "suite": "vn.edu.nhom7.quiz.client.ui.EditorInteractionTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "client",
+      "kind": "surefire",
+      "suite": "vn.edu.nhom7.quiz.client.ui.InterfaceEvidenceTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "client",
+      "kind": "surefire",
+      "suite": "vn.edu.nhom7.quiz.client.ui.LeaderboardPresentationTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "client",
+      "kind": "surefire",
+      "suite": "vn.edu.nhom7.quiz.client.ui.LobbyIntentTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "client",
+      "kind": "surefire",
+      "suite": "vn.edu.nhom7.quiz.client.ui.NativeViewsTest",
+      "tests": 15,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "client",
+      "kind": "surefire",
+      "suite": "vn.edu.nhom7.quiz.client.ui.PresentationTextTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "client",
+      "kind": "surefire",
+      "suite": "vn.edu.nhom7.quiz.client.ui.StickersTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "client",
+      "kind": "surefire",
+      "suite": "vn.edu.nhom7.quiz.client.ui.ThemeTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "visual": {
+    "before_count": 324,
+    "after_count": 324,
+    "missing": [],
+    "identical": 284
+  },
+  "fixture_smoke": {
+    "exit_code": 0,
+    "seconds": 8,
+    "screenshots": 10
+  }
+}

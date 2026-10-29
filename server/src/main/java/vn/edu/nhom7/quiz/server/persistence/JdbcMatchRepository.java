@@ -21,35 +21,35 @@ public final class JdbcMatchRepository {
     void at(String point) throws SQLException;
   }
 
-  public JdbcMatchRepository(ConnectionFactory c) {
-    this(c, point -> {});
+  public JdbcMatchRepository(ConnectionFactory connection) {
+    this(connection, point -> {});
   }
 
-  public JdbcMatchRepository(ConnectionFactory c, FaultInjector f) {
-    connections = c;
+  public JdbcMatchRepository(ConnectionFactory connection, FaultInjector f) {
+    connections = connection;
     faults = f;
   }
 
   public SaveResult save(MatchSummary summary) {
-    validate(summary);
-    try (var c = connections.open()) {
-      c.setAutoCommit(false);
+    MatchSummaryValidator.validate(summary);
+    try (var connection = connections.open()) {
+      connection.setAutoCommit(false);
       try {
-        var existing = load(c, summary.matchId());
+        var existing = load(connection, summary.matchId());
         if (existing != null) {
-          if (!projection(existing).equals(projection(summary)))
+          if (!MatchSummaryProjection.of(existing).equals(MatchSummaryProjection.of(summary)))
             throw new ServiceException("INTERNAL_ERROR", "Conflicting immutable match summary");
-          c.rollback();
+          connection.rollback();
           return SaveResult.ALREADY_SAVED;
         }
-        insert(c, summary);
+        insert(connection, summary);
         faults.at("before_commit");
-        c.commit();
+        connection.commit();
         faults.at("after_commit");
         return SaveResult.SAVED;
       } catch (SQLException | RuntimeException e) {
         try {
-          c.rollback();
+          connection.rollback();
         } catch (SQLException ignored) {
         }
         if (e instanceof SQLException sql && sql.getErrorCode() == 1062)
@@ -61,10 +61,11 @@ public final class JdbcMatchRepository {
     }
   }
 
-  private SaveResult existingResult(MatchSummary s) {
-    try (var c = connections.open()) {
-      var stored = load(c, s.matchId());
-      if (stored != null && projection(stored).equals(projection(s)))
+  private SaveResult existingResult(MatchSummary summary) {
+    try (var connection = connections.open()) {
+      var stored = load(connection, summary.matchId());
+      if (stored != null
+          && MatchSummaryProjection.of(stored).equals(MatchSummaryProjection.of(summary)))
         return SaveResult.ALREADY_SAVED;
       throw new ServiceException("INTERNAL_ERROR", "Conflicting match ID");
     } catch (SQLException e) {
@@ -72,174 +73,130 @@ public final class JdbcMatchRepository {
     }
   }
 
-  private String projection(MatchSummary s) {
-    try {
-      var sorted =
-          s.rounds().stream()
-              .sorted(Comparator.comparingInt(RoundSummary::roundIndex))
-              .map(
-                  r ->
-                      new RoundSummary(
-                          r.roundId(),
-                          r.roundIndex(),
-                          r.question(),
-                          r.revealed(),
-                          r.outcomes().stream()
-                              .sorted(Comparator.comparingLong(StoredAnswerOutcome::userId))
-                              .toList()))
-              .toList();
-      var copy =
-          new MatchSummary(
-              s.matchId(),
-              s.quizId(),
-              s.quizTitle(),
-              s.player1(),
-              s.player2(),
-              s.startedAt(),
-              s.endedAt(),
-              s.finishReason(),
-              s.reasonCode(),
-              s.outcome(),
-              s.completedRounds(),
-              s.openedRounds(),
-              sorted,
-              s.ranked(),
-              s.quizVersionId(),
-              s.totalRounds());
-      var tree = json.valueToTree(copy);
-      normalize(tree);
-      return tree.toString();
-    } catch (Exception e) {
-      throw new IllegalArgumentException("Invalid summary", e);
+  private void insert(Connection connection, MatchSummary summary) throws SQLException {
+    insertMatch(connection, summary);
+    for (var round : summary.rounds()) {
+      insertRound(connection, summary, round);
+      faults.at("after_round");
+      insertAnswers(connection, round);
+      faults.at("after_answers");
     }
+    updateRankedProfiles(connection, summary);
   }
 
-  private void normalize(JsonNode node) {
-    if (node.isObject()) {
-      var o = (com.fasterxml.jackson.databind.node.ObjectNode) node;
-      for (var name : List.of("startedAt", "endedAt", "receivedAt")) {
-        if (o.hasNonNull(name)) {
-          var v = o.get(name);
-          if (v.isTextual()) o.put(name, Instant.parse(v.asText()).toEpochMilli());
-        }
-      }
-      if (o.has("elapsedNanos") && !o.get("elapsedNanos").isNull())
-        o.put("elapsedNanos", o.get("elapsedNanos").asLong() / 1_000_000);
-      o.remove("avatarId");
-      for (var name : List.of("answerJson", "answerKeyJson")) {
-        if (o.hasNonNull(name))
-          try {
-            o.set(name, json.readTree(o.get(name).asText()));
-          } catch (Exception e) {
-            throw new IllegalArgumentException("Invalid JSON");
-          }
-      }
-    }
-    for (var child : node) normalize(child);
-  }
-
-  private void insert(Connection c, MatchSummary s) throws SQLException {
+  private void insertMatch(Connection connection, MatchSummary summary) throws SQLException {
     String sql =
         "INSERT INTO"
             + " MATCHES(id,quiz_id,quiz_title_snapshot,player1_id,player2_id,player1_name_snapshot,player2_name_snapshot,score1,score2,correct_count1,correct_count2,outcome,finish_reason,reason_code,started_at,ended_at,completed_rounds,opened_rounds,ranked,quiz_version_id,total_rounds)"
             + " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-    try (var p = c.prepareStatement(sql)) {
+    try (var statement = connection.prepareStatement(sql)) {
       int i = 1;
-      p.setString(i++, s.matchId().toString());
-      p.setLong(i++, s.quizId());
-      p.setString(i++, s.quizTitle());
-      p.setLong(i++, s.player1().userId());
-      p.setLong(i++, s.player2().userId());
-      p.setString(i++, s.player1().displayName());
-      p.setString(i++, s.player2().displayName());
-      p.setInt(i++, s.player1().totalScore());
-      p.setInt(i++, s.player2().totalScore());
-      p.setInt(i++, s.player1().correctCount());
-      p.setInt(i++, s.player2().correctCount());
-      p.setString(i++, s.outcome().name());
-      p.setString(i++, s.finishReason().name());
-      p.setString(i++, s.reasonCode().name());
-      p.setTimestamp(
-          i++, Timestamp.from(s.startedAt().truncatedTo(java.time.temporal.ChronoUnit.MILLIS)));
-      p.setTimestamp(
-          i++, Timestamp.from(s.endedAt().truncatedTo(java.time.temporal.ChronoUnit.MILLIS)));
-      p.setInt(i++, s.completedRounds());
-      p.setInt(i++, s.openedRounds());
-      p.setBoolean(i++, s.ranked());
-      if (s.quizVersionId() == 0) p.setNull(i++, Types.BIGINT);
-      else p.setLong(i++, s.quizVersionId());
-      p.setInt(i++, s.totalRounds());
-      p.executeUpdate();
+      statement.setString(i++, summary.matchId().toString());
+      statement.setLong(i++, summary.quizId());
+      statement.setString(i++, summary.quizTitle());
+      statement.setLong(i++, summary.player1().userId());
+      statement.setLong(i++, summary.player2().userId());
+      statement.setString(i++, summary.player1().displayName());
+      statement.setString(i++, summary.player2().displayName());
+      statement.setInt(i++, summary.player1().totalScore());
+      statement.setInt(i++, summary.player2().totalScore());
+      statement.setInt(i++, summary.player1().correctCount());
+      statement.setInt(i++, summary.player2().correctCount());
+      statement.setString(i++, summary.outcome().name());
+      statement.setString(i++, summary.finishReason().name());
+      statement.setString(i++, summary.reasonCode().name());
+      statement.setTimestamp(
+          i++,
+          Timestamp.from(summary.startedAt().truncatedTo(java.time.temporal.ChronoUnit.MILLIS)));
+      statement.setTimestamp(
+          i++, Timestamp.from(summary.endedAt().truncatedTo(java.time.temporal.ChronoUnit.MILLIS)));
+      statement.setInt(i++, summary.completedRounds());
+      statement.setInt(i++, summary.openedRounds());
+      statement.setBoolean(i++, summary.ranked());
+      if (summary.quizVersionId() == 0) statement.setNull(i++, Types.BIGINT);
+      else statement.setLong(i++, summary.quizVersionId());
+      statement.setInt(i++, summary.totalRounds());
+      statement.executeUpdate();
     }
-    for (var round : s.rounds()) {
-      try (var p = c.prepareStatement("INSERT INTO MATCH_QUESTIONS VALUES(?,?,?,?,?,?)")) {
-        p.setString(1, round.roundId().toString());
-        p.setString(2, s.matchId().toString());
-        p.setInt(3, round.roundIndex());
-        p.setLong(4, round.question().questionId());
-        try {
-          p.setString(5, json.writeValueAsString(round.question()));
-        } catch (Exception e) {
-          throw new SQLException("Invalid snapshot", e);
-        }
-        p.setBoolean(6, round.revealed());
-        p.executeUpdate();
+  }
+
+  private void insertRound(Connection connection, MatchSummary summary, RoundSummary round)
+      throws SQLException {
+    try (var statement =
+        connection.prepareStatement("INSERT INTO MATCH_QUESTIONS VALUES(?,?,?,?,?,?)")) {
+      statement.setString(1, round.roundId().toString());
+      statement.setString(2, summary.matchId().toString());
+      statement.setInt(3, round.roundIndex());
+      statement.setLong(4, round.question().questionId());
+      try {
+        statement.setString(5, json.writeValueAsString(round.question()));
+      } catch (Exception e) {
+        throw new SQLException("Invalid snapshot", e);
       }
-      faults.at("after_round");
-      try (var p =
-          c.prepareStatement(
-              "INSERT INTO"
-                  + " MATCH_ANSWERS(round_id,user_id,answer_json,answer_time_ms,received_at,outcome,is_correct,earned_points,request_id)"
-                  + " VALUES(?,?,?,?,?,?,?,?,?)")) {
-        for (var a : round.outcomes()) {
-          p.setString(1, round.roundId().toString());
-          p.setLong(2, a.userId());
-          p.setString(3, a.answerJson());
-          if (a.elapsedNanos() == null) p.setNull(4, Types.BIGINT);
-          else p.setLong(4, a.elapsedNanos() / 1_000_000);
-          p.setTimestamp(
-              5,
-              a.receivedAt() == null
-                  ? null
-                  : Timestamp.from(
-                      a.receivedAt().truncatedTo(java.time.temporal.ChronoUnit.MILLIS)));
-          p.setString(6, a.outcome().name());
-          if (a.correct() == null) p.setNull(7, Types.BOOLEAN);
-          else p.setBoolean(7, a.correct());
-          p.setInt(8, a.earnedPoints());
-          p.setString(9, a.requestId() == null ? null : a.requestId().toString());
-          p.addBatch();
-        }
-        p.executeBatch();
-      }
-      faults.at("after_answers");
+      statement.setBoolean(6, round.revealed());
+      statement.executeUpdate();
     }
-    if (s.ranked() && s.finishReason() != FinishReason.ABORTED) {
-      var players = new ArrayList<>(List.of(s.player1(), s.player2()));
+  }
+
+  private void insertAnswers(Connection connection, RoundSummary round) throws SQLException {
+    try (var statement =
+        connection.prepareStatement(
+            "INSERT INTO"
+                + " MATCH_ANSWERS(round_id,user_id,answer_json,answer_time_ms,received_at,outcome,is_correct,earned_points,request_id)"
+                + " VALUES(?,?,?,?,?,?,?,?,?)")) {
+      for (var answer : round.outcomes()) {
+        statement.setString(1, round.roundId().toString());
+        statement.setLong(2, answer.userId());
+        statement.setString(3, answer.answerJson());
+        if (answer.elapsedNanos() == null) statement.setNull(4, Types.BIGINT);
+        else statement.setLong(4, answer.elapsedNanos() / 1_000_000);
+        statement.setTimestamp(
+            5,
+            answer.receivedAt() == null
+                ? null
+                : Timestamp.from(
+                    answer.receivedAt().truncatedTo(java.time.temporal.ChronoUnit.MILLIS)));
+        statement.setString(6, answer.outcome().name());
+        if (answer.correct() == null) statement.setNull(7, Types.BOOLEAN);
+        else statement.setBoolean(7, answer.correct());
+        statement.setInt(8, answer.earnedPoints());
+        statement.setString(9, answer.requestId() == null ? null : answer.requestId().toString());
+        statement.addBatch();
+      }
+      statement.executeBatch();
+    }
+  }
+
+  private void updateRankedProfiles(Connection connection, MatchSummary summary)
+      throws SQLException {
+    if (summary.ranked() && summary.finishReason() != FinishReason.ABORTED) {
+      var players = new ArrayList<>(List.of(summary.player1(), summary.player2()));
       players.sort(Comparator.comparingLong(ParticipantSummary::userId));
       for (var player : players) {
-        try (var p = c.prepareStatement("SELECT id FROM USERS WHERE id=? FOR UPDATE")) {
-          p.setLong(1, player.userId());
-          try (var r = p.executeQuery()) {
-            if (!r.next()) throw new SQLException("Unknown participant");
+        try (var statement =
+            connection.prepareStatement("SELECT id FROM USERS WHERE id=? FOR UPDATE")) {
+          statement.setLong(1, player.userId());
+          try (var round = statement.executeQuery()) {
+            if (!round.next()) throw new SQLException("Unknown participant");
           }
         }
         boolean won =
-            s.outcome() == MatchOutcome.PLAYER1_WIN && player.userId() == s.player1().userId()
-                || s.outcome() == MatchOutcome.PLAYER2_WIN
-                    && player.userId() == s.player2().userId();
-        boolean draw = s.outcome() == MatchOutcome.DRAW;
-        try (var p =
-            c.prepareStatement(
+            summary.outcome() == MatchOutcome.PLAYER1_WIN
+                    && player.userId() == summary.player1().userId()
+                || summary.outcome() == MatchOutcome.PLAYER2_WIN
+                    && player.userId() == summary.player2().userId();
+        boolean draw = summary.outcome() == MatchOutcome.DRAW;
+        try (var statement =
+            connection.prepareStatement(
                 "UPDATE USERS SET"
                     + " total_score=total_score+?,total_matches=total_matches+1,wins=wins+?,losses=losses+?,draws=draws+?"
                     + " WHERE id=?")) {
-          p.setInt(1, player.totalScore());
-          p.setInt(2, won ? 1 : 0);
-          p.setInt(3, !won && !draw ? 1 : 0);
-          p.setInt(4, draw ? 1 : 0);
-          p.setLong(5, player.userId());
-          p.executeUpdate();
+          statement.setInt(1, player.totalScore());
+          statement.setInt(2, won ? 1 : 0);
+          statement.setInt(3, !won && !draw ? 1 : 0);
+          statement.setInt(4, draw ? 1 : 0);
+          statement.setLong(5, player.userId());
+          statement.executeUpdate();
         }
         faults.at("after_user");
       }
@@ -247,89 +204,92 @@ public final class JdbcMatchRepository {
   }
 
   public MatchSummary load(UUID id) {
-    try (var c = connections.open()) {
-      return load(c, id);
+    try (var connection = connections.open()) {
+      return load(connection, id);
     } catch (SQLException e) {
       throw ServiceException.database();
     }
   }
 
-  private MatchSummary load(Connection c, UUID id) throws SQLException {
-    try (var p =
-        c.prepareStatement(
+  private MatchSummary load(Connection connection, UUID id) throws SQLException {
+    try (var statement =
+        connection.prepareStatement(
             "SELECT m.*,u1.avatar_id avatar1,u2.avatar_id avatar2 FROM MATCHES m JOIN USERS u1 ON"
                 + " u1.id=m.player1_id JOIN USERS u2 ON u2.id=m.player2_id WHERE m.id=?")) {
-      p.setString(1, id.toString());
-      try (var r = p.executeQuery()) {
-        if (!r.next()) return null;
+      statement.setString(1, id.toString());
+      try (var rows = statement.executeQuery()) {
+        if (!rows.next()) return null;
         var p1 =
             new ParticipantSummary(
-                r.getLong("player1_id"),
-                r.getString("player1_name_snapshot"),
-                r.getString("avatar1"),
-                r.getInt("score1"),
-                r.getInt("correct_count1"));
+                rows.getLong("player1_id"),
+                rows.getString("player1_name_snapshot"),
+                rows.getString("avatar1"),
+                rows.getInt("score1"),
+                rows.getInt("correct_count1"));
         var p2 =
             new ParticipantSummary(
-                r.getLong("player2_id"),
-                r.getString("player2_name_snapshot"),
-                r.getString("avatar2"),
-                r.getInt("score2"),
-                r.getInt("correct_count2"));
-        var rounds = rounds(c, id);
+                rows.getLong("player2_id"),
+                rows.getString("player2_name_snapshot"),
+                rows.getString("avatar2"),
+                rows.getInt("score2"),
+                rows.getInt("correct_count2"));
+        var rounds = rounds(connection, id);
         return new MatchSummary(
             id,
-            r.getLong("quiz_id"),
-            r.getString("quiz_title_snapshot"),
+            rows.getLong("quiz_id"),
+            rows.getString("quiz_title_snapshot"),
             p1,
             p2,
-            r.getTimestamp("started_at").toInstant(),
-            r.getTimestamp("ended_at").toInstant(),
-            FinishReason.valueOf(r.getString("finish_reason")),
-            ReasonCode.valueOf(r.getString("reason_code")),
-            MatchOutcome.valueOf(r.getString("outcome")),
-            r.getInt("completed_rounds"),
-            r.getInt("opened_rounds"),
+            rows.getTimestamp("started_at").toInstant(),
+            rows.getTimestamp("ended_at").toInstant(),
+            FinishReason.valueOf(rows.getString("finish_reason")),
+            ReasonCode.valueOf(rows.getString("reason_code")),
+            MatchOutcome.valueOf(rows.getString("outcome")),
+            rows.getInt("completed_rounds"),
+            rows.getInt("opened_rounds"),
             rounds,
-            r.getBoolean("ranked"),
-            r.getLong("quiz_version_id"),
-            r.getInt("total_rounds"));
+            rows.getBoolean("ranked"),
+            rows.getLong("quiz_version_id"),
+            rows.getInt("total_rounds"));
       }
     }
   }
 
-  private List<RoundSummary> rounds(Connection c, UUID id) throws SQLException {
+  private List<RoundSummary> rounds(Connection connection, UUID id) throws SQLException {
     var result = new ArrayList<RoundSummary>();
     var totals = new HashMap<Long, Integer>();
-    try (var p =
-        c.prepareStatement("SELECT * FROM MATCH_QUESTIONS WHERE match_id=? ORDER BY round_index")) {
-      p.setString(1, id.toString());
-      try (var r = p.executeQuery()) {
-        while (r.next()) {
-          UUID round = UUID.fromString(r.getString("round_id"));
+    try (var statement =
+        connection.prepareStatement(
+            "SELECT * FROM MATCH_QUESTIONS WHERE match_id=? ORDER BY round_index")) {
+      statement.setString(1, id.toString());
+      try (var rows = statement.executeQuery()) {
+        while (rows.next()) {
+          UUID roundId = UUID.fromString(rows.getString("round_id"));
           var answers = new ArrayList<StoredAnswerOutcome>();
-          try (var a =
-              c.prepareStatement("SELECT * FROM MATCH_ANSWERS WHERE round_id=? ORDER BY user_id")) {
-            a.setString(1, round.toString());
-            try (var ar = a.executeQuery()) {
-              while (ar.next()) {
-                long uid = ar.getLong("user_id");
-                int before = totals.getOrDefault(uid, 0), points = ar.getInt("earned_points");
+          try (var answer =
+              connection.prepareStatement(
+                  "SELECT * FROM MATCH_ANSWERS WHERE round_id=? ORDER BY user_id")) {
+            answer.setString(1, roundId.toString());
+            try (var answerRows = answer.executeQuery()) {
+              while (answerRows.next()) {
+                long uid = answerRows.getLong("user_id");
+                int before = totals.getOrDefault(uid, 0),
+                    points = answerRows.getInt("earned_points");
                 totals.put(uid, before + points);
                 Long elapsed =
-                    ar.getObject("answer_time_ms") == null
+                    answerRows.getObject("answer_time_ms") == null
                         ? null
-                        : ar.getLong("answer_time_ms") * 1_000_000;
-                Timestamp received = ar.getTimestamp("received_at");
-                String req = ar.getString("request_id");
+                        : answerRows.getLong("answer_time_ms") * 1_000_000;
+                Timestamp received = answerRows.getTimestamp("received_at");
+                String req = answerRows.getString("request_id");
                 answers.add(
                     new StoredAnswerOutcome(
                         uid,
-                        ar.getString("answer_json"),
+                        answerRows.getString("answer_json"),
                         elapsed,
                         received == null ? null : received.toInstant(),
-                        AnswerOutcomeType.valueOf(ar.getString("outcome")),
-                        (Boolean) ar.getObject("is_correct"),
+                        AnswerOutcomeType.valueOf(answerRows.getString("outcome")),
+                        (Boolean) answerRows.getObject("is_correct"),
                         points,
                         before,
                         before + points,
@@ -340,10 +300,11 @@ public final class JdbcMatchRepository {
           try {
             result.add(
                 new RoundSummary(
-                    round,
-                    r.getInt("round_index"),
-                    json.readValue(r.getString("question_snapshot_json"), QuestionSnapshot.class),
-                    r.getBoolean("revealed"),
+                    roundId,
+                    rows.getInt("round_index"),
+                    json.readValue(
+                        rows.getString("question_snapshot_json"), QuestionSnapshot.class),
+                    rows.getBoolean("revealed"),
                     answers));
           } catch (Exception e) {
             throw new SQLException("Invalid history snapshot", e);
@@ -352,47 +313,5 @@ public final class JdbcMatchRepository {
       }
     }
     return List.copyOf(result);
-  }
-
-  private void validate(MatchSummary s) {
-    if (s.player1().userId() == s.player2().userId()
-        || s.totalRounds() < 1
-        || s.totalRounds() > 50
-        || s.ranked() && s.totalRounds() != 10
-        || s.rounds().size() > s.totalRounds()
-        || s.openedRounds() != s.rounds().size()
-        || s.completedRounds() != s.rounds().stream().filter(RoundSummary::revealed).count()
-        || s.startedAt() == null
-        || s.endedAt() == null) throw new IllegalArgumentException("Invalid match summary");
-    if (s.finishReason() == FinishReason.COMPLETED
-        && (s.rounds().size() != s.totalRounds() || s.completedRounds() != s.totalRounds()))
-      throw new IllegalArgumentException("Completed match requires all rounds");
-    var totals = new HashMap<Long, Integer>();
-    var counts = new HashMap<Long, Integer>();
-    var indices = new HashSet<Integer>();
-    for (var r : s.rounds()) {
-      if (r.roundIndex() < 1
-          || r.roundIndex() > s.totalRounds()
-          || !indices.add(r.roundIndex())
-          || r.outcomes().size() != 2) throw new IllegalArgumentException("Invalid rounds");
-      var users = new HashSet<Long>();
-      for (var a : r.outcomes()) {
-        if (!users.add(a.userId())
-            || (a.userId() != s.player1().userId() && a.userId() != s.player2().userId()))
-          throw new IllegalArgumentException("Invalid participants");
-        int before = totals.getOrDefault(a.userId(), 0);
-        if (before != a.scoreBefore()
-            || a.totalScore() != before + a.earnedPoints()
-            || a.earnedPoints() < 0
-            || a.earnedPoints() > 6)
-          throw new IllegalArgumentException("Inconsistent score projection");
-        totals.put(a.userId(), a.totalScore());
-        if (Boolean.TRUE.equals(a.correct())) counts.merge(a.userId(), 1, Integer::sum);
-      }
-    }
-    for (var player : List.of(s.player1(), s.player2()))
-      if (player.totalScore() != totals.getOrDefault(player.userId(), 0)
-          || player.correctCount() != counts.getOrDefault(player.userId(), 0))
-        throw new IllegalArgumentException("Final score mismatch");
   }
 }

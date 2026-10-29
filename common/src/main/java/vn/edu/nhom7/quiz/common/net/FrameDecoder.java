@@ -5,7 +5,7 @@ import java.util.*;
 import vn.edu.nhom7.quiz.common.protocol.ProtocolException;
 
 public final class FrameDecoder {
-  private final byte[] prefix = new byte[4];
+  private final byte[] prefix = new byte[FrameCodec.PREFIX_BYTES];
   private int prefixRead, bodyRead;
   private byte[] body;
   private Long firstByteAt;
@@ -18,9 +18,9 @@ public final class FrameDecoder {
       if (firstByteAt == null) firstByteAt = nowNanos;
       if (body == null) {
         prefix[prefixRead++] = bytes[i];
-        if (prefixRead == 4) {
+        if (prefixRead == FrameCodec.PREFIX_BYTES) {
           int n = ByteBuffer.wrap(prefix).getInt();
-          if (n < 1 || n > 65536)
+          if (n < 1 || n > FrameCodec.MAX_FRAME_BYTES)
             throw new ProtocolException("FRAME_TOO_LARGE", "Frame length outside 1..65536");
           body = new byte[n];
         }

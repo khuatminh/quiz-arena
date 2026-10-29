@@ -43,6 +43,124 @@ class NativeViewsTest {
   }
 
   @Test
+  void authenticationValidatesFormsAndClearsPasswordsAfterSending() throws Exception {
+    fx(
+        () -> {
+          var sent = new ArrayList<Object>();
+          var form =
+              new AuthForm(
+                  (type, match, round, payload) -> {
+                    sent.add(payload);
+                    return UUID.randomUUID();
+                  },
+                  (host, port) -> {});
+          form.connected(true);
+          var username = input(form, "Nhập tên tài khoản");
+          var password = input(form, "Nhập mật khẩu");
+          var confirm = input(form, "Nhập lại mật khẩu");
+          var display = input(form, "Tên bạn muốn mọi người nhìn thấy");
+          var login =
+              form.lookupAll(".button").stream()
+                  .map(node -> (Button) node)
+                  .filter(
+                      button ->
+                          button.getText().equals("Đăng nhập")
+                              && !button.getStyleClass().contains("topic"))
+                  .findFirst()
+                  .orElseThrow();
+          login.fire();
+          assertTrue(sent.isEmpty());
+          assertFalse(((Label) form.lookup(".auth-feedback")).getText().isBlank());
+          username.setText("player1");
+          password.setText("Password123!");
+          login.fire();
+          assertEquals(new Payloads.Login("player1", "Password123!"), sent.getFirst());
+          assertTrue(password.getText().isEmpty());
+          assertTrue(login.isDisabled());
+          form.connected(true);
+          form.lookupAll(".button").stream()
+              .map(node -> (Button) node)
+              .filter(button -> button.getText().equals("Đăng ký"))
+              .findFirst()
+              .orElseThrow()
+              .fire();
+          var register =
+              form.lookupAll(".button").stream()
+                  .map(node -> (Button) node)
+                  .filter(button -> button.getText().equals("Tạo tài khoản"))
+                  .findFirst()
+                  .orElseThrow();
+          display.setText("Người chơi");
+          password.setText("Password123!");
+          confirm.setText("Different123!");
+          register.fire();
+          assertEquals(1, sent.size());
+          confirm.setText("Password123!");
+          register.fire();
+          assertEquals(
+              new Payloads.Register("player1", "Password123!", "Người chơi", "avatar-01"),
+              sent.getLast());
+          assertTrue(password.getText().isEmpty());
+          assertTrue(confirm.getText().isEmpty());
+          assertTrue(register.isDisabled());
+        });
+  }
+
+  private static TextInputControl input(javafx.scene.Parent view, String prompt) {
+    return view.lookupAll(".text-input").stream()
+        .map(node -> (TextInputControl) node)
+        .filter(control -> control.getPromptText().equals(prompt))
+        .findFirst()
+        .orElseThrow();
+  }
+
+  @Test
+  void acceptedInvitationClosesDialogWithoutReportingFailure() throws Exception {
+    fx(
+        () -> {
+          try (var store = new vn.edu.nhom7.quiz.client.state.ClientStore();
+              var network =
+                  new vn.edu.nhom7.quiz.client.network.NetworkClient(e -> {}, reason -> {});
+              var shell = new AppShell(store, network, (t, m, r, p) -> UUID.randomUUID())) {
+            var codec = new ProtocolCodec();
+            var matchView = new Label("Trận đấu");
+            shell.setCenter(matchView);
+            var invitation = codec.mapper().createObjectNode();
+            invitation.put("challengeId", UUID.randomUUID().toString());
+            invitation.put("expiresAtMs", System.currentTimeMillis() + 30_000);
+            invitation.putObject("quiz");
+            shell.onEvent(
+                new Envelope(
+                    1, MessageType.CHALLENGE_ACK, UUID.randomUUID(), null, null, null, invitation));
+            var invitationHost = shell.lookup(".invite-dock");
+            assertNotNull(invitationHost);
+            // The server starts the match before closing the accepted invitation.
+            shell.onEvent(
+                new Envelope(
+                    1,
+                    MessageType.MATCH_START,
+                    null,
+                    UUID.randomUUID(),
+                    null,
+                    1L,
+                    codec.mapper().createObjectNode()));
+            shell.onEvent(
+                codec.envelope(
+                    MessageType.CHALLENGE_CLOSED,
+                    UUID.randomUUID(),
+                    null,
+                    null,
+                    null,
+                    new Payloads.ChallengeClosed(
+                        UUID.randomUUID(), "ACCEPTED", "ACCEPTED", UUID.randomUUID())));
+            assertEquals("Lời mời đã được chấp nhận.", ((Label) shell.lookup(".toast")).getText());
+            assertTrue(invitationHost.getParent() == null || invitationHost.isMouseTransparent());
+            assertSame(matchView, shell.getCenter());
+          }
+        });
+  }
+
+  @Test
   void communityEditorSerializesAllFourAnswerTypesAndPreservesOnError() throws Exception {
     fx(
         () -> {

@@ -6,6 +6,16 @@ import javafx.scene.Node;
 import vn.edu.nhom7.quiz.common.protocol.Payloads;
 
 public interface QuestionRenderer {
+  /** Shared renderer selection for live play and author previews. */
+  static QuestionRenderer forType(String type) {
+    return switch (type) {
+      case "MULTIPLE_CHOICE" -> new MultipleChoiceRenderer();
+      case "TRUE_FALSE" -> new TrueFalseRenderer();
+      case "SHORT_ANSWER" -> new ShortAnswerRenderer();
+      default -> new SingleChoiceRenderer();
+    };
+  }
+
   Node view();
 
   void bind(Payloads.PublicQuestion question, Consumer<JsonNode> answer);

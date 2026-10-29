@@ -70,6 +70,15 @@ public final class LobbyView extends BorderPane {
     this.state = state;
     getStyleClass().add("lobby");
     setPadding(new Insets(20, 24, 12, 24));
+    buildSteps();
+    buildLibrary(sink, detail, categoryId);
+    buildOnlinePlayers(sink, categoryId);
+    buildKeyboardPrompts();
+    addEventFilter(KeyEvent.KEY_PRESSED, this::onKey);
+    refreshHint();
+  }
+
+  private void buildSteps() {
     var stepRow =
         new HBox(
             12,
@@ -82,6 +91,10 @@ public final class LobbyView extends BorderPane {
     stepRow.setAlignment(Pos.CENTER_LEFT);
     BorderPane.setMargin(stepRow, new Insets(0, 0, 18, 0));
     setTop(stepRow);
+  }
+
+  private void buildLibrary(
+      UiCommandSink sink, java.util.function.Consumer<JsonNode> detail, Long categoryId) {
     var library = new VBox(16, Ui.title("Khám phá bộ câu hỏi"));
     var topics = new HBox(10);
     topics
@@ -190,7 +203,12 @@ public final class LobbyView extends BorderPane {
     libraryScroll.setMinHeight(0);
     setCenter(libraryScroll);
     javafx.application.Platform.runLater(() -> libraryScroll.setVvalue(0));
+  }
 
+  private void buildOnlinePlayers(UiCommandSink sink, Long categoryId) {
+    JsonNode list = state.payload(MessageType.QUIZ_LIST);
+    int page = list == null ? 1 : Math.max(1, list.path("page").asInt(1));
+    int pageSize = list == null ? 20 : Math.max(1, list.path("pageSize").asInt(20));
     JsonNode users = state.payload(MessageType.ONLINE_LIST);
     int free = 0;
     if (users != null)
@@ -260,7 +278,9 @@ public final class LobbyView extends BorderPane {
     sidebar.setMinHeight(0);
     BorderPane.setMargin(sidebar, new Insets(0, 0, 0, 20));
     setRight(sidebar);
+  }
 
+  private void buildKeyboardPrompts() {
     var prompts =
         new HBox(
             20,
@@ -277,8 +297,6 @@ public final class LobbyView extends BorderPane {
     prompts.setClip(clip);
     BorderPane.setMargin(prompts, new Insets(12, 0, 0, 0));
     setBottom(prompts);
-    addEventFilter(KeyEvent.KEY_PRESSED, this::onKey);
-    refreshHint();
   }
 
   private VBox card(JsonNode q, java.util.function.Consumer<JsonNode> detail) {

@@ -132,36 +132,7 @@ public final class ServerRuntime implements AutoCloseable {
               challenges.onDisconnected(s);
               matches.onLogout(s);
             },
-            (caller, e) -> {
-              var p = e.payload();
-              int page = p.path("page").asInt(1), size = p.path("pageSize").asInt(20);
-              return switch (e.type()) {
-                case AUTHOR_REQUEST ->
-                    authoring.execute(
-                        caller.userId(), codec.payload(e, CommunityPayloads.AuthorRequest.class));
-                case MEDIA_UPLOAD_START ->
-                    media.start(caller.userId(), codec.payload(e, MediaPayloads.UploadStart.class));
-                case MEDIA_UPLOAD_CHUNK ->
-                    media.chunk(caller.userId(), codec.payload(e, MediaPayloads.UploadChunk.class));
-                case MEDIA_REQUEST ->
-                    media.read(caller.userId(), codec.payload(e, MediaPayloads.MediaRequest.class));
-                case QUIZ_LIST_REQUEST ->
-                    quizzes.list(
-                        p.hasNonNull("categoryId") ? p.get("categoryId").asLong() : null,
-                        page,
-                        size);
-                case QUIZ_DETAIL_REQUEST -> quizzes.detail(p.path("quizId").asLong());
-                case PROFILE_REQUEST -> auth.profile(caller.userId());
-                case RANKING_REQUEST -> ranking.ranking(caller.userId(), page, size);
-                case HISTORY_REQUEST -> history.history(caller.userId(), page, size);
-                case MATCH_DETAIL_REQUEST ->
-                    history.detail(
-                        caller.userId(), UUID.fromString(p.path("historyMatchId").asText()), page);
-                default ->
-                    throw new vn.edu.nhom7.quiz.common.protocol.ProtocolException(
-                        "INVALID_MESSAGE", "Unsupported query");
-              };
-            },
+            new QueryDispatcher(quizzes, auth, ranking, history, authoring, media),
             services,
             maintenance);
     router.configureMediaExecutor(mediaIo);

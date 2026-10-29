@@ -99,7 +99,7 @@ public final class RematchCoordinator {
             var quiz = repository.currentMatchQuiz(old.quiz);
             repository.withMatchQuestions(
                 quiz,
-                java.util.random.RandomGenerator.getDefault(),
+                new Random(), // Available in java.base, including compact JRE deployments.
                 (pinned, questions) -> {
                   if (!completed.compareAndSet(false, true)) return null;
                   timeout.cancel();
@@ -150,7 +150,7 @@ public final class RematchCoordinator {
                               "RESULT_SESSION_CLOSED",
                               null,
                               s.connectionId(),
-                              MatchManager.obj("reason", "REMATCH"));
+                              MatchPayloads.obj("reason", "REMATCH"));
                         old.attached.clear();
                         manager.after(() -> manager.matches.remove(old.id, old));
                       });
@@ -183,7 +183,7 @@ public final class RematchCoordinator {
         "REMATCH_STATUS",
         null,
         null,
-        MatchManager.obj(
+        MatchPayloads.obj(
             "status",
             status,
             "requesterUserId",

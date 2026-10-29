@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import java.time.*;
 import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
-import vn.edu.nhom7.quiz.common.protocol.Payloads;
+import vn.edu.nhom7.quiz.common.protocol.*;
 import vn.edu.nhom7.quiz.server.domain.*;
 import vn.edu.nhom7.quiz.server.session.SessionContext;
 
@@ -120,6 +120,15 @@ public final class Match {
   int playerIndex(long user) {
     for (int i = 0; i < 2; i++) if (sessions.get(i).userId() == user) return i;
     throw new IllegalArgumentException("NOT_MATCH_MEMBER");
+  }
+
+  /** Rejects delayed commands from a previous round before any mutation. Caller holds the lock. */
+  void requireCurrentRound(Envelope command) {
+    if (!Objects.equals(roundId, command.roundId())
+        || index < 0
+        || command.payload().path("questionId").asLong(-1) != question().questionId()) {
+      throw new ProtocolException("STALE_ROUND", "STALE_ROUND");
+    }
   }
 
   QuestionSnapshot question() {

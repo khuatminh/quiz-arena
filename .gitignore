@@ -8,3 +8,9 @@ config/*.local.properties
 
 data/media/
 data/backups/
+
+# Generated refactor screenshots; compact verification reports remain versioned.
+outputs/refactor-*/ui-before/
+outputs/refactor-*/ui-after/
+outputs/refactor-*/fixture-smoke/
+outputs/refactor-*/ui-differences-review.png

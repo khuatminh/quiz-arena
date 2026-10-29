@@ -50,6 +50,148 @@ class EditorInteractionTest {
   }
 
   @Test
+  void publishingSavesTheOpenQuestionAndMetadataInOrderAndStopsOnFailure() throws Exception {
+    fx(
+        () -> {
+          try {
+            var json = new ObjectMapper();
+            var requests = new ArrayList<CommunityPayloads.AuthorRequest>();
+            var requestIds = new ArrayList<UUID>();
+            var categories =
+                json.createArrayNode()
+                    .add(
+                        json.createObjectNode()
+                            .put("categoryId", 1)
+                            .put("categoryName", "Tổng hợp"));
+            var view =
+                new CommunityQuizView(
+                    (type, match, round, payload) -> {
+                      requests.add((CommunityPayloads.AuthorRequest) payload);
+                      UUID id = UUID.randomUUID();
+                      requestIds.add(id);
+                      return id;
+                    },
+                    categories);
+            var main = (VBox) field(view, "main");
+            java.util.function.Consumer<JsonNode> respond =
+                data -> {
+                  var payload = json.createObjectNode().put("action", requests.getLast().action());
+                  payload.set("data", data);
+                  view.onEvent(
+                      new Envelope(
+                          1,
+                          MessageType.AUTHOR_RESULT,
+                          requestIds.getLast(),
+                          null,
+                          null,
+                          null,
+                          payload));
+                };
+            respond.accept(
+                json.createObjectNode()
+                    .put("pageSize", 20)
+                    .put("total", 0)
+                    .set("quizzes", json.createArrayNode()));
+            main.lookupAll(".button").stream()
+                .map(node -> (Button) node)
+                .filter(button -> button.getText().equals("Tạo quiz"))
+                .findFirst()
+                .orElseThrow()
+                .fire();
+            var metadata =
+                json.createObjectNode()
+                    .put("quizId", 7)
+                    .put("title", "Tên quiz")
+                    .put("description", "Mô tả")
+                    .put("categoryId", 1)
+                    .put("questionCount", 1);
+            metadata.set("questions", json.createArrayNode());
+            respond.accept(metadata);
+            var fill = CommunityQuizView.class.getDeclaredMethod("fillQuestion", JsonNode.class);
+            fill.setAccessible(true);
+            fill.invoke(
+                view,
+                json.createObjectNode()
+                    .put("questionType", "SHORT_ANSWER")
+                    .put("content", "Thủ đô?")
+                    .put("answerKey", "Hà Nội"));
+            var publish =
+                main.lookupAll(".button").stream()
+                    .map(node -> (Button) node)
+                    .filter(button -> button.getText().equals("Xuất bản"))
+                    .findFirst()
+                    .orElseThrow();
+            publish.fire();
+            assertEquals("SAVE_QUESTION", requests.getLast().action());
+            respond.accept(metadata);
+            assertEquals("SAVE_META", requests.getLast().action());
+            assertEquals("Tên quiz", requests.getLast().data().path("title").asText());
+            respond.accept(metadata);
+            assertEquals("PUBLISH", requests.getLast().action());
+            respond.accept(metadata);
+            publish.fire();
+            assertEquals("SAVE_QUESTION", requests.getLast().action());
+            int sent = requests.size();
+            view.onEvent(
+                new Envelope(
+                    1,
+                    MessageType.ERROR,
+                    requestIds.getLast(),
+                    null,
+                    null,
+                    null,
+                    json.createObjectNode().put("message", "Không hợp lệ")));
+            assertEquals(sent, requests.size(), "A failed save must not continue to publication");
+            assertEquals("Thủ đô?", view.question().path("content").asText());
+          } catch (Exception failure) {
+            throw new RuntimeException(failure);
+          }
+        });
+  }
+
+  @Test
+  void addingAndRemovingOptionsPreservesIdsTextAndTheSelectedAnswer() throws Exception {
+    fx(
+        () -> {
+          var json = new ObjectMapper();
+          var options =
+              json.createArrayNode()
+                  .add(json.createObjectNode().put("id", "A,one").put("text", "Giữ dấu | và dấu ,"))
+                  .add(json.createObjectNode().put("id", "B").put("text", "Hai"));
+          var editor = new VBox();
+          var savedOptions = new AtomicReference<com.fasterxml.jackson.databind.node.ArrayNode>();
+          var selected = new AtomicReference<List<String>>();
+          ChoiceAnswerEditor.render(
+              editor,
+              "SINGLE_CHOICE",
+              options,
+              List.of("A,one"),
+              (values, keys) -> {
+                savedOptions.set(values);
+                selected.set(keys);
+              });
+          ((Button) editor.getChildren().get(3)).fire();
+          assertEquals(3, savedOptions.get().size());
+          assertEquals("A,one", savedOptions.get().get(0).path("id").asText());
+          assertEquals("Giữ dấu | và dấu ,", savedOptions.get().get(0).path("text").asText());
+          assertEquals(2, options.size(), "Editing must not mutate the loaded draft");
+          var rows = (VBox) editor.getChildren().get(2);
+          ((CheckBox) ((HBox) rows.getChildren().get(2)).getChildren().get(2)).fire();
+          assertEquals(List.of("A"), selected.get());
+          ((Button) ((HBox) rows.getChildren().get(0)).getChildren().get(3)).fire();
+          assertEquals(List.of("A"), selected.get());
+          assertEquals(2, savedOptions.get().size());
+          rows = (VBox) editor.getChildren().get(2);
+          assertTrue(
+              ((Button) ((HBox) rows.getChildren().get(0)).getChildren().get(3)).isDisabled());
+          for (int count = 2; count < 6; count++) ((Button) editor.getChildren().get(3)).fire();
+          assertEquals(6, savedOptions.get().size());
+          assertEquals(List.of("A"), selected.get());
+          assertTrue(((Button) editor.getChildren().get(3)).isDisabled());
+        });
+  }
+
+  @Test
   void choicesPreserveArbitraryIdsAndTextAndSingleSelection() throws Exception {
     fx(
         () -> {

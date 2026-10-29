@@ -72,7 +72,7 @@ class MatchEngineTest {
             match.id,
             match.roundId,
             null,
-            MatchManager.obj(fields)));
+            MatchPayloads.obj(fields)));
   }
 
   void start() {
@@ -199,7 +199,7 @@ class MatchEngineTest {
     start();
     for (int i = 0; i < 10; i++) {
       open();
-      var answer = MatchManager.correctAnswer(match.question());
+      var answer = MatchPayloads.correctAnswer(match.question());
       command(0, "ANSWER", "questionId", match.question().questionId(), "answer", answer);
       command(1, "ANSWER", "questionId", match.question().questionId(), "answer", answer);
       assertEquals(MatchPhase.REVEAL, match.phase());
@@ -293,7 +293,7 @@ class MatchEngineTest {
               () -> {
                 try {
                   barrier.await();
-                  manager.locked(match, () -> manager.closeRound(match));
+                  manager.locked(match, () -> manager.rounds.closeRound(match));
                 } catch (Exception e) {
                   throw new RuntimeException(e);
                 }
@@ -353,7 +353,7 @@ class MatchEngineTest {
     UUID request = UUID.randomUUID();
     var c =
         new Envelope(
-            1, MessageType.CHAT, request, match.id, null, null, MatchManager.obj("text", " hi "));
+            1, MessageType.CHAT, request, match.id, null, null, MatchPayloads.obj("text", " hi "));
     manager.handle(ServerFixtures.players().getFirst(), c);
     manager.handle(ServerFixtures.players().getFirst(), c);
     long chatIds =
@@ -395,7 +395,7 @@ class MatchEngineTest {
             match.id,
             match.roundId,
             null,
-            MatchManager.obj("questionId", 1, "answer", "A"));
+            MatchPayloads.obj("questionId", 1, "answer", "A"));
     manager.handle(ServerFixtures.players().getFirst(), c);
     command(1, "ANSWER", "questionId", 1, "answer", "A");
     manager.handle(ServerFixtures.players().getFirst(), c);
@@ -471,7 +471,7 @@ class MatchEngineTest {
     assertNotEquals("A", removed.get(0).asText());
     assertEquals(
         List.of("DOUBLE_POINTS", "REMOVE_ONE"),
-        MatchManager.JSON.convertValue(result.payload().path("remaining"), List.class));
+        MatchPayloads.JSON.convertValue(result.payload().path("remaining"), List.class));
     var added = events.subList(before, events.size());
     assertEquals(1, added.stream().filter(e -> e.type() == MessageType.LIFELINE_RESULT).count());
     assertEquals(2, added.stream().filter(e -> e.type() == MessageType.LIFELINE_STATUS).count());

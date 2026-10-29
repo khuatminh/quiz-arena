@@ -49,6 +49,17 @@ public final class ClientMain extends Application {
         args.containsKey("fixture") ? (type, match, round, payload) -> UUID.randomUUID() : gateway;
     if (!args.containsKey("evidence")) vn.edu.nhom7.quiz.client.ui.Sound.enable();
     shell = new AppShell(store, network, sink);
+    subscribeToState(args);
+    configureStage(stage, args);
+    startTimeoutMonitor(tracker);
+    if (args.containsKey("evidence")) capture(shell, Path.of(args.get("evidence"), "auth.png"));
+    if (args.containsKey("fixture")) {
+      replay = new FixtureReplay();
+      replay.play(Long.parseLong(args.getOrDefault("participant", "101")), store::accept);
+    }
+  }
+
+  private void subscribeToState(Map<String, String> args) {
     var captured = new HashSet<String>();
     store.subscribe(
         s ->
@@ -69,6 +80,9 @@ public final class ClientMain extends Application {
                     }
                   }
                 }));
+  }
+
+  private void configureStage(Stage stage, Map<String, String> args) {
     var scene =
         new Scene(
             shell,
@@ -97,31 +111,16 @@ public final class ClientMain extends Application {
       exit.setOnFinished(e -> Platform.exit());
       exit.play();
     }
-    var notified = new HashSet<UUID>();
-    long[] epoch = {-1};
+  }
+
+  private void startTimeoutMonitor(RequestTracker tracker) {
+    var monitor =
+        new RequestTimeoutMonitor(
+            tracker, () -> store.state().connectionEpoch(), shell::requestTimeout);
     pendingTimer =
-        new Timeline(
-            new KeyFrame(
-                Duration.millis(250),
-                e -> {
-                  if (epoch[0] != store.state().connectionEpoch()) {
-                    tracker.clear();
-                    notified.clear();
-                    epoch[0] = store.state().connectionEpoch();
-                  }
-                  for (UUID id : tracker.expired(System.nanoTime()))
-                    if (notified.add(id)) {
-                      var pending = tracker.resolve(id);
-                      pending.ifPresent(p -> shell.requestTimeout(p.type()));
-                    }
-                }));
+        new Timeline(new KeyFrame(Duration.millis(250), event -> monitor.poll(System.nanoTime())));
     pendingTimer.setCycleCount(Animation.INDEFINITE);
     pendingTimer.play();
-    if (args.containsKey("evidence")) capture(shell, Path.of(args.get("evidence"), "auth.png"));
-    if (args.containsKey("fixture")) {
-      replay = new FixtureReplay();
-      replay.play(Long.parseLong(args.getOrDefault("participant", "101")), store::accept);
-    }
   }
 
   private static void scheduleCapture(javafx.scene.Parent node, Path path) {

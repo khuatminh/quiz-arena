@@ -164,7 +164,7 @@ public final class ChallengeManager {
     try {
       quizzes.withMatchQuestions(
           c.quiz,
-          java.util.random.RandomGenerator.getDefault(),
+          new Random(), // Available in java.base, including compact JRE deployments.
           (pinned, questions) -> {
             var match =
                 matches.prepare(c.newMatchId, pinned, List.of(c.sender, c.recipient), questions);

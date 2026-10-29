@@ -1,0 +1,2476 @@
+{
+  "before_count": 324,
+  "after_count": 324,
+  "missing": [],
+  "identical": 284,
+  "comparisons": [
+    {
+      "file": "1024x720/01-login.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/02-registration.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/03-lobby.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/04-quiz-detail.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/05-invitation.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/06-outgoing.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/07-expired.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/08-ready.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/16-result.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/17-ranking.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/18-history.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/19-history-review.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/20-chat.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/21-my-quizzes.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/auth-disconnected.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/auth-validation.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/editor-multiple_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/editor-short_answer.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/editor-single_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/editor-true_false.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/fx-chat-stickers.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/fx-invite-incoming.png",
+      "identical": false,
+      "changed_pixels": 106,
+      "changed_percent": 0.015,
+      "bbox": [
+        704,
+        216,
+        740,
+        271
+      ]
+    },
+    {
+      "file": "1024x720/fx-invite-outgoing.png",
+      "identical": false,
+      "changed_pixels": 48,
+      "changed_percent": 0.0068,
+      "bbox": [
+        940,
+        366,
+        976,
+        420
+      ]
+    },
+    {
+      "file": "1024x720/fx-lifeline-card-x2.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/fx-lifeline-card.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/fx-lifeline-double.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/fx-lifeline-fifty.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/fx-lifeline-ready.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/fx-lifeline-reveal-x2.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/fx-lock.png",
+      "identical": false,
+      "changed_pixels": 86,
+      "changed_percent": 0.0121,
+      "bbox": [
+        464,
+        28,
+        560,
+        29
+      ]
+    },
+    {
+      "file": "1024x720/fx-result-lose.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/fx-result-win.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/fx-streak-10.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/fx-streak-3.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/fx-streak-5.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/fx-wrong-flash.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/game-leaderboard-multiple_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/game-leaderboard-short_answer.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/game-leaderboard-single_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/game-leaderboard-true_false.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/game-long-question.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/game-match_countdown.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/game-open-multiple_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/game-open-short_answer.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/game-open-single_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/game-open-true_false.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/game-question-image.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/game-question_prepare-multiple_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/game-question_prepare-short_answer.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/game-question_prepare-single_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/game-question_prepare-true_false.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/game-reveal-multiple_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/game-reveal-short_answer.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/game-reveal-single_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/game-reveal-true_false.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/game-round_countdown-multiple_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/game-round_countdown-short_answer.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/game-round_countdown-single_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/game-round_countdown-true_false.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/game-shell-with-chat.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/history-empty.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/lobby-search-empty.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/lobby-selected.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/offline-overlay.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/pause-overlay.png",
+      "identical": false,
+      "changed_pixels": 78,
+      "changed_percent": 0.011,
+      "bbox": [
+        464,
+        26,
+        560,
+        27
+      ]
+    },
+    {
+      "file": "1024x720/preview-question-editor-multiple_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/preview-question-editor-short_answer.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/preview-question-editor-single_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/preview-question-editor-true_false.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/preview-reveal-editor-multiple_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/preview-reveal-editor-short_answer.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/preview-reveal-editor-single_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/preview-reveal-editor-true_false.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/question-editor-multiple_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/question-editor-short_answer.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/question-editor-single_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/question-editor-true_false.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/ranking-empty.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/ranking-loading.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/ready-one-player.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/result-review-cards.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/result-review-missed.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/result-shell.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/settings-overlay.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1024x720/toast.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/01-login.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/02-registration.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/03-lobby.png",
+      "identical": false,
+      "changed_pixels": 14949,
+      "changed_percent": 1.5128,
+      "bbox": [
+        564,
+        249,
+        1225,
+        715
+      ]
+    },
+    {
+      "file": "1280x800/04-quiz-detail.png",
+      "identical": false,
+      "changed_pixels": 12093,
+      "changed_percent": 1.2238,
+      "bbox": [
+        993,
+        245,
+        1225,
+        302
+      ]
+    },
+    {
+      "file": "1280x800/05-invitation.png",
+      "identical": false,
+      "changed_pixels": 12093,
+      "changed_percent": 1.1389,
+      "bbox": [
+        1037,
+        275,
+        1269,
+        332
+      ]
+    },
+    {
+      "file": "1280x800/06-outgoing.png",
+      "identical": false,
+      "changed_pixels": 12093,
+      "changed_percent": 1.1389,
+      "bbox": [
+        1037,
+        275,
+        1269,
+        332
+      ]
+    },
+    {
+      "file": "1280x800/07-expired.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/08-ready.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/16-result.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/17-ranking.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/18-history.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/19-history-review.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/20-chat.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/21-my-quizzes.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/auth-disconnected.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/auth-validation.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/editor-multiple_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/editor-short_answer.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/editor-single_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/editor-true_false.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/fx-chat-stickers.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/fx-invite-incoming.png",
+      "identical": false,
+      "changed_pixels": 258,
+      "changed_percent": 0.0261,
+      "bbox": [
+        812,
+        255,
+        868,
+        311
+      ]
+    },
+    {
+      "file": "1280x800/fx-invite-outgoing.png",
+      "identical": false,
+      "changed_pixels": 12347,
+      "changed_percent": 1.2495,
+      "bbox": [
+        993,
+        249,
+        1232,
+        500
+      ]
+    },
+    {
+      "file": "1280x800/fx-lifeline-card-x2.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/fx-lifeline-card.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/fx-lifeline-double.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/fx-lifeline-fifty.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/fx-lifeline-ready.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/fx-lifeline-reveal-x2.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/fx-lock.png",
+      "identical": false,
+      "changed_pixels": 86,
+      "changed_percent": 0.0087,
+      "bbox": [
+        592,
+        28,
+        688,
+        29
+      ]
+    },
+    {
+      "file": "1280x800/fx-result-lose.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/fx-result-win.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/fx-streak-10.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/fx-streak-3.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/fx-streak-5.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/fx-wrong-flash.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/game-leaderboard-multiple_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/game-leaderboard-short_answer.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/game-leaderboard-single_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/game-leaderboard-true_false.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/game-long-question.png",
+      "identical": false,
+      "changed_pixels": 192,
+      "changed_percent": 0.0142,
+      "bbox": [
+        457,
+        118,
+        553,
+        120
+      ]
+    },
+    {
+      "file": "1280x800/game-match_countdown.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/game-open-multiple_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/game-open-short_answer.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/game-open-single_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/game-open-true_false.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/game-question-image.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/game-question_prepare-multiple_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/game-question_prepare-short_answer.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/game-question_prepare-single_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/game-question_prepare-true_false.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/game-reveal-multiple_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/game-reveal-short_answer.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/game-reveal-single_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/game-reveal-true_false.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/game-round_countdown-multiple_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/game-round_countdown-short_answer.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/game-round_countdown-single_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/game-round_countdown-true_false.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/game-shell-with-chat.png",
+      "identical": false,
+      "changed_pixels": 192,
+      "changed_percent": 0.0194,
+      "bbox": [
+        457,
+        118,
+        553,
+        120
+      ]
+    },
+    {
+      "file": "1280x800/history-empty.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/lobby-search-empty.png",
+      "identical": false,
+      "changed_pixels": 12093,
+      "changed_percent": 1.2238,
+      "bbox": [
+        993,
+        245,
+        1225,
+        302
+      ]
+    },
+    {
+      "file": "1280x800/lobby-selected.png",
+      "identical": false,
+      "changed_pixels": 12093,
+      "changed_percent": 1.2238,
+      "bbox": [
+        993,
+        245,
+        1225,
+        302
+      ]
+    },
+    {
+      "file": "1280x800/offline-overlay.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/pause-overlay.png",
+      "identical": false,
+      "changed_pixels": 78,
+      "changed_percent": 0.0079,
+      "bbox": [
+        592,
+        26,
+        688,
+        27
+      ]
+    },
+    {
+      "file": "1280x800/preview-question-editor-multiple_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/preview-question-editor-short_answer.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/preview-question-editor-single_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/preview-question-editor-true_false.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/preview-reveal-editor-multiple_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/preview-reveal-editor-short_answer.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/preview-reveal-editor-single_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/preview-reveal-editor-true_false.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/question-editor-multiple_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/question-editor-short_answer.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/question-editor-single_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/question-editor-true_false.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/ranking-empty.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/ranking-loading.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/ready-one-player.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/result-review-cards.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/result-review-missed.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/result-shell.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/settings-overlay.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "1280x800/toast.png",
+      "identical": false,
+      "changed_pixels": 12073,
+      "changed_percent": 1.2218,
+      "bbox": [
+        993,
+        249,
+        1225,
+        306
+      ]
+    },
+    {
+      "file": "light-1280x800/01-login.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/02-registration.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/03-lobby.png",
+      "identical": false,
+      "changed_pixels": 12599,
+      "changed_percent": 1.275,
+      "bbox": [
+        752,
+        13,
+        1225,
+        306
+      ]
+    },
+    {
+      "file": "light-1280x800/04-quiz-detail.png",
+      "identical": false,
+      "changed_pixels": 12048,
+      "changed_percent": 1.2192,
+      "bbox": [
+        993,
+        245,
+        1225,
+        302
+      ]
+    },
+    {
+      "file": "light-1280x800/05-invitation.png",
+      "identical": false,
+      "changed_pixels": 12048,
+      "changed_percent": 1.1346,
+      "bbox": [
+        1037,
+        275,
+        1269,
+        332
+      ]
+    },
+    {
+      "file": "light-1280x800/06-outgoing.png",
+      "identical": false,
+      "changed_pixels": 15032,
+      "changed_percent": 1.4156,
+      "bbox": [
+        66,
+        250,
+        1269,
+        332
+      ]
+    },
+    {
+      "file": "light-1280x800/07-expired.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/08-ready.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/16-result.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/17-ranking.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/18-history.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/19-history-review.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/20-chat.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/21-my-quizzes.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/auth-disconnected.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/auth-validation.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/editor-multiple_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/editor-short_answer.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/editor-single_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/editor-true_false.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/fx-chat-stickers.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/fx-invite-incoming.png",
+      "identical": false,
+      "changed_pixels": 85,
+      "changed_percent": 0.0086,
+      "bbox": [
+        841,
+        256,
+        868,
+        292
+      ]
+    },
+    {
+      "file": "light-1280x800/fx-invite-outgoing.png",
+      "identical": false,
+      "changed_pixels": 12138,
+      "changed_percent": 1.2283,
+      "bbox": [
+        993,
+        249,
+        1232,
+        481
+      ]
+    },
+    {
+      "file": "light-1280x800/fx-lifeline-card-x2.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/fx-lifeline-card.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/fx-lifeline-double.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/fx-lifeline-fifty.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/fx-lifeline-ready.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/fx-lifeline-reveal-x2.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/fx-lock.png",
+      "identical": false,
+      "changed_pixels": 86,
+      "changed_percent": 0.0087,
+      "bbox": [
+        592,
+        28,
+        688,
+        29
+      ]
+    },
+    {
+      "file": "light-1280x800/fx-result-lose.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/fx-result-win.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/fx-streak-10.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/fx-streak-3.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/fx-streak-5.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/fx-wrong-flash.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/game-leaderboard-multiple_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/game-leaderboard-short_answer.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/game-leaderboard-single_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/game-leaderboard-true_false.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/game-long-question.png",
+      "identical": false,
+      "changed_pixels": 1898,
+      "changed_percent": 0.1399,
+      "bbox": [
+        452,
+        91,
+        558,
+        197
+      ]
+    },
+    {
+      "file": "light-1280x800/game-match_countdown.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/game-open-multiple_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/game-open-short_answer.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/game-open-single_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/game-open-true_false.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/game-question-image.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/game-question_prepare-multiple_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/game-question_prepare-short_answer.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/game-question_prepare-single_choice.png",
+      "identical": false,
+      "changed_pixels": 1878,
+      "changed_percent": 0.1893,
+      "bbox": [
+        1005,
+        682,
+        1091,
+        772
+      ]
+    },
+    {
+      "file": "light-1280x800/game-question_prepare-true_false.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/game-reveal-multiple_choice.png",
+      "identical": false,
+      "changed_pixels": 1878,
+      "changed_percent": 0.1893,
+      "bbox": [
+        1005,
+        682,
+        1091,
+        772
+      ]
+    },
+    {
+      "file": "light-1280x800/game-reveal-short_answer.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/game-reveal-single_choice.png",
+      "identical": false,
+      "changed_pixels": 1878,
+      "changed_percent": 0.1893,
+      "bbox": [
+        1005,
+        682,
+        1091,
+        772
+      ]
+    },
+    {
+      "file": "light-1280x800/game-reveal-true_false.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/game-round_countdown-multiple_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/game-round_countdown-short_answer.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/game-round_countdown-single_choice.png",
+      "identical": false,
+      "changed_pixels": 1878,
+      "changed_percent": 0.1893,
+      "bbox": [
+        1005,
+        682,
+        1091,
+        772
+      ]
+    },
+    {
+      "file": "light-1280x800/game-round_countdown-true_false.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/game-shell-with-chat.png",
+      "identical": false,
+      "changed_pixels": 1685,
+      "changed_percent": 0.1699,
+      "bbox": [
+        452,
+        91,
+        558,
+        197
+      ]
+    },
+    {
+      "file": "light-1280x800/history-empty.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/lobby-search-empty.png",
+      "identical": false,
+      "changed_pixels": 12048,
+      "changed_percent": 1.2192,
+      "bbox": [
+        993,
+        245,
+        1225,
+        302
+      ]
+    },
+    {
+      "file": "light-1280x800/lobby-selected.png",
+      "identical": false,
+      "changed_pixels": 12774,
+      "changed_percent": 1.2927,
+      "bbox": [
+        24,
+        143,
+        1225,
+        302
+      ]
+    },
+    {
+      "file": "light-1280x800/offline-overlay.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/pause-overlay.png",
+      "identical": false,
+      "changed_pixels": 80,
+      "changed_percent": 0.0081,
+      "bbox": [
+        592,
+        26,
+        688,
+        27
+      ]
+    },
+    {
+      "file": "light-1280x800/question-editor-multiple_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/question-editor-short_answer.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/question-editor-single_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/question-editor-true_false.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/ranking-empty.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/ranking-loading.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/ready-one-player.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/result-review-cards.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/result-review-missed.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/result-shell.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/settings-overlay.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "light-1280x800/toast.png",
+      "identical": false,
+      "changed_pixels": 12051,
+      "changed_percent": 1.2195,
+      "bbox": [
+        993,
+        249,
+        1225,
+        306
+      ]
+    },
+    {
+      "file": "xlarge-1024x720/01-login.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/02-registration.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/03-lobby.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/04-quiz-detail.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/05-invitation.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/06-outgoing.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/07-expired.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/08-ready.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/16-result.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/17-ranking.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/18-history.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/19-history-review.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/20-chat.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/21-my-quizzes.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/auth-disconnected.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/auth-validation.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/editor-multiple_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/editor-short_answer.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/editor-single_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/editor-true_false.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/fx-chat-stickers.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/fx-invite-incoming.png",
+      "identical": false,
+      "changed_pixels": 209,
+      "changed_percent": 0.0295,
+      "bbox": [
+        705,
+        215,
+        724,
+        251
+      ]
+    },
+    {
+      "file": "xlarge-1024x720/fx-invite-outgoing.png",
+      "identical": false,
+      "changed_pixels": 211,
+      "changed_percent": 0.0298,
+      "bbox": [
+        941,
+        330,
+        960,
+        367
+      ]
+    },
+    {
+      "file": "xlarge-1024x720/fx-lifeline-card-x2.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/fx-lifeline-card.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/fx-lifeline-double.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/fx-lifeline-fifty.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/fx-lifeline-ready.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/fx-lifeline-reveal-x2.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/fx-lock.png",
+      "identical": false,
+      "changed_pixels": 86,
+      "changed_percent": 0.0121,
+      "bbox": [
+        464,
+        28,
+        560,
+        29
+      ]
+    },
+    {
+      "file": "xlarge-1024x720/fx-result-lose.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/fx-result-win.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/fx-streak-10.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/fx-streak-3.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/fx-streak-5.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/fx-wrong-flash.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/game-leaderboard-multiple_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/game-leaderboard-short_answer.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/game-leaderboard-single_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/game-leaderboard-true_false.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/game-long-question.png",
+      "identical": false,
+      "changed_pixels": 1440,
+      "changed_percent": 0.0973,
+      "bbox": [
+        324,
+        92,
+        430,
+        198
+      ]
+    },
+    {
+      "file": "xlarge-1024x720/game-match_countdown.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/game-open-multiple_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/game-open-short_answer.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/game-open-single_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/game-open-true_false.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/game-question-image.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/game-question_prepare-multiple_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/game-question_prepare-short_answer.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/game-question_prepare-single_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/game-question_prepare-true_false.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/game-reveal-multiple_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/game-reveal-short_answer.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/game-reveal-single_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/game-reveal-true_false.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/game-round_countdown-multiple_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/game-round_countdown-short_answer.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/game-round_countdown-single_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/game-round_countdown-true_false.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/game-shell-with-chat.png",
+      "identical": false,
+      "changed_pixels": 1038,
+      "changed_percent": 0.1459,
+      "bbox": [
+        324,
+        92,
+        430,
+        198
+      ]
+    },
+    {
+      "file": "xlarge-1024x720/history-empty.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/lobby-search-empty.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/lobby-selected.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/offline-overlay.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/pause-overlay.png",
+      "identical": false,
+      "changed_pixels": 78,
+      "changed_percent": 0.011,
+      "bbox": [
+        464,
+        26,
+        560,
+        27
+      ]
+    },
+    {
+      "file": "xlarge-1024x720/question-editor-multiple_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/question-editor-short_answer.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/question-editor-single_choice.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/question-editor-true_false.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/ranking-empty.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/ranking-loading.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/ready-one-player.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/result-review-cards.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/result-review-missed.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/result-shell.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/settings-overlay.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    },
+    {
+      "file": "xlarge-1024x720/toast.png",
+      "identical": true,
+      "changed_pixels": 0,
+      "changed_percent": 0.0,
+      "bbox": null
+    }
+  ]
+}
