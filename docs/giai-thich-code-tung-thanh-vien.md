@@ -1,1111 +1,837 @@
-# Giải thích mã nguồn Quiz Arena theo từng thành viên
+# Giải thích luồng xử lý Quiz Arena theo từng thành viên
 
-Tài liệu học code và luyện trả lời khi bảo vệ bài tập lớn môn Lập trình mạng của Nhóm 7
+Tài liệu đọc code và luyện trả lời bảo vệ bài tập lớn Nhóm 7
 
-Ngày đối chiếu mã nguồn 31 tháng 10 năm 2026
+Đối chiếu mã nguồn ngày 31 tháng 10 năm 2026
 
-Quiz Arena cho hai người thi đấu câu hỏi qua mạng. Để trình bày được dự án, mỗi người cần hiểu dữ liệu đi vào phần mình từ đâu, các bước xử lý chính, kết quả gửi cho ai và cách xử lý khi có lỗi. Tài liệu đi theo đúng bốn câu hỏi đó, sau đó đưa ra tình huống minh họa và câu trả lời mẫu.
+Tài liệu giúp mỗi thành viên giải thích được phần mình bằng ngôn ngữ dễ hiểu: người dùng làm gì, chương trình nhận yêu cầu ở đâu, xử lý qua những bước nào và trả kết quả ra sao. Mỗi phần có hướng dẫn mở file, ví dụ cụ thể và 12 câu hỏi mẫu. Cuối tài liệu có thêm 8 câu hỏi chung để cả nhóm luyện trình bày cùng một luồng.
 
-Đọc phần tổng quan trước, rồi tập trung vào chương mang tên mình. Khi ôn, hãy mở các tệp được chỉ dẫn, lần theo một thao tác hoàn chỉnh và tự trả lời câu hỏi trước khi đọc đáp án mẫu. Những câu trả lời viết ở ngôi “em” là mẫu diễn đạt để luyện nói; khi trình bày cần nói đúng công việc mình thực sự đã thực hiện.
+Khi ôn, hãy đọc luồng trước, mở file được chỉ dẫn rồi thử kể lại bằng lời của mình. Các câu trả lời dùng từ “em” chỉ là mẫu diễn đạt; mỗi người cần điều chỉnh cho đúng phần việc thực tế của mình. Phân chia trong tài liệu dựa trên trách nhiệm đã giao cho bốn thành viên, không khẳng định tác giả của từng dòng code.
 
-## 1 Bức tranh chung để cả nhóm cùng hiểu
+## 1 Tổng quan để cả nhóm cùng hiểu
 
-### 1.1 Bốn phần ghép thành một ứng dụng
+### 1.1 Mỗi người phụ trách đoạn nào
 
-| Thành viên | Trách nhiệm chính theo phân công | Kết quả phần việc |
+Quiz Arena là ứng dụng cho hai người thi đấu câu hỏi qua mạng. Cùng một thao tác thường đi qua phần của nhiều người. Ví dụ, khi bấm gửi đáp án, giao diện của Việt nhận thao tác, phần mạng của Minh chuyển yêu cầu, phần thi đấu của Tuấn chấm điểm và phần dữ liệu của Phúc lưu kết quả sau trận.
+
+| Thành viên | Phần phụ trách chính | Có thể giải thích ngắn gọn là |
 | --- | --- | --- |
-| Khuất Quang Minh | Giao thức chung và mạng phía server | Nhận đúng thông điệp, xác định đúng người gửi, quản lý online và lời mời |
-| Đỗ Quang Tuấn | Logic thi đấu phía server | Quản lý lượt chơi, nhận đáp án, chấm điểm, kết thúc và tái đấu |
-| Nguyễn Hữu Việt | Client JavaFX, mạng phía client và trạng thái giao diện | Hiển thị màn hình, nhận thao tác, gửi yêu cầu và cập nhật theo server |
-| Trần Lê Hoàng Phúc | Database, tài khoản, câu hỏi, lưu kết quả và truy vấn | Lưu dữ liệu nhất quán, xác thực, cung cấp câu hỏi, ranking và lịch sử |
+| Khuất Quang Minh | Giao thức chung, mạng server, phiên đăng nhập, online và thách đấu | Nhận yêu cầu và chuyển đến đúng nơi xử lý |
+| Đỗ Quang Tuấn | Trận đấu, lượt câu hỏi, chấm điểm, trợ giúp, chat và tái đấu | Điều hành cuộc thi và quyết định kết quả |
+| Nguyễn Hữu Việt | Giao diện, kết nối phía client và trạng thái màn hình | Nhận thao tác và hiển thị những gì đang xảy ra |
+| Trần Lê Hoàng Phúc | Tài khoản, database, ngân hàng câu hỏi, lưu trận, xếp hạng và lịch sử | Cung cấp và lưu giữ dữ liệu của ứng dụng |
 
-Hãy tưởng tượng một cuộc thi: Việt làm bàn điều khiển cho người chơi; Minh làm đường liên lạc và bàn tiếp nhận; Tuấn làm trọng tài; Phúc quản lý sổ tài khoản, ngân hàng đề và biên bản kết quả. Tất cả cùng tham gia một thao tác, nhưng mỗi phần có trách nhiệm riêng.
+Các chức năng mở rộng như quiz cộng đồng và ảnh có cả giao diện lẫn xử lý server. Tài liệu đặt phần hiển thị ở chương của Việt, phần kiểm tra và lưu dữ liệu ở chương của Phúc; Minh và Tuấn tiếp tục phụ trách đường truyền và trận đấu có sử dụng những dữ liệu đó.
 
-Phân công mô tả trách nhiệm module. Các lớp phục vụ chức năng mở rộng như quiz cộng đồng và ảnh được giải thích tại chương của module tương ứng, kèm điểm phối hợp. Có thể cùng sửa một tệp khi tích hợp; không nên suy ra tác giả từng dòng chỉ từ nơi đặt tệp.
+### 1.2 Dự án đã gom thành một module
 
-### 1.2 Cấu trúc dự án và các công nghệ xuất hiện trong code
+Dự án có một file pom.xml ở thư mục gốc. Toàn bộ code Java nằm trong src/main/java/vn/edu/nhom7/quiz/. Bên trong vẫn chia thành ba package để dễ tìm: common là các quy định dùng chung; server là phần chạy trên máy chủ; client là phần chạy trên máy người chơi.
 
-Dự án dùng Java 21, JavaFX 21.0.6 cho giao diện, Jackson 2.18.3 để chuyển JSON, JDBC với MySQL Connector/J 8.4.0 để truy vấn MySQL, JUnit 5.11.4 cho kiểm thử và Maven để build. Đây là các phiên bản khai báo trong pom.xml của dự án.
+Một module là cách gom dự án để build. Nó không có nghĩa tất cả chương trình phải chạy trong một cửa sổ. Client và server vẫn được khởi động riêng, trao đổi qua kết nối TCP. Chỉ server làm việc với MySQL; client gửi yêu cầu để server đọc hoặc ghi dữ liệu giúp mình.
 
-Dự án dùng một module Maven với một pom.xml ở thư mục gốc. Toàn bộ Java nằm dưới src/main/java/vn/edu/nhom7/quiz/, chia thành ba package: common chứa hợp đồng dùng chung; server chứa nghiệp vụ và dữ liệu; client chứa JavaFX. common không còn là artifact Maven riêng. Client và server vẫn chạy trong hai tiến trình riêng, giao tiếp qua TCP; client không kết nối trực tiếp MySQL.
+Từ đây, các đường dẫn Java đều tính từ src/main/java/vn/edu/nhom7/quiz/. Ví dụ server/match/MatchRounds.java nghĩa là file MatchRounds.java trong phần server. Khi tài liệu ghi “tìm hàm answer”, hãy mở file rồi tìm tên hàm đó. Dòng “Đối chiếu” giúp tìm vị trí trong bản code hiện tại; số dòng có thể thay đổi khi sửa code về sau.
 
-```text
-Client A và Client B
-       | TCP mang các thông điệp JSON
-       v
-Server mạng và điều phối
-       | gọi dịch vụ tài khoản hoặc logic trận
-       v
-Repository qua JDBC -> MySQL
-MediaService -> thư mục ảnh trên server
-```
+### 1.3 Một lượt sử dụng hoàn chỉnh
 
-Các đường dẫn trong tài liệu tính từ thư mục gốc LTM. Với Java, ký hiệu C/ là src/main/java/vn/edu/nhom7/quiz/common/; S/ là src/main/java/vn/edu/nhom7/quiz/server/; V/ là src/main/java/vn/edu/nhom7/quiz/client/. Ví dụ S/match/MatchManager.java là lớp quản lý trận ở server. Số dòng đi kèm giúp tìm đúng vị trí trong bản code được đối chiếu.
+1. Người chơi mở ứng dụng. Client kết nối đến server và xác nhận hai bên có thể trao đổi với nhau.
+2. Người chơi đăng nhập. Server kiểm tra tài khoản rồi đưa người đó vào danh sách đang online.
+3. Ở sảnh chờ, người chơi chọn bộ câu hỏi và gửi lời mời cho một đối thủ đang rảnh.
+4. Đối thủ đồng ý. Server lấy câu hỏi, tạo trận và đưa cả hai đến màn hình chuẩn bị.
+5. Cả hai bấm sẵn sàng. Khi chuyển đến từng câu, client chuẩn bị nội dung và ảnh rồi báo đã tải xong.
+6. Server mở thời gian trả lời. Người chơi gửi đáp án; server ghi nhận và chấm theo quy tắc của dạng câu đó.
+7. Khi cả hai đã trả lời hoặc hết giờ, server công bố đáp án và điểm. Sau đó ứng dụng chuyển sang câu tiếp theo.
+8. Hết trận, server xác định thắng, thua hoặc hòa và gửi màn hình kết quả. Công việc lưu dữ liệu được thực hiện tiếp ở phía server.
+9. Sau khi lưu thành công, người chơi xem được lịch sử. Nếu là trận tính hạng hợp lệ, thống kê xếp hạng cũng được cập nhật.
 
-### 1.3 Luồng từ đăng nhập đến xem lịch sử
+Có thể nhớ đường đi chính như sau: **Thao tác trên giao diện → gửi yêu cầu → server chọn nơi xử lý → xử lý nghiệp vụ hoặc database → gửi kết quả → cập nhật màn hình.**
 
-1. NetworkClient kết nối TCP, gửi HELLO. Server kiểm tra phiên bản và trả HELLO_ACK.
-2. AuthView gửi LOGIN. MessageRouter gọi AuthService trên luồng dịch vụ; AuthService kiểm tra mật khẩu với dữ liệu tài khoản.
-3. SessionRegistry gắn userId vào connectionId. Client nhận LOGIN_RESULT và chuyển sang Lobby.
-4. Người chơi gửi CHALLENGE. ChallengeManager giữ chỗ hai người; khi đối thủ chấp nhận, server lấy câu hỏi và tạo Match.
-5. Hai người gửi MATCH_READY. Mỗi câu lại có QUESTION_READY để báo đã chuẩn bị xong, kể cả ảnh.
-6. Server mở thời gian trả lời. Client gửi ANSWER; server kiểm tra, chấm và xác nhận đã nhận.
-7. Khi cả hai trả lời hoặc hết giờ, server công bố đáp án, điểm câu và bảng điểm.
-8. Hết trận, MatchResults tạo MatchSummary. PersistenceService lưu qua JdbcMatchRepository; client có thể xem kết quả trước khi việc lưu hoàn tất.
-9. Khi lưu thành công, dữ liệu history có thể truy vấn; thống kê ranking được cập nhật nếu đây là trận tính hạng hợp lệ.
+### 1.4 Những điểm cần nói đúng khi bảo vệ
 
-### 1.4 Các quy tắc phải nhớ đúng
+Server quyết định thời gian, đúng sai và điểm số. Đồng hồ trên client giúp người chơi quan sát; việc sửa đồng hồ hoặc màn hình client không làm server đổi kết quả.
 
-Quiz hệ thống có 10 câu với cơ cấu 4 SINGLE_CHOICE, 2 MULTIPLE_CHOICE, 2 TRUE_FALSE và 2 SHORT_ANSWER. Quiz cộng đồng có từ 1 đến 50 câu, hỗ trợ thêm REORDER, RANGE và PINPOINT. Vì vậy “dự án có 7 dạng câu” đúng, nhưng “mọi trận dùng đủ 7 dạng” không đúng.
+Thông báo “đã nhận đáp án” chỉ xác nhận lượt gửi được chấp nhận, chưa công bố đúng sai. Đáp án chuẩn được công bố sau khi lượt trả lời kết thúc.
 
-Bốn dạng cũ có 15 giây trả lời; ba dạng tương tác có 30 giây. Server quyết định đúng sai, deadline và điểm. Client chỉ gửi lựa chọn và trình bày dữ liệu nhận được. Quiz cộng đồng được lưu lịch sử nhưng không cộng thống kê xếp hạng toàn cục.
+Quiz hệ thống có 10 câu, gồm 4 câu chọn một đáp án, 2 câu chọn nhiều đáp án, 2 câu đúng sai và 2 câu trả lời ngắn. Quiz cộng đồng có từ 1 đến 50 câu và có thể dùng thêm sắp xếp, chọn giá trị trên khoảng và chọn vị trí trên ảnh. Bốn dạng đầu có 15 giây trả lời; ba dạng tương tác có 30 giây.
 
-ACK của đáp án có nghĩa “server đã nhận hợp lệ”, chưa có nghĩa “đáp án đúng”. Đáp án chuẩn chỉ được công bố khi lượt chuyển sang REVEAL. Snapshot trận đang chạy hỗ trợ đồng bộ lại trạng thái; không đồng nghĩa với khôi phục trận sau khi socket bị mất.
+Quiz cộng đồng được lưu lịch sử nhưng không cộng thống kê xếp hạng toàn cục. Mất kết nối không có cơ chế tự quay lại trận cũ. Chức năng lấy lại trạng thái trận chỉ hỗ trợ đồng bộ trong phiên còn hợp lệ.
 
-## 2 Khuất Quang Minh phụ trách giao thức và mạng server
+## 2 Khuất Quang Minh phụ trách mạng và thách đấu
 
-### 2.1 Mục tiêu của phần Minh
+### 2.1 Minh cần trình bày được điều gì
 
-Phần này biến một luồng byte từ mạng thành lệnh có người gửi xác định, rồi chuyển lệnh đến đúng dịch vụ. Đầu vào là socket và byte; đầu ra là Envelope đã kiểm tra, SessionContext của người gửi và các phản hồi được xếp hàng về đúng kết nối.
+Phần Minh giúp server biết ai đang gửi yêu cầu và cần chuyển yêu cầu đó cho ai xử lý. Ngoài việc nhận và gửi thông tin, phần này còn nhớ người nào online, người nào đang được mời, người nào đang trong trận. Nhờ vậy server không tùy tiện đưa một người vào nhiều trận cùng lúc.
 
-Nếu phần mạng sai, hai thông điệp có thể bị đọc dính nhau, một người có thể bị gắn nhầm phiên hoặc thao tác từ hai luồng có thể làm người chơi vào hai trận. Vì vậy điểm cần giải thích sâu là đóng khung TCP, chia luồng, xác thực phiên và thay đổi trạng thái có đồng bộ.
+Cách giới thiệu mẫu: “Phần của em là đường liên lạc và điều phối phía server. Em tiếp nhận kết nối, kiểm tra người gửi đã đăng nhập chưa, chuyển lệnh đến đúng chức năng và quản lý danh sách online cùng quá trình thách đấu.”
 
-### 2.2 Bản đồ các tệp cần mở
-
-| Nhóm tệp | Vai trò dễ hiểu |
+| Mở file | Để xem chức năng |
 | --- | --- |
-| C/net/FrameCodec.java và FrameDecoder.java | Ghi độ dài trước JSON và gom đủ byte để đọc một thông điệp |
-| C/protocol/Envelope.java và MessageType.java | Quy định vỏ thông điệp và tên các loại lệnh hoặc sự kiện |
-| C/protocol/ProtocolCodec.java, PayloadRegistry.java, PayloadValidator.java | Chuyển JSON và kiểm tra loại, trường, kiểu dữ liệu, chiều gửi |
-| S/network/SocketServer.java | Mở cổng và tiếp nhận các kết nối |
-| S/network/Connection.java và ConnectionManager.java | Giữ socket, hàng đợi, trạng thái sống và dọn kết nối |
-| S/network/ConnectionReader.java và ConnectionWriter.java | Một phía chỉ đọc và một phía chỉ ghi trên mỗi kết nối |
-| S/network/MessageRouter.java và HandshakeValidator.java | Bắt tay, lấy phiên và điều hướng đến dịch vụ |
-| S/network/HeartbeatService.java, RateLimiter.java, RequestCache.java | Phát hiện kết nối im lặng, giới hạn yêu cầu và xử lý gửi lặp |
-| S/session/SessionRegistry.java và OnlinePresenceService.java | Ánh xạ tài khoản với kết nối, trạng thái và danh sách online |
-| S/challenge/Challenge.java và ChallengeManager.java | Vòng đời lời mời và giữ chỗ hai người |
-| S/ServerRuntime.java | Nối các dịch vụ và callback dọn kết nối với nhau |
+| common/protocol/Envelope.java và MessageType.java | Cách đặt tên yêu cầu và thông tin đi kèm |
+| common/protocol/ProtocolCodec.java | Đọc và kiểm tra thông điệp giữa hai phía |
+| common/net/FrameCodec.java và FrameDecoder.java | Giúp nhận đủ từng thông điệp qua mạng |
+| server/network/SocketServer.java và ConnectionReader.java | Nhận kết nối và đọc yêu cầu từ client |
+| server/network/MessageRouter.java | Chọn chức năng cần xử lý yêu cầu |
+| server/session/SessionRegistry.java | Nhớ tài khoản, kết nối và tình trạng của người chơi |
+| server/session/OnlinePresenceService.java | Tạo và gửi danh sách online |
+| server/challenge/ChallengeManager.java | Gửi, nhận, chấp nhận và đóng lời mời |
+| server/network/ConnectionManager.java và server/ServerRuntime.java | Dọn trạng thái khi kết nối đóng |
 
-### 2.3 TCP là luồng byte nên phải tự chia thông điệp
+### 2.2 Từ lúc mở ứng dụng đến lúc server nhận được yêu cầu
 
-TCP đưa byte đến theo thứ tự, nhưng một lần read không nhất thiết ứng với một lần send. Giả sử client gửi hai JSON liên tiếp: server có thể đọc được nửa JSON đầu ở lần thứ nhất và phần còn lại cộng JSON thứ hai ở lần thứ hai. Chỉ gọi read rồi parse ngay sẽ dễ báo JSON lỗi.
+1. Phía server chạy SocketServer.start để mở nơi tiếp nhận kết nối. Phía client kết nối đến địa chỉ và cổng đã cấu hình.
+2. Hai bên thực hiện bước chào ban đầu, gọi là HELLO. Khi hợp lệ, server trả HELLO_ACK để client biết có thể tiếp tục.
+3. Client gửi yêu cầu, chẳng hạn LOGIN hoặc CHALLENGE. Thông điệp có tên yêu cầu và dữ liệu cần xử lý.
+4. ConnectionReader đọc thông tin nhận được. Các lớp FrameDecoder và ProtocolCodec giúp tách đúng thông điệp và hiểu dữ liệu bên trong.
+5. MessageRouter.route xem tên yêu cầu để chuyển đến phần tài khoản, thách đấu, trận đấu hoặc truy vấn dữ liệu.
+6. Kết quả được gửi về đúng kết nối của người chơi. Client nhận kết quả rồi thay đổi màn hình.
 
-FrameCodec.encode đặt 4 byte độ dài trước phần JSON UTF 8. ByteBuffer mặc định dùng big endian, tức byte quan trọng nhất của số độ dài đứng trước. Giới hạn phần JSON là từ 1 đến 65.536 byte; bốn byte đầu không tính vào giới hạn đó. Độ dài là số byte UTF 8, không phải số ký tự tiếng Việt.
+Ví dụ dễ hiểu: MessageRouter giống bàn tiếp nhận. Yêu cầu đăng nhập được chuyển đến AuthService; yêu cầu trả lời câu hỏi được chuyển đến MatchManager. Router không tự chấm đáp án và cũng không tự viết câu lệnh lưu trận.
 
-Mã thực tế trong FrameCodec.encode
+Tìm SocketServer.start, ConnectionReader.run và MessageRouter.route để theo dõi đường đi này. Phần tách thông điệp chỉ cần giải thích là “mạng có thể đưa dữ liệu đến thành nhiều đoạn nên chương trình phải nhận đủ rồi mới đọc một yêu cầu”.
 
-```java
-return ByteBuffer.allocate(PREFIX_BYTES + jsonUtf8.length)
-    .putInt(jsonUtf8.length)
-    .put(jsonUtf8)
-    .array();
-```
+Đối chiếu [server/network/SocketServer.java dòng 30](../src/main/java/vn/edu/nhom7/quiz/server/network/SocketServer.java#L30).
+Đối chiếu [server/network/ConnectionReader.java dòng 25](../src/main/java/vn/edu/nhom7/quiz/server/network/ConnectionReader.java#L25).
+Đối chiếu [server/network/MessageRouter.java dòng 63](../src/main/java/vn/edu/nhom7/quiz/server/network/MessageRouter.java#L63).
 
-allocate cấp chỗ cho cả độ dài và nội dung; putInt ghi độ dài; put ghi nội dung; array lấy mảng byte để gửi. Nếu JSON có 100 byte, khung truyền đi có 104 byte.
+### 2.3 Khi đăng nhập thành công thì ai xuất hiện trong danh sách online
 
-FrameDecoder.accept giữ prefixRead và bodyRead qua nhiều lần gọi. Khi đủ 4 byte đầu, nó biết cần đọc bao nhiêu byte thân. Chỉ khi thân đủ độ dài, nó mới trả ra một frame hoàn chỉnh. Nếu một lần read chứa nhiều frame, kết quả là danh sách nhiều phần thân JSON. Khung chưa hoàn chỉnh quá 10 giây hoặc EOF nằm giữa khung là lỗi.
+1. MessageRouter nhận LOGIN và gọi AuthService để kiểm tra tài khoản. Việc kiểm tra mật khẩu thuộc phần Phúc.
+2. Nếu đúng, SessionRegistry.tryAuthenticate gắn tài khoản đó với kết nối hiện tại. Từ đây server biết lệnh trên kết nối này do ai gửi.
+3. Server trả LOGIN_RESULT. Client chuyển vào sảnh và xin danh sách bộ đề, danh sách online.
+4. OnlinePresenceService.snapshot lấy các phiên đã đăng nhập, kèm tên, điểm tổng và tình trạng của từng người.
+5. OnlinePresenceService.broadcast gửi danh sách mới khi trạng thái online thay đổi để các client cập nhật.
 
-Đối chiếu [C/net/FrameCodec.java dòng 12](../src/main/java/vn/edu/nhom7/quiz/common/net/FrameCodec.java#L12).
-Đối chiếu [C/net/FrameDecoder.java dòng 13](../src/main/java/vn/edu/nhom7/quiz/common/net/FrameDecoder.java#L13).
+Trạng thái FREE nghĩa là có thể nhận lời mời; CHALLENGING nghĩa là đang trong quá trình mời hoặc được mời; BUSY nghĩa là đang gắn với một trận. SessionRegistry dựa trên tình trạng thật mà server đang giữ để xác định những trạng thái này.
 
-### 2.4 Envelope và kiểm tra giao thức
+Nếu mật khẩu sai, quy trình dừng ở bước xác thực, chưa tạo phiên đăng nhập và chưa thêm người đó vào danh sách online. Đăng ký thành công cũng chưa tự đưa người dùng vào sảnh; người dùng cần đăng nhập tiếp.
 
-Envelope có protocolVersion, type, requestId, matchId, roundId, eventSeq và payload. Có thể ví như phong bì: type là loại việc, requestId là mã hồ sơ, matchId là phòng thi, roundId là lượt thi, payload là nội dung.
+Đối chiếu [server/network/MessageRouter.java dòng 169](../src/main/java/vn/edu/nhom7/quiz/server/network/MessageRouter.java#L169).
+Đối chiếu [server/session/SessionRegistry.java dòng 14](../src/main/java/vn/edu/nhom7/quiz/server/session/SessionRegistry.java#L14).
+Đối chiếu [server/session/OnlinePresenceService.java dòng 29](../src/main/java/vn/edu/nhom7/quiz/server/session/OnlinePresenceService.java#L29).
 
-requestId do client tạo để ghép yêu cầu với phản hồi. matchId xác định trận; roundId chống đáp án từ câu cũ đi vào câu mới. eventSeq do server tăng cho các sự kiện của trận. Client không được tự gửi eventSeq hay tự khai một trường userId ở vỏ để nhận mình là người khác.
+### 2.4 Khi A mời B thi đấu
 
-ProtocolCodec.decode kiểm tra UTF 8, JSON phải là object, không có trường lạ, đúng protocolVersion và MessageType, UUID đúng định dạng, payload đúng lớp khai báo. Jackson được cấu hình không tự ép kiểu vô tội vạ. Ví dụ boolean true khác chuỗi "true". PayloadRegistry cho biết loại thông điệp đi từ client hay từ server; router chặn client gửi sự kiện vốn chỉ server được phát.
+1. A chọn bộ đề rồi bấm mời B ở sảnh. Client gửi CHALLENGE chứa người được mời và bộ đề đã chọn.
+2. MessageRouter chuyển yêu cầu cho ChallengeManager. Hàm invite kiểm tra A có đang mời chính mình không, bộ đề có dùng được không và hai người có còn online, còn rảnh không.
+3. Nếu hợp lệ, SessionRegistry.reservePair giữ chỗ cho cặp A và B. Mục đích là tránh người khác chen thêm một lời mời vào cùng lúc.
+4. A nhận xác nhận đã gửi; B nhận thông báo có lời mời. Cả hai chuyển sang tình trạng đang thách đấu.
+5. B có thể đồng ý hoặc từ chối. A có thể hủy. Nếu không có phản hồi trong 20 giây, lời mời hết hạn.
+6. Khi B đồng ý, ChallengeManager.create lấy câu hỏi và tạo trận. Server kiểm tra lại hai người trước khi gắn họ vào trận rồi mới kích hoạt trận đó.
+7. Nếu việc tạo trận thất bại, server đóng lời mời và trả lại chỗ đã giữ. Nếu thành công, hai client nhận thông tin trận và đến màn hình sẵn sàng.
 
-HandshakeValidator yêu cầu HELLO là thông điệp đầu, đến trong 5 giây và khớp protocol 1, asset pack "1", client version "3.0". Phiên bản client là điều kiện tương thích của bản code này, không phải phiên bản Java.
+Điểm cần phân biệt: B bấm đồng ý mới là đồng ý ghép trận. Server vẫn phải lấy đề và tạo trận thành công thì hai người mới thực sự vào trận. Đồng ý lời mời cũng chưa có nghĩa bắt đầu đếm giờ trả lời ngay.
 
-Đối chiếu [C/protocol/Envelope.java dòng 6](../src/main/java/vn/edu/nhom7/quiz/common/protocol/Envelope.java#L6).
-Đối chiếu [C/protocol/ProtocolCodec.java dòng 37](../src/main/java/vn/edu/nhom7/quiz/common/protocol/ProtocolCodec.java#L37).
-Đối chiếu [S/network/HandshakeValidator.java dòng 6](../src/main/java/vn/edu/nhom7/quiz/server/network/HandshakeValidator.java#L6).
+Đối chiếu [server/challenge/ChallengeManager.java dòng 102](../src/main/java/vn/edu/nhom7/quiz/server/challenge/ChallengeManager.java#L102).
+Đối chiếu [server/challenge/ChallengeManager.java dòng 163](../src/main/java/vn/edu/nhom7/quiz/server/challenge/ChallengeManager.java#L163).
+Đối chiếu [server/session/SessionRegistry.java dòng 56](../src/main/java/vn/edu/nhom7/quiz/server/session/SessionRegistry.java#L56).
 
-### 2.5 Tại sao phải tách reader và writer
+### 2.5 Khi lời mời bị hủy hoặc người chơi mất kết nối
 
-SocketServer.start bind địa chỉ và cổng, tạo luồng accept, rồi lập lịch bảo trì mỗi 250 ms. Mỗi kết nối được giao một tác vụ ConnectionReader và một tác vụ ConnectionWriter. Code có pool 32 reader, pool 32 writer và chặn nhận quá 32 kết nối đang quản lý.
+ChallengeManager.handle nhận các hành động đồng ý, từ chối và hủy. Server kiểm tra đúng người được phép thực hiện: người gửi được hủy, người nhận được đồng ý hoặc từ chối. Hàm finish đóng lời mời, giải phóng chỗ đã giữ và báo lại hai bên.
 
-Reader đọc byte, giải frame, decode JSON và chuyển Envelope cho router. Writer là nơi duy nhất ghi OutputStream. Các dịch vụ khác chỉ gọi tryEnqueue. Nhờ vậy hai luồng nghiệp vụ không cùng ghi xen kẽ byte vào socket.
+Nếu người chơi đăng xuất hoặc mất kết nối, phần mạng đóng và dọn kết nối. ServerRuntime nối việc dọn này với danh sách phiên, ChallengeManager và MatchManager. Lời mời liên quan được hủy; nếu đang có trận thì phần của Tuấn quyết định cách kết thúc theo giai đoạn trận. Danh sách online được gửi lại để những người còn lại thấy trạng thái mới.
 
-Mỗi kết nối có hàng đợi điều khiển 256 frame và hàng đợi ảnh 8 frame. takeOutbound lấy thông điệp điều khiển trước, rồi mới lấy ảnh. Semaphore báo có dữ liệu cần gửi. tryEnqueue dùng offer nên không chờ hàng đợi có chỗ trống. Nếu queue đầy, kết nối bị đánh dấu slow để bảo trì đóng và giải phóng; một client đọc chậm không giữ luồng trận khác chờ ghi mạng.
+Với trường hợp mạng bị mất mà không có thông báo đóng rõ ràng, HeartbeatService giúp nhận ra kết nối đã im lặng quá lâu. Không nên giải thích là “vừa rút mạng là tất cả máy lập tức biết ngay”, vì còn cần thời gian phát hiện.
 
-Tách pool dịch vụ cũng quan trọng: kiểm tra mật khẩu PBKDF2 và truy vấn JDBC có thể lâu. MessageRouter.submit chuyển chúng sang executor dịch vụ. ServerRuntime cấu hình 4 worker dịch vụ với queue 128; tác vụ ảnh có 2 worker riêng và queue 64. Khi không nhận thêm tác vụ được, server trả lỗi bận thay vì tạo thêm vô hạn.
+Đối chiếu [server/challenge/ChallengeManager.java dòng 239](../src/main/java/vn/edu/nhom7/quiz/server/challenge/ChallengeManager.java#L239).
+Đối chiếu [server/challenge/ChallengeManager.java dòng 268](../src/main/java/vn/edu/nhom7/quiz/server/challenge/ChallengeManager.java#L268).
+Đối chiếu [server/network/ConnectionManager.java dòng 68](../src/main/java/vn/edu/nhom7/quiz/server/network/ConnectionManager.java#L68).
 
-Đối chiếu [S/network/SocketServer.java dòng 30](../src/main/java/vn/edu/nhom7/quiz/server/network/SocketServer.java#L30).
-Đối chiếu [S/network/Connection.java dòng 16](../src/main/java/vn/edu/nhom7/quiz/server/network/Connection.java#L16).
-Đối chiếu [S/network/ConnectionManager.java dòng 39](../src/main/java/vn/edu/nhom7/quiz/server/network/ConnectionManager.java#L39).
-Đối chiếu [S/ServerRuntime.java dòng 26](../src/main/java/vn/edu/nhom7/quiz/server/ServerRuntime.java#L26).
+### 2.6 Câu hỏi mẫu dành cho Minh
 
-### 2.6 Router lấy danh tính ở đâu
+**M01 Khi người dùng bấm đăng nhập thì yêu cầu đi qua đâu ở server?**
 
-Sau bắt tay, route xử lý PING, REGISTER và LOGIN theo nhánh riêng. Những lệnh cần đăng nhập phải có sessions.authenticated(connection.id). SessionContext chứa connectionId cùng userId đã xác thực. Router đưa đối tượng này cho ChallengeManager, MatchManager hoặc nhóm query.
+“Client gửi LOGIN qua kết nối đang mở. ConnectionReader đọc thông điệp, rồi MessageRouter.route nhận và chuyển sang authenticate. Tại đó server gọi AuthService để kiểm tra tài khoản. Nếu đúng, SessionRegistry gắn tài khoản với kết nối và server trả kết quả đăng nhập.”
 
-Ví dụ ANSWER được đưa vào matches.handle(caller, request). Minh đảm bảo caller là người đã đăng nhập; Tuấn tiếp tục kiểm tra caller có thuộc trận và còn gắn với trận không. AuthService của Phúc xác minh mật khẩu, còn SessionRegistry của Minh quản lý việc tài khoản có đang online hay không.
+**M02 Nếu cần tìm nơi phân loại các yêu cầu thì mở file nào?**
 
-Khi tác vụ bất đồng bộ hoàn tất, router kiểm tra kết nối còn sống và phiên vẫn đúng trước khi trả query. Nhờ đó kết quả truy vấn cũ không tự động được áp vào phiên khác. Với đăng nhập, code cũng kiểm tra lại trạng thái kết nối quanh bước gắn phiên.
+“Em mở server/network/MessageRouter.java. Hàm route là điểm nhận chính; routeAuthenticated xử lý các lệnh cần đăng nhập. Từ đây có thể lần sang ChallengeManager cho lời mời, MatchManager cho thi đấu và QueryDispatcher cho các màn hình lấy dữ liệu.”
 
-Đối chiếu [S/network/MessageRouter.java dòng 63](../src/main/java/vn/edu/nhom7/quiz/server/network/MessageRouter.java#L63).
-Đối chiếu [S/network/MessageRouter.java dòng 115](../src/main/java/vn/edu/nhom7/quiz/server/network/MessageRouter.java#L115).
+**M03 Danh sách người online được tạo và cập nhật ở đâu?**
 
-### 2.7 Session và chống tranh chấp lời mời
+“SessionRegistry giữ các phiên đã đăng nhập. OnlinePresenceService.snapshot dựa vào đó tạo danh sách có tên và trạng thái người chơi; broadcast gửi danh sách mới cho các client. Giao diện chỉ hiển thị lại danh sách server gửi về.”
 
-SessionRegistry giữ các map kết nối, tài khoản, lời mời đang giữ chỗ và trận. status trả BUSY khi đã có trận, CHALLENGING khi đang giữ chỗ và FREE khi không có hai loại ràng buộc trên. Tài khoản ở màn Ranking hay History vẫn có thể FREE.
+**M04 Nút thách đấu được xử lý ở đâu và có kiểm tra gì?**
 
-reservePair là thao tác synchronized kiểm tra và giữ chỗ cả hai người cùng lúc. Nếu A mời B đồng thời C cũng mời B, chỉ lần giữ chỗ hợp lệ đầu tiên thành công. Không tách “kiểm tra rảnh” và “đánh dấu bận” thành hai thao tác độc lập vì có thể cả hai bên đều thấy B rảnh.
+“Ở server em xem ChallengeManager.invite. Hàm này kiểm tra người được mời, bộ đề và tình trạng hai người. Nếu cả hai hợp lệ, server giữ chỗ cho cặp đó, gửi xác nhận cho người mời và gửi lời mời cho đối thủ.”
 
-ChallengeManager tạo lời mời có hạn 20 giây. Người gửi được hủy; người nhận được chấp nhận hoặc từ chối. Khi nhận accept, trạng thái chuyển sang CREATING_MATCH và bắt đầu tải đề trên executor. Giai đoạn tạo có thời hạn 5 giây. Việc lấy dữ liệu không nằm trong đoạn khóa quản lý lời mời dài hạn.
+**M05 Tại sao một người đang có lời mời lại không nhận thêm lời mời khác?**
 
-Sau khi có đề, code đăng ký Match đã chuẩn bị, kiểm tra lại hai phiên, chuyển giữ chỗ thành gắn trận bằng attachReservedPair rồi activate. Nếu lời mời đã bị hủy, hết hạn hoặc một người mất kết nối, kết quả tải về muộn không được làm sống lại trận không còn hợp lệ.
+“Vì lúc tạo lời mời, SessionRegistry.reservePair đã giữ chỗ cho cả hai. Lần mời khác sẽ kiểm tra tình trạng hiện tại và bị từ chối nếu người đó không còn rảnh. Nhờ vậy hai thao tác gần nhau không làm một người bị ghép vào hai cặp.”
 
-Đối chiếu [S/session/SessionRegistry.java dòng 56](../src/main/java/vn/edu/nhom7/quiz/server/session/SessionRegistry.java#L56).
-Đối chiếu [S/challenge/ChallengeManager.java dòng 163](../src/main/java/vn/edu/nhom7/quiz/server/challenge/ChallengeManager.java#L163).
+**M06 Khi đối thủ đồng ý thì chương trình đã bắt đầu trả lời câu hỏi ngay chưa?**
 
-### 2.8 Heartbeat và yêu cầu bị gửi lại
+“Chưa. ChallengeManager.create còn lấy đề, chuẩn bị trận và kiểm tra lại hai phiên. Sau khi tạo thành công, MatchManager mới kích hoạt trận và gửi màn hình chuẩn bị. Hai người còn phải bấm sẵn sàng trước khi đi vào lượt câu hỏi.”
 
-Client gửi PING định kỳ 10 giây; server trả PONG. HeartbeatService đóng kết nối nếu không có frame hợp lệ trong 30 giây, chưa bắt tay sau 5 giây hoặc đã bị đánh dấu slow. Heartbeat giúp phát hiện trường hợp mất mạng mà socket chưa báo EOF ngay.
+**M07 Chức năng từ chối và hủy lời mời nằm ở đâu?**
 
-ConnectionManager.close dùng compareAndSet để việc dọn chỉ xảy ra một lần dù reader, writer và heartbeat cùng phát hiện lỗi. Nó đóng socket, hủy tác vụ, xóa cache và gọi callback của ServerRuntime để dọn phiên, lời mời, trận và cập nhật online.
+“Em mở ChallengeManager.handle để xem các nhánh nhận lệnh. Người nhận có thể từ chối, người gửi có thể hủy. Cuối cùng finish đóng lời mời, trả lại trạng thái rảnh và thông báo lý do cho hai phía.”
 
-RequestCache nhớ tối đa 100 request trong khoảng 60 giây cho mỗi kết nối. Cùng requestId và cùng nội dung thì có thể trả phản hồi đã nhớ hoặc không chạy lại khi còn xử lý. Nếu dùng lại requestId nhưng đổi nội dung, server báo REQUEST_ID_REUSED. Nội dung được nhận diện bằng HMAC SHA 256. Đây là kiểm soát gửi lặp, không phải mã hóa toàn bộ đường truyền TCP.
+**M08 Nếu người nhận để nguyên cửa sổ mời thì chuyện gì xảy ra?**
 
-Đối chiếu [S/network/HeartbeatService.java dòng 10](../src/main/java/vn/edu/nhom7/quiz/server/network/HeartbeatService.java#L10).
-Đối chiếu [S/network/ConnectionManager.java dòng 68](../src/main/java/vn/edu/nhom7/quiz/server/network/ConnectionManager.java#L68).
-Đối chiếu [S/network/RequestCache.java dòng 16](../src/main/java/vn/edu/nhom7/quiz/server/network/RequestCache.java#L16).
+“Lời mời chỉ có hiệu lực 20 giây. Khi hết thời gian, server đóng lời mời và giải phóng cặp đã giữ. Vì thời hạn do server quản lý nên dù client vẫn đang hiện cửa sổ cũ, yêu cầu đồng ý muộn cũng không tạo được trận từ lời mời hết hạn.”
 
-### 2.9 Một tình huống để lần code
+**M09 Server biết người đang gửi đáp án là ai bằng cách nào?**
 
-A đăng nhập rồi mời B. Lần theo NetworkClient gửi CHALLENGE, ConnectionReader nhận frame, ProtocolCodec giải mã, MessageRouter lấy phiên A, ChallengeManager.invite kiểm tra quiz và giữ chỗ. A nhận CHALLENGE_ACK; B nhận CHALLENGE_RECEIVED. Khi B chấp nhận, ChallengeManager.create gọi repository lấy câu và MatchManager chuẩn bị trận.
+“Sau đăng nhập, SessionRegistry đã gắn tài khoản với kết nối. Khi nhận lệnh, MessageRouter lấy thông tin người gửi từ phiên đó để chuyển tiếp. Server không chỉ tin vào một tên người chơi do client tự ghi trong nội dung gửi lên.”
 
-Để minh họa xử lý tranh chấp, thử mời cùng B từ một người C trong khi lời mời A đang chờ. Kết quả mong đợi là C nhận lỗi bận; B không đồng thời được giữ chỗ cho hai lời mời. Test liên quan nằm ở FrameDecoderTest, ProtocolContractTest, SocketServerTest, RequestCacheTest, HeartbeatTest, OnlinePresenceTest và ChallengeManagerTest.
+**M10 Khi người chơi mất mạng thì phần nào chịu trách nhiệm dọn trạng thái?**
 
-### 2.10 Câu hỏi và câu trả lời mẫu cho Minh
+“ConnectionManager và ServerRuntime nối các bước dọn kết nối. Server bỏ phiên online, thông báo cho ChallengeManager và MatchManager, rồi cập nhật danh sách online. Lời mời được hủy ở phần Minh; kết quả trận đang chơi được xử lý theo luật ở phần Tuấn.”
 
-**M01 Vì sao dùng TCP mà vẫn phải có FrameCodec?**
+**M11 Vì sao cần FrameDecoder thay vì cứ nhận dữ liệu là đọc ngay?**
 
-Em dùng TCP để có kết nối hai chiều và byte đến đúng thứ tự. TCP không giữ ranh giới giữa các lần gửi nên em đặt 4 byte độ dài trước JSON. Decoder tích lũy đến khi đủ thân thông điệp rồi mới parse; vì vậy đọc thiếu hay đọc nhiều thông điệp một lần đều xử lý được.
+“Vì một yêu cầu có thể đến thành nhiều đoạn hoặc nhiều yêu cầu đến liền nhau. FrameDecoder gom và tách đủ từng thông điệp trước khi ProtocolCodec đọc nội dung. Em chỉ cần giải thích mục đích này để thấy đường truyền không làm lẫn các yêu cầu.”
 
-**M02 Nếu read nhận nửa JSON thì sao?**
+**M12 Gom thành một module thì phần mạng còn cần thiết không?**
 
-FrameDecoder giữ số byte đã đọc trong prefixRead và bodyRead, chờ read sau bổ sung. Nó chưa gọi parser với JSON thiếu. Nếu không hoàn thành trong 10 giây hoặc gặp EOF giữa khung, kết nối bị xử lý lỗi.
+“Vẫn cần. Một module chỉ là cách tổ chức và build code bằng một pom.xml. Client và server vẫn chạy riêng và giao tiếp qua TCP, nên SocketServer, NetworkClient và MessageRouter vẫn thực hiện đúng vai trò cũ.”
 
-**M03 Vì sao không cho mọi service ghi thẳng vào socket?**
+## 3 Đỗ Quang Tuấn phụ trách luồng thi đấu
 
-Nhiều luồng ghi cùng OutputStream có thể làm byte bị xen kẽ. Em để mỗi kết nối có một writer duy nhất; các service chỉ enqueue. Ngoài ra enqueue không chờ ghi mạng nên một người chơi đọc chậm không kéo theo toàn bộ xử lý trận.
+### 3.1 Tuấn cần trình bày được điều gì
 
-**M04 Một client gửi userId của người khác có giả mạo được không?**
+Phần Tuấn quyết định trận đang ở bước nào, lúc nào được trả lời, đáp án có đúng không và mỗi người được bao nhiêu điểm. Có thể xem phần này là người điều hành cuộc thi: chỉ mở câu khi đủ điều kiện, chỉ nhận đáp án trong thời gian cho phép và chỉ công bố kết quả khi lượt đã kết thúc.
 
-Router không lấy danh tính người gửi từ payload. Em tra SessionRegistry bằng connectionId đã đăng nhập để tạo caller. Ví dụ targetUserId trong lời mời chỉ là người nhận, còn người gửi luôn là caller.userId. MatchManager còn kiểm tra membership trước khi nhận lệnh trận.
+Cách giới thiệu mẫu: “Phần của em bắt đầu khi server tạo được trận. Em quản lý sẵn sàng, chuyển câu, nhận và chấm đáp án, tính điểm, xử lý trợ giúp, kết thúc trận và tái đấu.”
 
-**M05 Hai người cùng mời một đối thủ thì xử lý thế nào?**
-
-reservePair vừa kiểm tra vừa giữ chỗ hai tài khoản trong một phương thức synchronized. Lần đến sau thấy đối thủ đã CHALLENGING nên bị từ chối. Cách này tránh hai luồng cùng đọc FREE rồi cùng tạo lời mời thành công.
-
-**M06 Khi query MySQL lâu thì có khóa reader không?**
-
-Những việc như login, hash mật khẩu và query được đưa sang executor dịch vụ. Reader tiếp tục nhận và phân tích thông điệp. Executor có queue giới hạn; nếu đầy thì trả SERVER_BUSY. Khi trả kết quả, code kiểm tra phiên và kết nối còn đúng.
-
-**M07 requestId và eventSeq khác nhau thế nào?**
-
-requestId nhận diện một yêu cầu và phản hồi tương ứng. eventSeq là thứ tự sự kiện server phát trong một trận. ACK gửi riêng vẫn dùng bộ đếm đó nên người còn lại có thể thấy số nhảy; không được tự kết luận cứ thiếu một số là mất gói.
-
-**M08 Nếu client gửi lại LOGIN hoặc CHALLENGE cùng requestId?**
-
-RequestCache nhận diện nội dung đã chuẩn hóa. Nếu cùng requestId và cùng nội dung thì không thực hiện lại tùy trạng thái và có thể trả phản hồi cũ. Nếu nội dung khác thì trả REQUEST_ID_REUSED. Với đáp án còn có tầng chống gửi lặp ở logic trận.
-
-**M09 Queue gửi đầy thì chuyện gì xảy ra?**
-
-offer trả false và ConnectionManager đánh dấu slow. HeartbeatService sẽ dọn kết nối; đường phát sự kiện trận còn có xử lý khi enqueue thất bại. Em không cho queue tăng vô hạn vì một socket đọc chậm có thể làm hết bộ nhớ server.
-
-**M10 Heartbeat có đảm bảo khôi phục trận khi mạng trở lại không?**
-
-Không. Heartbeat giúp phát hiện kết nối không còn phản hồi. Bản code này dọn phiên khi disconnect và xử lý rời trận theo logic gameplay. Người dùng có thể đăng nhập lại, nhưng không có cam kết nối lại vào đúng trận đang chạy trước đó.
-
-**M11 Mật khẩu đã hash trong database thì TCP đã được mã hóa chưa?**
-
-Chưa. Hash bảo vệ cách lưu mật khẩu; HMAC trong request cache phục vụ nhận diện yêu cầu lặp. SocketServer hiện dùng ServerSocket và Socket thông thường, nên không thể gọi đây là TLS. Nếu cần mã hóa đường truyền phải triển khai thêm lớp TLS hoặc kênh bảo vệ tương ứng.
-
-**M12 Em trình bày phần mình trong khoảng một phút thế nào?**
-
-Em phụ trách giao thức và mạng server. Dữ liệu đi theo chuỗi TCP byte, frame độ dài, Envelope JSON, kiểm tra phiên rồi router chuyển đến service. Mỗi kết nối có reader và writer riêng, hàng đợi giới hạn, heartbeat và cơ chế dọn một lần. Em dùng giữ chỗ nguyên tử cho hai người khi thách đấu, còn chấm điểm và lưu dữ liệu được gọi qua module của Tuấn và Phúc.
-
-## 3 Đỗ Quang Tuấn phụ trách logic trận đấu
-
-### 3.1 Mục tiêu của phần Tuấn
-
-Tuấn biến các lệnh đã xác thực thành diễn biến thi đấu đúng luật. Đầu vào là hai người chơi, bộ câu hỏi riêng tư của server và các lệnh ready, answer, lifeline, chat, exit hoặc rematch. Đầu ra là các sự kiện diễn biến trận, điểm và một MatchSummary để lưu.
-
-Điểm trung tâm là server làm trọng tài. Client không gửi số điểm để server tin theo, không tự quyết định đáp án đúng và không tự chuyển câu chỉ vì đồng hồ giao diện đã về 0.
-
-### 3.2 Bản đồ các tệp cần mở
-
-| Tệp trong S/match | Vai trò |
+| Mở file | Để xem chức năng |
 | --- | --- |
-| Match.java và MatchPhase.java | Dữ liệu của một trận và tập các trạng thái có thể có |
-| MatchManager.java và MatchGateway.java | Tiếp nhận lệnh, kiểm tra thành viên, khóa trận và phát sự kiện |
-| MatchRounds.java | Chuẩn bị câu, nhận đáp án, kết thúc câu và bảng điểm |
-| AnswerEvaluator.java và ShortAnswerNormalizer.java | Kiểm tra kiểu đáp án và chấm đúng sai |
-| ScoreCalculator.java và MatchRanker.java | Tính điểm theo thời gian và thứ hạng trong trận |
-| MatchResults.java | Hoàn tất, bỏ cuộc, hủy và phiên xem kết quả |
-| RematchCoordinator.java | Đề nghị tái đấu và chuyển hai người sang trận mới |
-| MatchLifelines.java | Quyền x2, bỏ một đáp án và 50 phần trăm |
-| MatchChat.java và ChatService.java | Logic chat đang được gọi từ MatchManager nằm ở MatchChat; đọc thêm lớp tiện ích khi cần |
-| GameClock.java, SystemGameClock.java, GameScheduler.java, ExecutorGameScheduler.java, PhaseToken.java | Đo thời gian và lập lịch chuyển trạng thái |
-| MatchPayloads.java và MatchSnapshotFactory.java | Tạo dữ liệu công khai và snapshot theo trạng thái |
-| MatchWireBudget.java | Kiểm tra dữ liệu trận có thể nằm trong giới hạn frame |
+| server/match/MatchManager.java | Nhận các lệnh trong trận và kiểm tra người tham gia |
+| server/match/MatchRounds.java | Chuẩn bị câu, mở trả lời, nhận đáp án và công bố kết quả |
+| server/match/AnswerEvaluator.java | Kiểm tra đúng sai cho từng dạng câu |
+| server/match/ScoreCalculator.java | Tính điểm dựa trên tốc độ trả lời |
+| server/match/MatchLifelines.java | Xử lý quyền trợ giúp |
+| server/match/MatchChat.java | Chuyển tin nhắn trong cùng trận |
+| server/match/MatchResults.java | Kết thúc, rời trận và chuyển kết quả đi lưu |
+| server/match/RematchCoordinator.java | Xử lý lời mời tái đấu |
+| server/match/MatchPayloads.java | Chuẩn bị thông tin câu hỏi gửi cho client |
 
-S/domain/QuestionSnapshot.java, RoundSummary.java, StoredAnswerOutcome.java và MatchSummary.java là các mô hình đầu vào hoặc đầu ra dùng chung giữa gameplay và lưu trữ. Việc tạo dữ liệu kết quả thuộc gameplay; việc ghi chúng xuống MySQL thuộc persistence.
+### 3.2 Từ màn hình sẵn sàng đến lúc mở câu hỏi
 
-### 3.3 Một Match giữ những gì
+1. MatchManager.activate gửi thông tin bắt đầu trận. Hai người đến màn hình sẵn sàng; server chưa mở giờ làm bài.
+2. Mỗi người bấm sẵn sàng và gửi MATCH_READY. MatchManager ghi nhận riêng từng người.
+3. Khi cả hai đã sẵn sàng, server đếm ngược trước khi đưa câu đầu tiên ra.
+4. MatchRounds.nextQuestion tạo lượt câu hỏi mới và gửi nội dung câu cho hai client. Giai đoạn này là chuẩn bị, chưa được trả lời.
+5. Mỗi client tải nội dung, kể cả ảnh, rồi gửi QUESTION_READY. Server đợi cả hai cùng chuẩn bị xong.
+6. Server đếm ngược vào câu, phát QUESTION_OPEN và bắt đầu nhận đáp án. Thời gian là 15 hoặc 30 giây tùy dạng câu.
 
-Match có id, quiz, danh sách hai phiên, câu hỏi và profile tại thời điểm tạo; các tập ready, questionReady và attached; map accepted; điểm, số câu đúng và danh sách kết quả các lượt. Nó còn giữ phase, roundId, deadline, version, sequence và terminal summary.
+Có hai lần sẵn sàng với mục đích khác nhau. MATCH_READY là đồng ý bắt đầu cả trận; QUESTION_READY là xác nhận đã chuẩn bị xong một câu cụ thể. Ví dụ A tải ảnh nhanh hơn B thì A không được bắt đầu làm trước chỉ vì máy A nhanh hơn.
 
-accepted được xóa khi sang câu mới nên mỗi câu có vùng nhận đáp án riêng. attached cho biết ai còn gắn với phiên trận hoặc kết quả; việc tài khoản vẫn online không tự động có nghĩa còn được chat trong trận cũ.
+Nếu có người không sẵn sàng trong thời gian cho phép, server hủy theo quy tắc chờ của trận. Chương trình không treo mãi ở bước chờ.
 
-Constructor kiểm tra hai người khác nhau, số câu đúng yêu cầu, questionId không trùng. Quiz hệ thống còn phải đúng cơ cấu 4/2/2/2. MatchManager.prepare kiểm tra dữ liệu câu, snapshot profile và giới hạn kích thước thông điệp trước khi tạo trận.
+Đối chiếu [server/match/MatchManager.java dòng 95](../src/main/java/vn/edu/nhom7/quiz/server/match/MatchManager.java#L95).
+Đối chiếu [server/match/MatchRounds.java dòng 57](../src/main/java/vn/edu/nhom7/quiz/server/match/MatchRounds.java#L57).
+Đối chiếu [server/match/MatchRounds.java dòng 19](../src/main/java/vn/edu/nhom7/quiz/server/match/MatchRounds.java#L19).
 
-Mỗi Match có ReentrantLock riêng. Hai lệnh cùng tác động một trận phải nối tiếp trong khóa đó; hai trận khác nhau có thể xử lý đồng thời. Không dùng một khóa toàn cục cho toàn bộ trận đấu.
+### 3.3 Khi người chơi gửi một đáp án
 
-Đối chiếu [S/match/Match.java dòng 50](../src/main/java/vn/edu/nhom7/quiz/server/match/Match.java#L50).
-Đối chiếu [S/match/MatchManager.java dòng 53](../src/main/java/vn/edu/nhom7/quiz/server/match/MatchManager.java#L53).
+1. Client gửi ANSWER kèm trận, lượt câu hỏi và nội dung đã chọn. MessageRouter chuyển đến MatchManager.
+2. MatchManager kiểm tra người gửi có thuộc trận đó không. MatchRounds.answer kiểm tra câu và lượt đang trả lời có đúng với lượt hiện tại không.
+3. Server kiểm tra lượt đã mở chưa, còn thời gian không và người này đã có đáp án được nhận chưa. Gửi sớm, gửi muộn hoặc gửi cho câu cũ sẽ không được tính như một đáp án mới.
+4. Với lượt gửi hợp lệ, AnswerEvaluator kiểm tra đúng sai, ScoreCalculator tính điểm và server giữ kết quả để dùng khi kết thúc lượt.
+5. Server gửi xác nhận đã nhận đáp án cho người gửi. Người còn lại có thể thấy đối thủ đã trả lời nhưng chưa biết đáp án chuẩn.
+6. Khi cả hai đã trả lời hoặc hết giờ, closeRound chốt lượt và gửi QUESTION_RESULT. Lúc này mới có đáp án chuẩn, giải thích và điểm được công bố.
 
-### 3.4 Máy trạng thái của trận
+Ví dụ A chọn đáp án B, server trả ACK. A chỉ nên hiểu là “lượt gửi đã được nhận”. Nếu B vẫn còn đang suy nghĩ thì chương trình chưa tiết lộ kết quả. Đến khi B trả lời hoặc hết giờ, cả hai mới cùng xem đáp án và điểm.
 
-Máy trạng thái là cách biểu diễn “đang ở bước nào thì được làm việc gì”. Chẳng hạn ANSWER chỉ có hiệu lực ở ANSWERING; gửi đáp án trong thời gian đang tải câu không thể được tính điểm.
+Mỗi người chỉ có một đáp án được chấp nhận trong một lượt. Gửi lại đúng yêu cầu cũ chỉ nhận lại xác nhận; gửi yêu cầu khác sau khi đã trả lời sẽ bị báo đã trả lời. Vì vậy bấm nhiều lần không đổi được kết quả đã nhận.
 
-| Trạng thái server | Ý nghĩa | Thời lượng hoặc điều kiện đi tiếp |
-| --- | --- | --- |
-| WAITING_READY | Chờ cả hai sẵn sàng vào trận | Tối đa 30 giây |
-| MATCH_COUNTDOWN | Đếm ngược mở trận | 3 giây |
-| QUESTION_PREPARING | Gửi câu và chờ client chuẩn bị tài nguyên | Tối đa 30 giây |
-| ROUND_COUNTDOWN | Đếm ngược mở quyền trả lời | 2 giây |
-| ANSWERING | Nhận đáp án của câu hiện tại | 15 hoặc 30 giây; có thể kết thúc sớm khi cả hai đã trả lời |
-| REVEAL | Công bố đáp án và kết quả câu | 2 giây |
-| LEADERBOARD | Hiển thị điểm sau lượt | 3 giây |
-| RESULT | Kết quả cuối, còn có thể chat hoặc tái đấu theo điều kiện | Tối đa 60 giây |
-| CANCELLED hoặc CLOSED | Trận bị hủy trước lúc bắt đầu hoặc phiên đã đóng | Không tiếp nhận lệnh chơi mới |
+Đối chiếu [server/match/MatchRounds.java dòng 80](../src/main/java/vn/edu/nhom7/quiz/server/match/MatchRounds.java#L80).
+Đối chiếu [server/match/MatchRounds.java dòng 119](../src/main/java/vn/edu/nhom7/quiz/server/match/MatchRounds.java#L119).
+Đối chiếu [server/match/MatchRounds.java dòng 136](../src/main/java/vn/edu/nhom7/quiz/server/match/MatchRounds.java#L136).
 
-Sau MATCH_READY của cả hai, trận vào MATCH_COUNTDOWN. Hết đếm ngược thì nextQuestion đặt roundId mới, xóa đáp án cũ và gửi QUESTION công khai. Cả hai QUESTION_READY mới mở ROUND_COUNTDOWN. Hết đếm ngược này server phát QUESTION_OPEN và bắt đầu cửa sổ chấm thời gian.
+### 3.4 Đúng sai và điểm được tính như thế nào
 
-Nếu client không ready đúng hạn ở WAITING_READY hoặc QUESTION_PREPARING, server xử lý theo nhánh CLIENT_NOT_READY. Kết thúc trận trước startedAt và kết thúc sau startedAt có hành vi lưu khác nhau, nên không gộp mọi trường hợp thành “mất kết nối là hòa”.
+AnswerEvaluator.evaluate chọn cách kiểm tra dựa trên dạng câu. Điều quan trọng khi giải thích là mỗi dạng có cách nhập và điều kiện đúng riêng; không thể dùng cách so một lựa chọn cho tất cả câu hỏi.
 
-Đối chiếu [S/match/MatchManager.java dòng 145](../src/main/java/vn/edu/nhom7/quiz/server/match/MatchManager.java#L145).
-Đối chiếu [S/match/MatchRounds.java dòng 19](../src/main/java/vn/edu/nhom7/quiz/server/match/MatchRounds.java#L19).
-Đối chiếu [S/match/MatchRounds.java dòng 57](../src/main/java/vn/edu/nhom7/quiz/server/match/MatchRounds.java#L57).
-
-### 3.5 Timer cũ không được chuyển nhầm trạng thái mới
-
-Khi chuyển phase, MatchManager.phase hủy timer trước, tăng version, đặt deadline bằng nanoTime và tạo PhaseToken gồm matchId, roundId, phase, version. Callback khi chạy lại lấy khóa và so token với trạng thái hiện tại.
-
-Mã thực tế ở callback của MatchManager.phase
-
-```java
-() -> {
-  if (match.isCurrent(token)) rounds.timeout(match);
-}
-```
-
-Ví dụ cả hai đã trả lời ở giây thứ 4, câu chuyển REVEAL nhưng callback hết 15 giây cũ vẫn có thể đang chờ chạy. Token của nó mang ANSWERING và version cũ nên bị bỏ qua. Chỉ gọi cancel là chưa đủ để diễn đạt đầy đủ cơ chế chống callback muộn.
-
-nanoTime dùng để đo khoảng thời gian vì không phụ thuộc việc chỉnh giờ hệ thống. instant hoặc epoch millisecond dùng cho timestamp gửi client và lưu dữ liệu. endMillis chuyển thời gian còn lại theo deadline đơn điệu sang mốc hiển thị cho client.
-
-Đối chiếu [S/match/MatchManager.java dòng 263](../src/main/java/vn/edu/nhom7/quiz/server/match/MatchManager.java#L263).
-Đối chiếu [S/match/Match.java dòng 118](../src/main/java/vn/edu/nhom7/quiz/server/match/Match.java#L118).
-
-### 3.6 Nhận một ANSWER theo thứ tự nào
-
-1. MatchManager tìm matchId và lấy khóa trận.
-2. member kiểm tra đúng SessionContext trong danh sách ban đầu và user vẫn còn attached.
-3. MatchRounds.answer lấy thời điểm xử lý bằng clock.nanoTime và requireCurrentRound kiểm tra roundId cùng questionId.
-4. Nếu đã có accepted cho user: cùng requestId thì gửi lại ACK; khác requestId thì báo ALREADY_ANSWERED.
-5. Kiểm tra phase là ANSWERING và thời điểm không vượt deadline.
-6. AnswerEvaluator xác minh kiểu và chấm; ScoreCalculator tính điểm theo elapsed, có nhân hai nếu quyền x2 đang có hiệu lực.
-7. Lưu Accepted, gửi ACK riêng và ANSWER_STATUS cho người trong trận. Chỉ trạng thái đã trả lời được công bố ở bước này.
-8. Nếu đã có hai đáp án, closeRound ngay; nếu chưa, chờ người còn lại hoặc timer hết hạn.
-
-Thời gian dùng tính điểm được lấy khi lệnh được xử lý bên trong khóa trận. Không phải timestamp người dùng tự khai và cũng không phải timestamp phần cứng card mạng. Do đó không nên nói hệ thống đã loại bỏ hoàn toàn độ trễ mạng.
-
-Đối chiếu [S/match/MatchManager.java dòng 258](../src/main/java/vn/edu/nhom7/quiz/server/match/MatchManager.java#L258).
-Đối chiếu [S/match/Match.java dòng 131](../src/main/java/vn/edu/nhom7/quiz/server/match/Match.java#L131).
-Đối chiếu [S/match/MatchRounds.java dòng 80](../src/main/java/vn/edu/nhom7/quiz/server/match/MatchRounds.java#L80).
-
-### 3.7 Chấm bảy loại câu hỏi
-
-| Loại | Dữ liệu ANSWER.answer | Luật chấm |
-| --- | --- | --- |
-| SINGLE_CHOICE | Chuỗi ID như "A" | ID nằm trong options và bằng key |
-| MULTIPLE_CHOICE | Mảng ID như ["A","C"] | Tập bằng chính xác tập key; thứ tự không quan trọng |
-| TRUE_FALSE | Boolean true hoặc false | Phải là boolean JSON và bằng key |
-| SHORT_ANSWER | Chuỗi từ 1 đến 120 code point | Chuẩn hóa rồi khớp một câu trả lời được chấp nhận |
-| REORDER | Mảng tất cả ID theo thứ tự | Không thiếu hoặc trùng ID và thứ tự bằng key |
-| RANGE | Số JSON như 50 | Đúng thang, đúng bước, nằm trong khoảng được chấp nhận |
-| PINPOINT | Object có x và y trong khoảng 0 đến 1 | Điểm nằm trong vùng chữ nhật chuẩn, tính cả biên |
-
-Với MULTIPLE_CHOICE, key A và C thì C,A vẫn đúng; chỉ A hoặc A,C,D đều sai. Phần tử trùng hoặc ID không tồn tại bị xem là dữ liệu không hợp lệ, không chỉ là chọn sai. Phải phân biệt một đáp án đúng kiểu nhưng sai kiến thức với một payload sai cấu trúc.
-
-ShortAnswerNormalizer đưa chữ về Unicode NFC, gom các khoảng trắng thành một khoảng, bỏ khoảng trắng đầu cuối và lowercase bằng Locale.ROOT. Nó giữ dấu tiếng Việt. “  HÀ   NỘI ” có thể khớp “Hà Nội”, còn “Ha Noi” chỉ đúng nếu được khai là biến thể chấp nhận riêng.
-
-RANGE dùng BigDecimal để tránh sai số khi so bước thập phân. Với min 0, max 100, step 5, khoảng đúng 45 đến 55: gửi 50 hợp lệ và đúng; 40 hợp lệ nhưng sai; 52 sai bước nên bị từ chối. PublicQuestion.config chỉ gửi thang và bước, không gửi acceptedMin, acceptedMax trước reveal.
-
-PINPOINT dùng tọa độ chuẩn hóa để cùng một vị trí có ý nghĩa trên các cửa sổ khác kích thước. Nếu vùng đúng x=0,2; y=0,3; width=0,1; height=0,2 thì điểm (0,25; 0,4) đúng. Vùng đúng vẫn là dữ liệu server giữ kín trước reveal. REORDER yêu cầu toàn bộ thứ tự đúng và không có điểm một phần.
-
-Đối chiếu [S/match/AnswerEvaluator.java dòng 13](../src/main/java/vn/edu/nhom7/quiz/server/match/AnswerEvaluator.java#L13).
-Đối chiếu [S/match/ShortAnswerNormalizer.java dòng 9](../src/main/java/vn/edu/nhom7/quiz/server/match/ShortAnswerNormalizer.java#L9).
-Đối chiếu [C/protocol/InteractiveQuestions.java dòng 12](../src/main/java/vn/edu/nhom7/quiz/common/protocol/InteractiveQuestions.java#L12).
-
-### 3.8 Tính điểm và hoàn tất một lượt
-
-ScoreCalculator chia cửa sổ trả lời thành ba phần. Đúng ở một phần ba đầu được 3 điểm; đúng ở một phần ba tiếp theo được 2; phần cuối được 1. Sai được 0. Việc hết giờ không có đáp án được tạo outcome TIMEOUT trong MatchRounds, không cần giả tạo một đáp án sai.
-
-| Cửa sổ | Được 3 điểm | Được 2 điểm | Được 1 điểm |
-| --- | --- | --- | --- |
-| 15 giây | 0 đến 5 giây, gồm mốc 5 | Sau 5 đến 10 giây, gồm mốc 10 | Sau 10 đến 15 giây, gồm mốc 15 |
-| 30 giây | 0 đến 10 giây, gồm mốc 10 | Sau 10 đến 20 giây, gồm mốc 20 | Sau 20 đến 30 giây, gồm mốc 30 |
-
-Mã thực tế trong ScoreCalculator.calculate
-
-```java
-return !correct
-    ? 0
-    : elapsedNanos <= windowNanos / 3 ? 3 : elapsedNanos <= windowNanos / 3 * 2 ? 2 : 1;
-```
-
-Ví dụ câu 15 giây: A đúng ở 4 giây được 3 điểm, B đúng ở 8 giây được 2 điểm. Nếu A dùng DOUBLE_POINTS ở câu đó thì A nhận 6. Quyền x2 chỉ dùng một lần trong trận nên điểm tối đa một trận hệ thống 10 câu là 33, không phải 60.
-
-closeRound chỉ chạy khi còn ANSWERING, tổng hợp outcomes và cộng điểm đúng một lần, rồi lưu RoundSummary. Nó phát QUESTION_RESULT chứa đáp án chuẩn và chuyển REVEAL. Sau đó leaderboard phát scoreBefore, earnedPoints, totalScore, rank và previousRank để client trình bày. Hết bảng điểm cuối mới đi đến kết quả trận.
-
-### 3.9 Quyền trợ giúp và chat
-
-Mỗi người có ba quyền: DOUBLE_POINTS, REMOVE_ONE và FIFTY_FIFTY. Mỗi quyền dùng tối đa một lần mỗi trận; mỗi câu dùng tối đa một quyền và phải dùng trước khi đáp án được chấp nhận. REMOVE_ONE và FIFTY_FIFTY chỉ khả dụng cho SINGLE_CHOICE có ít nhất ba phương án. x2 nhân điểm của câu đó, đáp án sai vẫn 0.
-
-MatchLifelines dùng key ở server để chọn các phương án sai được ẩn. Người dùng không tự gửi danh sách muốn bỏ để server tin theo. LIFELINE_RESULT gửi riêng thông tin cần thiết cho người sử dụng; LIFELINE_STATUS cho biết ai đã dùng quyền.
-
-Chat cũng đi qua kiểm tra membership. MatchChat bỏ khoảng trắng đầu cuối, cho từ 1 đến 300 code point và tối đa 5 tin trong cửa sổ 10 giây cho mỗi người. requestId lặp được xử lý để không tạo tin nhắn mới. Ở RESULT, chat chỉ còn hợp lệ khi cả hai vẫn attached. Gửi chat không đặt lại timer câu hỏi.
-
-Đối chiếu [S/match/MatchLifelines.java dòng 26](../src/main/java/vn/edu/nhom7/quiz/server/match/MatchLifelines.java#L26).
-Đối chiếu [S/match/MatchChat.java dòng 18](../src/main/java/vn/edu/nhom7/quiz/server/match/MatchChat.java#L18).
-
-### 3.10 Kết thúc và bàn giao cho Phúc
-
-MatchResults.finish chặn tạo terminal summary lần hai. COMPLETED so tổng điểm để thắng hoặc hòa; FORFEIT xử người rời là thua; ABORTED không có người thắng. Nếu cả hai socket đều không còn sống thì code có nhánh BOTH_DISCONNECTED và kết quả NONE.
-
-Nếu trận chưa có startedAt, phần này hủy trận, giải phóng giữ chỗ lưu và dọn assignment. Nếu đã bắt đầu mà một câu chưa công bố xong, có thể ghi RoundSummary chưa revealed và các outcome ABANDONED với 0 điểm cho lượt chưa hoàn tất; không cộng điểm tạm của lượt đó.
-
-Sau khi đóng gói MatchSummary, code lên lịch RESULT 60 giây và đưa sink.submit ra ngoài khóa qua manager.after. Đây là điểm bàn giao Tuấn sang Phúc. Client nhận MATCH_RESULT với persistenceStatus PENDING; việc MySQL lưu thành công hay thất bại sẽ được báo riêng.
-
-RematchCoordinator chỉ nhận tái đấu khi ở RESULT, cả hai còn attached và còn kết nối. Đề nghị tối đa 20 giây, không quá hạn phiên kết quả. Hai người cùng bấm tái đấu có thể được hiểu là đồng ý cùng một đề nghị. Nó tạo matchId mới, tải bộ câu theo repository và dùng generation để callback cũ không chuyển nhầm assignment. Cùng quiz không có nghĩa bảo đảm mọi câu đều khác trận trước.
-
-Đối chiếu [S/match/MatchResults.java dòng 18](../src/main/java/vn/edu/nhom7/quiz/server/match/MatchResults.java#L18).
-Đối chiếu [S/match/MatchManager.java dòng 241](../src/main/java/vn/edu/nhom7/quiz/server/match/MatchManager.java#L241).
-Đối chiếu [S/match/RematchCoordinator.java dòng 29](../src/main/java/vn/edu/nhom7/quiz/server/match/RematchCoordinator.java#L29).
-
-### 3.11 Cách lần code và tự kiểm tra
-
-Mở MatchManager.handle rồi đi vào case ANSWER, MatchRounds.answer, AnswerEvaluator.evaluate, ScoreCalculator.calculate, closeRound và cuối cùng MatchResults.finish. Đây là đường đi ngắn để giải thích phần cốt lõi mà không bị cuốn vào toàn bộ giao diện.
-
-Các test hữu ích: ScoreCalculatorTest cho mốc nano giây và chuẩn hóa; AnswerEvaluatorTest cho kiểu đáp án; InteractiveQuestionsTest cho dạng mới; MatchEngineTest cho lifecycle; MatchTerminationTest cho kết thúc; RematchCoordinatorTest cho tái đấu. Khi học timer, đọc cả FakeGameClock, FakeGameScheduler và ManualGameScheduler trong test support để thấy có thể đẩy thời gian mà không đợi 15 giây thật.
-
-### 3.12 Câu hỏi và câu trả lời mẫu cho Tuấn
-
-**T01 Vì sao phải dùng máy trạng thái?**
-
-Em cần biết lệnh nào hợp lệ ở thời điểm nào. Trận đi từ chờ ready, chuẩn bị câu, đếm ngược, trả lời, reveal đến bảng điểm và kết quả. Nếu không kiểm tra phase, một đáp án có thể đến khi câu chưa mở hoặc một callback cũ có thể làm kết thúc câu mới.
-
-**T02 Làm sao không tính hai đáp án của cùng người?**
-
-Em giữ accepted theo userId trong từng lượt dưới khóa trận. Có đáp án trước đó thì cùng requestId được trả ACK cũ, còn yêu cầu mới bị ALREADY_ANSWERED. roundId và questionId còn được kiểm tra để không nhận lệnh của câu trước.
-
-**T03 Nếu hai người gửi đáp án cùng lúc thì có mất điểm không?**
-
-Hai lệnh của cùng Match dùng chung ReentrantLock nên cập nhật tuần tự. Mỗi lệnh ghi một Accepted; khi map có hai người thì closeRound một lần. Các trận khác dùng khóa khác nên vẫn chạy đồng thời.
-
-**T04 Vì sao vừa cancel timer vừa cần PhaseToken?**
-
-cancel không nên được xem là bảo đảm callback cũ chưa thể đang chạy hoặc đang chờ khóa. Token chứa trận, lượt, phase và version; callback chỉ làm việc khi còn khớp. Khi câu kết thúc sớm, version đổi nên timer trả lời cũ không còn tác dụng.
-
-**T05 Tại sao dùng nanoTime thay currentTimeMillis để chấm?**
-
-Em cần khoảng thời gian đã trôi qua, không cần giờ lịch. nanoTime phù hợp với việc đo khoảng và không bị việc chỉnh đồng hồ hệ thống làm lệch như giờ lịch. Thời gian gửi đáp án do server đo lúc xử lý dưới khóa, không nhận elapsed từ client.
-
-**T06 Chọn nhiều đáp án có được điểm một phần không?**
-
-Không. Em chuyển danh sách hợp lệ thành tập rồi so với tập đáp án chuẩn. Đúng đủ và không thừa mới đúng; thứ tự phần tử không quan trọng. Nếu lặp ID hoặc dùng ID lạ thì dữ liệu bị từ chối là INVALID_ANSWER.
-
-**T07 Trả lời ngắn có bỏ dấu tiếng Việt không?**
-
-Không tự bỏ dấu. Code chuẩn hóa Unicode NFC, chữ thường và khoảng trắng. “HÀ NỘI” và “Hà Nội” có thể khớp; “Ha Noi” cần một alias riêng nếu bộ câu muốn chấp nhận.
-
-**T08 Điểm 3 2 1 có áp dụng câu 30 giây không?**
-
-Có, nhưng ngưỡng đổi theo độ dài cửa sổ. Với câu 15 giây là mốc 5 và 10 giây; với câu 30 giây là mốc 10 và 20. Đúng ở mốc đầu vẫn nhận mức điểm cao hơn. Quyền x2 nhân mức điểm thực của câu đó.
-
-**T09 Đã nhận ANSWER_ACK thì có được tô xanh đáp án ngay không?**
-
-Không. ACK xác nhận đáp án được nhận, gồm thời gian và request được chấp nhận. Đúng sai và key chỉ được công bố ở QUESTION_RESULT sau khi đóng lượt. Client có thể khóa vùng trả lời và hiển thị đã gửi trước đó.
-
-**T10 Nếu một người thoát giữa câu thì người đang dẫn chắc chắn thắng theo điểm à?**
-
-Nếu là FORFEIT thì người rời bị xử thua theo luật, không chỉ so điểm đang có. Nếu cả hai disconnect thì có nhánh ABORTED. Một lượt chưa hoàn tất không được cộng như lượt đã reveal; kết quả cần phân biệt lý do kết thúc với tổng điểm.
-
-**T11 Tại sao nhận kết quả rồi mà ranking chưa thay đổi?**
-
-Gameplay phát kết quả trước với trạng thái PENDING. Sau đó persistence commit thành công mới cập nhật profile và phát invalidation cho ranking. Quiz cộng đồng có ranked=false nên lưu lịch sử nhưng không làm thay đổi thống kê hạng.
-
-**T12 Em tóm tắt phần mình thế nào?**
-
-Em phụ trách trọng tài của trận: giữ phase và timer, kiểm tra thành viên cùng lượt, chấm bảy dạng đáp án và tính điểm theo thời gian server. Em dùng khóa riêng từng trận và token cho timer cũ. Khi hết trận em tạo summary bất biến để Phúc lưu; sự kiện theo thứ tự được chuyển qua lớp mạng của Minh đến UI của Việt.
-
-## 4 Nguyễn Hữu Việt phụ trách ứng dụng client JavaFX
-
-### 4.1 Mục tiêu của phần Việt
-
-Phần Việt là ứng dụng người chơi trực tiếp nhìn và bấm. Đầu vào gồm thao tác chuột, bàn phím và sự kiện server; đầu ra là yêu cầu gửi lên mạng và giao diện phản ánh đúng trạng thái được server xác nhận.
-
-Một UI đẹp chưa đủ nếu đọc socket làm cửa sổ đứng, bấm hai lần gửi hai đáp án hoặc kết quả trận cũ chèn lên trận mới. Vì vậy cần hiểu ba lớp network, state và ui cùng cách chuyển việc sang đúng luồng.
-
-### 4.2 Bản đồ các tệp cần mở
-
-| Nhóm tệp trong V/ | Trách nhiệm |
+| Dạng câu | Điều kiện để được tính đúng |
 | --- | --- |
-| ClientMain.java và DesktopLauncher.java | Khởi động, nối network với store và giao diện; đầu vào cho ứng dụng desktop |
-| network/NetworkClient.java | Kết nối TCP, gửi HELLO, reader, writer, heartbeat và báo disconnect |
-| network/RequestTracker.java và RequestTimeoutMonitor.java | Theo dõi yêu cầu chưa phản hồi và báo quá hạn |
-| network/ServerTimeEstimator.java | Ước lượng chênh lệch đồng hồ để hiển thị countdown |
-| state/ClientState.java, ClientStore.java, ClientStateReducer.java, MatchEventData.java | Trạng thái client và các phép chuyển trạng thái |
-| ui/AppShell.java, NavigationBar.java, UiCommandSink.java, CommandGateway.java | Điều hướng, khung ứng dụng và lối gửi lệnh thống nhất |
-| ui/AuthView.java, AuthForm.java, LobbyView.java, QuizDetailView.java, ChallengeDialog.java | Đăng nhập, sảnh và lời mời |
-| ui/WaitingView.java, GameView.java, ResultView.java | Các màn hình trong và sau trận |
-| ui/QuestionRenderer.java và các lớp Renderer | Hiển thị từng kiểu câu hỏi và tạo đáp án đúng kiểu |
-| ui/QuestionPreparation.java, QuestionContent.java, RevealPanel.java, LeaderboardPanel.java, ReviewCard.java | Chuẩn bị câu, kết quả câu, điểm và xem lại |
-| ui/ChatPanel.java, LifelineDock.java, RankingView.java, HistoryView.java | Chat, trợ giúp, ranking và lịch sử |
-| ui/CommunityQuizView.java, DraftQuestionMapper.java, ChoiceAnswerEditor.java, InteractiveAnswerEditor.java, QuestionPreview.java | Soạn và xem trước quiz cộng đồng |
-| assets/AssetLoader.java, RemoteMedia.java và ui/ImageTarget.java | Tải ảnh và xử lý tương tác trên ảnh |
-| ui/Theme.java, Effects.java, Sound.java, SettingsOverlay.java, ToastOverlay.java, PresentationText.java | Chủ đề, hiệu ứng, âm thanh, cài đặt và thông báo |
+| Chọn một đáp án | Lựa chọn trùng đáp án đúng |
+| Chọn nhiều đáp án | Chọn đủ và đúng toàn bộ tập đáp án; thứ tự chọn không quan trọng |
+| Đúng sai | Giá trị đúng hoặc sai trùng đáp án |
+| Trả lời ngắn | Khớp đáp án được chấp nhận sau khi chuẩn hóa chữ hoa thường và khoảng trắng; vẫn phân biệt dấu |
+| Sắp xếp | Các mục nằm đúng toàn bộ thứ tự yêu cầu |
+| Chọn giá trị trên khoảng | Giá trị hợp lệ theo thang chọn và nằm trong khoảng được chấp nhận |
+| Chọn vị trí trên ảnh | Điểm được chọn nằm trong vùng đáp án, kể cả đường biên |
 
-### 4.3 Ba luồng công việc dễ hình dung
+ScoreCalculator chia thời gian trả lời thành ba phần. Trả lời đúng ở phần đầu được 3 điểm, phần giữa được 2 điểm, phần cuối được 1 điểm. Câu 15 giây có các mốc 5 và 10 giây; câu 30 giây có các mốc 10 và 20 giây. Trả lời sai hoặc không trả lời được 0 điểm.
 
-JavaFX Application Thread giống người phụ trách vẽ cửa sổ và nhận thao tác. Nếu bắt người này đứng đợi socket.read hoặc chờ ảnh tải xong, các nút và animation cũng bị đứng. NetworkClient dùng executor cho kết nối, reader và writer; ClientStore có một executor đơn để chuyển state nối tiếp nhau; mọi cập nhật scene graph được chuyển sang JavaFX bằng Platform.runLater.
+Ví dụ, ở câu 15 giây, A trả lời đúng sau 4 giây được 3 điểm; B trả lời đúng sau 8 giây được 2 điểm. Điểm phụ thuộc thời điểm server nhận đáp án hợp lệ. Quyền nhân đôi điểm chỉ có tác dụng cho câu được dùng trợ giúp đó; trả lời sai vẫn là 0.
 
-Luồng dữ liệu chính là server event → NetworkClient → ClientStore → ClientStateReducer → state mới → AppShell.render. Theo hướng ngược lại, nút UI → UiCommandSink hoặc CommandGateway → NetworkClient.send → outbound queue → writer → socket.
+Sau khi công bố kết quả câu, MatchRounds.leaderboard gửi bảng điểm tạm thời. Nếu còn câu thì chuyển tiếp; nếu hết câu thì chuyển sang kết thúc trận. Bảng điểm giữa trận này khác bảng xếp hạng toàn cục ở mục Xếp hạng.
 
-Mã thực tế tại điểm đăng ký nghe state trong ClientMain
+Đối chiếu [server/match/AnswerEvaluator.java dòng 13](../src/main/java/vn/edu/nhom7/quiz/server/match/AnswerEvaluator.java#L13).
+Đối chiếu [server/match/ScoreCalculator.java dòng 10](../src/main/java/vn/edu/nhom7/quiz/server/match/ScoreCalculator.java#L10).
+Đối chiếu [server/match/MatchRounds.java dòng 193](../src/main/java/vn/edu/nhom7/quiz/server/match/MatchRounds.java#L193).
 
-```java
-store.subscribe(
-    s ->
-        Platform.runLater(
-            () -> {
-              shell.render(s);
-```
+### 3.5 Trợ giúp và chat trong trận
 
-Đây là phần đầu của callback, không phải một đoạn chương trình độc lập. s là trạng thái mới; runLater đặt việc render vào hàng đợi của JavaFX. Nó không biến truy vấn mạng thành nhanh hơn, nhưng giúp việc vẽ chạy đúng luồng.
+Người chơi bấm một trợ giúp thì client gửi LIFELINE_USE. MatchLifelines.lifeline kiểm tra đúng thời điểm đang trả lời, chưa nộp đáp án và còn quyền dùng. Mỗi loại trợ giúp được dùng một lần trong trận, mỗi câu chỉ được dùng một trợ giúp. Hai loại bỏ bớt lựa chọn chỉ dùng được với câu chọn một đáp án có đủ lựa chọn; không áp dụng tùy ý cho mọi dạng câu.
 
-Đối chiếu [V/ClientMain.java dòng 62](../src/main/java/vn/edu/nhom7/quiz/client/ClientMain.java#L62).
-Đối chiếu [V/state/ClientStore.java dòng 49](../src/main/java/vn/edu/nhom7/quiz/client/state/ClientStore.java#L49).
+Nếu dùng nhân đôi điểm, server ghi nhận tác dụng trên câu hiện tại rồi áp dụng khi chấm điểm. Nếu dùng loại bỏ lựa chọn, server gửi về các lựa chọn cần ẩn để client cập nhật. Server vẫn là nơi kiểm tra quyền dùng, nên bật lại nút ở client không tạo thêm lượt trợ giúp.
 
-### 4.4 Kết nối và gửi dữ liệu không chặn cửa sổ
+Với chat, client gửi CHAT; MatchManager kiểm tra người gửi thuộc trận rồi MatchChat.chat kiểm tra nội dung và chuyển cho hai người trong trận đó. Chat không mở lại câu đã hết giờ và không làm thời gian trả lời chạy lại từ đầu.
 
-NetworkClient.connect chạy bất đồng bộ bằng CompletableFuture trên executor io. Nó tạo Socket với timeout kết nối 5 giây, read timeout 1 giây, bật TCP_NODELAY, đưa HELLO với clientVersion "3.0" và assetPackVersion "1" vào queue rồi khởi chạy reader, writer.
+Đối chiếu [server/match/MatchLifelines.java dòng 26](../src/main/java/vn/edu/nhom7/quiz/server/match/MatchLifelines.java#L26).
+Đối chiếu [server/match/MatchChat.java dòng 18](../src/main/java/vn/edu/nhom7/quiz/server/match/MatchChat.java#L18).
 
-connect hoàn tất việc thiết lập socket chưa có nghĩa bắt tay đã xong. isConnected chỉ true khi open và handshake đều true. send chặn gửi các lệnh trước handshake, ngoại trừ HELLO. Reader kiểm tra HELLO_ACK đầu tiên, cập nhật thời điểm frame hợp lệ và đẩy event cho callback.
+### 3.6 Kết thúc trận và tái đấu
 
-Writer duy nhất lấy Envelope từ queue 256 phần tử, ProtocolCodec mã hóa thành JSON, FrameCodec đóng khung và ghi OutputStream. send trả boolean cho biết có đưa được vào queue không; nó không bảo đảm server đã nhận. Vì thế cần RequestTracker và phản hồi của server.
+1. Khi hoàn thành các câu, MatchResults.finish so tổng điểm để xác định thắng, thua hoặc hòa.
+2. Server tạo bản tổng hợp trận và chuyển cho PersistenceService lưu. Đồng thời gửi MATCH_RESULT để hai client hiển thị kết quả.
+3. Màn hình có thể đã hiện kết quả trong lúc trạng thái lưu còn chờ xử lý. Chỉ khi lưu thành công thì dữ liệu mới có trong lịch sử và thống kê phù hợp mới được cập nhật.
+4. Nếu một người rời trận hoặc mất kết nối khi trận đã bắt đầu, phần kết quả xử lý theo trường hợp bỏ cuộc. Nếu trận chưa thực sự bắt đầu, server hủy mà không tạo một trận thi đấu đã hoàn thành.
+5. Ở màn hình kết quả, một người có thể xin tái đấu. RematchCoordinator.commandLocked nhận thao tác; đối thủ phải đồng ý và cả hai vẫn phải còn đủ điều kiện tham gia.
+6. Khi hợp lệ, server lấy đề và tạo một trận mới. Trận tái đấu có mã trận mới và điểm bắt đầu lại; câu hỏi có thể trùng vì vẫn lấy từ cùng bộ đề.
 
-Heartbeat mỗi 10 giây gửi PING, PONG cập nhật ước lượng giờ server. Không nhận frame hợp lệ đủ lâu sẽ disconnect. Khi đóng, code hủy heartbeat, đóng socket, hủy writer và xóa queue. Các vòng đọc ghi còn kiểm tra socket hiện tại có phải socket của tác vụ đó không để giảm việc tác vụ của kết nối cũ can thiệp kết nối mới.
+Không nên nói “cứ thoát ứng dụng là trận được hòa” hoặc “tái đấu là tiếp tục điểm cũ”. Kết quả phụ thuộc tình huống kết thúc, còn tái đấu luôn đi qua quá trình tạo trận mới.
 
-Đối chiếu [V/network/NetworkClient.java dòng 45](../src/main/java/vn/edu/nhom7/quiz/client/network/NetworkClient.java#L45).
-Đối chiếu [V/network/NetworkClient.java dòng 98](../src/main/java/vn/edu/nhom7/quiz/client/network/NetworkClient.java#L98).
+Đối chiếu [server/match/MatchResults.java dòng 18](../src/main/java/vn/edu/nhom7/quiz/server/match/MatchResults.java#L18).
+Đối chiếu [server/match/MatchResults.java dòng 123](../src/main/java/vn/edu/nhom7/quiz/server/match/MatchResults.java#L123).
+Đối chiếu [server/match/RematchCoordinator.java dòng 29](../src/main/java/vn/edu/nhom7/quiz/server/match/RematchCoordinator.java#L29).
 
-### 4.5 State store và reducer làm gì
+### 3.7 Câu hỏi mẫu dành cho Tuấn
 
-ClientState là record giữ profile, activeMatchId, resultMatchId, roundId, phase, dữ liệu event, trạng thái đáp án, chat và trạng thái lưu của các trận. Constructor sao chép các map thành bản không cho thay đổi trực tiếp ở cấu trúc map. Việc chuyển state đi qua ClientStore, không để các view tùy ý sửa map chung.
+**T01 Code nào nhận thao tác sẵn sàng và khi nào bắt đầu trận?**
 
-Reducer nhận state hiện tại cùng event, tạo state kế tiếp. Ví dụ LOGIN_RESULT đưa phase về LOBBY; QUESTION đưa sang QUESTION_PREPARE và xóa cờ pending, accepted; QUESTION_OPEN đổi thành OPEN; ANSWER_ACK đặt accepted=true; QUESTION_RESULT đổi sang REVEAL; MATCH_RESULT đổi sang RESULT.
+“Em mở MatchManager.handle để tìm nhánh MATCH_READY. Server ghi nhận từng người đã sẵn sàng; đủ cả hai mới chạy đếm ngược và chuyển sang câu đầu. Một người bấm trước chưa làm người còn lại bắt đầu trả lời ngay.”
 
-Server gọi trạng thái trả lời là ANSWERING, client dùng tên phase OPEN. Khi nhận MATCH_SNAPSHOT, reducer chuyển tên server sang tên UI tương ứng. Vì vậy không nên tìm chuỗi OPEN trong MatchPhase rồi cho rằng server thiếu trạng thái.
+**T02 Vì sao vào từng câu lại cần báo sẵn sàng thêm một lần?**
 
-Reducer bỏ eventSeq không lớn hơn số đã nhận của cùng match. Nó còn bỏ event của match khác đang không hoạt động, ngoại trừ các nhánh cần xử lý riêng như MATCH_START và trạng thái lưu. ONLINE_LIST có revision riêng để bản online cũ không ghi đè bản mới. Số eventSeq có thể nhảy do ACK gửi riêng nên reducer không đòi số liên tiếp tuyệt đối.
+“Vì câu hỏi có thể có ảnh hoặc nội dung cần tải. MatchRounds.nextQuestion gửi nội dung trước, mỗi client chuẩn bị xong mới gửi QUESTION_READY. Server đợi cả hai, đếm ngược rồi mới gửi QUESTION_OPEN để mở thời gian trả lời.”
 
-Đối chiếu [V/state/ClientStateReducer.java dòng 22](../src/main/java/vn/edu/nhom7/quiz/client/state/ClientStateReducer.java#L22).
-Đối chiếu [V/state/ClientState.java dòng 46](../src/main/java/vn/edu/nhom7/quiz/client/state/ClientState.java#L46).
+**T03 Nếu cần tìm toàn bộ luồng gửi đáp án thì mở những hàm nào?**
 
-### 4.6 Bấm trả lời và ba trạng thái cần phân biệt
+“Em bắt đầu ở MatchManager.handle, đi sang MatchRounds.answer để xem kiểm tra và nhận đáp án. Trong đó gọi AnswerEvaluator.evaluate để xét đúng sai và ScoreCalculator.calculate để tính điểm. Cuối lượt, MatchRounds.closeRound công bố kết quả cho cả hai.”
 
-Trước khi gửi, client cần phase OPEN, chưa ownPending và chưa accepted. canAnswer tổng hợp ba điều kiện này. CommandGateway còn giữ pendingRound theo roundId để chặn bấm rất nhanh trước khi state executor kịp cập nhật.
+**T04 Server gửi ACK thì đáp án đã đúng chưa?**
 
-Mã thực tế trong CommandGateway.send
+“Chưa thể kết luận là đúng. MatchRounds.ack chỉ xác nhận đáp án hợp lệ đã được nhận. Server đợi cả hai trả lời hoặc hết giờ rồi closeRound mới gửi đáp án chuẩn, giải thích và điểm để tránh lộ kết quả khi đối thủ còn đang làm.”
 
-```java
-if (!store.state().canAnswer() || java.util.Objects.equals(pendingRound, roundId))
-  throw new IllegalStateException("Answer already pending or round closed");
-pendingRound = roundId;
-store.markAnswerPending();
-```
+**T05 Người chơi bấm gửi hai lần thì xử lý ở đâu?**
 
-ownPending nghĩa là đã yêu cầu gửi nhưng chưa biết server chấp nhận; accepted nghĩa là đã nhận ACK; đúng hoặc sai chỉ có sau QUESTION_RESULT. Nếu network.send thất bại ngay, gateway hủy pending để giao diện không treo ở trạng thái “đang gửi” của một yêu cầu chưa ra mạng.
+“Ở MatchRounds.answer. Server đã nhớ người đó có đáp án được nhận trong lượt chưa. Nếu là cùng yêu cầu cũ thì trả lại xác nhận; nếu là yêu cầu mới sau khi đã trả lời thì báo đã trả lời, không ghi đè đáp án trước.”
 
-Gateway tạo UUID mới cho request, đưa matchId, roundId và payload vào Envelope, rồi đăng ký RequestTracker. ANSWER và LOGOUT có mốc theo dõi 2 giây; phần lớn yêu cầu khác 5 giây. QUESTION_READY không được đăng ký như yêu cầu thông thường vì cơ chế phản hồi của nó khác. TimeoutMonitor báo mỗi timeout chưa giải quyết một lần và xóa tracker khi connectionEpoch đổi.
+**T06 Không ai trả lời hoặc chỉ một người trả lời thì có chuyển câu không?**
 
-Không nên tự động gửi lại một đáp án mới chỉ vì chưa thấy ACK. Timeout có thể xảy ra khi đáp án đã đến server. Snapshot cho phép hỏi lại trạng thái hiện tại để biết có acceptedAnswer hay chưa.
+“Có. MatchRounds.timeout xử lý khi hết thời gian, rồi closeRound chốt kết quả. Người chưa có đáp án được tính là không trả lời và không được điểm. Sau phần công bố và bảng điểm, server tiếp tục câu sau hoặc kết thúc nếu đó là câu cuối.”
 
-Đối chiếu [V/ui/CommandGateway.java dòng 22](../src/main/java/vn/edu/nhom7/quiz/client/ui/CommandGateway.java#L22).
-Đối chiếu [V/network/RequestTracker.java dòng 19](../src/main/java/vn/edu/nhom7/quiz/client/network/RequestTracker.java#L19).
-Đối chiếu [V/network/RequestTimeoutMonitor.java dòng 21](../src/main/java/vn/edu/nhom7/quiz/client/network/RequestTimeoutMonitor.java#L21).
+**T07 Câu chọn nhiều đáp án thiếu một lựa chọn đúng có được điểm một phần không?**
 
-### 4.7 Hiển thị bảy dạng câu bằng một hợp đồng
+“Không. AnswerEvaluator yêu cầu tập lựa chọn khớp đầy đủ với tập đáp án. Chọn thiếu hoặc chọn thừa đều sai; thứ tự bấm các lựa chọn không ảnh hưởng. Luật hiện tại không chia điểm cho từng lựa chọn đúng.”
 
-QuestionRenderer là interface có view, bind, setControlsEnabled và showResult. forType chọn renderer phù hợp; GameView không cần chứa toàn bộ logic nhập liệu của bảy loại câu.
+**T08 Muốn sửa quy tắc tính điểm thì tìm ở đâu và đang tính thế nào?**
 
-| Renderer | Cách tạo đáp án | Điều cần giải thích |
-| --- | --- | --- |
-| SingleChoiceRenderer | TextNode chứa ID | Chỉ gửi ID; nhãn hiển thị có thể thay đổi |
-| MultipleChoiceRenderer | ArrayNode chứa các ID | Chọn nhiều rồi khóa; server vẫn kiểm tra tập |
-| TrueFalseRenderer | BooleanNode | Gửi boolean thật, không gửi chữ Đúng hoặc Sai |
-| ShortAnswerRenderer | TextNode | Kiểm tra nhập liệu cơ bản rồi để server chuẩn hóa và chấm |
-| ReorderRenderer | Mảng ID theo thứ tự sau khi sắp xếp | Người chơi kéo thả hoặc dùng nút điều chỉnh rồi khóa |
-| RangeRenderer | DecimalNode | Chỉ cho gửi khi người chơi đã tương tác và số hợp lệ |
-| PinpointRenderer | Object có tọa độ x và y | Chỉ cho khóa khi ảnh đã sẵn sàng và có điểm chọn |
+“Em xem ScoreCalculator.calculate. Hiện tại thời gian được chia làm ba phần; trả lời đúng lần lượt được 3, 2 hoặc 1 điểm. Sai hoặc hết giờ là 0. Nếu dùng quyền nhân đôi cho câu đó thì điểm đúng được nhân đôi.”
 
-AnswerIntentFactory tạo typed JSON cho bốn dạng cũ. Các renderer tương tác tạo mảng, số hoặc object phù hợp dạng mới. UI kiểm tra trước để người chơi sửa dễ; server vẫn phải kiểm tra vì client có thể bị sửa hoặc có lỗi.
+**T09 Trợ giúp được kiểm tra ở đâu và có thể dùng liên tục không?**
 
-RangeRenderer có cờ touched để thanh trượt đặt sẵn ở giữa không bị hiểu thành người dùng đã chọn. Cờ syncing tránh vòng lặp khi text cập nhật slider rồi slider lại cập nhật text. Giá trị số dùng BigDecimal và kiểm tra đúng bước trước khi tạo DecimalNode.
+“Em xem MatchLifelines.lifeline. Server kiểm tra đang trong giờ trả lời, chưa nộp đáp án, loại trợ giúp còn lượt và phù hợp dạng câu. Mỗi loại chỉ một lần trong trận, mỗi câu một trợ giúp, nên không thể bấm liên tục để lấy thêm lợi thế.”
 
-ImageTarget tính tọa độ trên vùng ảnh thật, không tính khoảng trống viền do giữ tỷ lệ. Công thức x chuẩn hóa là (vị trí chuột trừ mép trái ảnh) chia chiều rộng ảnh. Khi resize, vùng và ghim được vẽ lại theo tỷ lệ. Cách này giữ ý nghĩa vị trí giữa màn hình nhỏ và lớn.
+**T10 Chat trong trận được gửi cho ai và có làm tăng thời gian làm bài không?**
 
-Đối chiếu [V/ui/QuestionRenderer.java dòng 10](../src/main/java/vn/edu/nhom7/quiz/client/ui/QuestionRenderer.java#L10).
-Đối chiếu [V/ui/AnswerIntentFactory.java dòng 10](../src/main/java/vn/edu/nhom7/quiz/client/ui/AnswerIntentFactory.java#L10).
-Đối chiếu [V/ui/RangeRenderer.java dòng 17](../src/main/java/vn/edu/nhom7/quiz/client/ui/RangeRenderer.java#L17).
-Đối chiếu [V/ui/ImageTarget.java dòng 142](../src/main/java/vn/edu/nhom7/quiz/client/ui/ImageTarget.java#L142).
+“MatchChat.chat chuyển tin nhắn cho người trong cùng trận sau khi kiểm tra nội dung và tư cách người gửi. Thao tác chat không đổi thời hạn trả lời. Vì vậy người chơi vẫn phải hoàn thành đáp án theo giờ của câu hiện tại.”
 
-### 4.8 Tại sao cần báo tải câu xong
+**T11 Kết quả được hiện trước hay sau khi lưu database?**
 
-Khi nhận QUESTION, QuestionPreparation kiểm tra questionAssetId và tải ảnh nếu có. Sau khi hoàn tất, nó quay lại JavaFX thread và kiểm tra matchId cùng roundId hiện tại vẫn khớp với lần bắt đầu tải. Chỉ khi còn đúng câu mới gửi QUESTION_READY. Nếu tải lỗi, nó báo lỗi và không giả vờ đã sẵn sàng.
+“MatchResults.finish chốt kết quả, chuyển bản tổng hợp đi lưu và gửi kết quả cho client. Người chơi có thể xem màn hình kết quả khi việc lưu còn đang chờ. Lưu thành công mới làm lịch sử và thống kê liên quan được cập nhật.”
 
-Ví dụ ảnh của câu 3 tải chậm, trong lúc đó trận bị đóng hoặc UI đã đổi phiên. Callback muộn phải bị bỏ qua; nếu không, client có thể gửi ready cho một lượt không còn hiệu lực. readyRounds cũng tránh gửi lại ready nhiều lần do render nhiều lần.
+**T12 Tái đấu được viết ở đâu và có giữ điểm trận trước không?**
 
-AssetLoader cung cấp lối tải tài nguyên. Với ảnh do người dùng tải lên, RemoteMedia xử lý chuỗi request lấy từng chunk, ráp dữ liệu và kiểm tra hash trước khi dùng. Không nên giải mã ảnh lớn hay chờ I/O ngay trên thao tác vẽ.
+“Em xem RematchCoordinator, nhất là commandLocked. Server ghi nhận lời mời và sự đồng ý của hai người, kiểm tra họ còn tham gia được rồi tạo trận mới. Trận mới có mã mới và điểm tính lại từ đầu, không cộng tiếp điểm của trận cũ.”
 
-Đối chiếu [V/ui/QuestionPreparation.java dòng 28](../src/main/java/vn/edu/nhom7/quiz/client/ui/QuestionPreparation.java#L28).
-Đối chiếu [V/assets/RemoteMedia.java dòng 109](../src/main/java/vn/edu/nhom7/quiz/client/assets/RemoteMedia.java#L109).
+## 4 Nguyễn Hữu Việt phụ trách giao diện và client
 
-### 4.9 Countdown và hiển thị điểm
+### 4.1 Việt cần trình bày được điều gì
 
-ServerTimeEstimator nhận sentMs, receivedMs và serverMs từ PONG, tính RTT là thời gian khứ hồi và offset là chênh lệch giờ server với trung điểm gửi nhận. Nó giữ tối đa 5 mẫu rồi lấy offset từ mẫu RTT nhỏ nhất. Countdown dùng deadline của server trừ giờ client đã hiệu chỉnh, giới hạn trong khoảng 0 đến duration.
+Phần Việt là nơi người dùng trực tiếp thao tác: nhập tài khoản, chọn bộ đề, thách đấu, trả lời và xem kết quả. Điểm cần giải thích là một nút bấm gửi yêu cầu gì, sự kiện trả về làm màn hình đổi ra sao và lúc nào giao diện cho phép thao tác tiếp.
 
-Đây là ước lượng để đồng hồ giao diện bám thời gian server hơn, không bảo đảm đồng bộ tuyệt đối. Server vẫn quyết định một đáp án có kịp hay không. Không dùng việc animation chạy chậm để xin thêm thời gian từ server.
+Cách giới thiệu mẫu: “Em làm phần client. Khi người dùng bấm nút, giao diện tạo yêu cầu và gửi lên server. Client nhận kết quả, cập nhật trạng thái rồi hiển thị đúng màn hình. Việc chấm điểm và lưu dữ liệu do server quyết định.”
 
-GameView render vùng câu, trạng thái đã trả lời, lifeline, reveal và leaderboard theo ClientState. LeaderboardPanel có thể animate scoreBefore đến totalScore nhưng điểm cuối lấy từ event. Effects và Sound tạo phản hồi; Theme và SettingsOverlay cho đổi giao diện hoặc giảm chuyển động. Các hiệu ứng không thay luật chấm.
+| Mở file | Để xem chức năng |
+| --- | --- |
+| client/ClientMain.java | Nối phần mạng, trạng thái và giao diện khi khởi động |
+| client/network/NetworkClient.java | Kết nối và gửi nhận thông điệp phía client |
+| client/ui/AppShell.java | Điều phối màn hình và phản hồi theo sự kiện |
+| client/ui/AuthForm.java | Nhập và gửi đăng nhập, đăng ký |
+| client/ui/LobbyView.java và ChallengeDialog.java | Sảnh chờ, chọn đề và cửa sổ lời mời |
+| client/ui/WaitingView.java và QuestionPreparation.java | Sẵn sàng cả trận và chuẩn bị từng câu |
+| client/ui/GameView.java và QuestionRenderer.java | Hiển thị màn chơi và chọn giao diện cho dạng câu |
+| client/ui/CommandGateway.java | Kiểm tra rồi gửi thao tác của người chơi |
+| client/state/ClientStateReducer.java và ClientState.java | Cập nhật trạng thái và điều kiện được trả lời |
+| client/ui/CommunityQuizView.java | Tạo và chỉnh sửa quiz cộng đồng |
+| client/ui/RankingView.java và HistoryView.java | Hiển thị xếp hạng và lịch sử |
 
-Đối chiếu [V/network/ServerTimeEstimator.java dòng 16](../src/main/java/vn/edu/nhom7/quiz/client/network/ServerTimeEstimator.java#L16).
-Đối chiếu [V/ui/GameView.java dòng 418](../src/main/java/vn/edu/nhom7/quiz/client/ui/GameView.java#L418).
+### 4.2 Từ mở ứng dụng đến vào sảnh
 
-### 4.10 Các màn hình ngoài lượt trả lời
+1. ClientMain.start khởi tạo phần kết nối, nơi giữ trạng thái và AppShell. Đây là nơi nối các phần client với nhau.
+2. NetworkClient.connect mở kết nối đến server và gửi lời chào. Khi nhận HELLO_ACK, AppShell cho phép dùng biểu mẫu tài khoản.
+3. Người dùng nhập thông tin và bấm đăng nhập. AuthForm.login kiểm tra các ô cần nhập rồi gửi LOGIN; trong lúc chờ, biểu mẫu được khóa để hạn chế bấm lặp.
+4. Khi server trả LOGIN_RESULT, phần trạng thái lưu thông tin người chơi. AppShell yêu cầu danh sách bộ đề và người online.
+5. AppShell.render và rebuildView dựa vào trạng thái mới để hiển thị sảnh chờ. LobbyView đưa danh sách và thông tin bộ đề lên màn hình.
+6. Nếu server trả lỗi, giao diện hiển thị thông báo phù hợp và cho nhập lại. Nếu đăng ký thành công, giao diện nhắc đăng nhập, chưa tự chuyển sang sảnh.
 
-AuthView và AuthForm thu thông tin tài khoản, gửi REGISTER hoặc LOGIN rồi hiển thị phản hồi. LobbyView hiển thị quiz cùng danh sách online; QuizDetailView giúp chọn nội dung trước khi mời; ChallengeDialog nhận thao tác chấp nhận, từ chối hoặc hủy. WaitingView gửi sẵn sàng vào trận.
+ClientMain nhận thông điệp theo hai việc liên quan: cập nhật dữ liệu trạng thái và chuyển sự kiện cho giao diện. Nhờ đó, ví dụ có LOGIN_RESULT thì cả thông tin tài khoản lẫn màn hình hiển thị đều được cập nhật theo cùng kết quả từ server.
 
-ResultView hiển thị thắng, thua hoặc hòa cùng trạng thái lưu, rematch và xem lại. RankingView và HistoryView yêu cầu dữ liệu từ server theo trang; ReviewCard dùng dữ liệu câu đã lưu hoặc live review để giải thích đáp án. Không lấy riêng ngân hàng answer key từ database trên client.
+Đối chiếu [client/ClientMain.java dòng 34](../src/main/java/vn/edu/nhom7/quiz/client/ClientMain.java#L34).
+Đối chiếu [client/ui/AuthForm.java dòng 77](../src/main/java/vn/edu/nhom7/quiz/client/ui/AuthForm.java#L77).
+Đối chiếu [client/ui/AppShell.java dòng 340](../src/main/java/vn/edu/nhom7/quiz/client/ui/AppShell.java#L340).
 
-CommunityQuizView quản lý danh sách quiz của tôi, sửa metadata, lưu từng câu, preview và publish qua AUTHOR_REQUEST. ChoiceAnswerEditor phụ trách dạng lựa chọn; InteractiveAnswerEditor cùng DraftQuestionMapper chuyển phần nhập liệu thành dữ liệu câu mới. Preview tái sử dụng QuestionRenderer để cách trình bày gần với lúc chơi.
+### 4.3 Chọn bộ đề và thách đấu trên giao diện
 
-Đối với dữ liệu bản nháp, client có thể đang nhập dở nên trải nghiệm lưu khác publish. Phúc chịu trách nhiệm kiểm tra quyền sở hữu và tính hợp lệ trước khi xuất bản; việc nút publish đang được bật không thay thế cho kiểm tra phía server.
+1. LobbyView hiển thị thư viện bộ đề. Người chơi tìm hoặc lọc, rồi chọn bộ đề để xem thông tin chi tiết.
+2. Danh sách online cho biết ai đang rảnh hoặc đang bận. Khi có bộ đề phù hợp và đối thủ có thể được mời, thao tác mời gửi CHALLENGE lên server.
+3. Khi nhận xác nhận hoặc lời mời, AppShell.onEvent mở ChallengeDialog. Người gửi thấy thao tác hủy; người nhận có thao tác đồng ý và từ chối.
+4. Bấm đồng ý, từ chối hoặc hủy sẽ gửi yêu cầu tương ứng. Giao diện không tự tạo kết quả lời mời chỉ từ nút bấm.
+5. Server báo lời mời đóng thì cửa sổ được đóng hoặc cập nhật lý do. Khi có MATCH_START, client chuyển sang màn hình chuẩn bị trận.
 
-### 4.11 Một kịch bản tự lần code
+Có thể minh họa với hai cửa sổ client: A chọn đề và mời, B thấy cửa sổ mời; B đồng ý thì cả hai mới cùng chuyển màn hình. Nếu A hoặc B đã bận, server có thể từ chối dù danh sách trên màn hình chưa kịp cập nhật.
 
-Chọn một câu SINGLE_CHOICE, bấm đáp án, theo dõi renderer → CommandGateway.send → NetworkClient.send. Ở chiều về, lần ANSWER_ACK → callback ClientMain → store.accept → reducer → AppShell.render. Tiếp tục đợi QUESTION_RESULT để thấy lúc nào mới xuất hiện đúng sai.
+Tìm LobbyView.buildLibrary để xem danh sách đề, buildOnlinePlayers để xem vùng đối thủ và AppShell.onEvent để xem cách mở, đóng cửa sổ lời mời.
 
-Sau đó thử RANGE mà chưa thao tác: nút khóa chưa được phép gửi. Thử PINPOINT khi ảnh chưa sẵn sàng: không có điểm hợp lệ để gửi. Cuối cùng mở History để thấy một view gửi query thay vì tự đọc MySQL.
+Đối chiếu [client/ui/LobbyView.java dòng 96](../src/main/java/vn/edu/nhom7/quiz/client/ui/LobbyView.java#L96).
+Đối chiếu [client/ui/LobbyView.java dòng 208](../src/main/java/vn/edu/nhom7/quiz/client/ui/LobbyView.java#L208).
 
-Test liên quan: NetworkClientTest, RequestTrackerTest, RequestTimeoutMonitorTest, ServerTimeEstimatorTest, AnswerPendingTest, ClientStateReducerTest, ResyncStateTest, AnswerIntentFactoryTest, InteractiveViewsTest và RemoteMediaTest. Các test này là điểm đọc và tự kiểm tra trong repository, không thay thế một lượt demo ứng dụng thật.
+### 4.4 Hiển thị câu hỏi và gửi đáp án
 
-### 4.12 Câu hỏi và câu trả lời mẫu cho Việt
+1. WaitingView có nút sẵn sàng gửi MATCH_READY. Khi server đưa câu hỏi xuống, QuestionPreparation.prepare chuẩn bị nội dung, tải ảnh nếu có.
+2. Chuẩn bị xong đúng câu hiện tại, client gửi QUESTION_READY. Client chưa bật trả lời chỉ vì đã thấy câu hỏi.
+3. QuestionRenderer.forType chọn giao diện theo dạng câu. Ví dụ câu chọn nhiều dùng MultipleChoiceRenderer; câu sắp xếp dùng ReorderRenderer; câu chọn vị trí dùng PinpointRenderer.
+4. Khi nhận QUESTION_OPEN, trạng thái chuyển sang đang trả lời. GameView hiển thị đồng hồ và cho phép thao tác phù hợp.
+5. Người chơi chọn hoặc nhập đáp án rồi gửi. CommandGateway.send kiểm tra có được trả lời lúc này không, đánh dấu đang gửi và chuyển yêu cầu đến NetworkClient.
+6. Khi có xác nhận đã nhận, client giữ trạng thái đã trả lời. Khi có QUESTION_RESULT, các thành phần hiển thị kết quả mới đánh dấu đúng sai và cập nhật điểm.
 
-**V01 Vì sao đọc socket trên JavaFX thread làm UI treo?**
+Với câu chọn vị trí trên ảnh, giao diện lấy vị trí người dùng bấm trong vùng ảnh rồi gửi tọa độ tương ứng. Server mới kiểm tra điểm đó có thuộc vùng đúng không. Giao diện của bảy dạng câu khác nhau nhưng đều đi theo một đường chung: nhận nội dung, chờ mở lượt, thu đáp án, gửi và hiển thị kết quả.
 
-read có thể đợi mạng trong khi JavaFX thread còn phải xử lý click và vẽ. Em tách reader, writer ra executor nền. Khi có dữ liệu cần cập nhật giao diện, em dùng Platform.runLater để đưa phần vẽ trở lại JavaFX thread.
+Đối chiếu [client/ui/QuestionPreparation.java dòng 28](../src/main/java/vn/edu/nhom7/quiz/client/ui/QuestionPreparation.java#L28).
+Đối chiếu [client/ui/QuestionRenderer.java dòng 10](../src/main/java/vn/edu/nhom7/quiz/client/ui/QuestionRenderer.java#L10).
+Đối chiếu [client/ui/CommandGateway.java dòng 22](../src/main/java/vn/edu/nhom7/quiz/client/ui/CommandGateway.java#L22).
 
-**V02 NetworkClient.send trả true có nghĩa server nhận rồi không?**
+### 4.5 Vì sao nút trả lời có lúc bị khóa
 
-Chưa. Nó cho biết lệnh đã được đưa vào hàng đợi khi kết nối và handshake cho phép. Writer còn phải gửi, mạng còn phải truyền và server còn phải kiểm tra. Em theo dõi requestId và ACK hoặc ERROR để biết kết quả xử lý.
+ClientState mô tả tình trạng hiện tại: ở sảnh, đang chờ, đang chuẩn bị câu, đang trả lời, đang xem đáp án hoặc đã kết thúc. ClientStateReducer.apply nhận thông điệp server và chuyển trạng thái tương ứng. AppShell cùng GameView dựa vào trạng thái đó để vẽ màn hình và bật, tắt các thao tác.
 
-**V03 Vì sao cần store và reducer thay vì sửa từng Label khi nhận event?**
+ClientState.canAnswer chỉ cho trả lời khi lượt đang mở, chưa có yêu cầu trả lời đang chờ và chưa được xác nhận đã trả lời. Vì vậy sau khi bấm gửi, nút có thể bị khóa ngay để tránh gửi lặp; người chơi không phải đợi công bố đúng sai mới bị khóa.
 
-Em muốn trạng thái được chuyển có thứ tự tại một nơi. Reducer tạo state mới từ state cũ và event, sau đó UI render theo state. Cách này dễ kiểm tra phase, chống event cũ và viết test hơn việc mỗi callback sửa rải rác nhiều control.
+Khóa nút là cách giúp người dùng thao tác đúng. Server vẫn kiểm tra lại vì client có thể gửi yêu cầu cũ hoặc trạng thái giao diện chưa kịp đổi. Nếu có dấu hiệu lệch trạng thái trong phiên còn hợp lệ, client có thể xin ảnh chụp trạng thái trận từ server để đồng bộ lại.
 
-**V04 Nếu bấm hai lần trước khi ACK về thì sao?**
+Nếu mất kết nối thật, AppShell.disconnected báo gián đoạn và vô hiệu hóa thao tác thi đấu. Người dùng cần kết nối và đăng nhập lại; bản hiện tại không tự tiếp tục trận đang chơi sau khi mất mạng.
 
-CommandGateway kiểm tra canAnswer và pendingRound ngay khi gửi, đồng thời đặt ownPending. Vì vậy lần bấm thứ hai bị chặn ngay cả khi state executor chưa kịp cập nhật. Server vẫn có kiểm tra chống đáp án lặp nên hai phía cùng bảo vệ tính đúng.
+Đối chiếu [client/state/ClientStateReducer.java dòng 22](../src/main/java/vn/edu/nhom7/quiz/client/state/ClientStateReducer.java#L22).
+Đối chiếu [client/state/ClientState.java dòng 46](../src/main/java/vn/edu/nhom7/quiz/client/state/ClientState.java#L46).
+Đối chiếu [client/ui/AppShell.java dòng 327](../src/main/java/vn/edu/nhom7/quiz/client/ui/AppShell.java#L327).
 
-**V05 ownPending và accepted khác nhau thế nào?**
+### 4.6 Quiz cộng đồng và các màn hình sau trận
 
-ownPending là client đang chờ kết quả nhận yêu cầu. accepted là server đã ACK chấp nhận đáp án. Hai cờ này chưa nói đáp án đúng hay sai; chỉ QUESTION_RESULT mới cho dữ liệu chấm để hiển thị kết quả.
+Ở quiz cộng đồng, CommunityQuizView cho người dùng tạo hoặc mở bản nháp, nhập thông tin bộ đề và thêm câu hỏi. Các thành phần như ChoiceAnswerEditor, InteractiveAnswerEditor và QuestionPreview hỗ trợ nhập, xem trước từng dạng câu. Khi lưu, client gửi nội dung lên server; khi xuất bản, client yêu cầu server kiểm tra và tạo bản dùng để thi đấu.
 
-**V06 Vì sao không lấy số giây cục bộ đếm lùi từ 15?**
+Luồng dễ nhớ là: **Mở bản nháp → sửa thông tin và câu hỏi → lưu nội dung → yêu cầu xuất bản → nhận kết quả từ server.** Xem saveQuestion, saveAll và saveMeta trong CommunityQuizView để tìm các thao tác lưu. Xem trước trên client giúp kiểm tra cách trình bày, còn điều kiện được xuất bản do server xác nhận.
 
-Đồng hồ và thời điểm nhận của mỗi client có thể khác nhau. Em dùng deadline server và offset ước lượng từ PING PONG để hiển thị gần thực tế hơn. Server vẫn dùng thời gian riêng để quyết định chấm, nên countdown ở UI chỉ là phần trình bày.
+Màn hình kết quả hiển thị tổng điểm và trạng thái lưu, kèm thao tác rời hoặc tái đấu. RankingView gửi yêu cầu lấy bảng xếp hạng theo trang. HistoryView gửi yêu cầu lấy lịch sử; khi chọn một trận thì yêu cầu chi tiết để hiện lại câu hỏi, đáp án và kết quả đã lưu.
 
-**V07 Snapshot có giúp quay lại trận sau disconnect không?**
+Những màn hình này dùng dữ liệu server trả về. Nếu kết quả vừa kết thúc còn đang chờ lưu thì lịch sử chưa chắc đã có ngay. Nếu ảnh câu hỏi cần tải từ server, RemoteMedia hỗ trợ nhận ảnh để các thành phần giao diện hiển thị.
 
-Snapshot giúp đồng bộ trạng thái hiện có khi phiên vẫn hợp lệ, chẳng hạn chưa rõ đáp án đã được nhận chưa. Bản hiện tại không nối lại trận sau disconnect thật. AppShell thông báo cần kết nối và đăng nhập lại để chơi các trận mới.
+Đối chiếu [client/ui/CommunityQuizView.java dòng 517](../src/main/java/vn/edu/nhom7/quiz/client/ui/CommunityQuizView.java#L517).
+Đối chiếu [client/ui/CommunityQuizView.java dòng 531](../src/main/java/vn/edu/nhom7/quiz/client/ui/CommunityQuizView.java#L531).
+Đối chiếu [client/ui/HistoryView.java dòng 54](../src/main/java/vn/edu/nhom7/quiz/client/ui/HistoryView.java#L54).
 
-**V08 Vì sao tách mỗi loại câu thành renderer?**
+### 4.7 Câu hỏi mẫu dành cho Việt
 
-Các loại câu có cách nhập khác nhau nhưng đều cần bind câu, bật tắt control và showResult. Em đặt chúng sau cùng interface QuestionRenderer. GameView chọn renderer theo loại nên không phải viết bảy màn game hoàn toàn riêng biệt.
+**V01 Nút đăng nhập được code ở đâu và bấm xong xảy ra gì?**
 
-**V09 Ghim ảnh trên cửa sổ khác kích thước có lệch đáp án không?**
+“Em mở AuthForm.login. Hàm kiểm tra dữ liệu nhập, gửi LOGIN và khóa biểu mẫu trong lúc chờ. Khi nhận kết quả, AppShell.onEvent xử lý; đăng nhập thành công thì trạng thái có thông tin người chơi và màn hình chuyển sang sảnh.”
 
-Em gửi tọa độ theo tỷ lệ 0 đến 1 của vùng ảnh thật. ImageTarget loại trừ phần trống quanh ảnh và vẽ lại ghim theo kích thước mới. Server chấm điểm đó trên vùng chuẩn hóa nên không phụ thuộc số pixel của cửa sổ.
+**V02 File nào quyết định đang hiện sảnh hay màn hình thi đấu?**
 
-**V10 Tại sao RANGE không tự gửi vị trí giữa slider?**
+“Em xem AppShell.render và rebuildView. AppShell dựa vào trạng thái hiện tại để chọn LobbyView, WaitingView, GameView hoặc ResultView. Vì vậy đổi màn hình theo sự kiện trận và dữ liệu server, không chỉ theo nút vừa bấm.”
 
-Vị trí ban đầu do UI đặt chưa phải lựa chọn của người chơi. Em dùng touched, yêu cầu nhập hoặc tương tác rồi mới bật khóa. Em cũng kiểm tra thang và bước bằng BigDecimal để không gửi một số sai cấu hình.
+**V03 Muốn tìm chỗ chọn bộ đề và bấm thách đấu thì xem ở đâu?**
 
-**V11 Nếu ảnh cũ tải xong sau khi đã đổi câu thì sao?**
+“Em mở LobbyView. buildLibrary dựng danh sách đề, selectQuiz xử lý phần chọn đề và buildOnlinePlayers dựng vùng người online. Khi mời đối thủ, client gửi CHALLENGE có bộ đề đã chọn rồi chờ server phản hồi.”
 
-QuestionPreparation so lại matchId và roundId trước khi gửi ready. Nếu không còn khớp thì bỏ callback đó. Nhờ vậy tác vụ bất đồng bộ của câu cũ không làm trạng thái câu hiện tại bị thay đổi sai.
+**V04 Cửa sổ lời mời xuất hiện do nút bấm hay do thông báo nào?**
 
-**V12 Em tóm tắt phần mình thế nào?**
+“AppShell.onEvent mở ChallengeDialog khi nhận sự kiện xác nhận hoặc nhận lời mời từ server. Các nút trên cửa sổ gửi đồng ý, từ chối hoặc hủy. Khi server báo lời mời đóng hoặc trận bắt đầu thì giao diện xử lý đóng cửa sổ đó.”
 
-Em phụ trách ứng dụng JavaFX và mạng client. UI gửi ý định qua CommandGateway; NetworkClient gửi nền; event về đi qua store và reducer rồi mới render trên JavaFX thread. Em làm các màn hình, renderer bảy loại, pending ACK, tải ảnh, countdown, chat, kết quả, ranking, history và phần soạn quiz; luật điểm vẫn theo server.
+**V05 Code nào báo cho server rằng ảnh câu hỏi đã tải xong?**
+
+“Em xem QuestionPreparation.prepare. Client chuẩn bị câu và tải ảnh, kiểm tra vẫn là câu đang chờ rồi mới gửi QUESTION_READY. Nhờ đó server có căn cứ chờ cả hai chuẩn bị xong trước khi mở thời gian trả lời.”
+
+**V06 Bảy dạng câu hỏi dùng chung một màn hình hay mỗi dạng một cách hiển thị?**
+
+“GameView là màn hình chơi chung, còn QuestionRenderer.forType chọn thành phần phù hợp cho từng dạng. Ví dụ MultipleChoiceRenderer cho chọn nhiều, ReorderRenderer cho sắp xếp và PinpointRenderer cho bấm vị trí trên ảnh. Mỗi thành phần thu dữ liệu khác nhau nhưng cùng gửi đáp án lên server.”
+
+**V07 Khi bấm gửi đáp án thì phần nào chặn bấm lần hai?**
+
+“CommandGateway.send kiểm tra điều kiện gửi và đánh dấu câu đang chờ xác nhận. ClientState.canAnswer dựa trên trạng thái lượt cùng thông tin đã gửi, đã nhận để khóa thao tác. Ngoài ra server cũng kiểm tra riêng nên không thể vượt luật chỉ bằng cách mở lại nút.”
+
+**V08 Tại sao hiện câu hỏi rồi mà chưa chọn đáp án được?**
+
+“Vì đó có thể vẫn là giai đoạn chuẩn bị. Client phải tải xong nội dung rồi báo QUESTION_READY; sau khi cả hai sẵn sàng, server mới phát QUESTION_OPEN. ClientStateReducer cập nhật trạng thái và GameView mới bật phần trả lời.”
+
+**V09 Đồng hồ trên màn hình có tự quyết định đáp án muộn hay sớm không?**
+
+“Không. GameView hiển thị thời gian dựa trên thông tin trận và ước lượng giờ server. Đúng hạn hay quá hạn được server kiểm tra khi nhận đáp án. Đồng hồ trên màn hình là để người dùng theo dõi và thao tác kịp.”
+
+**V10 Tạo và xuất bản quiz cộng đồng được làm ở file nào?**
+
+“Em mở CommunityQuizView để xem biểu mẫu và các thao tác saveMeta, saveQuestion, saveAll. Người dùng sửa bản nháp, lưu rồi yêu cầu xuất bản. Client nhận thông báo thành công hoặc lỗi từ server để cập nhật giao diện; client không tự quyết định đề đã hợp lệ để thi đấu.”
+
+**V11 Muốn xem lại một trận đã chơi thì màn hình lấy dữ liệu như thế nào?**
+
+“HistoryView gửi yêu cầu lấy danh sách lịch sử. Khi người dùng chọn một trận, client gửi MATCH_DETAIL_REQUEST rồi hiển thị chi tiết bằng các thành phần xem lại như ReviewCard. Dữ liệu là bản server đã lưu, không phải client tự nhớ lại các lần bấm trước đó.”
+
+**V12 Nếu mất mạng khi đang làm bài thì giao diện xử lý thế nào?**
+
+“AppShell.disconnected báo mất kết nối và khóa thao tác thi đấu. Người dùng cần kết nối và đăng nhập lại. Chức năng xin trạng thái trận chỉ giúp đồng bộ khi phiên vẫn còn hợp lệ; hiện tại không có tự vào lại trận cũ sau khi mất kết nối.”
 
 ## 5 Trần Lê Hoàng Phúc phụ trách dữ liệu và tài khoản
 
-### 5.1 Mục tiêu của phần Phúc
+### 5.1 Phúc cần trình bày được điều gì
 
-Phúc quản lý dữ liệu cần tồn tại sau khi chương trình tắt: tài khoản, đề, phiên bản quiz, ảnh và kết quả. Đầu vào là thông tin đăng ký hoặc đăng nhập, yêu cầu lấy đề, summary do gameplay tạo và query của người dùng. Đầu ra là profile, bộ câu hợp lệ, xác nhận lưu hoặc dữ liệu ranking và history.
+Phần Phúc cung cấp thông tin mà ứng dụng cần và lưu những gì cần giữ lại: tài khoản, bộ câu hỏi, kết quả trận, bảng xếp hạng và lịch sử. Khi giải thích, hãy nói dữ liệu được kiểm tra trước khi lưu như thế nào và màn hình nào sẽ sử dụng dữ liệu đó.
 
-Ba vấn đề cần nắm nhất là bảo vệ dữ liệu tài khoản, không lưu nửa trận và không cộng thống kê hai lần khi thử lưu lại. Với quiz cộng đồng còn phải tách bản nháp đang sửa khỏi bản đã xuất bản cho người khác chơi.
+Cách giới thiệu mẫu: “Em làm phần dữ liệu phía server. Em kiểm tra tài khoản, lấy câu hỏi để tạo trận và lưu kết quả sau khi chơi. Từ dữ liệu đã lưu, server trả bảng xếp hạng và lịch sử cho client.”
 
-### 5.2 Bản đồ các tệp cần mở
-
-| Nhóm tệp | Trách nhiệm |
+| Mở file | Để xem chức năng |
 | --- | --- |
-| database/001_schema.sql và 002_seed.sql | Khởi tạo bảng cơ sở và dữ liệu mẫu |
-| database/003_community_quizzes.sql | Thêm quiz cộng đồng, bản nháp, phiên bản và metadata ảnh |
-| database/004_lifelines.sql và 005_interactive_questions.sql | Mở giới hạn điểm và hỗ trợ bảy dạng câu |
-| S/db/ConnectionFactory.java, JdbcConnectionFactory.java, SchemaVerifier.java, StartupValidator.java | Mở JDBC và kiểm tra môi trường dữ liệu lúc khởi động |
-| S/auth/AccountValidator.java, PasswordHasher.java, AuthService.java, JdbcUserRepository.java | Kiểm tra tài khoản, hash và xác thực |
-| S/quiz/QuizRepository.java, JdbcQuizRepository.java, QuestionValidator.java | Lấy đề đúng cấu trúc và kiểm tra câu |
-| S/quiz/CommunityQuizService.java, JdbcCommunityQuizRepository.java, CommunityQuizPublisher.java, DraftValidator.java, QuizSql.java | Quản lý quiz của tác giả và xuất bản phiên bản |
-| S/persistence/PersistenceService.java, ResultSink.java, DatabaseHealth.java | Nhận yêu cầu lưu, giới hạn số lượng và thử lại khi lỗi |
-| S/persistence/JdbcMatchRepository.java, MatchSummaryValidator.java, MatchSummaryProjection.java, SaveResult.java | Ghi transaction và nhận diện kết quả đã lưu |
-| S/query/RankingService.java, HistoryService.java, QueryDispatcher.java | Xếp hạng, lịch sử và điều phối truy vấn |
-| S/media/MediaService.java và JdbcMediaStore.java | Lưu file ảnh cùng metadata và kiểm tra quyền truy cập |
-| S/domain/ | Mô hình dữ liệu trao đổi với gameplay và persistence |
+| server/auth/AuthService.java | Quy trình đăng ký và đăng nhập |
+| server/auth/AccountValidator.java và PasswordHasher.java | Kiểm tra đầu vào và bảo vệ mật khẩu |
+| server/auth/JdbcUserRepository.java | Đọc, ghi tài khoản trong database |
+| server/quiz/JdbcQuizRepository.java | Lấy bộ câu hỏi dùng cho trận |
+| server/quiz/CommunityQuizService.java | Nhận thao tác sửa bản nháp quiz cộng đồng |
+| server/quiz/CommunityQuizPublisher.java | Kiểm tra và xuất bản quiz cộng đồng |
+| server/persistence/PersistenceService.java | Nhận kết quả cần lưu và xử lý lưu lại khi lỗi |
+| server/persistence/JdbcMatchRepository.java | Lưu trận, câu hỏi và đáp án vào database |
+| server/query/QueryDispatcher.java | Chuyển yêu cầu lấy dữ liệu đến dịch vụ tương ứng |
+| server/query/RankingService.java và HistoryService.java | Lấy xếp hạng, lịch sử và chi tiết trận |
+| server/media/MediaService.java | Kiểm tra, lưu và cung cấp ảnh |
 
-### 5.3 Đọc schema theo mối quan hệ
+### 5.2 Đăng ký và đăng nhập lấy dữ liệu ở đâu
 
-| Bảng | Một dòng biểu diễn điều gì | Liên kết quan trọng |
-| --- | --- | --- |
-| USERS | Một tài khoản và thống kê tích lũy | id được các bảng khác tham chiếu |
-| CATEGORIES | Một nhóm chủ đề | QUIZZES thuộc một category |
-| QUIZZES | Một bộ quiz và nguồn SYSTEM hoặc COMMUNITY | Có owner và public_version_id nếu là quiz cộng đồng |
-| QUESTIONS | Một câu đã có cấu trúc và answer key | Thuộc quiz; được phiên bản và lịch sử tham chiếu |
-| QUIZ_DRAFTS | Metadata bản đang soạn | Mỗi quiz có thể có bản nháp |
-| QUIZ_DRAFT_QUESTIONS | Một câu bản nháp theo vị trí | Khóa gồm quiz_id và position |
-| QUIZ_VERSIONS và QUIZ_VERSION_QUESTIONS | Một bản xuất bản và thứ tự các câu của bản đó | Match có thể gắn quiz_version_id |
-| MATCHES | Kết quả tổng quát một trận | Hai tài khoản, quiz, điểm, lý do và thời gian |
-| MATCH_QUESTIONS | Một lượt của trận cùng snapshot câu | round_id và cặp match_id, round_index |
-| MATCH_ANSWERS | Kết quả một người trong một lượt | Unique round_id, user_id |
-| MEDIA_ASSETS | Metadata ảnh | owner, MIME, kích thước và SHA 256; file nằm ngoài DB |
+Khi đăng ký, AuthService.register kiểm tra thông tin tài khoản bằng AccountValidator. Nếu hợp lệ, PasswordHasher tạo dạng lưu bảo vệ mật khẩu rồi JdbcUserRepository.insert ghi tài khoản vào database. Nếu tên tài khoản đã có, server trả lỗi tên đã được sử dụng để client báo lại.
 
-Khóa chính nhận diện một dòng. Khóa ngoại giữ liên kết tới dòng tồn tại. Unique(round_id,user_id) là hàng rào dữ liệu ngăn một người có hai kết quả trong cùng lượt. CHECK bảo vệ các giới hạn như điểm, số câu và dạng dữ liệu ở mức bảng.
+Đăng ký thành công chỉ tạo tài khoản. Người dùng vẫn cần đăng nhập. Điều này thể hiện ở kết quả REGISTER_RESULT riêng, không phải LOGIN_RESULT và không tự tạo phiên online.
 
-MATCH_QUESTIONS có question_snapshot_json để giữ nội dung và đáp án tại lúc thi. Nếu chỉ giữ question_id rồi đọc lại ngân hàng, việc người tạo sửa đề có thể làm màn lịch sử không còn đúng với đề đã chơi. Snapshot giữ biên bản của trận; phiên bản xuất bản giữ bộ đề dùng để bắt đầu trận. Đây là hai lớp dữ liệu cho hai mục đích khác nhau.
+Khi đăng nhập, AuthService.login tìm tài khoản bằng JdbcUserRepository.find rồi kiểm tra mật khẩu với PasswordHasher.verify. Nếu đúng, hàm trả thông tin người dùng để phần MessageRouter của Minh tạo phiên đăng nhập. Nếu sai thì trả lỗi, không đi tiếp vào sảnh.
 
-### 5.4 Vì sao không chỉ đọc 001_schema
+Có thể giải thích việc bảo vệ mật khẩu ở mức cơ bản: “Database không lưu lại nguyên văn mật khẩu người dùng gõ. Khi đăng nhập, server dùng hàm kiểm tra để biết mật khẩu nhập vào có khớp với thông tin bảo vệ đã lưu hay không.” Không cần trình bày chi tiết thuật toán để giải thích luồng đăng nhập.
 
-001_schema thể hiện nền ban đầu với bốn dạng câu và giới hạn điểm 30. Những migration sau mở rộng cấu trúc. 003 thêm quiz cộng đồng và tổng số lượt 1 đến 50; 004 cho earned_points đến 6 và nới giới hạn tổng điểm; 005 thêm REORDER, RANGE, PINPOINT vào CHECK của question_type và đưa schema lên version 5.
+Đối chiếu [server/auth/AuthService.java dòng 19](../src/main/java/vn/edu/nhom7/quiz/server/auth/AuthService.java#L19).
+Đối chiếu [server/auth/AuthService.java dòng 34](../src/main/java/vn/edu/nhom7/quiz/server/auth/AuthService.java#L34).
+Đối chiếu [server/auth/JdbcUserRepository.java dòng 45](../src/main/java/vn/edu/nhom7/quiz/server/auth/JdbcUserRepository.java#L45).
+Đối chiếu [server/auth/PasswordHasher.java dòng 20](../src/main/java/vn/edu/nhom7/quiz/server/auth/PasswordHasher.java#L20).
 
-Điểm tối đa theo gameplay có x2 một lần là 3 nhân số câu cộng 3: hệ thống 10 câu tối đa 33; cộng đồng 50 câu tối đa 153. CHECK tổng điểm của bảng được nới đến 153 để chứa phạm vi chung. Không nên diễn giải giới hạn CHECK chung là mọi trận hệ thống đều có thể đạt 153.
+### 5.3 Lấy câu hỏi cho hai người chơi
 
-Các migration có thay đổi CHECK và ALTER TABLE, không phải script để chạy lặp tùy ý. Khi trình bày cần dùng hướng dẫn thiết lập trong docs/operations/database-setup.md và kiểm tra version thật, thay vì chỉ chạy lại toàn bộ SQL vào database đang có dữ liệu.
+1. Người chơi chọn bộ đề ở sảnh. Khi đối thủ đồng ý, ChallengeManager yêu cầu phần dữ liệu lấy câu hỏi cho trận.
+2. JdbcQuizRepository kiểm tra bộ đề có thể sử dụng và lấy các câu phù hợp. Với quiz hệ thống, đề có cơ cấu 10 câu theo bốn dạng đã quy định.
+3. Với quiz cộng đồng, server lấy bản đã xuất bản và các câu hợp lệ của bản đó. Nếu đề có cấu hình xáo trộn, server thực hiện theo cấu hình.
+4. Danh sách được đưa vào một trận chung cho hai người. Server không lấy riêng một đề khác cho từng client.
+5. Khi gửi câu cho người chơi, MatchPayloads.publicQuestion chỉ đưa thông tin cần hiển thị, giữ đáp án chuẩn ở server để chấm sau.
 
-Đối chiếu [database/004_lifelines.sql dòng 9](../database/004_lifelines.sql#L9).
-Đối chiếu [database/005_interactive_questions.sql dòng 7](../database/005_interactive_questions.sql#L7).
+Ví dụ A mời B chơi đề X. Cả hai cùng chơi danh sách câu hỏi của trận vừa tạo. Nếu chủ đề chỉnh bản nháp sau đó, việc chỉnh này không làm hai người đang chơi tự đổi sang câu hỏi mới.
 
-### 5.5 JDBC và PreparedStatement
+Tìm JdbcQuizRepository.loadMatchQuestions và withMatchQuestions để xem lấy đề; tìm MatchPayloads.publicQuestion ở phần Tuấn để xem dữ liệu nào được gửi ra client.
 
-JdbcConnectionFactory.open dùng DriverManager với dbUrl, user và password từ cấu hình. Nó đặt connectTimeout, socketTimeout 5 giây và múi giờ session UTC. Tài khoản database là cấu hình vận hành, không phải tài khoản người chơi.
+Đối chiếu [server/quiz/JdbcQuizRepository.java dòng 70](../src/main/java/vn/edu/nhom7/quiz/server/quiz/JdbcQuizRepository.java#L70).
+Đối chiếu [server/quiz/JdbcQuizRepository.java dòng 99](../src/main/java/vn/edu/nhom7/quiz/server/quiz/JdbcQuizRepository.java#L99).
+Đối chiếu [server/match/MatchPayloads.java dòng 90](../src/main/java/vn/edu/nhom7/quiz/server/match/MatchPayloads.java#L90).
 
-Repository dùng try with resources để đóng Connection, PreparedStatement và ResultSet khi ra khỏi khối, kể cả có lỗi. SQL có dấu ? và các lời gọi setString, setLong hoặc setInt truyền tham số. PreparedStatement giữ dữ liệu nhập ở vị trí tham số, tránh cách ghép chuỗi trực tiếp biến nội dung người dùng thành một phần câu lệnh SQL.
+### 5.4 Bản nháp và bản xuất bản của quiz cộng đồng
 
-ConnectionFactory là interface giúp chỗ sử dụng không phụ thuộc cách lấy kết nối. Code hiện mở kết nối qua DriverManager trong factory này; không nên tự gọi đây là connection pool nếu chưa có lớp pool tương ứng.
+1. Client gửi thao tác tạo hoặc sửa quiz. CommunityQuizService.execute chọn hành động cần thực hiện và kiểm tra quyền sở hữu trước khi sửa dữ liệu.
+2. Người dùng lưu thông tin bộ đề, thêm câu, sửa câu hoặc đổi thứ tự. Những thay đổi này nằm trong bản nháp để tiếp tục chỉnh sửa.
+3. Khi người dùng bấm xuất bản, CommunityQuizPublisher.publish kiểm tra bộ đề và toàn bộ câu hỏi. Bộ đề phải có từ 1 đến 50 câu hợp lệ.
+4. Nếu có câu chưa hợp lệ, server báo lỗi để người dùng sửa. Không công bố một phần câu hỏi còn lại như một đề hoàn chỉnh.
+5. Nếu hợp lệ, server tạo phiên bản dùng để thi đấu và cập nhật bộ đề trỏ đến bản xuất bản đó.
+6. Các lần sửa bản nháp sau này không tự thay thế nội dung bản đang xuất bản. Muốn đưa nội dung mới ra chơi thì cần xuất bản tiếp.
 
-Đối chiếu [S/db/JdbcConnectionFactory.java dòng 14](../src/main/java/vn/edu/nhom7/quiz/server/db/JdbcConnectionFactory.java#L14).
-Đối chiếu [S/auth/JdbcUserRepository.java dòng 45](../src/main/java/vn/edu/nhom7/quiz/server/auth/JdbcUserRepository.java#L45).
+Có thể ví bản nháp là bài đang soạn, bản xuất bản là bản đã chốt để mọi người sử dụng. Cách tách này giúp chủ đề sửa tiếp mà không làm hỏng nội dung đang dùng trong trận và giúp việc xem lại lịch sử giữ đúng nội dung đã chơi.
 
-### 5.6 Đăng ký và lưu mật khẩu
+Với câu có ảnh, MediaService nhận ảnh, kiểm tra định dạng PNG hoặc JPEG và nội dung trước khi lưu. Khi đọc ảnh, server cũng kiểm tra quyền truy cập; biết mã ảnh không có nghĩa được xem mọi ảnh riêng của người khác.
 
-AuthService.register gọi AccountValidator trước khi insert. Username được lowercase theo Locale.ROOT và phải khớp 3 đến 24 ký tự ASCII thuộc chữ, số, gạch dưới hoặc chấm. Display name có thể là tiếng Việt, được strip và kiểm tra số code point; mật khẩu dài 8 đến 128 theo điều kiện code; avatar phải có trong danh sách cho phép.
+Đối chiếu [server/quiz/CommunityQuizService.java dòng 23](../src/main/java/vn/edu/nhom7/quiz/server/quiz/CommunityQuizService.java#L23).
+Đối chiếu [server/quiz/CommunityQuizPublisher.java dòng 23](../src/main/java/vn/edu/nhom7/quiz/server/quiz/CommunityQuizPublisher.java#L23).
+Đối chiếu [server/media/MediaService.java dòng 53](../src/main/java/vn/edu/nhom7/quiz/server/media/MediaService.java#L53).
 
-PasswordHasher.hash tạo salt ngẫu nhiên 16 byte bằng SecureRandom và dùng PBKDF2WithHmacSHA256 với 600.000 vòng, khóa đầu ra 256 bit. Chuỗi lưu gồm phiên bản, tên thuật toán, số vòng, salt Base64 và key Base64. Hai tài khoản cùng mật khẩu thường có chuỗi lưu khác nhau vì salt khác.
+### 5.5 Lưu kết quả trận và xử lý khi chưa lưu được
 
-Mã thực tế ở bước tạo khóa trong PasswordHasher
+1. Phần Tuấn chốt trận và tạo bản tổng hợp gồm hai người chơi, kết quả, câu hỏi và đáp án theo lượt.
+2. PersistenceService.submit nhận bản tổng hợp để đưa vào xử lý lưu. Client có thể xem kết quả trong lúc việc lưu đang chờ.
+3. JdbcMatchRepository.save ghi dữ liệu trận, nội dung từng câu và đáp án của từng người. Nếu là trận tính hạng đủ điều kiện, thống kê người chơi được cập nhật trong cùng đợt ghi này.
+4. Chỉ khi các phần cần thiết đều ghi thành công thì server xác nhận đã lưu. Nếu lỗi giữa chừng, phần ghi đó được hủy để tránh có trận mà thiếu đáp án hoặc lệch thống kê.
+5. Nếu gặp lỗi tạm thời, dịch vụ giữ công việc để thử lưu lại. Server dùng mã trận để nhận biết trận đã lưu, tránh cộng kết quả lần nữa khi thử lại.
+6. Khi lưu thành công, trạng thái lưu được báo lại. Trận tính hạng còn làm thông tin hồ sơ và bảng xếp hạng được cập nhật.
 
-```java
-var spec = new PBEKeySpec(password, salt, ITERATIONS, 256);
-try {
-  return SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256").generateSecret(spec).getEncoded();
-```
+Điểm cần giải thích bằng ví dụ: lưu một trận không chỉ là thêm một dòng tổng điểm. Lịch sử còn cần biết lúc đó câu hỏi là gì và mỗi người trả lời thế nào. Vì vậy các phần liên quan phải được lưu đầy đủ và gắn với cùng trận.
 
-Đây là phần đầu khối try; phần finally của hàm gọi spec.clearPassword. PBEKeySpec chứa mật khẩu, salt, số vòng và độ dài khóa. PBKDF2 làm việc đoán mật khẩu tốn công hơn so với một lần hash nhanh. Base64 chỉ là cách biểu diễn byte thành chữ để lưu, không phải thuật toán bảo mật bổ sung.
+Cơ chế thử lại giúp khi database tạm thời có lỗi. Công việc đang chờ được giữ trong bộ nhớ của server, nên không nên khẳng định rằng tắt hẳn server vẫn chắc chắn lưu tiếp được mọi trận đang chờ. Trạng thái đã lưu thành công mới là mốc để coi dữ liệu đã được ghi ổn định vào database.
 
-verify tách chuỗi lưu, kiểm tra định dạng và tham số, tính lại khóa từ mật khẩu nhập cùng salt đã lưu rồi dùng MessageDigest.isEqual so sánh. Không có thao tác giải mã chuỗi hash để lấy mật khẩu cũ.
+Đối chiếu [server/persistence/PersistenceService.java dòng 85](../src/main/java/vn/edu/nhom7/quiz/server/persistence/PersistenceService.java#L85).
+Đối chiếu [server/persistence/JdbcMatchRepository.java dòng 34](../src/main/java/vn/edu/nhom7/quiz/server/persistence/JdbcMatchRepository.java#L34).
+Đối chiếu [server/ServerRuntime.java dòng 165](../src/main/java/vn/edu/nhom7/quiz/server/ServerRuntime.java#L165).
 
-Đối chiếu [S/auth/AccountValidator.java dòng 8](../src/main/java/vn/edu/nhom7/quiz/server/auth/AccountValidator.java#L8).
-Đối chiếu [S/auth/PasswordHasher.java dòng 11](../src/main/java/vn/edu/nhom7/quiz/server/auth/PasswordHasher.java#L11).
-Đối chiếu [S/auth/PasswordHasher.java dòng 20](../src/main/java/vn/edu/nhom7/quiz/server/auth/PasswordHasher.java#L20).
+### 5.6 Xếp hạng và lịch sử lấy thông tin gì
 
-### 5.7 Đăng nhập và phân biệt xác thực với online
+Khi mở Xếp hạng, client gửi RANKING_REQUEST. QueryDispatcher chuyển đến RankingService.ranking để lấy danh sách từ thống kê đã lưu. Danh sách ưu tiên tổng điểm cao hơn, sau đó đến số trận thắng. Dữ liệu được chia trang để client không phải tải toàn bộ danh sách cùng lúc.
 
-AuthService.login chuẩn hóa username, kiểm tra đầu vào, tìm tài khoản và verify mật khẩu. Không thấy tài khoản vẫn verify với một dummy hash được tạo sẵn để giảm khác biệt công việc giữa “không có username” và “mật khẩu sai”. Các lỗi thông tin đăng nhập trả chung INVALID_CREDENTIALS. Đây là biện pháp giảm lộ thông tin, không nên nói mọi đường đi có thời gian tuyệt đối bằng nhau.
+Quiz cộng đồng không cộng vào thống kê xếp hạng toàn cục. Quiz hệ thống có tính hạng thì kết quả hợp lệ được cập nhật khi lưu trận thành công. Trận bị hủy không được coi như một kết quả tính hạng đã hoàn tất.
 
-Nếu đúng, AuthService trả Profile. Sau đó MessageRouter dùng SessionRegistry.tryAuthenticate để kiểm tra tài khoản chưa online ở kết nối khác. Vậy Phúc trả lời “mật khẩu có đúng không”; Minh trả lời “tài khoản được gắn vào kết nối nào và đang online ra sao”.
+Khi mở Lịch sử, HistoryService.history chỉ lấy các trận có người đang yêu cầu tham gia và đã được lưu. Khi chọn một trận, HistoryService.detail kiểm tra người yêu cầu có phải một trong hai người của trận không rồi mới trả chi tiết.
 
-REGISTER_RESULT không tự biến kết nối thành đã đăng nhập trong router. LOGIN_RESULT mới đi kèm bước gắn session. Khi demo, cần kiểm tra đúng hành vi giao diện thay vì khẳng định cứ đăng ký là đã vào Lobby.
+Chi tiết lịch sử dùng nội dung câu hỏi đã lưu tại thời điểm chơi. Vì vậy nếu bộ đề gốc bị chỉnh sửa về sau, phần xem lại vẫn giải thích đúng trận cũ. Những phần đáp án chưa từng được công bố trong trận cũng không được tùy tiện lộ ra qua màn hình xem lại.
 
-Đối chiếu [S/auth/AuthService.java dòng 34](../src/main/java/vn/edu/nhom7/quiz/server/auth/AuthService.java#L34).
-Đối chiếu [S/network/MessageRouter.java dòng 169](../src/main/java/vn/edu/nhom7/quiz/server/network/MessageRouter.java#L169).
+Đối chiếu [server/query/QueryDispatcher.java dòng 39](../src/main/java/vn/edu/nhom7/quiz/server/query/QueryDispatcher.java#L39).
+Đối chiếu [server/query/RankingService.java dòng 16](../src/main/java/vn/edu/nhom7/quiz/server/query/RankingService.java#L16).
+Đối chiếu [server/query/HistoryService.java dòng 23](../src/main/java/vn/edu/nhom7/quiz/server/query/HistoryService.java#L23).
+Đối chiếu [server/query/HistoryService.java dòng 63](../src/main/java/vn/edu/nhom7/quiz/server/query/HistoryService.java#L63).
 
-### 5.8 Lấy bộ câu hỏi và giữ đáp án riêng tư
+### 5.7 Câu hỏi mẫu dành cho Phúc
 
-JdbcQuizRepository đọc câu đang active, đồng thời kiểm tra quiz và category đang active. Dữ liệu được đổi thành QuestionSnapshot rồi QuestionValidator.validate kiểm tra trước khi đưa vào ngân hàng hợp lệ.
+**P01 Code đăng ký tài khoản nằm ở đâu và đi qua các bước nào?**
 
-Với quiz hệ thống, REQUIRED quy định cơ cấu 4/2/2/2. Repository gom câu theo loại, shuffle từng nhóm, lấy đủ số cần và shuffle kết quả. Không đủ một nhóm thì trả QUIZ_UNAVAILABLE. Hai người nhận cùng bộ vì Match chứa một danh sách snapshot của trận, không gọi random đề riêng cho mỗi client.
+“Em xem AuthService.register. Đầu tiên kiểm tra thông tin bằng AccountValidator, sau đó tạo dạng lưu bảo vệ mật khẩu bằng PasswordHasher rồi gọi JdbcUserRepository.insert. Nếu dữ liệu hợp lệ và tên chưa trùng thì tài khoản được tạo; client được nhắc đăng nhập tiếp.”
 
-Với quiz cộng đồng, repository đọc các câu của public_version_id, kiểm tra phiên bản vẫn đúng, lấy khóa FOR SHARE trong transaction khi dùng withMatchQuestions để chuẩn bị và kích hoạt. Tùy shuffleQuestions mà giữ hoặc đảo thứ tự. Nó lấy số câu của phiên bản, không ép về 10 câu.
+**P02 Đăng nhập kiểm tra tài khoản ở đâu và ai đưa người dùng vào online?**
 
-QuestionSnapshot riêng tư chứa answerKeyJson, explanation và ảnh giải thích. MatchPayloads tạo PublicQuestion chỉ gồm dữ liệu cần chơi; InteractiveQuestions.publicConfig chỉ lộ cấu hình công khai. Tách dữ liệu công khai giúp server không gửi nhầm khoảng đúng của RANGE hoặc vùng đúng PINPOINT lúc mở câu.
+“AuthService.login đọc tài khoản qua JdbcUserRepository.find và kiểm tra mật khẩu bằng PasswordHasher.verify. Khi đúng, dịch vụ trả thông tin người dùng. MessageRouter và SessionRegistry bên phần Minh mới gắn tài khoản vào kết nối và cập nhật online.”
 
-Đối chiếu [S/quiz/JdbcQuizRepository.java dòng 70](../src/main/java/vn/edu/nhom7/quiz/server/quiz/JdbcQuizRepository.java#L70).
-Đối chiếu [S/quiz/JdbcQuizRepository.java dòng 99](../src/main/java/vn/edu/nhom7/quiz/server/quiz/JdbcQuizRepository.java#L99).
-Đối chiếu [S/match/MatchPayloads.java dòng 90](../src/main/java/vn/edu/nhom7/quiz/server/match/MatchPayloads.java#L90).
+**P03 Nếu tên đăng ký đã tồn tại thì chương trình xử lý thế nào?**
 
-### 5.9 Quiz cộng đồng và phiên bản xuất bản
+“Phần ghi tài khoản ở JdbcUserRepository phát hiện tên bị trùng và trả lỗi phù hợp. Lỗi được gửi lại client để hiển thị tên đã được sử dụng. Không ghi thêm một tài khoản mới có cùng tên và cũng không tự đăng nhập vào tài khoản cũ.”
 
-CommunityQuizService.execute xác định action, mở transaction và điều phối thao tác. Với các action cần quiz cụ thể, repository.owner kiểm tra tác giả trước khi đọc hoặc sửa dữ liệu riêng. LIST chỉ đọc danh sách của người đó; CREATE tạo quiz và nháp; SAVE_META, SAVE_QUESTION, MOVE_QUESTION, DELETE_QUESTION sửa nháp; PUBLISH và UNPUBLISH thay trạng thái công bố.
+**P04 Tại sao không lưu mật khẩu người dùng gõ dưới dạng đọc được?**
 
-CommunityQuizPublisher.publish kiểm tra metadata, category, từ 1 đến 50 câu, tính hợp lệ từng câu và wire budget. Nếu hợp lệ, nó tạo QUIZ_VERSIONS, tạo các dòng QUESTIONS mới từ nháp, liên kết qua QUIZ_VERSION_QUESTIONS rồi cập nhật public_version_id. Tất cả nằm trong transaction của service.
+“Vì như vậy ai đọc được dữ liệu tài khoản có thể thấy ngay mật khẩu. PasswordHasher tạo thông tin bảo vệ để lưu; lúc đăng nhập dùng verify kiểm tra có khớp không. Trong luồng đăng nhập, server cần xác nhận mật khẩu đúng chứ không cần trả lại mật khẩu gốc.”
 
-Sửa nháp không sửa trực tiếp bản đã công bố. Khi publish lại, người chơi mới có thể dùng bản mới, còn snapshot và liên kết của trận đã có vẫn phục vụ lịch sử đúng nội dung. UNPUBLISH gỡ khả năng chọn công khai, không nên hiểu là xóa mọi lịch sử liên quan.
+**P05 Câu hỏi được lấy ở file nào và hai người có nhận hai đề khác nhau không?**
 
-Đối chiếu [S/quiz/CommunityQuizService.java dòng 23](../src/main/java/vn/edu/nhom7/quiz/server/quiz/CommunityQuizService.java#L23).
-Đối chiếu [S/quiz/CommunityQuizPublisher.java dòng 23](../src/main/java/vn/edu/nhom7/quiz/server/quiz/CommunityQuizPublisher.java#L23).
+“Em mở JdbcQuizRepository, tìm loadMatchQuestions và withMatchQuestions. Server lấy danh sách câu cho một trận, rồi dùng chung trận đó cho cả hai. Hai client cùng theo một danh sách câu, không tự truy vấn riêng để lấy hai đề khác nhau.”
 
-### 5.10 Lưu trận trong một transaction
+**P06 Đáp án chuẩn có được gửi cùng câu hỏi xuống client không?**
 
-JdbcMatchRepository.save nhận MatchSummary từ gameplay. Trước khi ghi, MatchSummaryValidator kiểm tra sự nhất quán; repository mở Connection và setAutoCommit(false). Đường ghi chính gồm insertMatch, insertRound cùng snapshot cho mỗi lượt, insertAnswers theo batch và updateRankedProfiles nếu được phép tính hạng.
+“Không gửi ở dữ liệu mở câu cho người chơi. MatchPayloads.publicQuestion chuẩn bị phần cần hiển thị; đáp án chuẩn được giữ ở server để AnswerEvaluator chấm. Khi hết lượt, server mới gửi thông tin công bố kết quả.”
 
-Mã thực tế của nhóm thao tác ghi
+**P07 Bấm lưu quiz cộng đồng có đồng nghĩa mọi người chơi được bản vừa sửa không?**
 
-```java
-insertMatch(connection, summary);
-for (var round : summary.rounds()) {
-  insertRound(connection, summary, round);
-  faults.at("after_round");
-  insertAnswers(connection, round);
-  faults.at("after_answers");
-}
-updateRankedProfiles(connection, summary);
-```
+“Chưa. CommunityQuizService lưu thay đổi vào bản nháp. Người dùng phải yêu cầu xuất bản; CommunityQuizPublisher kiểm tra toàn bộ đề rồi tạo bản dùng cho thi đấu. Chỉ sửa bản nháp không tự thay nội dung đang được công bố.”
 
-faults.at là điểm chèn lỗi phục vụ kiểm thử, không phải thao tác ghi dữ liệu nghiệp vụ. Cả nhóm thao tác dùng cùng connection; save chỉ commit sau khi hoàn thành. Nếu lỗi trước commit, rollback làm trận, đáp án và thống kê không bị lưu một phần.
+**P08 Phần nào kiểm tra quiz cộng đồng trước khi xuất bản?**
 
-Ví dụ trận đã insert MATCHES nhưng lỗi sau lượt 3: không thể để history có trận dở trong khi USERS đã cộng điểm. Transaction giữ những thay đổi trong cùng một đơn vị. Khi update profile của hai người, code sắp theo userId rồi SELECT FOR UPDATE để giảm nguy cơ hai transaction khóa hai tài khoản theo thứ tự ngược nhau.
+“Em xem CommunityQuizPublisher.publish. Hàm kiểm tra đề có từ 1 đến 50 câu và các câu hợp lệ theo dạng tương ứng. Hợp lệ hết mới tạo phiên bản và cập nhật bản xuất bản; nếu còn lỗi thì trả về để người dùng sửa.”
 
-Một trận hệ thống hoàn tất đủ 10 lượt thường có 10 MATCH_QUESTIONS và 20 MATCH_ANSWERS, kể cả người timeout. Trận ngắn hơn, cộng đồng hoặc bị kết thúc giữa chừng có số dòng theo summary thực tế, nên không khẳng định mọi save đều có đúng 20 đáp án.
+**P09 Muốn tìm code lưu trận thì bắt đầu ở đâu?**
 
-Đối chiếu [S/persistence/JdbcMatchRepository.java dòng 34](../src/main/java/vn/edu/nhom7/quiz/server/persistence/JdbcMatchRepository.java#L34).
-Đối chiếu [S/persistence/JdbcMatchRepository.java dòng 77](../src/main/java/vn/edu/nhom7/quiz/server/persistence/JdbcMatchRepository.java#L77).
-Đối chiếu [S/persistence/JdbcMatchRepository.java dòng 171](../src/main/java/vn/edu/nhom7/quiz/server/persistence/JdbcMatchRepository.java#L171).
+“Em bắt đầu ở PersistenceService.submit để xem nơi nhận kết quả cần lưu, rồi sang JdbcMatchRepository.save để xem phần ghi database. Các dữ liệu chính là thông tin trận, nội dung câu hỏi khi chơi, đáp án và thống kê phù hợp. Lưu xong mới có dữ liệu cho lịch sử.”
 
-### 5.11 Thử lưu lại mà không cộng hai lần
+**P10 Nếu lưu bị lỗi hoặc server thử lưu cùng trận lần nữa thì có bị cộng điểm hai lần không?**
 
-Tình huống khó là MySQL đã commit nhưng kết nối lỗi trước khi ứng dụng nhận biết thành công. Nếu cứ insert và cộng USERS lại thì số trận hoặc tổng điểm bị tăng hai lần. Repository dùng matchId làm khóa nhận diện và load kết quả đã tồn tại trước khi ghi.
+“Dịch vụ sẽ thử lại khi lỗi tạm thời. JdbcMatchRepository.save kiểm tra mã trận đã được lưu chưa, nên cùng kết quả đã lưu không bị ghi thành trận mới và cộng thống kê lần nữa. Các phần dữ liệu liên quan cũng được ghi cùng đợt để tránh tình trạng chỉ lưu được một nửa.”
 
-Nếu bản đã lưu có MatchSummaryProjection bằng summary đang gửi, save trả ALREADY_SAVED mà không update counter lần nữa. Nếu cùng matchId nhưng nội dung xung đột, nó báo lỗi thay vì coi là cùng kết quả. Nhánh xử lý khóa trùng còn tra lại kết quả để xử lý hai lần lưu cạnh tranh.
+**P11 Xếp hạng được tính ở đâu và quiz cộng đồng có được cộng không?**
 
-PersistenceService giữ pending và reservations với tổng sức chứa 100. Trận phải giữ trước một chỗ lưu khi tạo. Nếu database không khỏe hoặc đủ sức chứa, hệ thống ngừng nhận thêm trận mới thay vì hứa lưu vô hạn.
+“RankingService.ranking lấy danh sách theo thống kê đã lưu, ưu tiên tổng điểm rồi số trận thắng. Phần cập nhật thống kê nằm trong JdbcMatchRepository khi lưu trận tính hạng đủ điều kiện. Quiz cộng đồng vẫn có lịch sử nhưng không cộng thống kê xếp hạng toàn cục.”
 
-Khi save lỗi, service đánh dấu database unavailable và thử lại sau 1, 2, 4 giây cho các lần đầu; từ lần lỗi thứ tư trở đi theo chu kỳ 30 giây. FAILED có retryable=true không có nghĩa đã ngừng thử vĩnh viễn. Khi thành công, nó xóa pending và báo SAVED. Listener hỏng không được đảo ngược một commit đã xong.
+**P12 Chi tiết lịch sử được kiểm tra quyền ở đâu và vì sao phải lưu cả nội dung câu hỏi?**
 
-Pending nằm trong RAM. Cơ chế retry xử lý lỗi tạm thời trong lúc tiến trình còn chạy; không phải nhật ký bền vững để tự khôi phục mọi kết quả chưa lưu sau khi server bị tắt đột ngột.
+“HistoryService.detail kiểm tra người xem có tham gia trận đó không. Nội dung câu hỏi được lưu cùng trận để khi đề gốc chỉnh sửa, người chơi vẫn xem lại đúng câu mình từng làm. Vì vậy lịch sử không chỉ dựa vào nội dung hiện tại của ngân hàng đề.”
 
-Đối chiếu [S/persistence/JdbcMatchRepository.java dòng 65](../src/main/java/vn/edu/nhom7/quiz/server/persistence/JdbcMatchRepository.java#L65).
-Đối chiếu [S/persistence/PersistenceService.java dòng 63](../src/main/java/vn/edu/nhom7/quiz/server/persistence/PersistenceService.java#L63).
-Đối chiếu [S/persistence/PersistenceService.java dòng 134](../src/main/java/vn/edu/nhom7/quiz/server/persistence/PersistenceService.java#L134).
+## 6 Ghép các phần để trình bày và chạy minh họa
 
-### 5.12 Ranking và history khác nhau ra sao
+### 6.1 Ví dụ A và B thi đấu một trận
 
-RankingService đọc thống kê tích lũy trong USERS. SQL dùng RANK trên total_score giảm dần rồi wins giảm dần để cho hạng bằng nhau khi hai giá trị này bằng nhau. ROW_NUMBER thêm id tăng dần để thứ tự phân trang ổn định. Vì thế cùng hạng vẫn có thể đứng ở hai vị trí dòng khác nhau; id không phá hòa của rank.
+A và B mở hai client và đăng nhập bằng hai tài khoản. Việt giải thích từ AuthForm.login đến lúc AppShell hiện sảnh; Minh nối tiếp bằng MessageRouter và SessionRegistry; Phúc giải thích việc AuthService đọc tài khoản và kiểm tra mật khẩu. Một chức năng đăng nhập đã có điểm phối hợp của ba phần.
 
-Ranking có giới hạn pageSize đến 50 và trả cả myEntry nếu người yêu cầu không nằm trong trang đang xem. Tổng điểm ở đây là điểm tích lũy đã commit của trận tính hạng, không phải điểm đang animate trên màn game.
+A chọn một quiz hệ thống rồi mời B. Việt chỉ nơi bấm trong LobbyView và cửa sổ ChallengeDialog. Minh chỉ ChallengeManager.invite để giải thích kiểm tra, giữ chỗ và gửi lời mời. Khi B đồng ý, Phúc chỉ nơi lấy câu hỏi trong JdbcQuizRepository; Tuấn chỉ nơi nhận đề để khởi tạo trận.
 
-HistoryService chỉ liệt kê trận có requester là player1 hoặc player2. detail kiểm tra quyền tham gia trước khi load review. Review trả tối đa 2 câu mỗi trang theo REVIEW_PAGE_SIZE để không vượt frame khi nội dung dài. Câu chưa revealed không được công bố key và giải thích trong review như một câu đã mở đáp án.
+Hai người bấm sẵn sàng. Tuấn giải thích điều kiện cả hai đã sẵn sàng trước khi mở câu. Việt chỉ WaitingView và QuestionPreparation để phân biệt sẵn sàng cả trận với chuẩn bị xong từng câu. Nếu câu có ảnh, hãy chỉ ra máy tải xong trước vẫn phải chờ server mở lượt.
 
-ServerRuntime nhận thông báo SAVED rồi mới làm mới profile và phát RANKING_INVALIDATED cho trận ranked. Client dùng thông báo đó để biết cần query lại; không cộng hạng trực tiếp từ animation.
+Ở câu đầu 15 giây, A trả lời đúng sau 4 giây và B trả lời sai sau 7 giây. Việt chỉ thao tác chọn và gửi; Minh chỉ đường chuyển lệnh ANSWER; Tuấn chỉ MatchRounds.answer, AnswerEvaluator và ScoreCalculator. A được 3 điểm, B được 0; hai người cùng thấy đáp án sau khi lượt chốt.
 
-Đối chiếu [S/query/RankingService.java dòng 16](../src/main/java/vn/edu/nhom7/quiz/server/query/RankingService.java#L16).
-Đối chiếu [S/query/HistoryService.java dòng 63](../src/main/java/vn/edu/nhom7/quiz/server/query/HistoryService.java#L63).
-Đối chiếu [S/ServerRuntime.java dòng 165](../src/main/java/vn/edu/nhom7/quiz/server/ServerRuntime.java#L165).
+Hết trận, Tuấn chỉ MatchResults.finish để giải thích thắng thua và tạo kết quả. Phúc chỉ PersistenceService cùng JdbcMatchRepository để giải thích lưu dữ liệu. Việt mở Lịch sử sau khi lưu thành công và trình bày cách xem chi tiết. Nếu có cập nhật xếp hạng thì giải thích đây là trận tính hạng, không áp dụng giống vậy cho quiz cộng đồng.
 
-### 5.13 Lưu ảnh và kiểm tra quyền
+### 6.2 Cách tìm nhanh theo chức năng
 
-Ảnh có file thực trong thư mục data/media theo cấu hình, còn MEDIA_ASSETS lưu metadata. MediaService cho PNG hoặc JPEG, kích thước tối đa 5 MiB theo hằng số code và không quá 16 triệu pixel. Nó kiểm tra SHA 256, nội dung ảnh thật và MIME thay vì chỉ tin phần mở rộng tên file.
-
-Upload chia chunk tối đa 24 KiB dữ liệu thô rồi Base64 để đưa vào JSON. Mỗi lần phải đúng offset; đợi ACK trước chunk sau giúp ảnh không chiếm toàn bộ đường gửi. Một tài khoản tối đa 2 upload đang chạy; toàn hệ thống tối đa 32; bỏ dở quá 2 phút bị dọn.
-
-Mỗi request tải ảnh đều kiểm tra owner hoặc quyền được cấp bởi trận và lịch sử. Biết mediaId không tự cho phép đọc ảnh bất kỳ. Ảnh giải thích được cấp cho người tham gia theo trạng thái reveal. File và metadata còn cần được sao lưu cùng nhau vì chỉ sao lưu MySQL không giữ được nội dung ảnh.
-
-Đối chiếu [S/media/MediaService.java dòng 53](../src/main/java/vn/edu/nhom7/quiz/server/media/MediaService.java#L53).
-Đối chiếu [S/media/MediaService.java dòng 129](../src/main/java/vn/edu/nhom7/quiz/server/media/MediaService.java#L129).
-
-### 5.14 Cách tự lần code của Phúc
-
-Luồng tài khoản: AuthService.register → AccountValidator → PasswordHasher.hash → JdbcUserRepository.insert; rồi AuthService.login → users.find → hasher.verify. Luồng kết quả: MatchResults.finish → ResultSink.submit → PersistenceService → JdbcMatchRepository.save → các insert và update → commit → thông báo SAVED → profile và ranking.
-
-Đọc PasswordHasherTest, UserRepositoryIT, QuizRepositoryIT, CommunityQuizServiceIT, MatchPersistenceIT, PersistenceServiceTest và RankingHistoryIT. Các lớp IT là kiểm thử tích hợp có thể cần MySQL theo cấu hình. Để minh họa transaction, xem điểm faults.at và tình huống lỗi trước hoặc sau commit trong test, thay vì cố tình phá dữ liệu đang dùng demo.
-
-### 5.15 Câu hỏi và câu trả lời mẫu cho Phúc
-
-**P01 Vì sao không lưu mật khẩu gốc?**
-
-Em lưu kết quả PBKDF2 với salt ngẫu nhiên riêng, không lưu mật khẩu để đọc lại. Khi login, em tính lại từ mật khẩu nhập và salt rồi so với key đã lưu. Nếu database bị lộ, người đọc không có ngay mật khẩu gốc, dù vẫn cần bảo vệ mật khẩu mạnh và hệ thống vận hành.
-
-**P02 Salt và 600 nghìn vòng có tác dụng gì?**
-
-Salt làm hai tài khoản cùng mật khẩu thường có hash khác nhau, giảm lợi ích của bảng tính sẵn dùng chung. Nhiều vòng PBKDF2 làm mỗi lần đoán tốn công hơn. Base64 trong chuỗi lưu chỉ giúp biểu diễn byte thành chữ, không phải mã hóa bảo mật.
-
-**P03 Tại sao dùng PreparedStatement?**
-
-Em viết SQL với dấu hỏi và truyền giá trị bằng setter. Như vậy dữ liệu người dùng được xử lý là tham số thay vì ghép thành cú pháp câu lệnh. Em còn dùng try with resources để đóng statement, result và connection khi xong hoặc có lỗi.
-
-**P04 Transaction bảo vệ tình huống nào?**
-
-Một kết quả trận kéo theo dòng MATCHES, các lượt, đáp án và thống kê USERS. Em ghi cùng transaction rồi commit. Nếu lỗi trước commit, rollback cả nhóm nên không có tình huống đã cộng điểm tài khoản mà thiếu biên bản trận.
-
-**P05 Commit thành công rồi ứng dụng tưởng lỗi thì có cộng lại không?**
-
-Em dùng matchId và kiểm tra nội dung summary đã lưu. Nếu cùng kết quả thì trả ALREADY_SAVED, không cộng counter lại. Nếu trùng ID nhưng khác nội dung thì báo xung đột. Đây là tính chất lưu lặp không làm thay đổi kết quả sau lần thành công đầu.
-
-**P06 Vì sao có cả QUESTIONS và MATCH_QUESTIONS?**
-
-QUESTIONS là câu trong ngân hàng hoặc bản xuất bản. MATCH_QUESTIONS lưu câu cụ thể của lượt thi cùng snapshot. Nhờ snapshot, sau này sửa đề hoặc tạo bản mới không làm lịch sử kể sai nội dung và đáp án đã dùng trong trận cũ.
-
-**P07 Hai người có lấy ngẫu nhiên hai đề khác nhau không?**
-
-Không. Repository lấy một danh sách snapshot cho Match, rồi gameplay gửi dữ liệu công khai của cùng từng câu cho cả hai. Hệ thống 10 câu lấy theo cơ cấu 4/2/2/2; cộng đồng lấy các câu trong phiên bản được chọn.
-
-**P08 Quiz cộng đồng có làm tăng ranking không?**
-
-Không. Summary của quiz cộng đồng có ranked=false. Repository vẫn ghi history, nhưng updateRankedProfiles chỉ cộng thống kê khi ranked và không ABORTED. Vì vậy chơi nhiều quiz tự tạo không tự tăng hạng chung.
-
-**P09 Hai người bằng điểm thì ranking xếp sao?**
-
-SQL xét total_score giảm dần rồi wins giảm dần. Nếu cả hai giá trị bằng nhau, RANK cho cùng hạng. ROW_NUMBER thêm id để phân trang ổn định, nên cần phân biệt hạng hiển thị với vị trí một dòng trong danh sách.
-
-**P10 Server tắt khi còn pending thì tự khôi phục hết được không?**
-
-Không có bảo đảm đó trong bản hiện tại. Pending nằm trong RAM, retry có tác dụng khi tiến trình còn hoạt động. Muốn tự khôi phục qua crash cần thêm hàng đợi hoặc journal bền vững; đó là hướng phát triển, không phải khả năng đã có.
-
-**P11 Vì sao bản nháp tách khỏi bản xuất bản?**
-
-Tác giả có thể đang nhập một câu chưa hoàn chỉnh. Em cho thao tác nháp riêng, còn publish kiểm tra toàn bộ và tạo phiên bản cố định trong transaction. Người chơi dùng bản đã công bố, nên việc tác giả đang sửa không làm đề thi thay đổi giữa trận.
-
-**P12 Em tóm tắt phần mình thế nào?**
-
-Em phụ trách schema, tài khoản, ngân hàng câu hỏi, quiz cộng đồng, lưu kết quả và các query. Em dùng PBKDF2 cho mật khẩu, repository JDBC cho dữ liệu, snapshot cho lịch sử và transaction cùng matchId để lưu an toàn khi thử lại. Ranking chỉ đổi sau commit của trận tính hạng; dữ liệu ảnh có metadata trong MySQL và file trên server.
-
-## 6 Ghép bốn phần để trả lời câu hỏi liên hệ
-
-### 6.1 Ví dụ một câu hỏi đi qua cả bốn người
-
-Giả sử A và B chơi câu SINGLE_CHOICE có đáp án chuẩn A. A chọn A ở giây thứ 4, B chọn C ở giây thứ 7.
-
-1. Phúc cung cấp QuestionSnapshot có key riêng tư; Tuấn giữ nó trong Match và tạo PublicQuestion không có key.
-2. Minh truyền QUESTION qua cùng cơ chế frame và queue đến hai kết nối. Việt hiển thị câu, tải ảnh nếu có và gửi QUESTION_READY khi xong.
-3. Tuấn đợi cả hai ready, đếm ngược rồi phát QUESTION_OPEN. Việt bật vùng nhập và hiển thị countdown.
-4. A bấm đáp án. Việt tạo answer kiểu chuỗi, gắn matchId, roundId, questionId và requestId; khóa gửi lặp trong lúc chờ.
-5. Minh giải mã, tra session của A và chuyển tới MatchManager. Tuấn kiểm tra đúng lượt, chấm A đúng và tính 3 điểm, nhưng chỉ gửi ACK và trạng thái đã trả lời ngay lúc đó.
-6. B gửi C, được nhận hợp lệ nhưng chấm sai và 0 điểm. Vì cả hai đã trả lời, Tuấn đóng lượt và phát QUESTION_RESULT cùng đáp án A.
-7. Việt mới hiển thị đúng sai, sau đó animate điểm từ dữ liệu ROUND_LEADERBOARD do server gửi.
-8. Hết trận, Tuấn chuyển summary sang Phúc. Phúc commit lịch sử và thống kê nếu ranked; Minh truyền thông báo lưu và làm mới dữ liệu cho Việt hiển thị.
-
-Ví dụ này giúp mỗi người trình bày điểm bắt đầu và điểm kết thúc phần mình, đồng thời giải thích được vì sao một chức năng cần nhiều thành viên phối hợp.
-
-### 6.2 Tám câu hỏi chung có thể gặp
-
-**C01 Dự án thuộc mô hình gì?**
-
-Dự án build bằng một module Maven nhưng vẫn là client server tập trung với hai điểm chạy ClientMain và ServerMain. Hai ứng dụng JavaFX gửi lệnh qua TCP đến một server Java; server quyết định luật và truy cập MySQL qua JDBC. Trong server có các package dịch vụ và repository để chia trách nhiệm, không phải mỗi package là một dịch vụ mạng độc lập.
-
-**C02 Vì sao không chấm ngay trên client cho nhanh?**
-
-Client là chương trình trên máy người dùng nên có thể bị thay đổi. Nếu tin điểm hoặc key ở client thì khó giữ luật thống nhất. Client chỉ gửi ý định; server kiểm tra thời hạn và chấm từ dữ liệu riêng tư. Cách này vẫn chịu độ trễ mạng, không có nghĩa mọi người đều có độ trễ như nhau.
-
-**C03 Vì sao đã kiểm tra ở UI mà server còn phải kiểm tra?**
-
-Kiểm tra UI giúp sửa lỗi nhập dễ và tránh gửi vô ích. Kiểm tra server là hàng rào quyết định vì client có thể bị sửa, dùng phiên bản cũ hoặc gửi dữ liệu lỗi. Database có thêm khóa và CHECK để bảo vệ tính nhất quán khi ghi.
-
-**C04 Nếu không thấy điểm trên ranking ngay thì phải kiểm tra đâu?**
-
-Kiểm tra trận có ranked không, MATCH_SAVE_STATUS đã SAVED chưa, transaction có commit không và client đã query lại sau RANKING_INVALIDATED chưa. Đừng chỉ kiểm tra điểm hiển thị ở GameView vì đó là điểm trong trận.
-
-**C05 Khi mất kết nối, mỗi người xử lý phần nào?**
-
-Minh phát hiện và dọn connection cùng session; Tuấn áp dụng luật rời trận và tạo kết quả phù hợp nếu trận đã bắt đầu; Phúc nhận summary và lưu theo cơ chế persistence; Việt báo mất kết nối và đưa người dùng vào luồng kết nối lại. Không nên chỉ sửa một Label rồi coi toàn bộ xử lý mất mạng đã xong.
-
-**C06 Lịch sử có làm lộ đáp án cho người không tham gia không?**
-
-HistoryService kiểm tra requester thuộc trận trước khi trả detail. Review và quyền ảnh còn xét trạng thái revealed. Biết matchId hoặc mediaId không tự mang quyền xem. Khi xuất bản hoặc hiển thị quiz công khai cũng phải dùng payload không chứa private key.
-
-**C07 Gửi ảnh lớn có làm chậm điều khiển trận không?**
-
-Code giảm ảnh hưởng bằng chunk nhỏ, stop and wait, executor ảnh riêng và queue ảnh được ưu tiên sau control. Tuy nhiên cùng một TCP vẫn có giới hạn băng thông và thứ tự byte, nên không thể nói hoàn toàn không có ảnh hưởng. Đây là cách hạn chế tải và duy trì khả năng phản hồi.
-
-**C08 Nếu được phát triển tiếp thì cải thiện gì?**
-
-Có thể thêm TLS cho đường truyền, journal bền vững cho kết quả chờ lưu và cơ chế nối lại trận có quy định phiên rõ ràng. Đây là đề xuất phát triển. Khi bảo vệ, nên nêu ranh giới của bản hiện tại trước rồi mới giải thích vì sao cải tiến đó có ích.
-
-### 6.3 Trình tự demo để mỗi người có điểm nói
-
-| Bước demo | Người dẫn chính | Điều nên mở hoặc giải thích |
-| --- | --- | --- |
-| Đăng ký và đăng nhập hai client | Phúc rồi Minh | Hash, truy vấn tài khoản, session và online |
-| Mời đấu rồi từ chối hoặc chấp nhận | Minh | CHALLENGING, thời hạn và giữ chỗ hai người |
-| Vào trận và sẵn sàng | Tuấn rồi Việt | Máy trạng thái, tải tài nguyên và QUESTION_READY |
-| Trả lời câu và chờ reveal | Việt rồi Tuấn | Typed answer, pending ACK, chấm và điểm theo thời gian |
-| Dùng trợ giúp và gửi chat | Tuấn rồi Việt | Giới hạn quyền, membership và phản hồi giao diện |
-| Kết thúc và xem lịch sử | Phúc | PENDING sang SAVED, transaction và snapshot |
-| Mở ranking | Phúc rồi Việt | Chỉ trận ranked đã lưu, phân trang và hiển thị |
-| Nếu cần minh họa chức năng mở rộng | Việt rồi Phúc | Soạn quiz 7 dạng, publish phiên bản và trận không tính hạng |
-
-Trước khi demo, chọn sẵn một quiz hệ thống và một quiz cộng đồng hợp lệ, dùng dữ liệu tài khoản phục vụ demo, xác nhận server và MySQL chạy đúng cấu hình. Phần này là kịch bản thực hành; không đồng nghĩa các bước đã được thực thi trong lần biên soạn tài liệu.
-
-## 7 Thuật ngữ cơ bản và cách ôn nhanh
-
-### 7.1 Từ điển đọc code
-
-| Thuật ngữ | Hiểu đơn giản trong dự án |
+| Cần tìm chức năng | Nơi bắt đầu đọc |
 | --- | --- |
-| Socket | Đầu nối để client và server trao đổi byte |
-| Frame | Một thông điệp có ranh giới do ứng dụng tự đặt trên TCP |
-| JSON | Dạng chữ có cấu trúc để mô tả dữ liệu |
-| Envelope | Vỏ thông điệp có loại, các ID và payload |
-| Payload hoặc DTO | Dữ liệu cụ thể của một yêu cầu hay phản hồi |
-| Thread và executor | Luồng làm việc và nơi quản lý việc chạy tác vụ |
-| Queue | Hàng đợi, ví dụ chờ writer gửi dữ liệu |
-| Lock hoặc synchronized | Cho phép một nhóm thao tác trên dữ liệu chung chạy an toàn theo lượt |
-| Race condition | Kết quả sai do nhiều tác vụ xen kẽ lúc đọc sửa cùng trạng thái |
-| Session | Mối gắn tài khoản đã xác thực với một kết nối |
-| State và reducer | Trạng thái hiện tại và hàm tạo trạng thái tiếp theo từ event |
-| ACK | Thông báo xác nhận đã nhận hoặc chấp nhận xử lý theo loại yêu cầu |
-| Deadline | Mốc hết hạn; timer là tác vụ được hẹn chạy tại thời điểm đó |
-| Snapshot | Bản dữ liệu chụp tại một thời điểm để giữ nội dung ổn định |
-| Repository | Lớp truy cập và chuyển đổi dữ liệu lưu trữ |
-| Transaction | Nhóm thao tác dữ liệu cùng commit hoặc cùng rollback |
-| Idempotent | Lặp thao tác hợp lệ không tạo thêm hiệu ứng sau lần thành công đầu |
-| Salt và password hash | Dữ liệu ngẫu nhiên riêng và kết quả dẫn xuất dùng kiểm tra mật khẩu |
-| Ranked | Trận có thể tham gia tính thống kê xếp hạng theo điều kiện lưu |
-| Migration | Script thay đổi schema từ phiên bản cũ sang phiên bản mới |
+| Bấm đăng nhập | client/ui/AuthForm.java hàm login |
+| Kiểm tra mật khẩu | server/auth/AuthService.java hàm login |
+| Chuyển yêu cầu đến đúng nơi | server/network/MessageRouter.java hàm route |
+| Online và tình trạng người chơi | server/session/SessionRegistry.java và OnlinePresenceService.java |
+| Mời và chấp nhận thi đấu | server/challenge/ChallengeManager.java hàm handle, invite, create |
+| Sẵn sàng và mở lượt | server/match/MatchManager.java và MatchRounds.java |
+| Tải câu hỏi trước khi báo sẵn sàng | client/ui/QuestionPreparation.java hàm prepare |
+| Chọn giao diện theo dạng câu | client/ui/QuestionRenderer.java hàm forType |
+| Gửi đáp án từ client | client/ui/CommandGateway.java hàm send |
+| Nhận đáp án trên server | server/match/MatchRounds.java hàm answer |
+| Kiểm tra đúng sai và tính điểm | server/match/AnswerEvaluator.java và ScoreCalculator.java |
+| Kết thúc và tái đấu | server/match/MatchResults.java và RematchCoordinator.java |
+| Lưu kết quả trận | server/persistence/JdbcMatchRepository.java hàm save |
+| Xuất bản quiz cộng đồng | server/quiz/CommunityQuizPublisher.java hàm publish |
+| Xếp hạng và lịch sử | server/query/RankingService.java và HistoryService.java |
 
-### 7.2 Mỗi người cần tự nói được năm điều
+### 6.3 Tám câu hỏi chung về luồng phối hợp
 
-1. Phần của mình nhận đầu vào gì, từ lớp của ai.
-2. Ba đến năm lớp quan trọng nhất và đường gọi giữa chúng.
-3. Một ví dụ dữ liệu đi từ đầu đến cuối, kể cả khi có lỗi.
-4. Cách tránh một lỗi đặc trưng: Minh tránh đọc sai frame và giữ chỗ trùng; Tuấn tránh timer cũ và cộng điểm lặp; Việt tránh block UI và gửi lặp; Phúc tránh lưu nửa trận và cộng counter hai lần.
-5. Một giới hạn thực tế của code và một hướng cải thiện được phân biệt rõ với chức năng đang có.
+**C01 Hãy giải thích từ lúc bấm gửi đáp án đến lúc hiện điểm mà không đi sâu kỹ thuật?**
 
-### 7.3 Thứ tự mở code khi thuyết trình
+“Giao diện thu đáp án và gửi lên server. Phần mạng xác định người gửi rồi chuyển cho phần trận đấu. Server kiểm tra đúng câu, đúng thời gian và chưa trả lời; sau đó chấm và ghi nhận. Khi cả hai trả lời hoặc hết giờ, server gửi đáp án cùng điểm để giao diện hiển thị.”
 
-Minh: FrameCodec → FrameDecoder → SocketServer → MessageRouter → SessionRegistry → ChallengeManager → ConnectionManager. Tuấn: MatchManager → Match → MatchRounds → AnswerEvaluator → ScoreCalculator → MatchResults → RematchCoordinator. Việt: ClientMain → NetworkClient → ClientStore → ClientStateReducer → CommandGateway → QuestionRenderer → GameView. Phúc: schema và migration → AuthService → PasswordHasher → JdbcQuizRepository → PersistenceService → JdbcMatchRepository → RankingService và HistoryService.
+**C02 Nếu muốn sửa một chức năng thì làm sao biết mở file của ai trước?**
 
-Không cần đọc từng dòng import. Hãy giải thích trường dữ liệu nào quan trọng, điều kiện bảo vệ nào đứng trước thay đổi trạng thái và kết quả được bàn giao ở đâu. Nếu bị hỏi sâu một hàm, chia câu trả lời thành đầu vào, kiểm tra, thay đổi dữ liệu và đầu ra.
+“Em xác định đang sửa đoạn nào của luồng. Sửa nút và cách hiển thị thì bắt đầu ở client của Việt; sửa điều phối yêu cầu và lời mời thì xem phần Minh; sửa luật chơi và điểm thì xem phần Tuấn; sửa dữ liệu và cách lưu thì xem phần Phúc. Sau đó lần theo các hàm gọi qua lại của chức năng đó.”
 
-## 8 Chỉ dẫn đối chiếu mã nguồn
+**C03 Vì sao client không tự chấm đáp án rồi gửi điểm lên server?**
 
-### 8.1 Nguồn phân công và kiến trúc
+“Vì người chơi có thể sửa chương trình phía mình. Client chỉ gửi câu trả lời; server có câu hỏi chuẩn, thời gian và luật chấm nên tự kiểm tra, tính điểm. Cả hai người cùng nhận kết quả từ một nơi để tránh mỗi máy hiển thị một kết quả khác nhau.”
 
-Phân công bốn người được đối chiếu từ BTL_Quiz_Doi_Khang_Nhom7_KienTruc_ThietKe_PhanCong.md mục 3.8 và các phần cá nhân, cùng docs/superpowers/specs/2026-10-05-quiz-arena-design.md mục 14.1. Bảng công việc Phan_cong_Nhom_7.xlsx phân rã theo bốn trách nhiệm này. Các chức năng mới được giải thích theo package đang triển khai và các điểm tích hợp giữa module.
+**C04 Một người đã thấy câu hỏi thì vì sao vẫn phải chờ người còn lại?**
 
-Để đọc tổng quan, dùng README.md và THONG_TIN_DU_AN.md. Để xem cơ chế luồng và giới hạn đang mô tả, dùng docs/architecture/network-explanation.md. Để xem ba dạng tương tác, dùng docs/architecture/interactive-questions.md. Chi tiết version thư viện và cấu hình chạy nằm ở pom.xml duy nhất. Kiểm thử nằm chung trong src/test/java; tài nguyên nằm trong src/main/resources. Chạy client bằng mvn javafx:run và server bằng java -jar target/quiz-arena-server.jar sau khi build. Các chỉ dẫn dưới đây trỏ vào bản mã nguồn được đối chiếu ngày 31 tháng 10 năm 2026; số dòng có thể thay đổi khi sửa code.
+“Vì thấy nội dung chưa đồng nghĩa cả hai đã chuẩn bị xong. Client có thể cần tải ảnh. Mỗi bên báo QUESTION_READY, server đợi đủ rồi mới mở thời gian trả lời chung, giúp hai người bắt đầu theo cùng một mốc của trận.”
 
-### 8.2 Danh mục vị trí code được giải thích
+**C05 Đã hiện kết quả rồi mà chưa thấy trong lịch sử có phải luôn là lỗi không?**
 
-- [1] [C/net/FrameCodec.java dòng 12](../src/main/java/vn/edu/nhom7/quiz/common/net/FrameCodec.java#L12)
-- [2] [C/net/FrameDecoder.java dòng 13](../src/main/java/vn/edu/nhom7/quiz/common/net/FrameDecoder.java#L13)
-- [3] [C/protocol/Envelope.java dòng 6](../src/main/java/vn/edu/nhom7/quiz/common/protocol/Envelope.java#L6)
-- [4] [C/protocol/ProtocolCodec.java dòng 37](../src/main/java/vn/edu/nhom7/quiz/common/protocol/ProtocolCodec.java#L37)
-- [5] [S/network/HandshakeValidator.java dòng 6](../src/main/java/vn/edu/nhom7/quiz/server/network/HandshakeValidator.java#L6)
-- [6] [S/network/SocketServer.java dòng 30](../src/main/java/vn/edu/nhom7/quiz/server/network/SocketServer.java#L30)
-- [7] [S/network/Connection.java dòng 16](../src/main/java/vn/edu/nhom7/quiz/server/network/Connection.java#L16)
-- [8] [S/network/ConnectionManager.java dòng 39](../src/main/java/vn/edu/nhom7/quiz/server/network/ConnectionManager.java#L39)
-- [9] [S/ServerRuntime.java dòng 26](../src/main/java/vn/edu/nhom7/quiz/server/ServerRuntime.java#L26)
-- [10] [S/network/MessageRouter.java dòng 63](../src/main/java/vn/edu/nhom7/quiz/server/network/MessageRouter.java#L63)
-- [11] [S/network/MessageRouter.java dòng 115](../src/main/java/vn/edu/nhom7/quiz/server/network/MessageRouter.java#L115)
-- [12] [S/session/SessionRegistry.java dòng 56](../src/main/java/vn/edu/nhom7/quiz/server/session/SessionRegistry.java#L56)
-- [13] [S/challenge/ChallengeManager.java dòng 163](../src/main/java/vn/edu/nhom7/quiz/server/challenge/ChallengeManager.java#L163)
-- [14] [S/network/HeartbeatService.java dòng 10](../src/main/java/vn/edu/nhom7/quiz/server/network/HeartbeatService.java#L10)
-- [15] [S/network/ConnectionManager.java dòng 68](../src/main/java/vn/edu/nhom7/quiz/server/network/ConnectionManager.java#L68)
-- [16] [S/network/RequestCache.java dòng 16](../src/main/java/vn/edu/nhom7/quiz/server/network/RequestCache.java#L16)
-- [17] [S/match/Match.java dòng 50](../src/main/java/vn/edu/nhom7/quiz/server/match/Match.java#L50)
-- [18] [S/match/MatchManager.java dòng 53](../src/main/java/vn/edu/nhom7/quiz/server/match/MatchManager.java#L53)
-- [19] [S/match/MatchManager.java dòng 145](../src/main/java/vn/edu/nhom7/quiz/server/match/MatchManager.java#L145)
-- [20] [S/match/MatchRounds.java dòng 19](../src/main/java/vn/edu/nhom7/quiz/server/match/MatchRounds.java#L19)
-- [21] [S/match/MatchRounds.java dòng 57](../src/main/java/vn/edu/nhom7/quiz/server/match/MatchRounds.java#L57)
-- [22] [S/match/MatchManager.java dòng 263](../src/main/java/vn/edu/nhom7/quiz/server/match/MatchManager.java#L263)
-- [23] [S/match/Match.java dòng 118](../src/main/java/vn/edu/nhom7/quiz/server/match/Match.java#L118)
-- [24] [S/match/MatchManager.java dòng 258](../src/main/java/vn/edu/nhom7/quiz/server/match/MatchManager.java#L258)
-- [25] [S/match/Match.java dòng 131](../src/main/java/vn/edu/nhom7/quiz/server/match/Match.java#L131)
-- [26] [S/match/MatchRounds.java dòng 80](../src/main/java/vn/edu/nhom7/quiz/server/match/MatchRounds.java#L80)
-- [27] [S/match/AnswerEvaluator.java dòng 13](../src/main/java/vn/edu/nhom7/quiz/server/match/AnswerEvaluator.java#L13)
-- [28] [S/match/ShortAnswerNormalizer.java dòng 9](../src/main/java/vn/edu/nhom7/quiz/server/match/ShortAnswerNormalizer.java#L9)
-- [29] [C/protocol/InteractiveQuestions.java dòng 12](../src/main/java/vn/edu/nhom7/quiz/common/protocol/InteractiveQuestions.java#L12)
-- [30] [S/match/MatchLifelines.java dòng 26](../src/main/java/vn/edu/nhom7/quiz/server/match/MatchLifelines.java#L26)
-- [31] [S/match/MatchChat.java dòng 18](../src/main/java/vn/edu/nhom7/quiz/server/match/MatchChat.java#L18)
-- [32] [S/match/MatchResults.java dòng 18](../src/main/java/vn/edu/nhom7/quiz/server/match/MatchResults.java#L18)
-- [33] [S/match/MatchManager.java dòng 241](../src/main/java/vn/edu/nhom7/quiz/server/match/MatchManager.java#L241)
-- [34] [S/match/RematchCoordinator.java dòng 29](../src/main/java/vn/edu/nhom7/quiz/server/match/RematchCoordinator.java#L29)
-- [35] [V/ClientMain.java dòng 62](../src/main/java/vn/edu/nhom7/quiz/client/ClientMain.java#L62)
-- [36] [V/state/ClientStore.java dòng 49](../src/main/java/vn/edu/nhom7/quiz/client/state/ClientStore.java#L49)
-- [37] [V/network/NetworkClient.java dòng 45](../src/main/java/vn/edu/nhom7/quiz/client/network/NetworkClient.java#L45)
-- [38] [V/network/NetworkClient.java dòng 98](../src/main/java/vn/edu/nhom7/quiz/client/network/NetworkClient.java#L98)
-- [39] [V/state/ClientStateReducer.java dòng 22](../src/main/java/vn/edu/nhom7/quiz/client/state/ClientStateReducer.java#L22)
-- [40] [V/state/ClientState.java dòng 46](../src/main/java/vn/edu/nhom7/quiz/client/state/ClientState.java#L46)
-- [41] [V/ui/CommandGateway.java dòng 22](../src/main/java/vn/edu/nhom7/quiz/client/ui/CommandGateway.java#L22)
-- [42] [V/network/RequestTracker.java dòng 19](../src/main/java/vn/edu/nhom7/quiz/client/network/RequestTracker.java#L19)
-- [43] [V/network/RequestTimeoutMonitor.java dòng 21](../src/main/java/vn/edu/nhom7/quiz/client/network/RequestTimeoutMonitor.java#L21)
-- [44] [V/ui/QuestionRenderer.java dòng 10](../src/main/java/vn/edu/nhom7/quiz/client/ui/QuestionRenderer.java#L10)
-- [45] [V/ui/AnswerIntentFactory.java dòng 10](../src/main/java/vn/edu/nhom7/quiz/client/ui/AnswerIntentFactory.java#L10)
-- [46] [V/ui/RangeRenderer.java dòng 17](../src/main/java/vn/edu/nhom7/quiz/client/ui/RangeRenderer.java#L17)
-- [47] [V/ui/ImageTarget.java dòng 142](../src/main/java/vn/edu/nhom7/quiz/client/ui/ImageTarget.java#L142)
-- [48] [V/ui/QuestionPreparation.java dòng 28](../src/main/java/vn/edu/nhom7/quiz/client/ui/QuestionPreparation.java#L28)
-- [49] [V/assets/RemoteMedia.java dòng 109](../src/main/java/vn/edu/nhom7/quiz/client/assets/RemoteMedia.java#L109)
-- [50] [V/network/ServerTimeEstimator.java dòng 16](../src/main/java/vn/edu/nhom7/quiz/client/network/ServerTimeEstimator.java#L16)
-- [51] [V/ui/GameView.java dòng 418](../src/main/java/vn/edu/nhom7/quiz/client/ui/GameView.java#L418)
-- [52] [database/004_lifelines.sql dòng 9](../database/004_lifelines.sql#L9)
-- [53] [database/005_interactive_questions.sql dòng 7](../database/005_interactive_questions.sql#L7)
-- [54] [S/db/JdbcConnectionFactory.java dòng 14](../src/main/java/vn/edu/nhom7/quiz/server/db/JdbcConnectionFactory.java#L14)
-- [55] [S/auth/JdbcUserRepository.java dòng 45](../src/main/java/vn/edu/nhom7/quiz/server/auth/JdbcUserRepository.java#L45)
-- [56] [S/auth/AccountValidator.java dòng 8](../src/main/java/vn/edu/nhom7/quiz/server/auth/AccountValidator.java#L8)
-- [57] [S/auth/PasswordHasher.java dòng 11](../src/main/java/vn/edu/nhom7/quiz/server/auth/PasswordHasher.java#L11)
-- [58] [S/auth/PasswordHasher.java dòng 20](../src/main/java/vn/edu/nhom7/quiz/server/auth/PasswordHasher.java#L20)
-- [59] [S/auth/AuthService.java dòng 34](../src/main/java/vn/edu/nhom7/quiz/server/auth/AuthService.java#L34)
-- [60] [S/network/MessageRouter.java dòng 169](../src/main/java/vn/edu/nhom7/quiz/server/network/MessageRouter.java#L169)
-- [61] [S/quiz/JdbcQuizRepository.java dòng 70](../src/main/java/vn/edu/nhom7/quiz/server/quiz/JdbcQuizRepository.java#L70)
-- [62] [S/quiz/JdbcQuizRepository.java dòng 99](../src/main/java/vn/edu/nhom7/quiz/server/quiz/JdbcQuizRepository.java#L99)
-- [63] [S/match/MatchPayloads.java dòng 90](../src/main/java/vn/edu/nhom7/quiz/server/match/MatchPayloads.java#L90)
-- [64] [S/quiz/CommunityQuizService.java dòng 23](../src/main/java/vn/edu/nhom7/quiz/server/quiz/CommunityQuizService.java#L23)
-- [65] [S/quiz/CommunityQuizPublisher.java dòng 23](../src/main/java/vn/edu/nhom7/quiz/server/quiz/CommunityQuizPublisher.java#L23)
-- [66] [S/persistence/JdbcMatchRepository.java dòng 34](../src/main/java/vn/edu/nhom7/quiz/server/persistence/JdbcMatchRepository.java#L34)
-- [67] [S/persistence/JdbcMatchRepository.java dòng 77](../src/main/java/vn/edu/nhom7/quiz/server/persistence/JdbcMatchRepository.java#L77)
-- [68] [S/persistence/JdbcMatchRepository.java dòng 171](../src/main/java/vn/edu/nhom7/quiz/server/persistence/JdbcMatchRepository.java#L171)
-- [69] [S/persistence/JdbcMatchRepository.java dòng 65](../src/main/java/vn/edu/nhom7/quiz/server/persistence/JdbcMatchRepository.java#L65)
-- [70] [S/persistence/PersistenceService.java dòng 63](../src/main/java/vn/edu/nhom7/quiz/server/persistence/PersistenceService.java#L63)
-- [71] [S/persistence/PersistenceService.java dòng 134](../src/main/java/vn/edu/nhom7/quiz/server/persistence/PersistenceService.java#L134)
-- [72] [S/query/RankingService.java dòng 16](../src/main/java/vn/edu/nhom7/quiz/server/query/RankingService.java#L16)
-- [73] [S/query/HistoryService.java dòng 63](../src/main/java/vn/edu/nhom7/quiz/server/query/HistoryService.java#L63)
-- [74] [S/ServerRuntime.java dòng 165](../src/main/java/vn/edu/nhom7/quiz/server/ServerRuntime.java#L165)
-- [75] [S/media/MediaService.java dòng 53](../src/main/java/vn/edu/nhom7/quiz/server/media/MediaService.java#L53)
-- [76] [S/media/MediaService.java dòng 129](../src/main/java/vn/edu/nhom7/quiz/server/media/MediaService.java#L129)
+“Không phải lúc nào cũng là lỗi. Kết quả có thể được hiển thị khi server đang lưu. Cần xem trạng thái lưu; khi lưu thành công, lịch sử mới đọc được trận đó. Nếu có lỗi lưu thì phần dữ liệu xử lý thử lại, chứ client không tự thêm một dòng lịch sử để thay thế.”
+
+**C06 Đổi nội dung một quiz có làm lịch sử trận cũ đổi theo không?**
+
+“Lịch sử dùng nội dung đã lưu tại thời điểm chơi nên vẫn giữ câu hỏi của trận cũ. Quiz cộng đồng còn tách bản nháp với bản xuất bản; sửa bản nháp chưa thay bản đang dùng. Cách làm này giúp chỉnh đề mà vẫn xem lại được đúng những gì đã thi đấu.”
+
+**C07 Nếu bấm trên client mà không thấy kết quả thì lần theo luồng thế nào?**
+
+“Em kiểm tra nút có được phép thao tác và có gửi yêu cầu chưa, tiếp theo xem kết nối có hoạt động không. Sau đó xem MessageRouter có chuyển đến đúng dịch vụ, dịch vụ có trả kết quả hay lỗi không. Cuối cùng xem client đã nhận và cập nhật trạng thái, màn hình theo kết quả đó chưa.”
+
+**C08 Một module nhưng vẫn chia common server client thì có mâu thuẫn không?**
+
+“Không. Một module nghĩa là cùng được tổ chức và build từ một pom.xml. Các package vẫn chia trách nhiệm để dễ tìm code: common dùng chung, server xử lý và lưu dữ liệu, client nhận thao tác và hiển thị. Khi chạy, client và server vẫn là các chương trình giao tiếp qua mạng.”
+
+### 6.4 Thứ tự minh họa khi bảo vệ
+
+1. Mở cấu trúc src/main/java/vn/edu/nhom7/quiz/ và giải thích một module cùng ba package.
+2. Chạy server rồi mở hai client. Đăng nhập để cho thấy danh sách online thay đổi.
+3. Chọn đề, gửi lời mời và nhận lời. Mở một file phía client và một file phía server của chức năng này.
+4. Bấm sẵn sàng ở cả hai máy. Minh họa một người bấm trước thì trận vẫn chờ người còn lại.
+5. Làm một câu: một người gửi trước, người kia gửi sau. Phân biệt xác nhận đã nhận với công bố đúng sai.
+6. Minh họa một trợ giúp hoặc một dạng câu tương tác nếu bộ đề có hỗ trợ. Chỉ đúng nơi xử lý thay vì đọc hết file.
+7. Hoàn thành trận, xem trạng thái lưu, mở lịch sử và giải thích điều kiện cập nhật xếp hạng.
+8. Nếu còn thời gian, mở quiz cộng đồng để minh họa lưu bản nháp và xuất bản là hai bước khác nhau.
+
+Khi trả lời một câu hỏi bất kỳ, có thể dùng mẫu: “Chức năng này bắt đầu ở file nào; khi người dùng làm gì thì gửi yêu cầu nào; server kiểm tra và xử lý ra sao; cuối cùng kết quả được trả về đâu.” Chỉ cần nêu tên lệnh khi nó giúp chỉ đường trong code, không cần học thuộc toàn bộ thông điệp hoặc đọc từng dòng.
+
+## 7 Vị trí đối chiếu trong mã nguồn
+
+Các vị trí dưới đây tính từ thư mục gốc của phần Java là src/main/java/vn/edu/nhom7/quiz/. Có thể dùng để mở đúng đoạn đang giải thích; không cần học thuộc số dòng. Trong bản Markdown trên GitHub, các vị trí được gắn liên kết đến file nguồn.
+
+1. [server/network/SocketServer.java dòng 30](../src/main/java/vn/edu/nhom7/quiz/server/network/SocketServer.java#L30)
+
+2. [server/network/ConnectionReader.java dòng 25](../src/main/java/vn/edu/nhom7/quiz/server/network/ConnectionReader.java#L25)
+
+3. [server/network/MessageRouter.java dòng 63](../src/main/java/vn/edu/nhom7/quiz/server/network/MessageRouter.java#L63)
+
+4. [server/network/MessageRouter.java dòng 169](../src/main/java/vn/edu/nhom7/quiz/server/network/MessageRouter.java#L169)
+
+5. [server/session/SessionRegistry.java dòng 14](../src/main/java/vn/edu/nhom7/quiz/server/session/SessionRegistry.java#L14)
+
+6. [server/session/OnlinePresenceService.java dòng 29](../src/main/java/vn/edu/nhom7/quiz/server/session/OnlinePresenceService.java#L29)
+
+7. [server/challenge/ChallengeManager.java dòng 102](../src/main/java/vn/edu/nhom7/quiz/server/challenge/ChallengeManager.java#L102)
+
+8. [server/challenge/ChallengeManager.java dòng 163](../src/main/java/vn/edu/nhom7/quiz/server/challenge/ChallengeManager.java#L163)
+
+9. [server/session/SessionRegistry.java dòng 56](../src/main/java/vn/edu/nhom7/quiz/server/session/SessionRegistry.java#L56)
+
+10. [server/challenge/ChallengeManager.java dòng 239](../src/main/java/vn/edu/nhom7/quiz/server/challenge/ChallengeManager.java#L239)
+
+11. [server/challenge/ChallengeManager.java dòng 268](../src/main/java/vn/edu/nhom7/quiz/server/challenge/ChallengeManager.java#L268)
+
+12. [server/network/ConnectionManager.java dòng 68](../src/main/java/vn/edu/nhom7/quiz/server/network/ConnectionManager.java#L68)
+
+13. [server/match/MatchManager.java dòng 95](../src/main/java/vn/edu/nhom7/quiz/server/match/MatchManager.java#L95)
+
+14. [server/match/MatchRounds.java dòng 57](../src/main/java/vn/edu/nhom7/quiz/server/match/MatchRounds.java#L57)
+
+15. [server/match/MatchRounds.java dòng 19](../src/main/java/vn/edu/nhom7/quiz/server/match/MatchRounds.java#L19)
+
+16. [server/match/MatchRounds.java dòng 80](../src/main/java/vn/edu/nhom7/quiz/server/match/MatchRounds.java#L80)
+
+17. [server/match/MatchRounds.java dòng 119](../src/main/java/vn/edu/nhom7/quiz/server/match/MatchRounds.java#L119)
+
+18. [server/match/MatchRounds.java dòng 136](../src/main/java/vn/edu/nhom7/quiz/server/match/MatchRounds.java#L136)
+
+19. [server/match/AnswerEvaluator.java dòng 13](../src/main/java/vn/edu/nhom7/quiz/server/match/AnswerEvaluator.java#L13)
+
+20. [server/match/ScoreCalculator.java dòng 10](../src/main/java/vn/edu/nhom7/quiz/server/match/ScoreCalculator.java#L10)
+
+21. [server/match/MatchRounds.java dòng 193](../src/main/java/vn/edu/nhom7/quiz/server/match/MatchRounds.java#L193)
+
+22. [server/match/MatchLifelines.java dòng 26](../src/main/java/vn/edu/nhom7/quiz/server/match/MatchLifelines.java#L26)
+
+23. [server/match/MatchChat.java dòng 18](../src/main/java/vn/edu/nhom7/quiz/server/match/MatchChat.java#L18)
+
+24. [server/match/MatchResults.java dòng 18](../src/main/java/vn/edu/nhom7/quiz/server/match/MatchResults.java#L18)
+
+25. [server/match/MatchResults.java dòng 123](../src/main/java/vn/edu/nhom7/quiz/server/match/MatchResults.java#L123)
+
+26. [server/match/RematchCoordinator.java dòng 29](../src/main/java/vn/edu/nhom7/quiz/server/match/RematchCoordinator.java#L29)
+
+27. [client/ClientMain.java dòng 34](../src/main/java/vn/edu/nhom7/quiz/client/ClientMain.java#L34)
+
+28. [client/ui/AuthForm.java dòng 77](../src/main/java/vn/edu/nhom7/quiz/client/ui/AuthForm.java#L77)
+
+29. [client/ui/AppShell.java dòng 340](../src/main/java/vn/edu/nhom7/quiz/client/ui/AppShell.java#L340)
+
+30. [client/ui/LobbyView.java dòng 96](../src/main/java/vn/edu/nhom7/quiz/client/ui/LobbyView.java#L96)
+
+31. [client/ui/LobbyView.java dòng 208](../src/main/java/vn/edu/nhom7/quiz/client/ui/LobbyView.java#L208)
+
+32. [client/ui/QuestionPreparation.java dòng 28](../src/main/java/vn/edu/nhom7/quiz/client/ui/QuestionPreparation.java#L28)
+
+33. [client/ui/QuestionRenderer.java dòng 10](../src/main/java/vn/edu/nhom7/quiz/client/ui/QuestionRenderer.java#L10)
+
+34. [client/ui/CommandGateway.java dòng 22](../src/main/java/vn/edu/nhom7/quiz/client/ui/CommandGateway.java#L22)
+
+35. [client/state/ClientStateReducer.java dòng 22](../src/main/java/vn/edu/nhom7/quiz/client/state/ClientStateReducer.java#L22)
+
+36. [client/state/ClientState.java dòng 46](../src/main/java/vn/edu/nhom7/quiz/client/state/ClientState.java#L46)
+
+37. [client/ui/AppShell.java dòng 327](../src/main/java/vn/edu/nhom7/quiz/client/ui/AppShell.java#L327)
+
+38. [client/ui/CommunityQuizView.java dòng 517](../src/main/java/vn/edu/nhom7/quiz/client/ui/CommunityQuizView.java#L517)
+
+39. [client/ui/CommunityQuizView.java dòng 531](../src/main/java/vn/edu/nhom7/quiz/client/ui/CommunityQuizView.java#L531)
+
+40. [client/ui/HistoryView.java dòng 54](../src/main/java/vn/edu/nhom7/quiz/client/ui/HistoryView.java#L54)
+
+41. [server/auth/AuthService.java dòng 19](../src/main/java/vn/edu/nhom7/quiz/server/auth/AuthService.java#L19)
+
+42. [server/auth/AuthService.java dòng 34](../src/main/java/vn/edu/nhom7/quiz/server/auth/AuthService.java#L34)
+
+43. [server/auth/JdbcUserRepository.java dòng 45](../src/main/java/vn/edu/nhom7/quiz/server/auth/JdbcUserRepository.java#L45)
+
+44. [server/auth/PasswordHasher.java dòng 20](../src/main/java/vn/edu/nhom7/quiz/server/auth/PasswordHasher.java#L20)
+
+45. [server/quiz/JdbcQuizRepository.java dòng 70](../src/main/java/vn/edu/nhom7/quiz/server/quiz/JdbcQuizRepository.java#L70)
+
+46. [server/quiz/JdbcQuizRepository.java dòng 99](../src/main/java/vn/edu/nhom7/quiz/server/quiz/JdbcQuizRepository.java#L99)
+
+47. [server/match/MatchPayloads.java dòng 90](../src/main/java/vn/edu/nhom7/quiz/server/match/MatchPayloads.java#L90)
+
+48. [server/quiz/CommunityQuizService.java dòng 23](../src/main/java/vn/edu/nhom7/quiz/server/quiz/CommunityQuizService.java#L23)
+
+49. [server/quiz/CommunityQuizPublisher.java dòng 23](../src/main/java/vn/edu/nhom7/quiz/server/quiz/CommunityQuizPublisher.java#L23)
+
+50. [server/media/MediaService.java dòng 53](../src/main/java/vn/edu/nhom7/quiz/server/media/MediaService.java#L53)
+
+51. [server/persistence/PersistenceService.java dòng 85](../src/main/java/vn/edu/nhom7/quiz/server/persistence/PersistenceService.java#L85)
+
+52. [server/persistence/JdbcMatchRepository.java dòng 34](../src/main/java/vn/edu/nhom7/quiz/server/persistence/JdbcMatchRepository.java#L34)
+
+53. [server/ServerRuntime.java dòng 165](../src/main/java/vn/edu/nhom7/quiz/server/ServerRuntime.java#L165)
+
+54. [server/query/QueryDispatcher.java dòng 39](../src/main/java/vn/edu/nhom7/quiz/server/query/QueryDispatcher.java#L39)
+
+55. [server/query/RankingService.java dòng 16](../src/main/java/vn/edu/nhom7/quiz/server/query/RankingService.java#L16)
+
+56. [server/query/HistoryService.java dòng 23](../src/main/java/vn/edu/nhom7/quiz/server/query/HistoryService.java#L23)
+
+57. [server/query/HistoryService.java dòng 63](../src/main/java/vn/edu/nhom7/quiz/server/query/HistoryService.java#L63)

@@ -589,4 +589,4 @@ Kết quả chưa lưu nằm trong RAM. Nếu server bị tắt cưỡng bức h
 
 ## Tài liệu giải thích code theo từng thành viên
 
-Xem [bản đọc trên GitHub](docs/giai-thich-code-tung-thanh-vien.md) hoặc tải [bản Word](outputs/giai-thich-code/Giai_thich_code_tung_thanh_vien_Nhom_7.docx). Tài liệu giải thích code theo Minh, Tuấn, Việt, Phúc, kèm 56 câu hỏi và câu trả lời mẫu.
+Xem [bản đọc trên GitHub](docs/giai-thich-code-tung-thanh-vien.md) hoặc tải [bản Word](outputs/giai-thich-code/Giai_thich_code_tung_thanh_vien_Nhom_7.docx). Tài liệu giải thích luồng xử lý theo phần của Minh, Tuấn, Việt, Phúc bằng ngôn ngữ dễ hiểu; chỉ file và hàm cần tìm, kèm 56 câu hỏi và câu trả lời mẫu về chức năng và cách xử lý.
