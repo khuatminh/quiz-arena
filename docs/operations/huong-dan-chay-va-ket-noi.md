@@ -80,7 +80,7 @@ Mở PowerShell tại thư mục gốc repo. Có thể mở thư mục đó bằ
 Trên máy hiện tại, gọi thẳng Java 21 để tránh Java 17 đang nằm trước trong `PATH`:
 
 ```powershell
-& 'C:\Program Files\Java\jdk-21\bin\java.exe' -jar server/target/quiz-arena-server.jar --config=config/server.local.properties
+& 'C:\Program Files\Java\jdk-21\bin\java.exe' -jar target/quiz-arena-server.jar --config=config/server.local.properties
 ```
 
 Khi thành công, terminal có dòng:
@@ -98,7 +98,7 @@ Terminal mới cũng phải đứng tại thư mục gốc repo:
 ```powershell
 $env:JAVA_HOME = 'C:\Program Files\Java\jdk-21'
 $env:Path = "$env:JAVA_HOME\bin;$env:Path"
-mvn -f client/pom.xml javafx:run
+mvn javafx:run
 ```
 
 Nếu JDK 21 được cài ở đường dẫn khác, thay đường dẫn trong hai ví dụ trên.
@@ -150,18 +150,18 @@ Tại thư mục có file `pom.xml` cha:
 mvn clean install
 ```
 
-Chờ `BUILD SUCCESS`. Lệnh build cả `common`, `server`, `client`, chạy kiểm thử thông thường và cài các module vào kho Maven cục bộ. Lần đầu cần Internet để tải thư viện.
+Chờ `BUILD SUCCESS`. Lệnh build một module chứa ba package common/server/client, chạy kiểm thử thông thường và tạo các JAR trong target/. Lần đầu cần Internet để tải thư viện.
 
 File server sau build:
 
 ```text
-server/target/quiz-arena-server.jar
+target/quiz-arena-server.jar
 ```
 
-Máy B chỉ chạy client có thể build các module cần thiết bằng:
+Máy B chạy client cũng build từ pom.xml gốc bằng:
 
 ```powershell
-mvn -pl client -am clean install
+mvn clean install
 ```
 
 ### 3.3. Tạo database mới và nạp dữ liệu
@@ -188,6 +188,8 @@ USE quiz_arena;
 SOURCE database/001_schema.sql;
 SOURCE database/002_seed.sql;
 SOURCE database/003_community_quizzes.sql;
+SOURCE database/004_lifelines.sql;
+SOURCE database/005_interactive_questions.sql;
 SELECT version, asset_pack_version FROM SCHEMA_METADATA;
 SELECT COUNT(*) AS quiz_count FROM QUIZZES;
 SELECT COUNT(*) AS question_count FROM QUESTIONS;
@@ -196,9 +198,9 @@ EXIT;
 
 Mở MySQL từ thư mục gốc repo để các đường dẫn `SOURCE database/...` được giải quyết đúng. `--default-character-set=utf8mb4` giúp nạp đúng nội dung câu hỏi tiếng Việt. Tài khoản quản trị chạy SQL; tài khoản `quiz` dùng cho server sau đó.
 
-Kết quả cần có **schema version 3**, **asset pack 1**, **3 quiz**, **60 câu hỏi**. Nếu MySQL báo lỗi tại một bước, xử lý lỗi trước khi chạy bước tiếp theo.
+Kết quả cần có **schema version 5**, **asset pack 1**, **3 quiz**, **60 câu hỏi**. Nếu MySQL báo lỗi tại một bước, xử lý lỗi trước khi chạy bước tiếp theo.
 
-**Nếu đã có database:** kiểm tra `SCHEMA_METADATA` trước. Bản 3 thì dùng tiếp, không chạy lại migration `003`. Bản 1 cần dừng server, sao lưu database và `data/media`, rồi nâng cấp bằng `003` một lần; xem [hướng dẫn database](database-setup.md). Không xóa database để xử lý lỗi kết nối.
+**Nếu đã có database:** kiểm tra `SCHEMA_METADATA` trước. Bản 5 dùng tiếp; bản 3 cần thêm `004` rồi `005`, bản 4 cần thêm `005`. Bản 1 cần dừng server, sao lưu database và `data/media`, rồi nâng cấp lần lượt `003`, `004`, `005` mỗi file một lần; xem [hướng dẫn database](database-setup.md). Không xóa database để xử lý lỗi kết nối.
 
 ### 3.4. Tạo cấu hình server
 
@@ -226,7 +228,7 @@ Server ưu tiên biến môi trường `QUIZ_DB_URL`, `QUIZ_DB_USER`, `QUIZ_DB_P
 Sau khi database và file cấu hình đã sẵn sàng, chạy tại gốc repo với Java 21:
 
 ```powershell
-java -cp server/target/quiz-arena-server.jar vn.edu.nhom7.quiz.server.tools.DemoUserSeeder
+java -cp target/quiz-arena-server.jar vn.edu.nhom7.quiz.server.tools.DemoUserSeeder
 ```
 
 Công cụ tạo `demo1`–`demo4`, mật khẩu `DemoQuiz123!`. Nếu tài khoản đã tồn tại, công cụ giữ nguyên tài khoản và không đặt lại mật khẩu.
@@ -238,7 +240,7 @@ Cuối cùng, chạy server và client theo mục 2.
 ## 4. Thử hai người trên cùng một máy
 
 1. Chạy **một** server.
-2. Mở client thứ nhất bằng `mvn -f client/pom.xml javafx:run`.
+2. Mở client thứ nhất bằng `mvn javafx:run`.
 3. Mở terminal mới, chọn JDK 21 như mục 2, chạy lại lệnh client để mở cửa sổ thứ hai.
 4. Cả hai cửa sổ kết nối **Host:** `localhost`, **Port:** `5555`.
 5. Cửa sổ thứ nhất đăng nhập `demo1`, cửa sổ thứ hai đăng nhập `demo2`.
@@ -332,7 +334,7 @@ Nếu `False`, kiểm tra theo thứ tự: server có đang chạy → đúng IP
 
 1. Lấy cùng phiên bản repo với máy A.
 2. Chọn JDK 21 và build theo mục 3.1–3.2.
-3. Chạy `mvn -f client/pom.xml javafx:run` từ gốc repo.
+3. Chạy `mvn javafx:run` từ gốc repo.
 4. Trong **Kết nối máy chủ**, nhập **Host:** `192.168.1.20`, **Port:** `5555`.
 5. Nhấn **Kết nối**, đăng nhập `demo2` hoặc tài khoản riêng đã đăng ký trên server A.
 
@@ -469,7 +471,7 @@ Thay tên rule tương ứng nếu dùng cổng khác hoặc rule VPN.
 | Mở `localhost:5555` trong trình duyệt không được | Mở client JavaFX và nhập Host/Port trong **Kết nối máy chủ** |
 | `mvn` hoặc `java` không được nhận diện | Kiểm tra cài JDK/Maven và `PATH`; mở terminal mới sau khi thay biến môi trường |
 | `release version 21 not supported` | `mvn -version` đang dùng JDK cũ; đặt `JAVA_HOME` và thêm JDK 21 vào đầu `PATH` |
-| Thiếu `quiz-arena-common` khi mở client | Build từ gốc bằng `mvn clean install` hoặc `mvn -pl client -am clean install` |
+| Thiếu `quiz-arena-common` khi mở client | Build từ gốc bằng `mvn clean install` hoặc `mvn clean install` |
 | Không tìm thấy JAR server | Kiểm tra đang đứng tại gốc repo và đã build thành công |
 | `mysql` không được nhận diện | Gọi `mysql.exe` bằng đường dẫn đầy đủ như mục 3.3 |
 | Server lỗi kết nối database | Kiểm tra dịch vụ MySQL, cổng trong JDBC URL, database và cấu hình user/password |

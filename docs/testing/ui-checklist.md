@@ -1,6 +1,6 @@
 # Native JavaFX verification
 
-Run the client with `mvn -f client/pom.xml javafx:run -Djavafx.args="--fixture"` after installing the reactor. Fixture participant IDs are 101 and 102; choose the second with `--participant=102`. Fixture mode uses the public ten-round 4/2/2/2 event stream and requires no server/database.
+Run the client with `mvn javafx:run -Djavafx.args="--fixture"` from the single-module project root. Fixture participant IDs are 101 and 102; choose the second with `--participant=102`. Fixture mode uses the public ten-round 4/2/2/2 event stream and requires no server/database.
 
 Native toolkit captures were generated at 1280×800 and 1024×720 with `--fixture --evidence=/absolute/output --width=1280 --height=800 --exit-after-seconds=125`. PNGs are scene snapshots from the actual JavaFX toolkit, after CSS/layout and a 650 ms animation settling interval. They contain only Quiz Arena, not the user's other applications.
 

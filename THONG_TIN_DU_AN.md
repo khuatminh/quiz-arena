@@ -22,7 +22,7 @@ Người chơi đăng nhập, chọn bộ câu hỏi, mời một người đang
 | Database | MySQL 8.4 | Lưu tài khoản, quiz và lịch sử trận |
 | Truy cập database | JDBC + MySQL Connector/J 8.4.0 | Truy vấn SQL và transaction |
 | Xử lý đồng thời | Java Concurrency API | Thread pool, scheduler và cấu trúc dữ liệu đồng thời |
-| Build | Maven multi-module | Quản lý dependency, build và đóng gói |
+| Build | Maven một module | Quản lý dependency, build và đóng gói |
 | Kiểm thử | JUnit 5.11.4 | Unit test và integration test |
 | Băm mật khẩu | PBKDF2-HMAC-SHA256 | Salt riêng cho từng tài khoản, 600.000 vòng lặp |
 
@@ -30,9 +30,7 @@ Người chơi đăng nhập, chọn bộ câu hỏi, mời một người đang
 
 Nguồn cấu hình:
 
-- [Maven cha](pom.xml)
-- [Maven client](client/pom.xml)
-- [Maven server](server/pom.xml)
+- [Cấu hình Maven duy nhất](pom.xml)
 
 ## 3. Kiến trúc nền tảng
 
@@ -86,7 +84,7 @@ Nhờ đó, logic quyết định thắng/thua không phụ thuộc vào dữ li
 
 Backend là **một ứng dụng server duy nhất, chia thành các package nghiệp vụ**. Cách tổ chức này gần với **modular monolith kết hợp service/repository**.
 
-Các thành phần được khởi tạo và nối với nhau trong [ServerRuntime.java](server/src/main/java/vn/edu/nhom7/quiz/server/ServerRuntime.java):
+Các thành phần được khởi tạo và nối với nhau trong [ServerRuntime.java](src/main/java/vn/edu/nhom7/quiz/server/ServerRuntime.java):
 
 | Thành phần | Trách nhiệm |
 | --- | --- |
@@ -118,9 +116,9 @@ Giao diện theo phong cách "console arena": màu và cỡ chữ là các token
 
 ## 4. Cấu trúc mã nguồn
 
-Dự án gồm **3 Maven module**:
+Dự án dùng **1 module Maven** với ba package chính dưới `src/main/java/vn/edu/nhom7/quiz/`:
 
-| Module/thư mục | Nội dung |
+| Package hoặc thư mục | Nội dung |
 | --- | --- |
 | `common/` | Hợp đồng giao thức, DTO/payload, loại message, đóng khung TCP và tài nguyên dùng chung |
 | `server/` | Networking, tài khoản, phiên, thách đấu, trận, quiz, ảnh, JDBC và truy vấn |
@@ -129,7 +127,7 @@ Dự án gồm **3 Maven module**:
 | `config/` | Cấu hình server mẫu |
 | `docs/` | Thiết kế, giao thức, vận hành, kế hoạch và bằng chứng kiểm thử |
 
-Quan hệ dependency:
+Quan hệ sử dụng giữa các package trong cùng module:
 
 ```text
 client ──► common ◄── server
@@ -168,8 +166,8 @@ client/
 
 Hai điểm khởi động chính:
 
-- [ClientMain.java](client/src/main/java/vn/edu/nhom7/quiz/client/ClientMain.java)
-- [ServerMain.java](server/src/main/java/vn/edu/nhom7/quiz/server/ServerMain.java)
+- [ClientMain.java](src/main/java/vn/edu/nhom7/quiz/client/ClientMain.java)
+- [ServerMain.java](src/main/java/vn/edu/nhom7/quiz/server/ServerMain.java)
 
 ## 5. Chức năng và nghiệp vụ chính
 
@@ -245,7 +243,7 @@ matchId, roundId, eventSeq, payload
 
 Các định danh giúp liên kết phản hồi với yêu cầu và đúng trận/câu hỏi; `eventSeq` hỗ trợ kiểm soát thứ tự sự kiện.
 
-Sau khi kết nối, client gửi `HELLO` để kiểm tra phiên bản. Theo README, phiên bản hiện tại dùng **client `2.0`, protocol `1`, asset pack `1`**.
+Sau khi kết nối, client gửi `HELLO` để kiểm tra phiên bản. Theo README, phiên bản hiện tại dùng **client `3.0`, protocol `1`, asset pack `1`**.
 
 ### 6.2. Đồng thời và giới hạn kết nối
 
@@ -318,17 +316,17 @@ Môi trường được hướng dẫn sử dụng là **desktop và mạng LAN*
 Các lệnh chính, chạy từ thư mục gốc sau khi chuẩn bị database và cấu hình:
 
 ```sh
-# Build và cài các module vào kho Maven cục bộ
+# Build và cài một module vào kho Maven cục bộ
 mvn clean install
 
 # Chạy server
-java -jar server/target/quiz-arena-server.jar --config=config/server.local.properties
+java -jar target/quiz-arena-server.jar --config=config/server.local.properties
 
 # Chạy client
-mvn -f client/pom.xml javafx:run
+mvn javafx:run
 
 # Xem demo giao diện ngoại tuyến
-mvn -f client/pom.xml javafx:run -Djavafx.args="--fixture --participant=101"
+mvn javafx:run -Djavafx.args="--fixture --participant=101"
 
 # Chạy kiểm thử thông thường
 mvn clean verify

@@ -1,5 +1,5 @@
 #!/bin/sh
-# Run the full Maven reactor with the project's required Java version.
+# Verify the single Maven module with the project's required Java version.
 set -eu
 
 project_root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)

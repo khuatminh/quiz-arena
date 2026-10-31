@@ -1,8 +1,8 @@
 # Quiz Arena operations
 
-Use JDK21 and MySQL8.4. Build with `mvn clean install`. Prepare the schema, seed and account permissions using [database setup](database-setup.md). Copy the example configuration into the ignored `config/server.local.properties`; environment variables override the file. Launch the shaded server jar and run each client separately with `mvn -f client/pom.xml javafx:run`.
+Use JDK21 and MySQL8.4. Build with `mvn clean install`. Prepare the schema, seed and account permissions using [database setup](database-setup.md). Copy the example configuration into the ignored `config/server.local.properties`; environment variables override the file. Launch the shaded server jar and run each client separately with `mvn javafx:run`.
 
-Startup validates schema version1, asset pack1, required tables/indexes and active question validity. Fix the reported setup problem before retrying; startup does not reset an existing database. The example configuration contains no private password.
+Startup validates schema version5, asset pack1, required tables/indexes and active question validity. Clients must use version 3.0. Fix the reported setup problem before retrying; startup does not reset an existing database. The example configuration contains no private password. See [the deployed VPS](vps-deployment.md) for the current public endpoint and backup location.
 
 For LAN, bind is 0.0.0.0 on configured port5555; enter the server LAN IPv4 address in each client. MySQL remains server-side. Confirm connectivity and firewall rules using two clients before starting the four-client demonstration. A physical two-machine LAN rehearsal is recorded separately from loopback system tests.
 

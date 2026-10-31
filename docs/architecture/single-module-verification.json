@@ -1,0 +1,1383 @@
+{
+  "date": "2026-10-31",
+  "baselineCommit": "bb9e919",
+  "baselineIncludesExistingWorkingTreeChanges": true,
+  "mavenModulesBefore": 3,
+  "mavenModulesAfter": 1,
+  "sourceAndResourceFiles": 266,
+  "byteIdenticalFiles": 266,
+  "changedSourceOrResourceFiles": 0,
+  "baselineUnitTests": {
+    "tests": 311,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 1,
+    "passed": 310
+  },
+  "singleModuleUnitTests": {
+    "tests": 311,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 1,
+    "passed": 310
+  },
+  "integrationTests": {
+    "tests": 36,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 36
+  },
+  "optionalSkippedTest": "InterfaceEvidenceTest requires quiz.uiEvidence",
+  "packagedServer": {
+    "startedWithIsolatedMySQL": true,
+    "tcpHelloAck": true,
+    "noClientClasses": true,
+    "noJavaFX": true
+  },
+  "packagedClient": {
+    "fixtureExitCode": 0,
+    "noServerClasses": true,
+    "noJdbcDependency": true,
+    "desktopDependencyStaging": "passed"
+  },
+  "mavenClientFixtureExitCode": 0,
+  "wordGuide": {
+    "pages": 29,
+    "questions": 56,
+    "codeReferences": 76,
+    "renderedAndInspected": true
+  },
+  "files": [
+    {
+      "old": "common/src/main/java/vn/edu/nhom7/quiz/common/assets/AssetRegistry.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/common/assets/AssetRegistry.java",
+      "sha256": "cfe1a9361e26442246ffd55b8ef513614dbf9503482ef385e32264555939fe04"
+    },
+    {
+      "old": "common/src/main/java/vn/edu/nhom7/quiz/common/net/FrameCodec.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/common/net/FrameCodec.java",
+      "sha256": "3588d02e89fbd740c4499cabcee6aeb1696491e5d79554d09df10c224122a672"
+    },
+    {
+      "old": "common/src/main/java/vn/edu/nhom7/quiz/common/net/FrameDecoder.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/common/net/FrameDecoder.java",
+      "sha256": "69b4678ac8b577763405f88b520e79a9adec9a7ee81e790e997637deec9ce626"
+    },
+    {
+      "old": "common/src/main/java/vn/edu/nhom7/quiz/common/protocol/CommunityPayloads.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/common/protocol/CommunityPayloads.java",
+      "sha256": "eaea7faf920bc5aa66939555022624e8e96884d055c0e8d07d53f49dc49f4310"
+    },
+    {
+      "old": "common/src/main/java/vn/edu/nhom7/quiz/common/protocol/Envelope.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/common/protocol/Envelope.java",
+      "sha256": "e221ce8fda2e2eb98f2599b6ba6f164bb619dbcbe51efbe069453244d4b3ddef"
+    },
+    {
+      "old": "common/src/main/java/vn/edu/nhom7/quiz/common/protocol/InteractiveQuestions.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/common/protocol/InteractiveQuestions.java",
+      "sha256": "2c983a51e107cd7c03e4be0d0ad77acd8ad2b704055677f0378965b75c269fe4"
+    },
+    {
+      "old": "common/src/main/java/vn/edu/nhom7/quiz/common/protocol/MediaPayloads.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/common/protocol/MediaPayloads.java",
+      "sha256": "9edd396ebfe9d4f80e468e6260f6a3e5ee660adb38b6fe1c0495783d174c04a5"
+    },
+    {
+      "old": "common/src/main/java/vn/edu/nhom7/quiz/common/protocol/MessageType.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/common/protocol/MessageType.java",
+      "sha256": "42ae6823bfda1c5a957e7b50ecd95f6da0eb9d97f4ed528e48bd75a556336885"
+    },
+    {
+      "old": "common/src/main/java/vn/edu/nhom7/quiz/common/protocol/PayloadRegistry.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/common/protocol/PayloadRegistry.java",
+      "sha256": "f83da55a9ce2e0b4cae89fc0fcae1031ffa9be2728c72c652976dbfcff75db98"
+    },
+    {
+      "old": "common/src/main/java/vn/edu/nhom7/quiz/common/protocol/PayloadValidator.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/common/protocol/PayloadValidator.java",
+      "sha256": "8107efa845a412fdffbaef66bf54ac85852de487c661462a86b61dde13588b62"
+    },
+    {
+      "old": "common/src/main/java/vn/edu/nhom7/quiz/common/protocol/Payloads.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/common/protocol/Payloads.java",
+      "sha256": "159736cae3b36b617750ec2f4486942b2db9872e980b690f3c2409e658e1a47f"
+    },
+    {
+      "old": "common/src/main/java/vn/edu/nhom7/quiz/common/protocol/ProtocolCodec.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/common/protocol/ProtocolCodec.java",
+      "sha256": "9e65be8f270edcc035cf3f3bbec144586de088b0e9fc8f899a8f67cad60120e0"
+    },
+    {
+      "old": "common/src/main/java/vn/edu/nhom7/quiz/common/protocol/ProtocolException.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/common/protocol/ProtocolException.java",
+      "sha256": "fc92e2eccd2c13b0559cb7145672bb298b4b6a2ec1d8b446272399fece6bde8c"
+    },
+    {
+      "old": "common/src/main/java/vn/edu/nhom7/quiz/common/protocol/QuestionType.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/common/protocol/QuestionType.java",
+      "sha256": "6718878117bf32964f4a217789d50e423bb6b146e3c57466353739f384f6f4c7"
+    },
+    {
+      "old": "common/src/main/resources/assets/registry.json",
+      "new": "src/main/resources/assets/registry.json",
+      "sha256": "cb2d42857bcb7a822d96b4f570f4e5972a7f7812c79e7232768caef04efceb1c"
+    },
+    {
+      "old": "common/src/main/resources/protocol/demo-match-v1.json",
+      "new": "src/main/resources/protocol/demo-match-v1.json",
+      "sha256": "3ea686cdce79d27420d4298748821963fbf900a1655ddb5b5c5b2f8cd64207aa"
+    },
+    {
+      "old": "common/src/test/java/vn/edu/nhom7/quiz/common/BuildSmokeTest.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/common/BuildSmokeTest.java",
+      "sha256": "bf570cd152e70adf67715442b676dc2957f1e770cf66381574b90fccd749bbf9"
+    },
+    {
+      "old": "common/src/test/java/vn/edu/nhom7/quiz/common/assets/AssetRegistryTest.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/common/assets/AssetRegistryTest.java",
+      "sha256": "2911826d7d11ce803027e8be02e82f96e84460c038a0a7ffe3df1461573aa810"
+    },
+    {
+      "old": "common/src/test/java/vn/edu/nhom7/quiz/common/net/FrameDecoderTest.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/common/net/FrameDecoderTest.java",
+      "sha256": "a1e4e6adbe41ca71206b5656293ceca8e57e89ccb1391e2bf0e309bcfa040b8e"
+    },
+    {
+      "old": "common/src/test/java/vn/edu/nhom7/quiz/common/protocol/CommunityProtocolTest.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/common/protocol/CommunityProtocolTest.java",
+      "sha256": "eedb86a099666b0d7b0e3a527d48a20dd9abe9763c9bf688b8a50324623784cf"
+    },
+    {
+      "old": "common/src/test/java/vn/edu/nhom7/quiz/common/protocol/ProtocolCatalogueTest.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/common/protocol/ProtocolCatalogueTest.java",
+      "sha256": "661f55ade6223e8bdca09fabd12f6fa41bca63af143fea97c75bcc14855a1495"
+    },
+    {
+      "old": "common/src/test/java/vn/edu/nhom7/quiz/common/protocol/ProtocolContractTest.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/common/protocol/ProtocolContractTest.java",
+      "sha256": "66fbd3abf73418b31bdaa847ada0139805297be6a89385652146aed2cc840d20"
+    },
+    {
+      "old": "common/src/test/resources/protocol/catalogue-v1.json",
+      "new": "src/test/resources/protocol/catalogue-v1.json",
+      "sha256": "767ef40788b5d1c15d1bd31c5c765659a55c25c0bec876209d0c4507ce676454"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/ServerMain.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/ServerMain.java",
+      "sha256": "be7d8471c121c00435a885db3f9cb2726657063437b9472785520d8d478ce940"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/ServerRuntime.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/ServerRuntime.java",
+      "sha256": "955d54b07be63e77a5a89a5fba48f200b930f01d57b90703bf03ae27461152af"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/auth/AccountValidator.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/auth/AccountValidator.java",
+      "sha256": "3c2c2ae2a68c18b7a62fe47f73a02960ee63d6ffdac449f5a154b0565445426a"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/auth/AuthService.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/auth/AuthService.java",
+      "sha256": "6b46b3e537af7985f5570714d9a7bd0f7a6c059a42384d291bc944f6789ec57a"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/auth/JdbcUserRepository.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/auth/JdbcUserRepository.java",
+      "sha256": "bdd04ca391a13cc68dee1af080eb984ebd4249781dd654dd18c0f8b97ee68eb5"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/auth/PasswordHasher.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/auth/PasswordHasher.java",
+      "sha256": "c1afd80ab3c7e5fbffee274560e5058fe48c8696de63ca451d110748e80d4611"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/auth/ServiceException.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/auth/ServiceException.java",
+      "sha256": "3061542bf8199d8a0c852ff437e08976750ac7579f8e09527cbdef176ce20c39"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/challenge/Challenge.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/challenge/Challenge.java",
+      "sha256": "f408d62a1eb539aaee6c0c53e8c31b7a29d654d74c8799b2da8502434b704bdf"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/challenge/ChallengeManager.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/challenge/ChallengeManager.java",
+      "sha256": "14ab038dec8e236f7cb8a718e2544a13fc674ee172dcb133f9553fd471b5a115"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/config/ServerConfig.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/config/ServerConfig.java",
+      "sha256": "8e78983fbdef617749d17c8517ea09420e2662de84aad32ccd699cfcc8c93800"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/db/ConnectionFactory.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/db/ConnectionFactory.java",
+      "sha256": "c1c763ffa3f9ce74bf6bc379bb479dcf190df81cebdbe7675ef78f547e591a7c"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/db/JdbcConnectionFactory.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/db/JdbcConnectionFactory.java",
+      "sha256": "4381138432a150a84ba73c523b9719872abbdf5291bf242f3ccf011b84d3ce26"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/db/SchemaVerifier.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/db/SchemaVerifier.java",
+      "sha256": "9a8354d0426c9095c702af15672176908f4558a2fc8510c927a1ceb2dd91081c"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/db/StartupValidator.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/db/StartupValidator.java",
+      "sha256": "f4f0851fba6e295fa7db5cb5e306cd7bb9be92bb1ec5a20d6ca136e7d9419988"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/domain/AnswerOutcomeType.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/domain/AnswerOutcomeType.java",
+      "sha256": "9a5cc0b211b29347beb4f9d6cb17c8e544c998174f34e881ea0c56fe8c037ac6"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/domain/FinishReason.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/domain/FinishReason.java",
+      "sha256": "3fce69177b7837f9d1c5e674f32e8c156371d4dac8063fcfb1f3d53f6a9c0311"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/domain/MatchOutcome.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/domain/MatchOutcome.java",
+      "sha256": "2126975e0237345ad8cdef14d357fcdfabf3bc1da98f680ecf27f45fc57ae399"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/domain/MatchSummary.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/domain/MatchSummary.java",
+      "sha256": "bce851734c819255c67008e0692a5e4e06d9caef8c46edbdc77c8f5910456712"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/domain/ParticipantSummary.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/domain/ParticipantSummary.java",
+      "sha256": "317b825bf9a12735fe1a1dec68960e8dc47ef0f9d43af62264708816b73e57d2"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/domain/QuestionSnapshot.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/domain/QuestionSnapshot.java",
+      "sha256": "4dcfc555c153eecbc05d7b9731b0e3c39cd72676faf4aa16eeb059c4cff101cc"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/domain/ReasonCode.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/domain/ReasonCode.java",
+      "sha256": "0b02da893d3b30c47b9c78f27c8259c8dc356aa68828ae372f915c9e5f88e590"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/domain/RoundSummary.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/domain/RoundSummary.java",
+      "sha256": "f525ae43e6e5cb2fe7589e2f8f0bfe1350f6314a40a30eba4684478f56a88743"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/domain/StoredAnswerOutcome.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/domain/StoredAnswerOutcome.java",
+      "sha256": "279ebdd60a71de422621d7850707c165c2e30ff5056663dcc1fa3c8b4341f6b1"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/match/AnswerEvaluator.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/match/AnswerEvaluator.java",
+      "sha256": "e11cc376afb9bad316f456a718d1816d80a755304940ca7bc9b64e9aab316a77"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/match/ChatService.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/match/ChatService.java",
+      "sha256": "61143d8c50adbe3409a7138b00ad10369fe4a74af8cb970ed904b03a4f603d4e"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/match/ExecutorGameScheduler.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/match/ExecutorGameScheduler.java",
+      "sha256": "46b7b61fa84a536167d083c0b9959ce045e8f2c440305f0e617ead1c57a8f282"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/match/GameClock.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/match/GameClock.java",
+      "sha256": "b5ef155440122e68f792791cc05327e0d934801079ee867cd922abe90926b0e0"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/match/GameScheduler.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/match/GameScheduler.java",
+      "sha256": "123747aabd2b2f31f10faabea2e8a234023d3a80144808adcf6f63045294dfb8"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/match/Match.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/match/Match.java",
+      "sha256": "ce83389512c746b5ff61ff6326e56ac15e9f2808dd19dd92352d767c024ac7ee"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/match/MatchChat.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/match/MatchChat.java",
+      "sha256": "c5e3c13b66a682265595acec71b3b57b5798eadde6b1182f74bcbbed97edffb6"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/match/MatchGateway.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/match/MatchGateway.java",
+      "sha256": "48b8b782b0ecd6484a05d60cadd122e8580de50b684491d31b16c9b87a8d8616"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/match/MatchLifelines.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/match/MatchLifelines.java",
+      "sha256": "e7f814305f1c9a8626235942b452cf2278934dc2ed5765370fdcee4eeb774228"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/match/MatchManager.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/match/MatchManager.java",
+      "sha256": "530190e35fdafc37d2a2ca93f1fdb08fa9731f56fe986a7c2dba35e3c5bb3a30"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/match/MatchPayloads.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/match/MatchPayloads.java",
+      "sha256": "9b7dfd14e45d61d663ed5b11491ade8ebad193938aaeeba81c949853bc7368f1"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/match/MatchPhase.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/match/MatchPhase.java",
+      "sha256": "3bada42b1da191315c3fae9c4d0c27e85dcc51a68a16a13fc3b2f037bfca9a10"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/match/MatchRanker.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/match/MatchRanker.java",
+      "sha256": "74df5f913e7b07c2a372a8755a788eb466a40f132f67d9e63e6aedcf3ac1af38"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/match/MatchResults.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/match/MatchResults.java",
+      "sha256": "7df77521aea13286bbb54075ceb0c02d46f7fa3bd68ff9e44c128ad3ea95afed"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/match/MatchRounds.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/match/MatchRounds.java",
+      "sha256": "348a0d84946aa8030bc760619301967a63a56a0fd34ee80cdbe54a6214b57e9f"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/match/MatchSnapshotFactory.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/match/MatchSnapshotFactory.java",
+      "sha256": "dffdc76925afc8f9727f981386e427317ead88be6812384913a5b7c7fa832f6c"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/match/MatchWireBudget.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/match/MatchWireBudget.java",
+      "sha256": "dae5e73ead184d13956d8740541560f05a840d3dfaf95adb791075bd88e72220"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/match/PhaseToken.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/match/PhaseToken.java",
+      "sha256": "561b68b35d11d83590b5695551ec4b6d1bcb6e4f2c664c8fb840cd27248186ae"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/match/RematchCoordinator.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/match/RematchCoordinator.java",
+      "sha256": "ec727dbf301261f6da777eecfb07aff177a8422b88847e5d9a7502cf9941b9b0"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/match/ScoreCalculator.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/match/ScoreCalculator.java",
+      "sha256": "63718fd063e4fc06bbcc9f372b43e3167af4db86d1b1a7a7e9d62432eec97281"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/match/ShortAnswerNormalizer.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/match/ShortAnswerNormalizer.java",
+      "sha256": "dcffdb1240c3ea16b171f401491b2421694244302f0c405a79e57371fb77dfde"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/match/SystemGameClock.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/match/SystemGameClock.java",
+      "sha256": "bac765194ef4f1917dd5f03cabe91ac6d7ac8b126b6ab03d2f76507d6207aedc"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/media/JdbcMediaStore.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/media/JdbcMediaStore.java",
+      "sha256": "b000f50a745165dd00fd82fb86263eb1989a1c6aa84b600597400de391757ca3"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/media/MediaService.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/media/MediaService.java",
+      "sha256": "8d73c38185e1cc797512dcf579abf30d4e901ac40594c19272629b18aac9a4c6"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/network/Connection.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/network/Connection.java",
+      "sha256": "a873c807cbd8cb0daf290a7c59882263fa82456c1588aa096985e258d3bf952b"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/network/ConnectionManager.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/network/ConnectionManager.java",
+      "sha256": "31c6f9dd5469b0b3f9e1453118c90c9a2021614d0be4896bbb178345aedbc12c"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/network/ConnectionReader.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/network/ConnectionReader.java",
+      "sha256": "de770bc2bacb8642e30f98bfb688e75627fe466b4389091ce304a0b7f3a2392d"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/network/ConnectionWriter.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/network/ConnectionWriter.java",
+      "sha256": "5de32d41f59b495d5344ec0fc64297d59dff7e1b06ad4d4f87655e632f928127"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/network/HandshakeValidator.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/network/HandshakeValidator.java",
+      "sha256": "4351c243877d181c79bc1871e5f5a157f1ebabaf2b58dda931c7c130b980fb91"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/network/HeartbeatService.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/network/HeartbeatService.java",
+      "sha256": "fe3c9289a0e60b21c6dff0c81e60b8fdc8b888e2bfb0e0b927937e777d5010b7"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/network/MessageRouter.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/network/MessageRouter.java",
+      "sha256": "5414de6d447fa45b6e97b8a76b4ae2b616027209f08d0a7b929fa13cf8d1d5c9"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/network/OutboundTransport.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/network/OutboundTransport.java",
+      "sha256": "f4b79feee32e5cfe8639a6c36903689c97c9ca12fa584c5c19d1622177d2262d"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/network/RateLimiter.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/network/RateLimiter.java",
+      "sha256": "7d77a8e79993234c7210c7ffbd81cd5800cda111a8a20361898f78a222935e9c"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/network/RequestCache.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/network/RequestCache.java",
+      "sha256": "db38a683d15f041e777a68550187aecb6e2c45a3261d65a4e4688c00d529caed"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/network/SocketServer.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/network/SocketServer.java",
+      "sha256": "b4c4231ae21c29e9875cc60a65f5ae5ef22e3cb1adc313f45f61658ac8cd26a5"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/persistence/DatabaseHealth.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/persistence/DatabaseHealth.java",
+      "sha256": "73ed1b1725638a99d57e77706fdd6dfe23cb0c5f703368775314782975198bbb"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/persistence/JdbcMatchRepository.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/persistence/JdbcMatchRepository.java",
+      "sha256": "81de07d0cec253cad7c38dc63b0749d104aca1dd8a63b807af1f87d9216172fb"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/persistence/MatchSummaryProjection.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/persistence/MatchSummaryProjection.java",
+      "sha256": "a43977b716c2ae443abb5b68db33bc2dcdc86145c58422ecb4ec986b72f117f4"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/persistence/MatchSummaryValidator.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/persistence/MatchSummaryValidator.java",
+      "sha256": "5b4818fb16cf0144d69215090bf99bad5fadf2b9882be1d51367729176b2ed65"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/persistence/PersistenceService.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/persistence/PersistenceService.java",
+      "sha256": "958f564b3a7e9abce3f246e6d9d6315ab05e8601eaf9e80f9991629372c573ac"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/persistence/ResultSink.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/persistence/ResultSink.java",
+      "sha256": "dddcb1fc1fd3a2b6b0086ea84dbaa59204587fba1786daadac35a3efb2ecb659"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/persistence/SaveResult.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/persistence/SaveResult.java",
+      "sha256": "8a6bc21680f2c5a0eac28492f932f643fd67316dcc81022d33e9b34e0703bbb5"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/query/HistoryService.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/query/HistoryService.java",
+      "sha256": "b8ca0c8048eec0e6769b1d70f16ddab5a7c2881c569a70bb7f6dfdfa8948f51d"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/query/QueryDispatcher.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/query/QueryDispatcher.java",
+      "sha256": "f58302452ee8cb7c6268d5ed5b65eab4bc491a68af598007b64ca4c3bf46e7d3"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/query/RankingService.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/query/RankingService.java",
+      "sha256": "33371e19ba3d21c01788808f9b1531d88b93e7924c765c1f315cd4c500575988"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/quiz/CommunityQuizPublisher.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/quiz/CommunityQuizPublisher.java",
+      "sha256": "b56dfc1b2672e31e8c86fec0ac49eff46603fcfaf7c04ae510683c99e6bd213b"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/quiz/CommunityQuizService.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/quiz/CommunityQuizService.java",
+      "sha256": "55636b663d3c3012601077010ed7504f7d6b61f79301540ec5ffa4e40cdcbee7"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/quiz/DraftValidator.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/quiz/DraftValidator.java",
+      "sha256": "2fae20c13ff88b68b7defbfb5a883eae45451476e5444708977b92d98bc54f3a"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/quiz/JdbcCommunityQuizRepository.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/quiz/JdbcCommunityQuizRepository.java",
+      "sha256": "cf429f0367aec3430359ff743a0a55d366079263eca156a05ec823ca94f50b67"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/quiz/JdbcQuizRepository.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/quiz/JdbcQuizRepository.java",
+      "sha256": "e9f11f20436e90be75bd69737c75759e553d084db038640c65db9cfd66f07bd9"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/quiz/QuestionValidator.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/quiz/QuestionValidator.java",
+      "sha256": "29f161bea9eff043c4d8df1e33996237936b9e954404d2c7078d67956b57b159"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/quiz/QuizRepository.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/quiz/QuizRepository.java",
+      "sha256": "ff8b8ef52631b7ca45381dcfc716e214677afce848702a2893949a8ad90f5101"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/quiz/QuizSql.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/quiz/QuizSql.java",
+      "sha256": "0b3b6ce86ba3849fc59e44096bb1849dea046979b66ec119037dec90cac758b6"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/session/AssignmentSnapshot.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/session/AssignmentSnapshot.java",
+      "sha256": "74a0c65737cb3372a47b43af216bff4cea02c02133e6af02485eba549738ada0"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/session/OnlinePresenceService.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/session/OnlinePresenceService.java",
+      "sha256": "5dd2291500f2d0082e35ab622f3f1462c1cf96594dc5176663f76096485f8cf5"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/session/SessionContext.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/session/SessionContext.java",
+      "sha256": "b7bd968ab5ac3706afe8e4c25c5eb4c661a7af80ee8ca54b2703f0a2d2c2eea2"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/session/SessionRegistry.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/session/SessionRegistry.java",
+      "sha256": "beaf461b116d3b44fffd7b459dfef8271a4ed5b67b07b32368c22931b386e240"
+    },
+    {
+      "old": "server/src/main/java/vn/edu/nhom7/quiz/server/tools/DemoUserSeeder.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/server/tools/DemoUserSeeder.java",
+      "sha256": "dda3347578c9c46ab2dc3664752bec2f1fbb0edefba2aa1801b97b4bc965b8e0"
+    },
+    {
+      "old": "server/src/test/java/vn/edu/nhom7/quiz/server/auth/AccountValidatorTest.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/server/auth/AccountValidatorTest.java",
+      "sha256": "e7157d0abe78eab1e03a5284d7f98548294e954ff21735ab91211a985494a128"
+    },
+    {
+      "old": "server/src/test/java/vn/edu/nhom7/quiz/server/auth/PasswordHasherTest.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/server/auth/PasswordHasherTest.java",
+      "sha256": "da0e46abcff5db0b5bd94f5ebde692ef22b22ec090f270fab6d0ee251f339d00"
+    },
+    {
+      "old": "server/src/test/java/vn/edu/nhom7/quiz/server/auth/UserRepositoryIT.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/server/auth/UserRepositoryIT.java",
+      "sha256": "cf0e6ad8fea88aaa962e3ce740d74c3fe571a12ad1dd4a2f15084bbf8f0a8e43"
+    },
+    {
+      "old": "server/src/test/java/vn/edu/nhom7/quiz/server/challenge/ChallengeManagerTest.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/server/challenge/ChallengeManagerTest.java",
+      "sha256": "72e0f52eaa865462d4194dffd885037735e988ac666a018527795f301d5702cb"
+    },
+    {
+      "old": "server/src/test/java/vn/edu/nhom7/quiz/server/db/SchemaIT.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/server/db/SchemaIT.java",
+      "sha256": "39c5e5adc07c9699c183b6beadfd9bce3f05f50c6e6e4bdfa0653fb7a2136b78"
+    },
+    {
+      "old": "server/src/test/java/vn/edu/nhom7/quiz/server/db/ServerConfigTest.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/server/db/ServerConfigTest.java",
+      "sha256": "1b2cd2a4d8b14c32087d05eb243e817cb04d083917d8e88e1c2bf3d58a46b61b"
+    },
+    {
+      "old": "server/src/test/java/vn/edu/nhom7/quiz/server/db/StartupChecksIT.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/server/db/StartupChecksIT.java",
+      "sha256": "9485d05de5e6e53cb1df4995a0d93d16e636b416248837143a2b076bfe29c885"
+    },
+    {
+      "old": "server/src/test/java/vn/edu/nhom7/quiz/server/match/AnswerEvaluatorTest.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/server/match/AnswerEvaluatorTest.java",
+      "sha256": "3b16a5745f27b155d59887f1cd00f51a8e93ed13a39adccf0d19bfed5fc41f27"
+    },
+    {
+      "old": "server/src/test/java/vn/edu/nhom7/quiz/server/match/InteractiveQuestionsTest.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/server/match/InteractiveQuestionsTest.java",
+      "sha256": "ef74e30bf5a34001e16af62d014d14aac3adf343fda900f38cfdc09fe1b8ae53"
+    },
+    {
+      "old": "server/src/test/java/vn/edu/nhom7/quiz/server/match/MatchEngineTest.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/server/match/MatchEngineTest.java",
+      "sha256": "f969858f061c279abe8bae82b54c5205ae9bac704ed71b5edaa442c4f080fcd7"
+    },
+    {
+      "old": "server/src/test/java/vn/edu/nhom7/quiz/server/match/MatchTerminationTest.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/server/match/MatchTerminationTest.java",
+      "sha256": "3cdc04d700b05b273b61138a94d47dd1564d11879682ac5b239b76c684fe1916"
+    },
+    {
+      "old": "server/src/test/java/vn/edu/nhom7/quiz/server/match/MatchWireBudgetTest.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/server/match/MatchWireBudgetTest.java",
+      "sha256": "e6755b0e9d810cc761e63ea08cc72d22b812a8e0574001cff465c08ea0ba3e25"
+    },
+    {
+      "old": "server/src/test/java/vn/edu/nhom7/quiz/server/match/RematchCoordinatorTest.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/server/match/RematchCoordinatorTest.java",
+      "sha256": "5f3082346eae2d3d2bfb2560eecb60216cfc81472b52d6c075edb30c8d0550a3"
+    },
+    {
+      "old": "server/src/test/java/vn/edu/nhom7/quiz/server/match/ScoreCalculatorTest.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/server/match/ScoreCalculatorTest.java",
+      "sha256": "b038a7067ab43d3ff181726aac7d22cd67f72c058a7b8b064ace85159951e45a"
+    },
+    {
+      "old": "server/src/test/java/vn/edu/nhom7/quiz/server/media/MediaServiceTest.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/server/media/MediaServiceTest.java",
+      "sha256": "6f1d988d5699fa7785efbd1e176d6dc3e591c4e3208aa9e97a7f3d090f4c7238"
+    },
+    {
+      "old": "server/src/test/java/vn/edu/nhom7/quiz/server/network/HeartbeatTest.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/server/network/HeartbeatTest.java",
+      "sha256": "ecbff1772eabd205718bb40b513a0386789b36198c37ef3cea0491871242606e"
+    },
+    {
+      "old": "server/src/test/java/vn/edu/nhom7/quiz/server/network/RequestCacheTest.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/server/network/RequestCacheTest.java",
+      "sha256": "c35a430b62b7293b66e0d8f89f8ebbbe5abb05c70e4282141bbf15ef8ccc26f5"
+    },
+    {
+      "old": "server/src/test/java/vn/edu/nhom7/quiz/server/network/SocketServerTest.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/server/network/SocketServerTest.java",
+      "sha256": "ab880006e6939aecbb96f73337d172c04197cf00cf4162e57a73da710c9fe82b"
+    },
+    {
+      "old": "server/src/test/java/vn/edu/nhom7/quiz/server/persistence/MatchPersistenceIT.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/server/persistence/MatchPersistenceIT.java",
+      "sha256": "83de9d2ff7896846a45eea594dd170e358883ef022f96c6fd7f8ff7e562c335b"
+    },
+    {
+      "old": "server/src/test/java/vn/edu/nhom7/quiz/server/persistence/PersistenceServiceTest.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/server/persistence/PersistenceServiceTest.java",
+      "sha256": "6213687a0a3311d4cd07159875dcfb14547002ba1789cec21f92df86d0e5c77a"
+    },
+    {
+      "old": "server/src/test/java/vn/edu/nhom7/quiz/server/query/RankingHistoryIT.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/server/query/RankingHistoryIT.java",
+      "sha256": "5f3b851ce6866f61f69b6df43ac48b98cc8bb23b93db46459d0c933e28aa1f45"
+    },
+    {
+      "old": "server/src/test/java/vn/edu/nhom7/quiz/server/quiz/CommunityQuizServiceIT.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/server/quiz/CommunityQuizServiceIT.java",
+      "sha256": "939821fae3b81f0164c2b523cbae004c4323a3b0a872317e24de4b4fc0556fdb"
+    },
+    {
+      "old": "server/src/test/java/vn/edu/nhom7/quiz/server/quiz/QuestionValidatorTest.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/server/quiz/QuestionValidatorTest.java",
+      "sha256": "5f01639a159b3effa236a42d7c8c26cc11cac5a466921887852f38dbff8384e1"
+    },
+    {
+      "old": "server/src/test/java/vn/edu/nhom7/quiz/server/quiz/QuizRepositoryIT.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/server/quiz/QuizRepositoryIT.java",
+      "sha256": "96f00fe50d8317423920c0d15e5ee0a4bac158a56e9ad5c10aa468aff9b5f582"
+    },
+    {
+      "old": "server/src/test/java/vn/edu/nhom7/quiz/server/session/OnlinePresenceTest.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/server/session/OnlinePresenceTest.java",
+      "sha256": "5aec83567c4ec65392deb22f623bdbcb880f9c334ae795d579e6a281e2fc4c54"
+    },
+    {
+      "old": "server/src/test/java/vn/edu/nhom7/quiz/server/session/SessionRegistryTest.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/server/session/SessionRegistryTest.java",
+      "sha256": "6250e980796388967da85d3ff0f8909eed2d45d82f6b5355d461827ea5d20e9d"
+    },
+    {
+      "old": "server/src/test/java/vn/edu/nhom7/quiz/server/support/DatabaseFixtures.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/server/support/DatabaseFixtures.java",
+      "sha256": "3aac25c31dc1ebc1780caf985cf1598d488658f0228183f05ff2b94066a2420b"
+    },
+    {
+      "old": "server/src/test/java/vn/edu/nhom7/quiz/server/support/FakeGameClock.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/server/support/FakeGameClock.java",
+      "sha256": "cd15753807089f841d51bf2b95bce87fe1438a3d00ef59ae64ab52684beedb9d"
+    },
+    {
+      "old": "server/src/test/java/vn/edu/nhom7/quiz/server/support/FakeGameScheduler.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/server/support/FakeGameScheduler.java",
+      "sha256": "f624d94b900d9475773a05ff1908a83aaad8f67dc33fa16ab3b1f2d9037e11a0"
+    },
+    {
+      "old": "server/src/test/java/vn/edu/nhom7/quiz/server/support/ManualGameScheduler.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/server/support/ManualGameScheduler.java",
+      "sha256": "8f52128c98b2ebbec0510eb7a06f865827173035bf0e823a8b0931bf410f3f3e"
+    },
+    {
+      "old": "server/src/test/java/vn/edu/nhom7/quiz/server/support/RecordingResultSink.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/server/support/RecordingResultSink.java",
+      "sha256": "48da44600aa37f69bdda428713c67b451a97c211822eda8c18ed826bcc8a17b6"
+    },
+    {
+      "old": "server/src/test/java/vn/edu/nhom7/quiz/server/support/RecordingTransport.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/server/support/RecordingTransport.java",
+      "sha256": "dd3106bba246a6310b9d6e34e1e356b27b79bd80808e760587e41dc8dacdabef"
+    },
+    {
+      "old": "server/src/test/java/vn/edu/nhom7/quiz/server/support/ServerFixtures.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/server/support/ServerFixtures.java",
+      "sha256": "b2104812768cb53cf5ed542a767bc7630982ee549fcb54dbdc6343b8da68e9d4"
+    },
+    {
+      "old": "server/src/test/java/vn/edu/nhom7/quiz/server/support/SocketHarness.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/server/support/SocketHarness.java",
+      "sha256": "e5c7af5a152957343a02a0e2ce78c4b01574169f4695cc3d3b616bcecc0638f2"
+    },
+    {
+      "old": "server/src/test/java/vn/edu/nhom7/quiz/server/support/SystemTestSupport.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/server/support/SystemTestSupport.java",
+      "sha256": "3ce0640b048b12ceea65828bba0d539489425a4eaba155732daa8199087c4fc4"
+    },
+    {
+      "old": "server/src/test/java/vn/edu/nhom7/quiz/server/support/TestDatabase.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/server/support/TestDatabase.java",
+      "sha256": "705dbc26fa465169fb0c73abb0b34eaa55639abc06ad22ffe0ebf98e38467d60"
+    },
+    {
+      "old": "server/src/test/java/vn/edu/nhom7/quiz/server/support/TestSupportTest.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/server/support/TestSupportTest.java",
+      "sha256": "55f148757cdc287f02c68294345e76568516aa42cb9ef434a5fcdfb5413b9ae1"
+    },
+    {
+      "old": "server/src/test/java/vn/edu/nhom7/quiz/server/system/CommunityWorkflowIT.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/server/system/CommunityWorkflowIT.java",
+      "sha256": "dff1594975c20c8336e8b25a0ff34148e642e13c6b55a60c904fbc993277bf7f"
+    },
+    {
+      "old": "server/src/test/java/vn/edu/nhom7/quiz/server/system/ConcurrentMatchesIT.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/server/system/ConcurrentMatchesIT.java",
+      "sha256": "5cf74ce7ee28539127471dced6844dfdb418905260c7485d58a9153648332482"
+    },
+    {
+      "old": "server/src/test/java/vn/edu/nhom7/quiz/server/system/DatabaseOutageIT.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/server/system/DatabaseOutageIT.java",
+      "sha256": "52b3e05f6279a3c3a09f8a5ec64b015191c57f2eda1a0ebb8f8135ef76d16deb"
+    },
+    {
+      "old": "server/src/test/java/vn/edu/nhom7/quiz/server/system/LoadProbe.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/server/system/LoadProbe.java",
+      "sha256": "4f82a3ef021cbdc59f0d6bcf6744bf5f16640f982eb53c955f0c16d2c37ee1d9"
+    },
+    {
+      "old": "server/src/test/java/vn/edu/nhom7/quiz/server/system/LobbyFlowIT.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/server/system/LobbyFlowIT.java",
+      "sha256": "d3218f7de4eece374cc056533722fdb7e9201398a129338cc564951d40135d36"
+    },
+    {
+      "old": "server/src/test/java/vn/edu/nhom7/quiz/server/system/ProtocolRoutingIT.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/server/system/ProtocolRoutingIT.java",
+      "sha256": "99ce3b6cb2d97b050f0303dc98acaa43f85e36f446406c3efdb5aec31b79a1f6"
+    },
+    {
+      "old": "server/src/test/java/vn/edu/nhom7/quiz/server/system/TenRoundMatchIT.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/server/system/TenRoundMatchIT.java",
+      "sha256": "b86a2dc68887e25c29d21550747130ffa70aeae0855d924007eaf15ee03eafae"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/ClientMain.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/ClientMain.java",
+      "sha256": "8c264a7c2bad7852a755df5fa8f1bc62a10fcab30808faaf73183f6e5b87f8ca"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/DesktopLauncher.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/DesktopLauncher.java",
+      "sha256": "9b273629da0106b5d49187668ed0565f5c72d24c9b4cc3008b33b2585cb96a98"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/assets/AssetLoader.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/assets/AssetLoader.java",
+      "sha256": "f227a098dd96c90bc97bbff849d3444dc0634dd2295eaac5e5bed369aa6a2179"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/assets/RemoteMedia.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/assets/RemoteMedia.java",
+      "sha256": "a121cd63cc96b32af61b4a851333c3ee361cedcddee2eecaca544c3a167ad73a"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/network/NetworkClient.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/network/NetworkClient.java",
+      "sha256": "771d6ba75716d0f4d10cfa8053906ce33e6e7b8adebceb34b9645bd3e2b46801"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/network/RequestTimeoutMonitor.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/network/RequestTimeoutMonitor.java",
+      "sha256": "df2e18dea0c0a1d2614f7c5a8c774caf9d8f1df6fc24e97a8b2835f5e98fc43b"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/network/RequestTracker.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/network/RequestTracker.java",
+      "sha256": "b1b9273c998703e8bd406d76c94c1a7d41fbe1b678130654e8e2e47ab81933f4"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/network/ServerTimeEstimator.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/network/ServerTimeEstimator.java",
+      "sha256": "bb4deb3cffc2f0ded6416bd1a4a9c2b05e34f9e5238ca859a3f53bb0c4629221"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/state/ClientState.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/state/ClientState.java",
+      "sha256": "20ee7cda81676bc504a620dc73ec62d2c9a6a39cfe61de8ae32a2bc655071364"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/state/ClientStateReducer.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/state/ClientStateReducer.java",
+      "sha256": "1230b11ee50d64a1c1cdbf1f5dc19fb33bc89dacae05423dfe37a253e71b7b9f"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/state/ClientStore.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/state/ClientStore.java",
+      "sha256": "1632e4ca521337552f805e5e894a07c339fefa6f32054a6dd1318156977c206a"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/state/MatchEventData.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/state/MatchEventData.java",
+      "sha256": "c2884f029e20999457f0d84fe914cf272f5df2bcaa7de5fe2f8b202f6b5fa82b"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/support/FixtureReplay.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/support/FixtureReplay.java",
+      "sha256": "29887c52918a7ef218b29963013ecd5a682c668a57718e360295b25a5e09ff25"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/ui/AnswerIntentFactory.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/ui/AnswerIntentFactory.java",
+      "sha256": "b96208b0748769105ff3b3386a9aba7942021913ad083e242be8f4a69f2a164f"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/ui/AppShell.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/ui/AppShell.java",
+      "sha256": "491c6c583b3ee5eaa471f941b477f455b5fb7d1a0b6a515bc03b0aca8b1ec62a"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/ui/AuthForm.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/ui/AuthForm.java",
+      "sha256": "fea96567e750cf4670c934f998196067421d28563336cfda98fb0c638e877d06"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/ui/AuthView.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/ui/AuthView.java",
+      "sha256": "177e083566011fe89b623202c63789502b1f3d96679cb8dbbb5210d2be5b953b"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/ui/BaseQuestionRenderer.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/ui/BaseQuestionRenderer.java",
+      "sha256": "07fef34bb0a8d3a652d755cab12faee75f40b55d8f9cba6a4a415002483ef703"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/ui/ChallengeDialog.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/ui/ChallengeDialog.java",
+      "sha256": "dc62fd5c67f4670487b63f319490728e3fca32ca2cbe8f07bdc77173a72b9c22"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/ui/ChatPanel.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/ui/ChatPanel.java",
+      "sha256": "e6c92988cb0406eab9d22facf5d720df099fcba845c228eabc5dcecb14c86a2e"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/ui/ChoiceAnswerEditor.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/ui/ChoiceAnswerEditor.java",
+      "sha256": "fb1b89c1ac7f2054084b04b9205ad3a166908c98c6bd43567d4ae3c4167c153c"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/ui/CommandGateway.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/ui/CommandGateway.java",
+      "sha256": "2e8f12b746312ede579916d6e2b5c8cb5f8caf7f7b3cc52e83300ddc57b11be8"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/ui/CommunityQuizView.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/ui/CommunityQuizView.java",
+      "sha256": "9aee070fe53344fa657981556bbe68ef05c9f26e77a972b78ff134a2d482787b"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/ui/DraftQuestionMapper.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/ui/DraftQuestionMapper.java",
+      "sha256": "9bd6c1ca26dc2e8f29ddcd4b495f308adf3fd27622e084d2078ee8e6f69e1db1"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/ui/Effects.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/ui/Effects.java",
+      "sha256": "88dd86fd0761b5255f6898cf6ac0abe6ef2f1c19198ac87b249452cb4223d09f"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/ui/GameView.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/ui/GameView.java",
+      "sha256": "330ec09336696c72553d63baa97f6ee25c7c95a34a873fc1d34b143881d6e2f3"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/ui/HistoryView.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/ui/HistoryView.java",
+      "sha256": "f43c2e7850a32189781d1692702d17b70e46c48e9409a98e1aaf565df0d9ce08"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/ui/ImageTarget.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/ui/ImageTarget.java",
+      "sha256": "018adaf9ad232a1135afd2deebfb4fc31ec531b311ca76435b5f50c536cb7feb"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/ui/InteractiveAnswerEditor.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/ui/InteractiveAnswerEditor.java",
+      "sha256": "677bca65f42c3a95ee57b81b09425069846b3f1a675c91dbb879fddc071fe2c6"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/ui/LeaderboardPanel.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/ui/LeaderboardPanel.java",
+      "sha256": "36fda8af571469aff3369fdd052fc5da8d8304f8fd36a2bda401722c3fde5d74"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/ui/LifelineDock.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/ui/LifelineDock.java",
+      "sha256": "c780a8a5e72d1d1c9aeddcca203af3caa3f2f5fa0012cb9d1918183b9d23eba5"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/ui/LobbyView.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/ui/LobbyView.java",
+      "sha256": "c147f874ed939fc8df97a72f456225b9ff0b0649986c54826e19c3ef8177b318"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/ui/MultipleChoiceRenderer.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/ui/MultipleChoiceRenderer.java",
+      "sha256": "717edf6f560e27a55ccd02223bec848320b8a4ad7e79f3644e0968d99753fbd7"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/ui/NavigationBar.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/ui/NavigationBar.java",
+      "sha256": "62b2a3b69558b61781c0e55017e608553cc5ea2c074d59a62a4fe71cab20a7c5"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/ui/PinpointRenderer.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/ui/PinpointRenderer.java",
+      "sha256": "40539b443ac43a76754a960304e9226e963a53ab1a0a0e8222ef62c30476a180"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/ui/PresentationText.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/ui/PresentationText.java",
+      "sha256": "69b9dfa3033324371b1aaa7271f092ed87171c42312719962885a8effa852b9b"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/ui/QuestionContent.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/ui/QuestionContent.java",
+      "sha256": "1f0f265e34a061fd7dc81b99a74b97b47349d2304ae28272d0eeb350d5123ca4"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/ui/QuestionPreparation.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/ui/QuestionPreparation.java",
+      "sha256": "9f4fd8a0911afc3080847989be5591dcc3320244617f99830eedfa2f7d1a949c"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/ui/QuestionPreview.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/ui/QuestionPreview.java",
+      "sha256": "cb1a3a5f8bece731991cdc8c36a60b45b92ee4a5f1127f4454699ef2969e5519"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/ui/QuestionRenderer.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/ui/QuestionRenderer.java",
+      "sha256": "5cbc9f97db4d65da3039584f377dc86991e96d0a11d49cf0a554b6c818b62dcb"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/ui/QuizDetailView.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/ui/QuizDetailView.java",
+      "sha256": "15cd753f3bb165040b3a63a00a7eb44479f5dee4c9e2c33505624007b0721ac9"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/ui/RangeRenderer.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/ui/RangeRenderer.java",
+      "sha256": "2ef5cedc536570e92c920bf25c3002dd7488e5d9e78c8c4d996f38c7ceeaf03a"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/ui/RankingView.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/ui/RankingView.java",
+      "sha256": "9c5841d215473c178b5041c95e33788194e5eb54e9e875b0076c54811a9d53d8"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/ui/ReorderRenderer.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/ui/ReorderRenderer.java",
+      "sha256": "315f2ef832e8663f6b35e502ba1ecf82736c252d273c49ddb427552461df9526"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/ui/ResultView.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/ui/ResultView.java",
+      "sha256": "7debce37db47d846893f08a43b2ee9ec956d1e6077605d5c7aa5a7775c658c2b"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/ui/RevealPanel.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/ui/RevealPanel.java",
+      "sha256": "2379c5f644b75c54e1704089c9cc47777dd98f480258ec665a0dc2127f99d13e"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/ui/ReviewCard.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/ui/ReviewCard.java",
+      "sha256": "9833b8024e8e0603577879425e2104d3ed995888a3df4e499e2188c27ba3f329"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/ui/SettingsOverlay.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/ui/SettingsOverlay.java",
+      "sha256": "4d82fb21500c4396396e3b64934e84f56fed40765d3522aaa26002a8d7a25ea0"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/ui/ShortAnswerRenderer.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/ui/ShortAnswerRenderer.java",
+      "sha256": "29c262c84fb6b849cfd47708246d7d688dbe425764dbc638b6dcf5a0027008ff"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/ui/SingleChoiceRenderer.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/ui/SingleChoiceRenderer.java",
+      "sha256": "38e702f432145ec0f365d11c56bf54d26a0d5f0b846a0ab59f333bce80a1b5f2"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/ui/Sound.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/ui/Sound.java",
+      "sha256": "89b694f041b97ff6597cade957d7044cd48f9a8c329e29f0ff84a2d2d261b768"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/ui/Stickers.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/ui/Stickers.java",
+      "sha256": "b3ed63a748f4c8a2a74f7b74c321f9c92e43b394345aac1a363f96ded2339e61"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/ui/Theme.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/ui/Theme.java",
+      "sha256": "722e2335b8c3ad6f12bafaf58adb89c11b99c3ae905a61e491bfadc6355569db"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/ui/ToastOverlay.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/ui/ToastOverlay.java",
+      "sha256": "d5a948ae05259d8c6bf55b335a73581040a2bf7d1c018b94460a910c3fba58ae"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/ui/TrueFalseRenderer.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/ui/TrueFalseRenderer.java",
+      "sha256": "e159d5ba8385bcd6fd36e4e8a44a430f84184fef61b7bf7fd8aeca6fee3d0c0e"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/ui/Ui.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/ui/Ui.java",
+      "sha256": "1f7e973cce2f1bcceedbfcaa372c444c80b0feb086cf6077fe8c4cede00c7ae7"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/ui/UiCommandSink.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/ui/UiCommandSink.java",
+      "sha256": "c8d5629c988a09594bd7b738ecca08a3d8d95e91a8aa9e2ed38f6862e57e3512"
+    },
+    {
+      "old": "client/src/main/java/vn/edu/nhom7/quiz/client/ui/WaitingView.java",
+      "new": "src/main/java/vn/edu/nhom7/quiz/client/ui/WaitingView.java",
+      "sha256": "f324927ed0958bf54fa7d10fe0062d9644353b625e949853060ed4a885fc81c9"
+    },
+    {
+      "old": "client/src/main/resources/assets/avatars/avatar-01.png",
+      "new": "src/main/resources/assets/avatars/avatar-01.png",
+      "sha256": "0fa7a083677d9971a8cf6b3b3b2dd83cbcef77f768a5161548a0368b3f99217f"
+    },
+    {
+      "old": "client/src/main/resources/assets/avatars/avatar-02.png",
+      "new": "src/main/resources/assets/avatars/avatar-02.png",
+      "sha256": "0d38091cccea91f16655ce39ec5ce51300c4a1a898fb39df026d617b74de4106"
+    },
+    {
+      "old": "client/src/main/resources/assets/avatars/avatar-03.png",
+      "new": "src/main/resources/assets/avatars/avatar-03.png",
+      "sha256": "55b8aa1b3be10f0befff5b3a476c5d38fa8c507acaab5690a64093d67c28bb44"
+    },
+    {
+      "old": "client/src/main/resources/assets/avatars/avatar-04.png",
+      "new": "src/main/resources/assets/avatars/avatar-04.png",
+      "sha256": "c143f8703f6f514efb26c9336c39eab2a59c19a619e50594441c1bf65858ddbd"
+    },
+    {
+      "old": "client/src/main/resources/assets/avatars/avatar-05.png",
+      "new": "src/main/resources/assets/avatars/avatar-05.png",
+      "sha256": "d0ca393ef50edc858dbb9ee440de7cc1f831ebf32601aa3ec1fb377e637db9b4"
+    },
+    {
+      "old": "client/src/main/resources/assets/avatars/avatar-06.png",
+      "new": "src/main/resources/assets/avatars/avatar-06.png",
+      "sha256": "66038944532f4e186828285e1e91fd4d6138659c96d228f3579c8c043bc2fc26"
+    },
+    {
+      "old": "client/src/main/resources/assets/avatars/avatar-07.png",
+      "new": "src/main/resources/assets/avatars/avatar-07.png",
+      "sha256": "e0fb2b49066dd7a99ea40d38ade58ab2fe3cebe6cecba8ec8b617620306b69e3"
+    },
+    {
+      "old": "client/src/main/resources/assets/avatars/avatar-08.png",
+      "new": "src/main/resources/assets/avatars/avatar-08.png",
+      "sha256": "5a1b0ab82a9d23ddbba076cf950913eaa7604db9eb5915d1576eb3bf31241134"
+    },
+    {
+      "old": "client/src/main/resources/assets/images/placeholder.png",
+      "new": "src/main/resources/assets/images/placeholder.png",
+      "sha256": "f6cf53466d35cfb6e112feb94959fea02423f48add682a7e8a607c37660908b6"
+    },
+    {
+      "old": "client/src/main/resources/assets/images/question-sample.png",
+      "new": "src/main/resources/assets/images/question-sample.png",
+      "sha256": "e78504e4df102ae4ed1d828c056136c6ae41ef9c74ff2267a693536d6cd31450"
+    },
+    {
+      "old": "client/src/main/resources/assets/images/quiz-cover-general-v2.png",
+      "new": "src/main/resources/assets/images/quiz-cover-general-v2.png",
+      "sha256": "101d4851334722249ab9962c198531ffe05d8fb0375ae7fef379743ccabd74c3"
+    },
+    {
+      "old": "client/src/main/resources/assets/images/quiz-cover-general.png",
+      "new": "src/main/resources/assets/images/quiz-cover-general.png",
+      "sha256": "8669b31910f3af756afc85a64ede8abd3ad6459df33b606d9ae4550bea8ef2dd"
+    },
+    {
+      "old": "client/src/main/resources/assets/images/quiz-cover-history-v2.png",
+      "new": "src/main/resources/assets/images/quiz-cover-history-v2.png",
+      "sha256": "ed7e870f9188e9b4644a774b63a9fc25313611454b103586b6ece7cf6a686278"
+    },
+    {
+      "old": "client/src/main/resources/assets/images/quiz-cover-history.png",
+      "new": "src/main/resources/assets/images/quiz-cover-history.png",
+      "sha256": "1f5f6a371c3e6065958c5d76fc42fee103e404aa1f27a2ba978cbcd2a12009b2"
+    },
+    {
+      "old": "client/src/main/resources/assets/images/quiz-cover-science-v2.png",
+      "new": "src/main/resources/assets/images/quiz-cover-science-v2.png",
+      "sha256": "becfdf35372a25bb27b032dadd60ac98c50763ebafc9cc0b0cfa8780303f91e2"
+    },
+    {
+      "old": "client/src/main/resources/assets/images/quiz-cover-science.png",
+      "new": "src/main/resources/assets/images/quiz-cover-science.png",
+      "sha256": "1d6a4060cd5fda3770cc1b8c4fa60f3aa7bee4ae69bc6abb3b4d750e9acff7b2"
+    },
+    {
+      "old": "client/src/main/resources/assets/sounds/correct.wav",
+      "new": "src/main/resources/assets/sounds/correct.wav",
+      "sha256": "da079c97bd1efab3895329ccc614cba093fd22f319a3ff116dc0bd34c257d062"
+    },
+    {
+      "old": "client/src/main/resources/assets/sounds/invite.wav",
+      "new": "src/main/resources/assets/sounds/invite.wav",
+      "sha256": "430eb7df7a6052f45b3fccc424736cf64d768e8b8cd2839c994bbb569264a646"
+    },
+    {
+      "old": "client/src/main/resources/assets/sounds/lifeline.wav",
+      "new": "src/main/resources/assets/sounds/lifeline.wav",
+      "sha256": "905150ac0298eb4d96c31cff4144ddd4eccaf156ad48a8dd1e0634430f245b36"
+    },
+    {
+      "old": "client/src/main/resources/assets/sounds/lose.wav",
+      "new": "src/main/resources/assets/sounds/lose.wav",
+      "sha256": "339cce6e2e2d49b46be99e8378d13ccf41446f94566911f98013f69e088f76b9"
+    },
+    {
+      "old": "client/src/main/resources/assets/sounds/music.wav",
+      "new": "src/main/resources/assets/sounds/music.wav",
+      "sha256": "c470dc38850ff56dd964baa6aa0d0675df8d092665a39630d664e8da24b15b03"
+    },
+    {
+      "old": "client/src/main/resources/assets/sounds/streak.wav",
+      "new": "src/main/resources/assets/sounds/streak.wav",
+      "sha256": "3557733c6fbb5c19aff2cb6be26c3013be5c795b51e7a1cc0a1329b91c6f7640"
+    },
+    {
+      "old": "client/src/main/resources/assets/sounds/tick.wav",
+      "new": "src/main/resources/assets/sounds/tick.wav",
+      "sha256": "d612faf89670f887fff08929e5bc906d2714eba44b7c983b0e084a79aec53413"
+    },
+    {
+      "old": "client/src/main/resources/assets/sounds/win.wav",
+      "new": "src/main/resources/assets/sounds/win.wav",
+      "sha256": "eb2e34a8e6470830e99fd608d764f2056e7b72ee1e63d6c95fb909a1cd863a44"
+    },
+    {
+      "old": "client/src/main/resources/assets/sounds/wrong.wav",
+      "new": "src/main/resources/assets/sounds/wrong.wav",
+      "sha256": "7958d7ddcfc279a6c22cadc232138bc365d2202f164ccc19e8253d894dc0a4c1"
+    },
+    {
+      "old": "client/src/main/resources/fonts/BeVietnamPro-Bold.ttf",
+      "new": "src/main/resources/fonts/BeVietnamPro-Bold.ttf",
+      "sha256": "7f738fe5c43c8872807b20e2d30d42163618de8a4daf7f48a939adac32c16847"
+    },
+    {
+      "old": "client/src/main/resources/fonts/BeVietnamPro-Medium.ttf",
+      "new": "src/main/resources/fonts/BeVietnamPro-Medium.ttf",
+      "sha256": "b60832bfa0fcd015158112c64d7e3fdad3b0c6287d1823f85a3103636e845268"
+    },
+    {
+      "old": "client/src/main/resources/fonts/BeVietnamPro-Regular.ttf",
+      "new": "src/main/resources/fonts/BeVietnamPro-Regular.ttf",
+      "sha256": "cd1ef6e9d7db28ad5cdb88a65ccbe693870e60d340b791f349d248342b4fe4c3"
+    },
+    {
+      "old": "client/src/main/resources/fonts/BeVietnamPro-SemiBold.ttf",
+      "new": "src/main/resources/fonts/BeVietnamPro-SemiBold.ttf",
+      "sha256": "bd8e27eb02720b9d91e59e4f10a90878643219f25ce6a8d9a4f06a8a88d3bb71"
+    },
+    {
+      "old": "client/src/main/resources/fonts/ChakraPetch-Bold.ttf",
+      "new": "src/main/resources/fonts/ChakraPetch-Bold.ttf",
+      "sha256": "65fbf76d95651697275e19db4d717c0e95a789ddd3476478b05292104db278a0"
+    },
+    {
+      "old": "client/src/main/resources/fonts/ChakraPetch-SemiBold.ttf",
+      "new": "src/main/resources/fonts/ChakraPetch-SemiBold.ttf",
+      "sha256": "45264de3204ddbd5fb3e14a2402acd5c630d16650ae5fc221d2c52da46a6734b"
+    },
+    {
+      "old": "client/src/main/resources/fonts/OFL-BeVietnamPro.txt",
+      "new": "src/main/resources/fonts/OFL-BeVietnamPro.txt",
+      "sha256": "6b7f8f73609a25ea78c891e34cf37b06f8a676b7ea986e941e43b009110f2a85"
+    },
+    {
+      "old": "client/src/main/resources/fonts/OFL-ChakraPetch.txt",
+      "new": "src/main/resources/fonts/OFL-ChakraPetch.txt",
+      "sha256": "13831d02389d917d22fcfa6c79f98f8acbf61d230add0e73a4d4dc5f3bfb9e56"
+    },
+    {
+      "old": "client/src/main/resources/ui/quiz-arena-light.css",
+      "new": "src/main/resources/ui/quiz-arena-light.css",
+      "sha256": "ad127b9f735ce9572bf7efa35ecbe816903dc04538dbf423641147ebcae78aa7"
+    },
+    {
+      "old": "client/src/main/resources/ui/quiz-arena.css",
+      "new": "src/main/resources/ui/quiz-arena.css",
+      "sha256": "1f894398d8299241aba793db501631f49d6313c15681c246458054c02e7eb31b"
+    },
+    {
+      "old": "client/src/test/java/vn/edu/nhom7/quiz/client/assets/AssetRegistryTest.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/client/assets/AssetRegistryTest.java",
+      "sha256": "943338446f136135d18ee9fa7a98cd375de0d1b08cb84502aa07745b54e11af0"
+    },
+    {
+      "old": "client/src/test/java/vn/edu/nhom7/quiz/client/assets/RemoteMediaTest.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/client/assets/RemoteMediaTest.java",
+      "sha256": "eaedada358d709080f3bca1dfc1558afbd33a6a10586a8a98ac99cbfbc292110"
+    },
+    {
+      "old": "client/src/test/java/vn/edu/nhom7/quiz/client/network/NetworkClientLiveProbe.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/client/network/NetworkClientLiveProbe.java",
+      "sha256": "a832f2bae70476fb19c71a8af36cca596fe59bc00336fff3d5070746fd5405c3"
+    },
+    {
+      "old": "client/src/test/java/vn/edu/nhom7/quiz/client/network/NetworkClientTest.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/client/network/NetworkClientTest.java",
+      "sha256": "cd34c6a08c397136b7a7f3c2add5aa21d97cd3631697460c0273989b8b84e541"
+    },
+    {
+      "old": "client/src/test/java/vn/edu/nhom7/quiz/client/network/RequestTimeoutMonitorTest.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/client/network/RequestTimeoutMonitorTest.java",
+      "sha256": "710cfe1fe75ba7dfdf4ce979e968c1f58d380dfbdca839489c795cd6f3f8f952"
+    },
+    {
+      "old": "client/src/test/java/vn/edu/nhom7/quiz/client/network/RequestTrackerTest.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/client/network/RequestTrackerTest.java",
+      "sha256": "5b9b8c4641a9f63ab821f68729390a75e13b3c4c7de44551bf0e33b8e4df8d99"
+    },
+    {
+      "old": "client/src/test/java/vn/edu/nhom7/quiz/client/network/ServerTimeEstimatorTest.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/client/network/ServerTimeEstimatorTest.java",
+      "sha256": "a4af537a2fa036eb282f9f1ac55a355c2a56ee0cab7810bc834ecf0929281a9e"
+    },
+    {
+      "old": "client/src/test/java/vn/edu/nhom7/quiz/client/state/AnswerPendingTest.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/client/state/AnswerPendingTest.java",
+      "sha256": "cd2ed97a91ced255418649a5e83c18a337742b70ed7d6fb525b265a279fa16b3"
+    },
+    {
+      "old": "client/src/test/java/vn/edu/nhom7/quiz/client/state/ChatResultStateTest.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/client/state/ChatResultStateTest.java",
+      "sha256": "b39053a60c45e404352ef0c738ab9a9f1f162fbd712a7edd06a99dcd05c41b8f"
+    },
+    {
+      "old": "client/src/test/java/vn/edu/nhom7/quiz/client/state/ClientStateReducerTest.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/client/state/ClientStateReducerTest.java",
+      "sha256": "6c0aaa31d9412af3e11a7d280f49bbff9ed5af296a48bf3431cbabe3c3e98044"
+    },
+    {
+      "old": "client/src/test/java/vn/edu/nhom7/quiz/client/state/GamePhaseStateTest.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/client/state/GamePhaseStateTest.java",
+      "sha256": "2f94650ede5c3d9df748d5300bb06c41eb0f90cb96ecf4c7a628a2324a97a385"
+    },
+    {
+      "old": "client/src/test/java/vn/edu/nhom7/quiz/client/state/LifelineStateTest.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/client/state/LifelineStateTest.java",
+      "sha256": "fd3d7cb3ebd4ee82186e2fece811e4b84743a51f018fe30243c87b9be15928ee"
+    },
+    {
+      "old": "client/src/test/java/vn/edu/nhom7/quiz/client/state/ResultSessionTest.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/client/state/ResultSessionTest.java",
+      "sha256": "72a6f8f341fb6f51afaea5642aaf7891f1ed67359467c9ed87bac372c1343be0"
+    },
+    {
+      "old": "client/src/test/java/vn/edu/nhom7/quiz/client/state/ResyncStateTest.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/client/state/ResyncStateTest.java",
+      "sha256": "a81752bf6fb7e6a6c0ba09fecfa12618993687dd43d342ded329072220e867e1"
+    },
+    {
+      "old": "client/src/test/java/vn/edu/nhom7/quiz/client/state/StreakStateTest.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/client/state/StreakStateTest.java",
+      "sha256": "e4cd59656673fac86fe206f0d8cc5bfff06e58e89c0d2d98193d0aa8acd05f0b"
+    },
+    {
+      "old": "client/src/test/java/vn/edu/nhom7/quiz/client/ui/AnswerIntentFactoryTest.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/client/ui/AnswerIntentFactoryTest.java",
+      "sha256": "0a7a165ebe1e3ba5d191506cace819470d141a0d594bf36ed67005e774bb398a"
+    },
+    {
+      "old": "client/src/test/java/vn/edu/nhom7/quiz/client/ui/EditorInteractionTest.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/client/ui/EditorInteractionTest.java",
+      "sha256": "de22ab0bc7d0819790762bf69af5bc75d98b21f43134df86a66c4153a86a69e4"
+    },
+    {
+      "old": "client/src/test/java/vn/edu/nhom7/quiz/client/ui/InteractiveViewsTest.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/client/ui/InteractiveViewsTest.java",
+      "sha256": "d108a896bdbc2c3176013bb60d175ef60b9fb2978b1f019126798cea2ec24374"
+    },
+    {
+      "old": "client/src/test/java/vn/edu/nhom7/quiz/client/ui/InterfaceEvidenceTest.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/client/ui/InterfaceEvidenceTest.java",
+      "sha256": "63ea711a9157cd0e38bea72db46f9e272d778183fe95cd49e74e396f1761542c"
+    },
+    {
+      "old": "client/src/test/java/vn/edu/nhom7/quiz/client/ui/LeaderboardPresentationTest.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/client/ui/LeaderboardPresentationTest.java",
+      "sha256": "e954ba337f5a44f56b361154bcb93a1a242b6bd3592d4a6c726f1cda97f05200"
+    },
+    {
+      "old": "client/src/test/java/vn/edu/nhom7/quiz/client/ui/LobbyIntentTest.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/client/ui/LobbyIntentTest.java",
+      "sha256": "b84ad586b5ab61508ccfe422a66dd9b207d73b25bf6ba43ece5fc8859013bb3f"
+    },
+    {
+      "old": "client/src/test/java/vn/edu/nhom7/quiz/client/ui/NativeViewsTest.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/client/ui/NativeViewsTest.java",
+      "sha256": "ccc92db85d5bd851c476036c36561573082302af8a29b437f64365d64d202700"
+    },
+    {
+      "old": "client/src/test/java/vn/edu/nhom7/quiz/client/ui/PresentationTextTest.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/client/ui/PresentationTextTest.java",
+      "sha256": "0de0f20715d5fa68814a55955d1704222887ead87b61d2f863c2286a3e88a194"
+    },
+    {
+      "old": "client/src/test/java/vn/edu/nhom7/quiz/client/ui/StickersTest.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/client/ui/StickersTest.java",
+      "sha256": "d17dfd8356f8b46442e3acb043816f56b08d6edb83e87bd9f256b7d53f46ec61"
+    },
+    {
+      "old": "client/src/test/java/vn/edu/nhom7/quiz/client/ui/ThemeTest.java",
+      "new": "src/test/java/vn/edu/nhom7/quiz/client/ui/ThemeTest.java",
+      "sha256": "14f196d6c7a58818cb24ba796314748e8e7125b8f77a265a94947d6ad3447457"
+    }
+  ]
+}

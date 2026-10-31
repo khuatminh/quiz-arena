@@ -976,7 +976,7 @@ Các giá trị gameplay bắt buộc được server gửi cho client; không c
 
 ### 13.4. Build, chạy và bàn giao
 
-- Maven parent chứa common/server/client, dependency versions được khóa thống nhất trong một nơi khi triển khai.
+- Một module Maven với một pom.xml gốc; common/server/client là các package dưới src/main/java/vn/edu/nhom7/quiz, các phiên bản dependency được khóa thống nhất.
 - Bàn giao source, hướng dẫn JDK/JavaFX, cấu hình mẫu, SQL schema/seed, asset attribution và tài khoản demo.
 - Hướng dẫn phải có hai cách chạy: localhost với nhiều tiến trình và server/client trên hai máy LAN.
 - Database chỉ do server truy cập; không đặt JDBC credentials trong gói client.

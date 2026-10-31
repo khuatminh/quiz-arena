@@ -1,5 +1,8 @@
 # Quiz Arena — JavaFX Client Implementation Plan
 
+> Cấu trúc build hiện tại đã chuyển sang một module Maven với `src/main` và `src/test`. Tài liệu này lưu kế hoạch triển khai ban đầu; dùng [hướng dẫn một module](../../architecture/single-module.md) cho đường dẫn và lệnh chạy hiện tại.
+
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Bàn giao client JavaFX có trải nghiệm chọn quiz, thi đấu và leaderboard sau mỗi câu lấy cảm hứng từ phiên quiz.com đã phân tích.

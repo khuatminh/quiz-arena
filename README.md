@@ -31,7 +31,7 @@ Quiz Arena là ứng dụng desktop bằng Java, cho phép **hai người thi đ
 | Sảnh chờ | Xem quiz theo danh mục, tìm trong trang đang hiển thị, xem người chơi trực tuyến |
 | Thách đấu | Mời một người đang rảnh, chấp nhận, từ chối hoặc hủy lời mời |
 | Thi đấu | Hai người cùng trả lời một bộ câu hỏi, đồng hồ đếm ngược, chấm điểm trên server |
-| Câu hỏi | Một đáp án, nhiều đáp án, đúng/sai và trả lời ngắn |
+| Câu hỏi | Một đáp án, nhiều đáp án, đúng/sai, trả lời ngắn; quiz cộng đồng thêm sắp xếp, ước lượng số và ghim trên ảnh |
 | Quiz của tôi | Tạo bản nháp, sửa và sắp xếp câu hỏi, xem trước, xuất bản hoặc gỡ khỏi sảnh |
 | Hình ảnh | Ảnh câu hỏi xuất hiện trước khi tính giờ; ảnh giải thích xuất hiện khi công bố đáp án |
 | Trong trận | Chat với đối thủ, xem đáp án và bảng điểm sau từng câu |
@@ -45,21 +45,27 @@ Quiz Arena là ứng dụng desktop bằng Java, cho phép **hai người thi đ
 | Nguồn | Dữ liệu có sẵn trong database | Người dùng tạo qua **Quiz của tôi** |
 | Số câu mỗi trận | 10 câu | Toàn bộ 1–50 câu đã xuất bản |
 | Cách chọn câu | Ngẫu nhiên: 4 câu một đáp án, 2 nhiều đáp án, 2 đúng/sai, 2 trả lời ngắn | Theo thứ tự tác giả hoặc xáo trộn nếu bật tùy chọn |
-| Thời gian trả lời | 15 giây/câu | 15 giây/câu |
+| Thời gian trả lời | 15 giây/câu | 15 giây câu cũ; 30 giây câu tương tác |
 | Điểm tối đa | 33 điểm (30 + 3 nhờ x2) | 3 × số câu + 3, tối đa 153 điểm |
 | Bảng xếp hạng toàn cục | Có, theo kết quả trận đủ điều kiện | Không cập nhật các bộ đếm xếp hạng |
 | Kết quả và lịch sử riêng | Có | Có, gồm điểm và kết quả thắng/thua/hòa của trận |
 
 Dữ liệu mẫu có **3 bộ quiz và 60 câu hỏi**. Mỗi bộ có 20 câu để server chọn 10 câu theo cơ cấu trên.
 
+### App mở trực tiếp (không cần cài Java trên máy chơi)
+
+Bản build nằm trong `dist/`: `QuizArena-3.0.0-macos-arm64.zip` chứa **Quiz Arena.app**; `QuizArena-3.0.0-windows-x64.zip` chứa **Quiz Arena.exe** cùng runtime. Giải nén toàn bộ và mở app. Client kết nối đến server Quiz Arena 3.0/schema 5 qua host/port nhập trong màn hình đăng nhập.
+
+Để build lại cả hai gói trên macOS: `python3 scripts/package-desktop.py`. Xem [hướng dẫn đóng gói desktop](docs/operations/desktop-app.md).
+
 ## 2. Công nghệ sử dụng
 
-Các phiên bản thư viện dưới đây được cấu hình trong các file `pom.xml` của dự án.
+Các phiên bản thư viện dưới đây được cấu hình trong file `pom.xml` duy nhất của dự án.
 
 | Công nghệ | Phiên bản | Vai trò |
 | --- | --- | --- |
 | Java / JDK | 21 | Ngôn ngữ và môi trường chạy client, server |
-| Maven | 3.9 trở lên | Quản lý thư viện, biên dịch, kiểm thử, đóng gói nhiều module |
+| Maven | 3.9 trở lên | Quản lý thư viện, biên dịch, kiểm thử, đóng gói một module |
 | JavaFX | 21.0.6 | Giao diện desktop, điều khiển và hiệu ứng |
 | JavaFX CSS | Đi kèm JavaFX | Màu sắc, kiểu chữ, bố cục trình bày của các thành phần |
 | Java TCP Socket | Có sẵn trong JDK | Kết nối lâu dài giữa client và server |
@@ -115,7 +121,7 @@ Ví dụ người chơi gửi câu trả lời:
 
 Mỗi client duy trì một kết nối TCP. Mỗi thông điệp gồm **4 byte độ dài theo big-endian**, tiếp theo là JSON UTF-8, với phần JSON tối đa **65.536 byte**. Bộ giải mã xử lý được dữ liệu bị chia nhỏ hoặc nhiều thông điệp đến trong cùng một lần đọc.
 
-Sau khi kết nối, client gửi `HELLO` để kiểm tra phiên bản. Phiên bản hiện tại dùng **client `2.0`, protocol `1`, asset pack `1`**. Các mã `requestId`, `matchId`, `roundId` giúp liên kết yêu cầu với đúng thao tác, trận và câu hỏi; sự kiện server có số thứ tự `eventSeq`.
+Sau khi kết nối, client gửi `HELLO` để kiểm tra phiên bản. Phiên bản hiện tại dùng **client `3.0`, protocol `1`, asset pack `1`**. Các mã `requestId`, `matchId`, `roundId` giúp liên kết yêu cầu với đúng thao tác, trận và câu hỏi; sự kiện server có số thứ tự `eventSeq`.
 
 Mỗi kết nối có bộ đọc, bộ ghi và hàng đợi gửi riêng. Mỗi trận có khóa đồng bộ và bộ định thời riêng, giúp xử lý trường hợp trả lời đồng thời với hết giờ. Tác vụ database và ảnh chạy qua các bộ thực thi có giới hạn; việc lưu kết quả không giữ khóa xử lý trận.
 
@@ -125,57 +131,32 @@ Heartbeat kiểm tra kết nối định kỳ 10 giây; kết nối không hoạ
 
 ```text
 quiz-arena/
-├── pom.xml                         # Maven cha, phiên bản và danh sách module
-├── common/
-│   └── src/main/
-│       ├── java/.../common/
-│       │   ├── protocol/           # Loại thông điệp, payload, kiểm tra giao thức
-│       │   ├── net/                # Đóng gói và giải mã dữ liệu TCP
-│       │   └── assets/             # Danh mục và thông tin tài nguyên dùng chung
-│       └── resources/assets/       # registry.json
-├── server/
-│   └── src/main/java/.../server/
-│       ├── ServerMain.java         # Điểm khởi động server
-│       ├── config/                 # Đọc cấu hình database và cổng
-│       ├── network/                # Kết nối, bắt tay, định tuyến thông điệp
-│       ├── auth/                   # Đăng ký, đăng nhập, băm mật khẩu
-│       ├── session/                # Phiên đăng nhập và trạng thái online
-│       ├── challenge/              # Mời và ghép cặp thi đấu
-│       ├── match/                  # Vòng đời trận, thời gian, đáp án, điểm, chat
-│       ├── quiz/                   # Ngân hàng câu hỏi và quản lý quiz
-│       ├── media/                  # Tải lên, tải xuống và kiểm tra ảnh
-│       ├── persistence/            # Lưu kết quả và thử lại khi gặp lỗi
-│       ├── query/                  # Truy vấn bảng xếp hạng và lịch sử
-│       ├── db/                     # JDBC và kiểm tra database lúc khởi động
-│       ├── domain/                 # Mô hình dữ liệu nghiệp vụ
-│       └── tools/                  # Công cụ tạo tài khoản demo
-├── client/
-│   └── src/main/
-│       ├── java/.../client/
-│       │   ├── ClientMain.java     # Điểm khởi động JavaFX
-│       │   ├── ui/                 # Các màn hình và thành phần giao diện
-│       │   ├── state/              # Trạng thái client và cập nhật theo sự kiện
-│       │   ├── network/            # Giao tiếp với server
-│       │   ├── assets/             # Nạp, lưu đệm tài nguyên
-│       │   └── support/            # Tiện ích hỗ trợ client
-│       └── resources/
-│           ├── ui/quiz-arena.css   # Giao diện và màu sắc
-│           └── assets/            # Ảnh và tài nguyên đóng gói
-├── database/
-│   ├── 001_schema.sql             # Schema ban đầu
-│   ├── 002_seed.sql               # Danh mục, quiz và câu hỏi mẫu
-│   ├── 003_community_quizzes.sql   # Nâng cấp schema cho quiz cộng đồng và ảnh
-│   └── 004_lifelines.sql          # Nới giới hạn điểm cho quyền trợ giúp x2
-├── config/
-│   ├── server.properties.example  # Cấu hình mẫu
-│   └── server.local.properties    # Cấu hình riêng, không đưa lên Git
-├── data/                          # Dữ liệu phát sinh khi chạy
-│   ├── media/                     # File ảnh người dùng tải lên
-│   └── backups/                   # Bản sao lưu cục bộ nếu có
-└── docs/                          # Kiến trúc, giao thức, vận hành, kiểm thử
+├── pom.xml                         # Một module Maven, cấu hình build chung
+├── src/
+│   ├── main/
+│   │   ├── java/vn/edu/nhom7/quiz/
+│   │   │   ├── common/             # Protocol, frame TCP và hợp đồng dữ liệu
+│   │   │   ├── server/             # ServerMain, mạng, trận, JDBC và dịch vụ
+│   │   │   └── client/             # ClientMain, JavaFX, network và state
+│   │   └── resources/
+│   │       ├── assets/             # Registry, avatar, ảnh và âm thanh
+│   │       ├── fonts/              # Font giao diện và giấy phép
+│   │       ├── protocol/           # Fixture giao thức
+│   │       └── ui/                 # Stylesheet JavaFX
+│   └── test/
+│       ├── java/vn/edu/nhom7/quiz/  # Kiểm thử common, server và client
+│       └── resources/             # Catalogue giao thức dùng cho test
+├── database/                       # Schema, seed và migration 001 đến 005
+├── scripts/                        # Kiểm tra và đóng gói desktop
+├── config/                         # Cấu hình mẫu và cấu hình riêng được ignore
+├── data/                           # Dữ liệu chạy thật và ảnh người dùng
+├── target/                         # Kết quả build được ignore
+│   ├── quiz-arena-server.jar       # Server độc lập, đã kèm JDBC và Jackson
+│   └── quiz-arena-1.0.0-SNAPSHOT-client.jar # Client và common, chưa kèm thư viện
+└── docs/                           # Kiến trúc, giao thức, hướng dẫn và kiểm thử
 ```
 
-Trong từng module, kiểm thử nằm ở `src/test/java`; kết quả build nằm ở `target/`. Các thư mục dữ liệu chạy thật và cấu hình riêng được bỏ qua bởi Git.
+Kiểm thử của cả ba package nằm chung ở `src/test/java`; kết quả build nằm ở `target/`. Một module vẫn có hai điểm chạy độc lập là `ServerMain` và `ClientMain`. Xem [cấu trúc và đóng gói một module](docs/architecture/single-module.md). Các thư mục dữ liệu chạy thật và cấu hình riêng được bỏ qua bởi Git.
 
 ## 5. Cài đặt và chạy ứng dụng
 
@@ -208,9 +189,9 @@ cd quiz-arena
 mvn clean install
 ```
 
-Lệnh này biên dịch và kiểm thử các module, cài thư viện `common` vào kho Maven cục bộ, đồng thời tạo `server/target/quiz-arena-server.jar`. Lần đầu cần mạng để tải thư viện.
+Lệnh này biên dịch và kiểm thử một module, đồng thời tạo `target/quiz-arena-server.jar` và JAR client riêng. Không cần cài thư viện common như một artifact riêng. Lần đầu cần mạng để tải thư viện.
 
-**Các lệnh bên dưới chạy từ thư mục gốc dự án**, nơi có file `pom.xml` cha.
+**Các lệnh bên dưới chạy từ thư mục gốc dự án**, nơi có file `pom.xml` duy nhất.
 
 ### 5.3. Tạo database mới
 
@@ -236,11 +217,12 @@ mysql -u root -p quiz_arena < database/001_schema.sql
 mysql -u root -p quiz_arena < database/002_seed.sql
 mysql -u root -p quiz_arena < database/003_community_quizzes.sql
 mysql -u root -p quiz_arena < database/004_lifelines.sql
+mysql -u root -p quiz_arena < database/005_interactive_questions.sql
 ```
 
-Trong PowerShell, có thể mở `mysql -u root -p quiz_arena` rồi chạy lần lượt `SOURCE database/001_schema.sql;`, `SOURCE database/002_seed.sql;`, `SOURCE database/003_community_quizzes.sql;`, `SOURCE database/004_lifelines.sql;` từ thư mục gốc dự án.
+Trong PowerShell, có thể mở `mysql -u root -p quiz_arena` rồi chạy lần lượt `SOURCE database/001_schema.sql;`, `SOURCE database/002_seed.sql;`, `SOURCE database/003_community_quizzes.sql;`, `SOURCE database/004_lifelines.sql;`, `SOURCE database/005_interactive_questions.sql;` từ thư mục gốc dự án.
 
-**Nếu đã có database phiên bản cũ:** dừng server, sao lưu database và ảnh, kiểm tra `SELECT version FROM SCHEMA_METADATA;`. Database phiên bản 1 cần chạy migration `003` rồi `004`, mỗi file một lần; database phiên bản 3 chỉ cần chạy `004`; database phiên bản 4 đã cập nhật thì không chạy lại migration. Không tạo lại bảng hoặc nạp lại schema ban đầu để nâng cấp dữ liệu đang sử dụng.
+**Nếu đã có database phiên bản cũ:** dừng server, sao lưu database và ảnh, kiểm tra `SELECT version FROM SCHEMA_METADATA;`. Database phiên bản 1 cần chạy lần lượt `003`, `004`, `005`; bản 3 chạy `004`, `005`; bản 4 chạy `005`; bản 5 không chạy lại. Mỗi migration chạy một lần. Không tạo lại bảng hoặc nạp lại schema ban đầu để nâng cấp dữ liệu đang sử dụng.
 
 ### 5.4. Cấu hình server
 
@@ -275,17 +257,17 @@ Biến môi trường được ưu tiên hơn file cấu hình. File `server.loc
 Mở terminal thứ nhất:
 
 ```sh
-java -jar server/target/quiz-arena-server.jar --config=config/server.local.properties
+java -jar target/quiz-arena-server.jar --config=config/server.local.properties
 ```
 
-Khởi động thành công sẽ có thông báo `Quiz Arena listening on 5555`. Giữ terminal này hoạt động khi sử dụng app. Server kiểm tra schema phiên bản 4, tài nguyên và ngân hàng câu hỏi trước khi nhận kết nối.
+Khởi động thành công sẽ có thông báo `Quiz Arena listening on 5555`. Giữ terminal này hoạt động khi sử dụng app. Server kiểm tra schema phiên bản 5, tài nguyên và ngân hàng câu hỏi trước khi nhận kết nối.
 
 ### 5.6. Tạo tài khoản demo — tùy chọn
 
 Sau khi cấu hình database, chạy:
 
 ```sh
-java -cp server/target/quiz-arena-server.jar vn.edu.nhom7.quiz.server.tools.DemoUserSeeder
+java -cp target/quiz-arena-server.jar vn.edu.nhom7.quiz.server.tools.DemoUserSeeder
 ```
 
 Công cụ đọc `config/server.local.properties` mặc định và các biến môi trường ở trên. Nó tạo `demo1`, `demo2`, `demo3`, `demo4`, cùng mật khẩu **`DemoQuiz123!`**. Tài khoản đã tồn tại được giữ nguyên; công cụ không đặt lại mật khẩu.
@@ -297,7 +279,7 @@ Bạn cũng có thể tự đăng ký trực tiếp trong app.
 Mở terminal thứ hai:
 
 ```sh
-mvn -f client/pom.xml javafx:run
+mvn javafx:run
 ```
 
 Trong app, nhập máy chủ `localhost`, cổng `5555`, nhấn kết nối rồi đăng nhập hoặc đăng ký.
@@ -307,7 +289,7 @@ Trong app, nhập máy chủ `localhost`, cổng `5555`, nhấn kết nối rồ
 ### 5.8. Xem demo giao diện ngoại tuyến
 
 ```sh
-mvn -f client/pom.xml javafx:run -Djavafx.args="--fixture --participant=101"
+mvn javafx:run -Djavafx.args="--fixture --participant=101"
 ```
 
 Chế độ này tự phát lại trận mẫu để xem giao diện, không cần database hoặc server. Để đăng nhập thật, lưu quiz, tải ảnh và đấu với người khác, dùng lệnh client ở mục 5.7 **không có `--fixture`**.
@@ -388,13 +370,13 @@ Mời đối thủ → Chấp nhận → Chờ hai người sẵn sàng (tối �
     → Đếm ngược bắt đầu (3 giây)
     → Chuẩn bị câu hỏi và tải ảnh (tối đa 30 giây)
     → Đếm ngược câu hỏi (2 giây)
-    → Trả lời (tối đa 15 giây)
+    → Trả lời (15 giây câu cũ, 30 giây câu tương tác)
     → Công bố đáp án (2 giây)
     → Bảng điểm (3 giây)
     → Câu tiếp theo, hoặc kết quả trận nếu đã hết câu
 ```
 
-Server chuyển sang công bố đáp án ngay khi cả hai đã trả lời, hoặc khi hết 15 giây. Thời gian chuẩn bị ảnh và đếm ngược không bị tính vào thời gian trả lời.
+Server chuyển sang công bố đáp án ngay khi cả hai đã trả lời, hoặc khi hết thời hạn của câu (15 hoặc 30 giây). Thời gian chuẩn bị ảnh và đếm ngược không bị tính vào thời gian trả lời.
 
 ### Công thức điểm mỗi câu
 
@@ -434,7 +416,7 @@ Khi hoàn thành trận, người có tổng điểm cao hơn thắng; bằng đ
 
 1. Đăng nhập, mở **Quiz của tôi**, chọn **Tạo quiz**.
 2. Điền tên, mô tả và danh mục. Chọn xáo trộn nếu muốn đổi thứ tự câu hỏi khi chơi.
-3. Thêm câu hỏi, chọn một trong bốn loại và nhập nội dung.
+3. Thêm câu hỏi, chọn một trong bảy loại và nhập nội dung.
 4. Với trắc nghiệm, nhập 2–6 phương án và đánh dấu đáp án đúng. Với trả lời ngắn, nhập mỗi cách trả lời được chấp nhận trên một dòng.
 5. Thêm giải thích, ảnh câu hỏi hoặc ảnh giải thích nếu cần.
 6. Nhấn **Lưu câu**. Sau khi tải ảnh xong vẫn cần lưu câu để gắn ảnh vào câu hỏi.
@@ -442,6 +424,14 @@ Khi hoàn thành trận, người có tổng điểm cao hơn thắng; bằng đ
 8. Lưu bản nháp để tiếp tục sửa sau. Khi có 1–50 câu hợp lệ, chọn **Xuất bản** để quiz xuất hiện công khai trong sảnh.
 
 Nội dung câu hỏi tối đa 500 ký tự; mỗi phương án và mỗi đáp án ngắn tối đa 120 ký tự. Server kiểm tra dữ liệu khi xuất bản, bao gồm loại câu, đáp án và quyền sở hữu ảnh.
+
+### Ba dạng tương tác trong quiz cộng đồng
+
+- **Sắp xếp thứ tự:** nhập 3–6 mục theo thứ tự đúng. Người chơi kéo thả hoặc dùng ↑/↓ rồi khóa thứ tự.
+- **Ước lượng số:** đặt thang min/max, bước nhảy, đơn vị và khoảng đúng. Người chơi kéo hoặc nhập số rồi khóa giá trị.
+- **Ghim trên ảnh:** chọn ảnh, kéo khoanh một vùng chữ nhật hoặc nhập vị trí/kích thước theo %. Người chơi đặt ghim rồi khóa vị trí.
+
+Ba dạng này có 30 giây; đúng ở ≤10 giây được 3 điểm, >10–20 giây được 2, >20–30 giây được 1; sai/hết giờ 0. Lịch sử hiển thị đáp án và lựa chọn từng người. Cần schema 5 và cập nhật cả client/server 3.0. Xem [thiết kế và hợp đồng dữ liệu](docs/architecture/interactive-questions.md).
 
 ### Bản nháp, bản xuất bản và gỡ khỏi sảnh
 
@@ -460,7 +450,7 @@ Một câu có thể có cả hai ảnh hoặc chỉ một ảnh. Nếu bạn đ
 
 Ảnh phải là **PNG hoặc JPEG**, tối đa **5 MiB/file** và **16 triệu pixel**. Server kiểm tra nội dung thực, kích thước, khả năng giải mã và mã kiểm tra SHA-256. Ảnh được truyền theo từng phần qua TCP; không yêu cầu client truy cập thư mục trên máy server.
 
-Trước khi mở lượt trả lời, server chờ cả hai client báo chuẩn bị xong, tối đa 30 giây. Cơ chế này giúp thời gian tải ảnh không tiêu tốn 15 giây làm bài. Quyền tải ảnh giải thích chỉ được mở theo trạng thái công bố đáp án của trận.
+Trước khi mở lượt trả lời, server chờ cả hai client báo chuẩn bị xong, tối đa 30 giây. Cơ chế này giúp thời gian tải ảnh không tiêu tốn thời gian làm bài. Quyền tải ảnh giải thích chỉ được mở theo trạng thái công bố đáp án của trận.
 
 ## 9. Cơ sở dữ liệu và lưu kết quả
 
@@ -540,7 +530,7 @@ mvn install -Dquiz.uiEvidence=target/ui-evidence
 
 Bộ chụp xuất bốn thư mục: `1280x800`, `1024x720` (cửa sổ nhỏ), `light-1280x800` (giao diện sáng) và `xlarge-1024x720` (cỡ chữ Rất lớn trên cửa sổ nhỏ). Ảnh hiệu ứng (`fx-*`) được chụp ở khung hình đỉnh của hiệu ứng. Ảnh của từng giai đoạn làm lại giao diện nằm trong `docs/design/evidence/huong-d-*`.
 
-Đường dẫn tương đối được giải quyết theo thư mục chạy của module kiểm thử; dùng đường dẫn tuyệt đối nếu muốn tập trung ảnh vào một thư mục cụ thể. Xem [báo cáo giao diện](docs/design/interface-redesign.md) và [manifest ảnh](docs/design/evidence/manifest.json) để đối chiếu các trạng thái.
+Đường dẫn tương đối được giải quyết theo thư mục gốc dự án; dùng đường dẫn tuyệt đối nếu muốn tập trung ảnh vào một thư mục cụ thể. Xem [báo cáo giao diện](docs/design/interface-redesign.md) và [manifest ảnh](docs/design/evidence/manifest.json) để đối chiếu các trạng thái.
 
 Các số liệu kiểm thử trong tài liệu là kết quả của lần chạy được ghi nhận ở đó; không thay thế việc chạy lại khi thay đổi mã nguồn.
 
@@ -549,11 +539,11 @@ Các số liệu kiểm thử trong tài liệu là kết quả của lần ch�
 | Hiện tượng | Cách xử lý |
 | --- | --- |
 | Maven báo sai phiên bản Java hoặc `release version 21 not supported` | Kiểm tra `mvn -version`, sửa `JAVA_HOME` để Maven dùng JDK 21 |
-| Không tìm thấy thư viện `quiz-arena-common` khi chạy client | Chạy `mvn clean install` từ thư mục gốc trước |
+| IDE còn hiện các module common/server/client cũ | Nạp lại Maven từ pom.xml gốc; mã nguồn hiện nằm chung trong src/ |
 | `mysql` không được nhận diện | Thêm thư mục `bin` của MySQL vào `PATH`, hoặc dùng đường dẫn đầy đủ tới chương trình |
 | Server báo không kết nối được database | Kiểm tra MySQL đang chạy, host, cổng, tên schema, tài khoản và mật khẩu |
 | `Access denied` từ MySQL | Kiểm tra mật khẩu và quyền của user trên đúng database; biến môi trường có thể đang ghi đè file cấu hình |
-| Server báo schema không đúng phiên bản | Kiểm tra `SCHEMA_METADATA`; nâng cấp lần lượt bằng migration `003`, `004` sau khi sao lưu nếu đang ở bản cũ |
+| Server báo schema không đúng phiên bản | Kiểm tra `SCHEMA_METADATA`; nâng cấp lần lượt bằng migration `003`, `004`, `005` sau khi sao lưu nếu đang ở bản cũ |
 | Không bind được cổng server | Kiểm tra server khác đang chạy; dừng tiến trình đúng hoặc đổi `server.port` và cổng kết nối của client |
 | Client không kết nối được | Chạy server trước; kiểm tra host, cổng, firewall; khi dùng LAN không nhập `localhost` của máy chơi |
 | Kết nối bị từ chối do phiên bản | Build và chạy client/server cùng phiên bản mã nguồn hiện tại |
@@ -572,7 +562,7 @@ Các số liệu kiểm thử trong tài liệu là kết quả của lần ch�
 
 ```sh
 java -Dquiz.mediaDir=/duong/dan/luu/anh \
-  -jar server/target/quiz-arena-server.jar \
+  -jar target/quiz-arena-server.jar \
   --config=config/server.local.properties
 ```
 
@@ -596,3 +586,7 @@ Kết quả chưa lưu nằm trong RAM. Nếu server bị tắt cưỡng bức h
 | [Kiểm chứng chức năng quiz cộng đồng](docs/testing/community-quiz-verification.md) | Bằng chứng kiểm thử tạo quiz, xuất bản và ảnh |
 | [Báo cáo nghiệm thu](docs/testing/acceptance-report.md) | Phạm vi và kết quả kiểm chứng đã ghi nhận |
 | [Thiết kế giao diện](docs/design/interface-redesign.md) | Hệ thống màu sắc, màn hình và bằng chứng giao diện |
+
+## Tài liệu giải thích code theo từng thành viên
+
+Xem [bản đọc trên GitHub](docs/giai-thich-code-tung-thanh-vien.md) hoặc tải [bản Word](outputs/giai-thich-code/Giai_thich_code_tung_thanh_vien_Nhom_7.docx). Tài liệu giải thích code theo Minh, Tuấn, Việt, Phúc, kèm 56 câu hỏi và câu trả lời mẫu.

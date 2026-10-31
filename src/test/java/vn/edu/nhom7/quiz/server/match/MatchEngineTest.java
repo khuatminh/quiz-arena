@@ -1,0 +1,584 @@
+package vn.edu.nhom7.quiz.server.match;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.time.*;
+import java.util.*;
+import java.util.concurrent.*;
+import org.junit.jupiter.api.*;
+import vn.edu.nhom7.quiz.common.protocol.*;
+import vn.edu.nhom7.quiz.server.domain.*;
+import vn.edu.nhom7.quiz.server.persistence.ResultSink;
+import vn.edu.nhom7.quiz.server.support.*;
+
+class MatchEngineTest {
+  FakeGameClock clock;
+  FakeGameScheduler scheduler;
+  MatchManager manager;
+  Match match;
+  List<Envelope> events;
+  List<MatchSummary> saved;
+
+  @BeforeEach
+  void setup() {
+    clock = new FakeGameClock();
+    scheduler = new FakeGameScheduler(clock);
+    events = Collections.synchronizedList(new ArrayList<>());
+    saved = new ArrayList<>();
+    ProtocolCodec codec = new ProtocolCodec();
+    manager =
+        new MatchManager(
+            clock,
+            scheduler,
+            (c, e) -> {
+              codec.encode(e);
+              events.add(e);
+              return true;
+            },
+            new ResultSink() {
+              public void submit(MatchSummary s) {
+                saved.add(s);
+              }
+
+              public boolean canCreateMatch() {
+                return true;
+              }
+
+              public boolean reserveMatch(UUID id) {
+                return true;
+              }
+
+              public void cancelReservation(UUID id) {}
+            },
+            id -> new ParticipantSummary(id, "P" + id, "avatar-1", 0, 0),
+            c -> true,
+            (u, id) -> {});
+    match =
+        manager.prepare(
+            UUID.randomUUID(),
+            ServerFixtures.quiz(),
+            ServerFixtures.players(),
+            ServerFixtures.questions());
+    manager.activate(match);
+  }
+
+  void command(int player, String type, Object... fields) {
+    manager.handle(
+        ServerFixtures.players().get(player),
+        new Envelope(
+            1,
+            MessageType.valueOf(type),
+            UUID.randomUUID(),
+            match.id,
+            match.roundId,
+            null,
+            MatchPayloads.obj(fields)));
+  }
+
+  void start() {
+    command(0, "MATCH_READY");
+    command(1, "MATCH_READY");
+    scheduler.advance(Duration.ofSeconds(3));
+  }
+
+  void open() {
+    command(0, "QUESTION_READY", "questionId", match.question().questionId());
+    command(1, "QUESTION_READY", "questionId", match.question().questionId());
+    scheduler.advance(Duration.ofSeconds(2));
+  }
+
+  @Test
+  void interactiveRoundsUseThirtySecondsAndKeepKeysPrivateUntilReveal() throws Exception {
+    var json = new com.fasterxml.jackson.databind.ObjectMapper();
+    var questions =
+        List.of(
+            InteractiveQuestionsTest.question(QuestionType.REORDER, "[\"a\",\"b\",\"c\"]"),
+            InteractiveQuestionsTest.question(QuestionType.RANGE, InteractiveQuestionsTest.RANGE),
+            InteractiveQuestionsTest.question(
+                QuestionType.PINPOINT, InteractiveQuestionsTest.REGION));
+    var quiz =
+        new Payloads.QuizSummary(
+            1, "Interactive", 1, "General", null, "AVAILABLE", 3, "COMMUNITY", "Author", 42);
+    match = manager.prepare(UUID.randomUUID(), quiz, ServerFixtures.players(), questions);
+    manager.activate(match);
+    start();
+    int n = 0;
+    for (String raw : List.of("[\"a\",\"b\",\"c\"]", "5", "{\"x\":0.4,\"y\":0.4}")) {
+      assertFalse(
+          MatchSnapshotFactory.snapshotLocked(match, 101, clock)
+              .path("question")
+              .toString()
+              .contains("acceptedMin"));
+      open();
+      scheduler.advance(Duration.ofSeconds(16));
+      assertEquals(MatchPhase.ANSWERING, match.phase());
+      command(
+          0, "ANSWER", "questionId", match.question().questionId(), "answer", json.readTree(raw));
+      scheduler.advance(Duration.ofSeconds(14));
+      assertEquals(MatchPhase.REVEAL, match.phase());
+      assertEquals(2, match.latestResult.path("outcomes").get(0).path("earnedPoints").asInt());
+      scheduler.advance(Duration.ofSeconds(5));
+      n++;
+    }
+    assertEquals(3, saved.getLast().completedRounds());
+    assertEquals(6, saved.getLast().player1().totalScore());
+    assertEquals(
+        30000,
+        events.stream()
+            .filter(
+                e ->
+                    e.matchId() != null
+                        && e.matchId().equals(match.id)
+                        && e.type() == MessageType.QUESTION_OPEN)
+            .findFirst()
+            .orElseThrow()
+            .payload()
+            .path("remainingMs")
+            .asInt());
+  }
+
+  @Test
+  void communityCompletesAllRoundsWithoutRankedSnapshot() {
+    for (int count : List.of(1, 50)) {
+      saved.clear();
+      var quiz =
+          new Payloads.QuizSummary(
+              1, "Community", 1, "General", null, "AVAILABLE", count, "COMMUNITY", "Author", 42);
+      var base = ServerFixtures.questions().getFirst();
+      var questions = new ArrayList<QuestionSnapshot>();
+      for (int i = 1; i <= count; i++)
+        questions.add(
+            new QuestionSnapshot(
+                i,
+                1,
+                base.questionType(),
+                base.content(),
+                base.options(),
+                base.answerKeyJson(),
+                base.explanation(),
+                "question-" + i,
+                "explanation-" + i));
+      match = manager.prepare(UUID.randomUUID(), quiz, ServerFixtures.players(), questions);
+      manager.activate(match);
+      start();
+      for (int i = 0; i < count; i++) {
+        open();
+        command(0, "ANSWER", "questionId", match.question().questionId(), "answer", "A");
+        command(1, "ANSWER", "questionId", match.question().questionId(), "answer", "A");
+        scheduler.advance(Duration.ofSeconds(5));
+      }
+      var summary = saved.getLast();
+      assertEquals(count, summary.completedRounds());
+      assertEquals(count, summary.totalRounds());
+      assertFalse(summary.ranked());
+      assertEquals(42, summary.quizVersionId());
+      assertTrue(events.getLast().payload().path("review").size() <= 5);
+      if (count == 50) {
+        for (int page = 1; page <= 25; page++) {
+          command(0, "LIVE_REVIEW_REQUEST", "page", page);
+          var payload = events.getLast().payload();
+          assertEquals(page, payload.path("page").asInt());
+          assertEquals(50, payload.path("totalItems").asInt());
+          assertEquals(2, payload.path("review").size());
+          assertEquals(
+              (page - 1) * 2 + 1, payload.path("review").get(0).path("roundIndex").asInt());
+        }
+      }
+    }
+  }
+
+  @Test
+  void mediaAccessRequiresParticipantAndReveal() {
+    start();
+    var q = match.question();
+    assertFalse(manager.canAccessMedia(999, "question"));
+    assertFalse(manager.canAccessMedia(101, "unknown"));
+    var question =
+        new QuestionSnapshot(
+            q.questionId(),
+            q.quizId(),
+            q.questionType(),
+            q.content(),
+            q.options(),
+            q.answerKeyJson(),
+            q.explanation(),
+            "question",
+            "explanation");
+    var questions = new ArrayList<>(ServerFixtures.questions());
+    questions.set(0, question);
+    match =
+        manager.prepare(
+            UUID.randomUUID(), ServerFixtures.quiz(), ServerFixtures.players(), questions);
+    manager.activate(match);
+    assertFalse(manager.canAccessMedia(101, "question"));
+    start();
+    assertTrue(manager.canAccessMedia(101, "question"));
+    assertFalse(manager.canAccessMedia(101, "explanation"));
+    open();
+    scheduler.advance(Duration.ofSeconds(15));
+    assertTrue(manager.canAccessMedia(101, "explanation"));
+    scheduler.advance(Duration.ofSeconds(5));
+    assertTrue(manager.canAccessMedia(101, "explanation"));
+    assertTrue(manager.canAccessMedia(102, "question"));
+    assertFalse(manager.canAccessMedia(999, "explanation"));
+    command(0, "EXIT_MATCH");
+    assertFalse(manager.canAccessMedia(101, "explanation"));
+    assertTrue(manager.canAccessMedia(102, "explanation"));
+  }
+
+  @Test
+  void abandonedReviewHidesAnswerKeyAndExplanation() {
+    start();
+    open();
+    command(0, "EXIT_MATCH");
+    var review =
+        events.stream()
+            .filter(e -> e.type() == MessageType.MATCH_RESULT)
+            .findFirst()
+            .orElseThrow()
+            .payload()
+            .path("review")
+            .get(0);
+    assertTrue(review.path("correctAnswer").isNull());
+    assertTrue(review.path("explanation").isNull());
+    assertTrue(review.path("explanationAssetId").isNull());
+  }
+
+  @Test
+  void completesTenRoundsAndPublishesLeaderboardTenBeforeResult() {
+    start();
+    for (int i = 0; i < 10; i++) {
+      open();
+      var answer = MatchPayloads.correctAnswer(match.question());
+      command(0, "ANSWER", "questionId", match.question().questionId(), "answer", answer);
+      command(1, "ANSWER", "questionId", match.question().questionId(), "answer", answer);
+      assertEquals(MatchPhase.REVEAL, match.phase());
+      scheduler.advance(Duration.ofSeconds(5));
+    }
+    assertEquals(MatchPhase.RESULT, match.phase());
+    assertEquals(1, saved.size());
+    assertEquals(10, saved.getFirst().completedRounds());
+    assertEquals(10, saved.getFirst().openedRounds());
+    assertEquals(30, saved.getFirst().player1().totalScore());
+    assertEquals(MatchOutcome.DRAW, saved.getFirst().outcome());
+    assertEquals(
+        20, events.stream().filter(e -> e.type() == MessageType.ROUND_LEADERBOARD).count());
+    int result = 0, lastBoard = 0;
+    for (int i = 0; i < events.size(); i++) {
+      if (events.get(i).type() == MessageType.MATCH_RESULT) result = i;
+      if (events.get(i).type() == MessageType.ROUND_LEADERBOARD) lastBoard = i;
+    }
+    assertTrue(result > lastBoard);
+  }
+
+  @Test
+  void waitingTimeoutCancelsWithoutHistoryAndStaleCallbacksDoNothing() {
+    var old = scheduler.callbacks();
+    scheduler.advance(Duration.ofSeconds(30));
+    assertEquals(MatchPhase.CANCELLED, match.phase());
+    old.forEach(Runnable::run);
+    assertTrue(saved.isEmpty());
+  }
+
+  @Test
+  void invalidAnswerDoesNotConsumeSlotAndSnapshotProtectsOpponent() {
+    start();
+    open();
+    assertThrows(
+        ProtocolException.class, () -> command(0, "ANSWER", "questionId", 1, "answer", "unknown"));
+    assertTrue(match.accepted.isEmpty());
+    command(0, "ANSWER", "questionId", 1, "answer", "A");
+    command(1, "MATCH_SNAPSHOT_REQUEST");
+    var snap = events.getLast().payload();
+    assertTrue(snap.path("acceptedAnswer").isNull());
+    assertFalse(snap.toString().contains("correctAnswer"));
+    long deadline = match.deadline;
+    command(0, "CHAT", "text", "hello");
+    assertEquals(deadline, match.deadline);
+    scheduler.advance(Duration.ofSeconds(15));
+    assertEquals(3, match.scores[0]);
+    assertEquals(0, match.scores[1]);
+  }
+
+  @Test
+  void unfinalizedAnswerIsAbandonedOnForfeit() {
+    start();
+    open();
+    command(0, "ANSWER", "questionId", 1, "answer", "A");
+    command(1, "EXIT_MATCH");
+    var summary = saved.getFirst();
+    assertEquals(FinishReason.FORFEIT, summary.finishReason());
+    assertEquals(0, summary.completedRounds());
+    assertEquals(1, summary.openedRounds());
+    assertEquals(0, summary.player1().totalScore());
+    assertEquals(
+        AnswerOutcomeType.ABANDONED, summary.rounds().getFirst().outcomes().getFirst().outcome());
+    assertNull(summary.rounds().getFirst().outcomes().getFirst().correct());
+  }
+
+  @Test
+  void concurrentTwoAnswersAndTimeoutCloseExactlyOnce() throws Exception {
+    start();
+    open();
+    var barrier = new CyclicBarrier(3);
+    var executor = Executors.newFixedThreadPool(3);
+    try {
+      List<Future<?>> jobs = new ArrayList<>();
+      for (int player = 0; player < 2; player++) {
+        int p = player;
+        jobs.add(
+            executor.submit(
+                () -> {
+                  try {
+                    barrier.await();
+                    command(p, "ANSWER", "questionId", 1, "answer", "A");
+                  } catch (ProtocolException ignored) {
+                  } catch (Exception e) {
+                    throw new RuntimeException(e);
+                  }
+                }));
+      }
+      jobs.add(
+          executor.submit(
+              () -> {
+                try {
+                  barrier.await();
+                  manager.locked(match, () -> manager.rounds.closeRound(match));
+                } catch (Exception e) {
+                  throw new RuntimeException(e);
+                }
+              }));
+      for (var j : jobs) j.get(2, TimeUnit.SECONDS);
+      assertEquals(1, match.completed);
+      assertEquals(1, match.rounds.size());
+      assertEquals(2, events.stream().filter(e -> e.type() == MessageType.QUESTION_RESULT).count());
+    } finally {
+      executor.shutdownNow();
+    }
+  }
+
+  @Test
+  void questionPreparationTimeoutAbortsStartedMatch() {
+    start();
+    scheduler.advance(Duration.ofSeconds(29));
+    assertTrue(saved.isEmpty());
+    scheduler.advance(Duration.ofSeconds(1));
+    assertEquals(FinishReason.ABORTED, saved.getFirst().finishReason());
+    assertEquals(ReasonCode.CLIENT_NOT_READY, saved.getFirst().reasonCode());
+    assertEquals(1, saved.getFirst().openedRounds());
+    assertEquals(0, saved.getFirst().completedRounds());
+  }
+
+  @Test
+  void duplicateReadyCannotExtendDeadline() {
+    long deadline = match.deadline;
+    command(0, "MATCH_READY");
+    scheduler.advance(Duration.ofSeconds(1));
+    command(0, "MATCH_READY");
+    assertEquals(deadline, match.deadline);
+    command(1, "MATCH_READY");
+    scheduler.advance(Duration.ofSeconds(3));
+    deadline = match.deadline;
+    command(0, "QUESTION_READY", "questionId", 1);
+    scheduler.advance(Duration.ofSeconds(1));
+    command(0, "QUESTION_READY", "questionId", 1);
+    assertEquals(deadline, match.deadline);
+  }
+
+  @Test
+  void resultExpiresAndCanNoLongerSnapshot() {
+    start();
+    open();
+    command(0, "EXIT_MATCH");
+    scheduler.advance(Duration.ofSeconds(60));
+    assertEquals(MatchPhase.CLOSED, match.phase());
+    assertTrue(manager.find(match.id).isEmpty());
+    assertThrows(ProtocolException.class, () -> command(1, "MATCH_SNAPSHOT_REQUEST"));
+  }
+
+  @Test
+  void chatLimiterAndIdempotenceAreIndependentFromAnswer() {
+    start();
+    open();
+    UUID request = UUID.randomUUID();
+    var c =
+        new Envelope(
+            1, MessageType.CHAT, request, match.id, null, null, MatchPayloads.obj("text", " hi "));
+    manager.handle(ServerFixtures.players().getFirst(), c);
+    manager.handle(ServerFixtures.players().getFirst(), c);
+    long chatIds =
+        events.stream()
+            .filter(e -> e.type() == MessageType.CHAT_MESSAGE)
+            .map(e -> e.payload().path("chatMessageId").asText())
+            .distinct()
+            .count();
+    assertEquals(1, chatIds);
+    for (int i = 0; i < 4; i++) command(0, "CHAT", "text", "message");
+    assertThrows(ProtocolException.class, () -> command(0, "CHAT", "text", "sixth"));
+    command(0, "ANSWER", "questionId", 1, "answer", "A");
+    assertTrue(match.accepted.containsKey(101L));
+  }
+
+  @Test
+  void scoresAtExactDeadlineButRejectsOneNanosecondAfter() {
+    start();
+    open();
+    clock.advance(Duration.ofSeconds(15));
+    command(0, "ANSWER", "questionId", 1, "answer", "A");
+    assertEquals(1, match.accepted.get(101L).points());
+    clock.advance(Duration.ofNanos(1));
+    ProtocolException error =
+        assertThrows(
+            ProtocolException.class, () -> command(1, "ANSWER", "questionId", 1, "answer", "A"));
+    assertEquals("LATE_ANSWER", error.code());
+  }
+
+  @Test
+  void duplicateAnswerAcknowledgesOriginalAfterClose() {
+    start();
+    open();
+    var c =
+        new Envelope(
+            1,
+            MessageType.ANSWER,
+            UUID.randomUUID(),
+            match.id,
+            match.roundId,
+            null,
+            MatchPayloads.obj("questionId", 1, "answer", "A"));
+    manager.handle(ServerFixtures.players().getFirst(), c);
+    command(1, "ANSWER", "questionId", 1, "answer", "A");
+    manager.handle(ServerFixtures.players().getFirst(), c);
+    assertEquals(3, match.scores[0]);
+    assertEquals(MessageType.ANSWER_ACK, events.getLast().type());
+  }
+
+  @Test
+  void constructorRejectsDuplicatesWrongDistributionAndCallerMutation() {
+    var questions = new ArrayList<>(ServerFixtures.questions());
+    questions.set(1, questions.getFirst());
+    assertThrows(
+        IllegalArgumentException.class,
+        () ->
+            manager.prepare(
+                UUID.randomUUID(), ServerFixtures.quiz(), ServerFixtures.players(), questions));
+    var source = new ArrayList<>(ServerFixtures.questions());
+    var copy =
+        manager.prepare(UUID.randomUUID(), ServerFixtures.quiz(), ServerFixtures.players(), source);
+    source.clear();
+    assertEquals(10, copy.questions.size());
+    assertThrows(UnsupportedOperationException.class, () -> copy.questions.clear());
+  }
+
+  @Test
+  void registeredPreparedDisconnectCannotReviveAtActivation() {
+    var prepared =
+        manager.prepare(
+            UUID.randomUUID(),
+            ServerFixtures.quiz(),
+            ServerFixtures.players(),
+            ServerFixtures.questions());
+    manager.registerPrepared(prepared);
+    manager.onDisconnected(ServerFixtures.players().getFirst());
+    assertEquals(MatchPhase.CANCELLED, prepared.phase());
+    assertThrows(ProtocolException.class, () -> manager.activate(prepared));
+    assertFalse(manager.find(prepared.id).isPresent());
+  }
+
+  Envelope last(String type) {
+    return events.stream()
+        .filter(e -> e.type() == MessageType.valueOf(type))
+        .reduce((a, b) -> b)
+        .orElseThrow();
+  }
+
+  String rejected(int player, String kind) {
+    return assertThrows(
+            ProtocolException.class,
+            () ->
+                command(
+                    player,
+                    "LIFELINE_USE",
+                    "questionId",
+                    match.question().questionId(),
+                    "kind",
+                    kind))
+        .code();
+  }
+
+  @Test
+  void fiftyFiftyKeepsTheKeyAndOneWrongOptionForTheCallerOnly() {
+    start();
+    open();
+    long question = match.question().questionId();
+    int before = events.size();
+    command(0, "LIFELINE_USE", "questionId", question, "kind", "FIFTY_FIFTY");
+    var result = last("LIFELINE_RESULT");
+    assertEquals(match.roundId, result.roundId());
+    var removed = result.payload().path("removedOptionIds");
+    // Three options: the key "A" stays with one wrong option.
+    assertEquals(1, removed.size());
+    assertNotEquals("A", removed.get(0).asText());
+    assertEquals(
+        List.of("DOUBLE_POINTS", "REMOVE_ONE"),
+        MatchPayloads.JSON.convertValue(result.payload().path("remaining"), List.class));
+    var added = events.subList(before, events.size());
+    assertEquals(1, added.stream().filter(e -> e.type() == MessageType.LIFELINE_RESULT).count());
+    assertEquals(2, added.stream().filter(e -> e.type() == MessageType.LIFELINE_STATUS).count());
+    assertFalse(last("LIFELINE_STATUS").payload().has("removedOptionIds"));
+    assertEquals("LIFELINE_LIMIT", rejected(0, "DOUBLE_POINTS"));
+    command(0, "MATCH_SNAPSHOT_REQUEST");
+    var lifelines = last("MATCH_SNAPSHOT").payload().path("lifelines");
+    assertEquals("FIFTY_FIFTY", lifelines.path("active").get(0).asText());
+    assertEquals(removed, lifelines.path("removedOptionIds"));
+    command(1, "MATCH_SNAPSHOT_REQUEST");
+    var opponent = last("MATCH_SNAPSHOT").payload().path("lifelines");
+    assertEquals(3, opponent.path("remaining").size());
+    assertEquals(0, opponent.path("removedOptionIds").size());
+  }
+
+  @Test
+  void doublePointsDoublesOneQuestionAndEachLifelineIsSpentOncePerMatch() {
+    start();
+    open();
+    long question = match.question().questionId();
+    command(0, "LIFELINE_USE", "questionId", question, "kind", "DOUBLE_POINTS");
+    command(0, "ANSWER", "questionId", question, "answer", "A");
+    command(1, "ANSWER", "questionId", question, "answer", "A");
+    var outcomes = last("QUESTION_RESULT").payload().path("outcomes");
+    assertEquals(6, outcomes.get(0).path("earnedPoints").asInt());
+    assertEquals(3, outcomes.get(1).path("earnedPoints").asInt());
+    scheduler.advance(Duration.ofSeconds(5));
+    open();
+    assertEquals("LIFELINE_USED", rejected(0, "DOUBLE_POINTS"));
+    command(0, "LIFELINE_USE", "questionId", match.question().questionId(), "kind", "REMOVE_ONE");
+    var removed = last("LIFELINE_RESULT").payload().path("removedOptionIds");
+    assertEquals(1, removed.size());
+    assertNotEquals("A", removed.get(0).asText());
+    command(0, "ANSWER", "questionId", match.question().questionId(), "answer", "B");
+    command(1, "ANSWER", "questionId", match.question().questionId(), "answer", "A");
+    assertEquals(
+        0, last("QUESTION_RESULT").payload().path("outcomes").get(0).path("earnedPoints").asInt());
+  }
+
+  @Test
+  void lifelinesNeedAnOpenUnansweredQuestionAndOptionsToRemove() {
+    start();
+    assertEquals("INVALID_STATE", rejected(0, "DOUBLE_POINTS"));
+    open();
+    assertEquals("INVALID_LIFELINE", rejected(0, "SKIP"));
+    command(1, "ANSWER", "questionId", match.question().questionId(), "answer", "A");
+    assertEquals("INVALID_STATE", rejected(1, "DOUBLE_POINTS"));
+    // Rounds 5-8 are multiple choice and true/false: x2 only.
+    for (int round = 1; round < 7; round++) {
+      scheduler.advance(Duration.ofSeconds(20));
+      open();
+    }
+    assertEquals(QuestionType.TRUE_FALSE, match.question().questionType());
+    assertEquals("LIFELINE_UNAVAILABLE", rejected(0, "FIFTY_FIFTY"));
+    assertEquals("LIFELINE_UNAVAILABLE", rejected(0, "REMOVE_ONE"));
+    command(
+        0, "LIFELINE_USE", "questionId", match.question().questionId(), "kind", "DOUBLE_POINTS");
+    assertEquals("DOUBLE_POINTS", last("LIFELINE_STATUS").payload().path("kind").asText());
+  }
+}

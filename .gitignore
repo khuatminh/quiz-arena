@@ -1,4 +1,6 @@
 target/
+dist/
+__pycache__/
 .idea/
 *.iml
 .DS_Store
@@ -14,3 +16,7 @@ outputs/refactor-*/ui-before/
 outputs/refactor-*/ui-after/
 outputs/refactor-*/fixture-smoke/
 outputs/refactor-*/ui-differences-review.png
+
+# Local document sources, render previews and QA intermediates.
+outputs/giai-thich-code/_work/
+~$*

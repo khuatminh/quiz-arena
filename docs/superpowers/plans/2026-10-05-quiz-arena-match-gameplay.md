@@ -1,5 +1,8 @@
 # Quiz Arena — Match & Gameplay Implementation Plan
 
+> Cấu trúc build hiện tại đã chuyển sang một module Maven với `src/main` và `src/test`. Tài liệu này lưu kế hoạch triển khai ban đầu; dùng [hướng dẫn một module](../../architecture/single-module.md) cho đường dẫn và lệnh chạy hiện tại.
+
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Bàn giao game engine 1v1 đủ10 câu, chấm bốn loại đáp án, realtime leaderboard, chat/forfeit/rematch và bảo vệ mọi race bằng test xác định.

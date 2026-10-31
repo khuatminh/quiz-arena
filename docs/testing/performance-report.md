@@ -5,7 +5,7 @@ Measured on2026-10-09, Asia/Ho_Chi_Minh, Apple M4/arm64, macOS27.0, JDK21.0.9, M
 Command (public demo password supplied via QUIZ_DEMO_PASSWORD):
 
 ```sh
-java -cp 'server/target/test-classes:server/target/quiz-arena-server.jar' \
+java -cp 'target/test-classes:target/quiz-arena-server.jar' \
  vn.edu.nhom7.quiz.server.system.LoadProbe \
  --host=127.0.0.1 --port=15555 --connections=4 --matches=2 \
  --samples=100 --csv=docs/testing/evidence/latency.csv

@@ -40,7 +40,7 @@ The evidence suite rendered **63 states at each of 1280×800 and 1024×720**. St
 | Ranking and history | `17-ranking`, `18-history`, empty/loading states; aligned ranking columns and compact history rows |
 | Community authoring | `21-my-quizzes`, four `editor-*`, four scrolled `question-editor-*`, eight `preview-*`; structured choices, native boolean answer, image controls and preserved drafts |
 
-Launched `ClientMain` through `mvn -f client/pom.xml javafx:run` with the existing offline fixture and automatic evidence capture. The process exited successfully; inspected actual application auth, lobby, waiting, countdown, open, reveal and leaderboard frames. This supplements the native gallery rather than replacing its broader coverage.
+Launched `ClientMain` through `mvn javafx:run` with the existing offline fixture and automatic evidence capture. The process exited successfully; inspected actual application auth, lobby, waiting, countdown, open, reveal and leaderboard frames. This supplements the native gallery rather than replacing its broader coverage.
 
 Key contrast ratios: ink/white 12.08:1; muted/white 5.67:1; white/primary teal 4.91:1; placeholder/white 4.56:1; ink/gold 7.54:1. Keyboard focus remains visible. Existing optional leaderboard motion and reduced-motion support are preserved. No new animation dependency was introduced.
 
