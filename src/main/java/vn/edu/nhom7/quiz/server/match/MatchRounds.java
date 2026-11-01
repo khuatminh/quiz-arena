@@ -139,7 +139,7 @@ final class MatchRounds {
     match.rounds.add(
         new RoundSummary(match.roundId, match.index + 1, match.question(), true, outcomes));
     match.completed++;
-    manager.phase(match, MatchPhase.REVEAL, 2);
+    manager.phase(match, MatchPhase.REVEAL, 6);
     match.latestResult =
         obj(
             "questionId",
@@ -153,7 +153,7 @@ final class MatchRounds {
             "outcomes",
             outcomes.stream().map(MatchPayloads::publicOutcome).toList(),
             "durationMs",
-            2000,
+            6000,
             "phaseEndsAtMs",
             manager.endMillis(match),
             "serverTimeMs",

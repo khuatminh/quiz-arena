@@ -10,15 +10,20 @@ import vn.edu.nhom7.quiz.common.protocol.*;
 import vn.edu.nhom7.quiz.server.*;
 import vn.edu.nhom7.quiz.server.support.*;
 
-class TenRoundMatchIT {
+class SystemQuizMatchIT {
   @Test
-  void tenRoundsThroughTcpPersistTwentyOutcomesAndRematchFreshState() throws Exception {
+  void allSystemQuestionsThroughTcpPersistRankedOutcomesAndRematchFreshState() throws Exception {
     var clock = new FakeGameClock();
     var timer = new FakeGameScheduler(clock);
     try (var runtime = new ServerRuntime(TestDatabase.factory(), clock, timer)) {
       runtime.start("127.0.0.1", 0);
       try (var one = login(runtime);
           var two = login(runtime)) {
+        int total =
+            new vn.edu.nhom7.quiz.server.quiz.JdbcQuizRepository(TestDatabase.factory())
+                .summary(1)
+                .totalRounds();
+        assertEquals(20, total);
         UUID match = challenge(one, two);
         ready(one, match);
         ready(two, match);
@@ -27,7 +32,7 @@ class TenRoundMatchIT {
         timer.advance(Duration.ofSeconds(3));
         Set<Long> questions = new HashSet<>();
         Map<String, Integer> types = new HashMap<>();
-        for (int i = 1; i <= 10; i++) {
+        for (int i = 1; i <= total; i++) {
           Envelope q = one.socket().await(MessageType.QUESTION, WAIT);
           two.socket().await(MessageType.QUESTION, WAIT);
           assertEquals(i, q.payload().path("roundIndex").asInt());
@@ -46,7 +51,7 @@ class TenRoundMatchIT {
           two.socket().await(MessageType.ANSWER_ACK, WAIT);
           one.socket().await(MessageType.QUESTION_RESULT, WAIT);
           two.socket().await(MessageType.QUESTION_RESULT, WAIT);
-          timer.advance(Duration.ofSeconds(2));
+          timer.advance(Duration.ofSeconds(6));
           var board = one.socket().await(MessageType.ROUND_LEADERBOARD, WAIT);
           two.socket().await(MessageType.ROUND_LEADERBOARD, WAIT);
           assertEquals(2, board.payload().path("standings").size());
@@ -58,18 +63,19 @@ class TenRoundMatchIT {
         }
         Envelope result = one.socket().await(MessageType.MATCH_RESULT, WAIT);
         two.socket().await(MessageType.MATCH_RESULT, WAIT);
-        assertEquals(10, result.payload().path("completedRounds").asInt());
-        assertEquals(10, questions.size());
+        assertEquals(total, result.payload().path("completedRounds").asInt());
+        assertTrue(result.payload().path("ranked").asBoolean());
+        assertEquals(total, questions.size());
         assertEquals(
-            Map.of("SINGLE_CHOICE", 4, "MULTIPLE_CHOICE", 2, "TRUE_FALSE", 2, "SHORT_ANSWER", 2),
+            Map.of("SINGLE_CHOICE", 8, "MULTIPLE_CHOICE", 4, "TRUE_FALSE", 4, "SHORT_ANSWER", 4),
             types);
         assertEquals(Payloads.REVIEW_PAGE_SIZE, result.payload().path("review").size());
-        assertEquals(10, result.payload().path("reviewTotalItems").asInt());
+        assertEquals(total, result.payload().path("reviewTotalItems").asInt());
         var reviewedRounds = new HashSet<Integer>();
         for (var review : result.payload().path("review"))
           assertTrue(reviewedRounds.add(review.path("roundIndex").asInt()));
         for (int page = 2;
-            page <= (10 + Payloads.REVIEW_PAGE_SIZE - 1) / Payloads.REVIEW_PAGE_SIZE;
+            page <= (total + Payloads.REVIEW_PAGE_SIZE - 1) / Payloads.REVIEW_PAGE_SIZE;
             page++) {
           one.socket()
               .send(
@@ -80,7 +86,7 @@ class TenRoundMatchIT {
                       new Payloads.LiveReviewRequest(page)));
           var reviews = one.socket().await(MessageType.LIVE_REVIEW, WAIT).payload();
           assertEquals(page, reviews.path("page").asInt());
-          assertEquals(10, reviews.path("totalItems").asInt());
+          assertEquals(total, reviews.path("totalItems").asInt());
           for (var review : reviews.path("review")) {
             assertTrue(reviewedRounds.add(review.path("roundIndex").asInt()));
             assertTrue(review.path("revealed").asBoolean());
@@ -88,7 +94,7 @@ class TenRoundMatchIT {
           }
         }
         assertEquals(
-            java.util.stream.IntStream.rangeClosed(1, 10)
+            java.util.stream.IntStream.rangeClosed(1, total)
                 .boxed()
                 .collect(java.util.stream.Collectors.toSet()),
             reviewedRounds);
@@ -102,7 +108,7 @@ class TenRoundMatchIT {
           s.setString(1, match.toString());
           try (var rs = s.executeQuery()) {
             rs.next();
-            assertEquals(20, rs.getInt(1));
+            assertEquals(total * 2, rs.getInt(1));
           }
         }
         one.socket()

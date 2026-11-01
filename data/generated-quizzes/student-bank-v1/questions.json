@@ -1,0 +1,896 @@
+[
+  {
+    "key": "networks",
+    "categoryId": 3,
+    "title": "Mạng máy tính — 7 dạng câu hỏi",
+    "questions": [
+      {
+        "questionType": "SINGLE_CHOICE",
+        "content": "Giao thức nào cung cấp luồng byte tin cậy, có thứ tự giữa hai ứng dụng?",
+        "options": [
+          {
+            "id": "A",
+            "text": "UDP"
+          },
+          {
+            "id": "B",
+            "text": "TCP"
+          },
+          {
+            "id": "C",
+            "text": "IP"
+          },
+          {
+            "id": "D",
+            "text": "ARP"
+          }
+        ],
+        "answerKey": "B",
+        "explanation": "TCP cung cấp luồng byte có thứ tự và cơ chế truyền lại khi mất dữ liệu.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "SINGLE_CHOICE",
+        "content": "IPv4 có độ dài địa chỉ là bao nhiêu bit?",
+        "options": [
+          {
+            "id": "A",
+            "text": "16 bit"
+          },
+          {
+            "id": "B",
+            "text": "64 bit"
+          },
+          {
+            "id": "C",
+            "text": "128 bit"
+          },
+          {
+            "id": "D",
+            "text": "32 bit"
+          }
+        ],
+        "answerKey": "D",
+        "explanation": "Địa chỉ IPv4 gồm 32 bit, thường biểu diễn bằng bốn số thập phân.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "MULTIPLE_CHOICE",
+        "content": "Chọn tất cả giao thức thuộc tầng ứng dụng trong mô hình TCP/IP.",
+        "options": [
+          {
+            "id": "A",
+            "text": "HTTP"
+          },
+          {
+            "id": "B",
+            "text": "TCP"
+          },
+          {
+            "id": "C",
+            "text": "DNS"
+          },
+          {
+            "id": "D",
+            "text": "Ethernet"
+          }
+        ],
+        "answerKey": [
+          "A",
+          "C"
+        ],
+        "explanation": "HTTP và DNS thuộc tầng ứng dụng; TCP thuộc tầng giao vận, Ethernet thuộc tầng liên kết.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "MULTIPLE_CHOICE",
+        "content": "Để đọc một thông điệp trên TCP, ứng dụng có thể dùng những cách phân định nào?",
+        "options": [
+          {
+            "id": "A",
+            "text": "Prefix chứa độ dài"
+          },
+          {
+            "id": "B",
+            "text": "Ký tự phân cách có quy tắc escape"
+          },
+          {
+            "id": "C",
+            "text": "Mặc định mỗi lần read là một thông điệp"
+          },
+          {
+            "id": "D",
+            "text": "Thông điệp có độ dài cố định"
+          }
+        ],
+        "answerKey": [
+          "A",
+          "B",
+          "D"
+        ],
+        "explanation": "TCP không giữ ranh giới thông điệp. Có thể dùng độ dài, dấu phân cách hoặc kích thước cố định để phân khung.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "TRUE_FALSE",
+        "content": "Một lần gọi read() trên socket TCP luôn nhận đủ một thông điệp do phía gửi gửi đi.",
+        "options": [],
+        "answerKey": false,
+        "explanation": "TCP là luồng byte: một thông điệp có thể bị chia qua nhiều lần đọc hoặc nhiều thông điệp đến cùng lần đọc.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "TRUE_FALSE",
+        "content": "Hai kết nối TCP khác nhau có thể cùng kết nối tới một cổng lắng nghe trên server.",
+        "options": [],
+        "answerKey": true,
+        "explanation": "Server phân biệt các kết nối bằng các đầu mút địa chỉ IP và cổng; nhiều client có thể dùng chung cổng server.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "SHORT_ANSWER",
+        "content": "Viết tên viết tắt của hệ thống phân giải tên miền sang địa chỉ IP.",
+        "options": [],
+        "answerKey": [
+          "DNS",
+          "Domain Name System"
+        ],
+        "explanation": "DNS là Domain Name System, dùng để phân giải tên miền và nhiều loại bản ghi khác.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "SHORT_ANSWER",
+        "content": "Trong địa chỉ 127.0.0.1, máy đích chính là máy đang chạy ứng dụng. Địa chỉ này được gọi là địa chỉ gì? (Nhập tiếng Anh.)",
+        "options": [],
+        "answerKey": [
+          "loopback",
+          "loopback address",
+          "localhost"
+        ],
+        "explanation": "127.0.0.1 là địa chỉ loopback IPv4, thường được ánh xạ bởi tên localhost.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "REORDER",
+        "content": "Sắp xếp các bước của một TCP client đơn giản theo thứ tự thực hiện.",
+        "options": [
+          {
+            "id": "A",
+            "text": "Tạo socket"
+          },
+          {
+            "id": "B",
+            "text": "Kết nối tới server"
+          },
+          {
+            "id": "C",
+            "text": "Trao đổi dữ liệu"
+          },
+          {
+            "id": "D",
+            "text": "Đóng socket"
+          }
+        ],
+        "answerKey": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "explanation": "Client tạo socket, kết nối, trao đổi dữ liệu rồi giải phóng kết nối.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "REORDER",
+        "content": "Sắp xếp các lớp sau theo thứ tự từ gần ứng dụng nhất tới gần đường truyền nhất.",
+        "options": [
+          {
+            "id": "A",
+            "text": "Ứng dụng"
+          },
+          {
+            "id": "B",
+            "text": "Giao vận"
+          },
+          {
+            "id": "C",
+            "text": "Internet"
+          },
+          {
+            "id": "D",
+            "text": "Liên kết"
+          }
+        ],
+        "answerKey": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "explanation": "Mô hình TCP/IP bốn tầng theo thứ tự từ trên xuống: ứng dụng, giao vận, Internet, liên kết.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "RANGE",
+        "content": "Một frame gồm prefix 4 byte và JSON dài 120 byte. Tổng kích thước frame là bao nhiêu byte?",
+        "options": [],
+        "answerKey": {
+          "min": 0,
+          "max": 200,
+          "step": 1,
+          "unit": "byte",
+          "acceptedMin": 124,
+          "acceptedMax": 124
+        },
+        "explanation": "Tổng kích thước bằng 4 + 120 = 124 byte.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "RANGE",
+        "content": "Một địa chỉ IPv4 gồm 32 bit. Nếu chia thành 4 nhóm bằng nhau, mỗi nhóm có bao nhiêu bit?",
+        "options": [],
+        "answerKey": {
+          "min": 0,
+          "max": 32,
+          "step": 1,
+          "unit": "bit",
+          "acceptedMin": 8,
+          "acceptedMax": 8
+        },
+        "explanation": "32 / 4 = 8 bit, tức một octet.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "PINPOINT",
+        "content": "Ghim vào phần giữa thiết bị Switch trong sơ đồ mạng hình sao.",
+        "options": [],
+        "answerKey": {
+          "x": 0.41,
+          "y": 0.408333,
+          "width": 0.18,
+          "height": 0.15
+        },
+        "explanation": "Switch nằm ở trung tâm, nối các máy trạm trong sơ đồ.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": "network-star.png"
+      },
+      {
+        "questionType": "PINPOINT",
+        "content": "Ghim vào vùng PREFIX 4 BYTE trong hình minh họa frame TCP của ứng dụng.",
+        "options": [],
+        "answerKey": {
+          "x": 0.075,
+          "y": 0.408333,
+          "width": 0.18,
+          "height": 0.183333
+        },
+        "explanation": "Prefix chứa độ dài phần JSON, cho phép bên nhận xác định ranh giới thông điệp.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": "network-frame.png"
+      }
+    ]
+  },
+  {
+    "key": "java",
+    "categoryId": 3,
+    "title": "Java cơ bản — 7 dạng câu hỏi",
+    "questions": [
+      {
+        "questionType": "SINGLE_CHOICE",
+        "content": "Trong Java, từ khóa nào dùng để tạo một đối tượng bằng constructor?",
+        "options": [
+          {
+            "id": "A",
+            "text": "class"
+          },
+          {
+            "id": "B",
+            "text": "return"
+          },
+          {
+            "id": "C",
+            "text": "new"
+          },
+          {
+            "id": "D",
+            "text": "static"
+          }
+        ],
+        "answerKey": "C",
+        "explanation": "Toán tử new tạo đối tượng mới và gọi constructor tương ứng.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "SINGLE_CHOICE",
+        "content": "Biểu thức Java 7 / 2 có giá trị nào khi cả hai toán hạng đều là int?",
+        "options": [
+          {
+            "id": "A",
+            "text": "3"
+          },
+          {
+            "id": "B",
+            "text": "3.5"
+          },
+          {
+            "id": "C",
+            "text": "4"
+          },
+          {
+            "id": "D",
+            "text": "2"
+          }
+        ],
+        "answerKey": "A",
+        "explanation": "Phép chia hai số nguyên trả về phần nguyên; với số dương, 7 / 2 = 3.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "MULTIPLE_CHOICE",
+        "content": "Chọn tất cả kiểu dữ liệu nguyên thủy của Java.",
+        "options": [
+          {
+            "id": "A",
+            "text": "int"
+          },
+          {
+            "id": "B",
+            "text": "String"
+          },
+          {
+            "id": "C",
+            "text": "boolean"
+          },
+          {
+            "id": "D",
+            "text": "double"
+          }
+        ],
+        "answerKey": [
+          "A",
+          "C",
+          "D"
+        ],
+        "explanation": "int, boolean và double là kiểu nguyên thủy; String là một lớp.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "MULTIPLE_CHOICE",
+        "content": "Chọn tất cả từ khóa truy cập hợp lệ trong Java.",
+        "options": [
+          {
+            "id": "A",
+            "text": "public"
+          },
+          {
+            "id": "B",
+            "text": "internal"
+          },
+          {
+            "id": "C",
+            "text": "private"
+          },
+          {
+            "id": "D",
+            "text": "protected"
+          }
+        ],
+        "answerKey": [
+          "A",
+          "C",
+          "D"
+        ],
+        "explanation": "Java có public, private, protected và mức truy cập package khi không ghi từ khóa.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "TRUE_FALSE",
+        "content": "Mảng Java đánh chỉ số phần tử đầu tiên từ 0.",
+        "options": [],
+        "answerKey": true,
+        "explanation": "Mảng có n phần tử sử dụng các chỉ số từ 0 đến n - 1.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "TRUE_FALSE",
+        "content": "Đối với hai đối tượng String, toán tử == luôn so sánh nội dung ký tự.",
+        "options": [],
+        "answerKey": false,
+        "explanation": "== so sánh tham chiếu đối tượng; thường dùng equals() để so sánh nội dung chuỗi.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "SHORT_ANSWER",
+        "content": "Nhập tên phương thức dùng để lấy độ dài một String trong Java (có thể kèm dấu ngoặc).",
+        "options": [],
+        "answerKey": [
+          "length",
+          "length()"
+        ],
+        "explanation": "String.length() trả về số đơn vị mã UTF-16 của chuỗi; đây là phương thức, không phải thuộc tính length của mảng.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "SHORT_ANSWER",
+        "content": "Từ khóa nào dùng để kế thừa một lớp trong Java?",
+        "options": [],
+        "answerKey": [
+          "extends"
+        ],
+        "explanation": "Một lớp dùng extends để khai báo lớp cha, ví dụ class Dog extends Animal.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "REORDER",
+        "content": "Sắp xếp các bước chạy chương trình Java từ mã nguồn.",
+        "options": [
+          {
+            "id": "A",
+            "text": "Viết file .java"
+          },
+          {
+            "id": "B",
+            "text": "Biên dịch bằng javac"
+          },
+          {
+            "id": "C",
+            "text": "Tạo bytecode .class"
+          },
+          {
+            "id": "D",
+            "text": "JVM thực thi bytecode"
+          }
+        ],
+        "answerKey": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "explanation": "javac biên dịch mã nguồn thành bytecode; JVM nạp và thực thi bytecode.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "REORDER",
+        "content": "Sắp xếp các bước của thuật toán tìm giá trị lớn nhất trong một mảng không rỗng.",
+        "options": [
+          {
+            "id": "A",
+            "text": "Gán max bằng phần tử đầu"
+          },
+          {
+            "id": "B",
+            "text": "Duyệt các phần tử còn lại"
+          },
+          {
+            "id": "C",
+            "text": "Nếu phần tử lớn hơn max thì cập nhật max"
+          },
+          {
+            "id": "D",
+            "text": "Trả về max sau khi duyệt xong"
+          }
+        ],
+        "answerKey": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "explanation": "Khởi tạo từ phần tử đầu giúp xử lý đúng cả mảng toàn số âm.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "RANGE",
+        "content": "int sum = 0; for (int i = 1; i <= 5; i++) sum += i; Sau vòng lặp, sum bằng bao nhiêu?",
+        "options": [],
+        "answerKey": {
+          "min": 0,
+          "max": 30,
+          "step": 1,
+          "unit": "",
+          "acceptedMin": 15,
+          "acceptedMax": 15
+        },
+        "explanation": "sum = 1 + 2 + 3 + 4 + 5 = 15.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "RANGE",
+        "content": "Một mảng Java có length = 8. Chỉ số hợp lệ lớn nhất là bao nhiêu?",
+        "options": [],
+        "answerKey": {
+          "min": 0,
+          "max": 12,
+          "step": 1,
+          "unit": "",
+          "acceptedMin": 7,
+          "acceptedMax": 7
+        },
+        "explanation": "Chỉ số cuối là length - 1 = 7.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "PINPOINT",
+        "content": "Ghim vào giữa khối điều kiện x > 0 trong lưu đồ.",
+        "options": [],
+        "answerKey": {
+          "x": 0.445,
+          "y": 0.425,
+          "width": 0.11,
+          "height": 0.15
+        },
+        "explanation": "Khối hình thoi kiểm tra điều kiện và chọn nhánh đúng hoặc sai.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": "java-flow.png"
+      },
+      {
+        "questionType": "PINPOINT",
+        "content": "Với int[] a = {10, 20, 30, 40, 50}, ghim vào ô chứa a[3].",
+        "options": [],
+        "answerKey": {
+          "x": 0.62,
+          "y": 0.416667,
+          "width": 0.12,
+          "height": 0.15
+        },
+        "explanation": "Mảng bắt đầu từ chỉ số 0 nên a[3] = 40.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": "java-array.png"
+      }
+    ]
+  },
+  {
+    "key": "math",
+    "categoryId": 1,
+    "title": "Toán và logic — 7 dạng câu hỏi",
+    "questions": [
+      {
+        "questionType": "SINGLE_CHOICE",
+        "content": "Tổng ba góc trong một tam giác trên mặt phẳng bằng bao nhiêu độ?",
+        "options": [
+          {
+            "id": "A",
+            "text": "90"
+          },
+          {
+            "id": "B",
+            "text": "180"
+          },
+          {
+            "id": "C",
+            "text": "270"
+          },
+          {
+            "id": "D",
+            "text": "360"
+          }
+        ],
+        "answerKey": "B",
+        "explanation": "Trong hình học phẳng Euclid, tổng ba góc của tam giác là 180 độ.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "SINGLE_CHOICE",
+        "content": "Số nào sau đây là số nguyên tố?",
+        "options": [
+          {
+            "id": "A",
+            "text": "21"
+          },
+          {
+            "id": "B",
+            "text": "27"
+          },
+          {
+            "id": "C",
+            "text": "29"
+          },
+          {
+            "id": "D",
+            "text": "33"
+          }
+        ],
+        "answerKey": "C",
+        "explanation": "29 chỉ có hai ước dương là 1 và 29; các số còn lại đều chia hết cho 3.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "MULTIPLE_CHOICE",
+        "content": "Chọn tất cả số chia hết cho 3.",
+        "options": [
+          {
+            "id": "A",
+            "text": "12"
+          },
+          {
+            "id": "B",
+            "text": "14"
+          },
+          {
+            "id": "C",
+            "text": "21"
+          },
+          {
+            "id": "D",
+            "text": "25"
+          }
+        ],
+        "answerKey": [
+          "A",
+          "C"
+        ],
+        "explanation": "12 = 3 × 4 và 21 = 3 × 7.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "MULTIPLE_CHOICE",
+        "content": "Chọn tất cả số chính phương.",
+        "options": [
+          {
+            "id": "A",
+            "text": "16"
+          },
+          {
+            "id": "B",
+            "text": "18"
+          },
+          {
+            "id": "C",
+            "text": "25"
+          },
+          {
+            "id": "D",
+            "text": "36"
+          }
+        ],
+        "answerKey": [
+          "A",
+          "C",
+          "D"
+        ],
+        "explanation": "16 = 4², 25 = 5², 36 = 6²; 18 không phải số chính phương.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "TRUE_FALSE",
+        "content": "Số 1 là số nguyên tố.",
+        "options": [],
+        "answerKey": false,
+        "explanation": "Số nguyên tố phải lớn hơn 1 và có đúng hai ước dương phân biệt.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "TRUE_FALSE",
+        "content": "Nếu cả P và Q đều đúng thì mệnh đề P AND Q đúng.",
+        "options": [],
+        "answerKey": true,
+        "explanation": "Phép hội AND đúng khi và chỉ khi cả hai mệnh đề thành phần đều đúng.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "SHORT_ANSWER",
+        "content": "Đa giác có ba cạnh được gọi là hình gì?",
+        "options": [],
+        "answerKey": [
+          "tam giác",
+          "hình tam giác",
+          "tam giac",
+          "hinh tam giac"
+        ],
+        "explanation": "Tam giác có ba cạnh và ba đỉnh.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "SHORT_ANSWER",
+        "content": "Số nào là phần tử trung hòa của phép cộng các số nguyên?",
+        "options": [],
+        "answerKey": [
+          "0",
+          "không",
+          "khong",
+          "số 0",
+          "so 0"
+        ],
+        "explanation": "Với mọi số nguyên a, a + 0 = 0 + a = a.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "REORDER",
+        "content": "Sắp xếp các số theo thứ tự tăng dần.",
+        "options": [
+          {
+            "id": "A",
+            "text": "-3"
+          },
+          {
+            "id": "B",
+            "text": "0"
+          },
+          {
+            "id": "C",
+            "text": "2"
+          },
+          {
+            "id": "D",
+            "text": "5"
+          }
+        ],
+        "answerKey": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "explanation": "Trên trục số, -3 < 0 < 2 < 5.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "REORDER",
+        "content": "Sắp xếp các phân số theo thứ tự tăng dần.",
+        "options": [
+          {
+            "id": "A",
+            "text": "1/4"
+          },
+          {
+            "id": "B",
+            "text": "1/2"
+          },
+          {
+            "id": "C",
+            "text": "3/4"
+          },
+          {
+            "id": "D",
+            "text": "1"
+          }
+        ],
+        "answerKey": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "explanation": "Các giá trị tương ứng là 0,25; 0,5; 0,75; 1.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "RANGE",
+        "content": "Hình chữ nhật dài 8 cm, rộng 5 cm có diện tích bao nhiêu cm²?",
+        "options": [],
+        "answerKey": {
+          "min": 0,
+          "max": 80,
+          "step": 1,
+          "unit": "cm²",
+          "acceptedMin": 40,
+          "acceptedMax": 40
+        },
+        "explanation": "Diện tích hình chữ nhật bằng dài × rộng = 8 × 5 = 40 cm².",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "RANGE",
+        "content": "Có 4 viên bi đỏ và 6 viên bi xanh. Xác suất lấy ngẫu nhiên một viên bi đỏ là bao nhiêu phần trăm?",
+        "options": [],
+        "answerKey": {
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "acceptedMin": 40,
+          "acceptedMax": 40
+        },
+        "explanation": "Có 10 viên bi; xác suất lấy bi đỏ là 4/10 = 40%.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "PINPOINT",
+        "content": "Ghim vào điểm có tọa độ (-2; 2) trên mặt phẳng tọa độ.",
+        "options": [],
+        "answerKey": {
+          "x": 0.275,
+          "y": 0.258333,
+          "width": 0.05,
+          "height": 0.083333
+        },
+        "explanation": "Điểm (-2; 2) nằm bên trái trục tung và phía trên trục hoành, tại vị trí A.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": "math-plane.png"
+      },
+      {
+        "questionType": "PINPOINT",
+        "content": "Ghim vào phần giữa hình tròn trong ảnh.",
+        "options": [],
+        "answerKey": {
+          "x": 0.685,
+          "y": 0.608333,
+          "width": 0.07,
+          "height": 0.116667
+        },
+        "explanation": "Hình tròn nằm phía dưới bên phải; các hình còn lại là vuông, tam giác và chữ nhật.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": "math-shapes.png"
+      }
+    ]
+  }
+]

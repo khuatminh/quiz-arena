@@ -31,7 +31,7 @@ Quiz Arena là ứng dụng desktop bằng Java, cho phép **hai người thi đ
 | Sảnh chờ | Xem quiz theo danh mục, tìm trong trang đang hiển thị, xem người chơi trực tuyến |
 | Thách đấu | Mời một người đang rảnh, chấp nhận, từ chối hoặc hủy lời mời |
 | Thi đấu | Hai người cùng trả lời một bộ câu hỏi, đồng hồ đếm ngược, chấm điểm trên server |
-| Câu hỏi | Một đáp án, nhiều đáp án, đúng/sai, trả lời ngắn; quiz cộng đồng thêm sắp xếp, ước lượng số và ghim trên ảnh |
+| Câu hỏi | Một đáp án, nhiều đáp án, đúng/sai, trả lời ngắn, sắp xếp, ước lượng số và ghim trên ảnh |
 | Quiz của tôi | Tạo bản nháp, sửa và sắp xếp câu hỏi, xem trước, xuất bản hoặc gỡ khỏi sảnh |
 | Hình ảnh | Ảnh câu hỏi xuất hiện trước khi tính giờ; ảnh giải thích xuất hiện khi công bố đáp án |
 | Trong trận | Chat với đối thủ, xem đáp án và bảng điểm sau từng câu |
@@ -43,20 +43,29 @@ Quiz Arena là ứng dụng desktop bằng Java, cho phép **hai người thi đ
 | Tiêu chí | Quiz hệ thống | Quiz cộng đồng |
 | --- | --- | --- |
 | Nguồn | Dữ liệu có sẵn trong database | Người dùng tạo qua **Quiz của tôi** |
-| Số câu mỗi trận | 10 câu | Toàn bộ 1–50 câu đã xuất bản |
-| Cách chọn câu | Ngẫu nhiên: 4 câu một đáp án, 2 nhiều đáp án, 2 đúng/sai, 2 trả lời ngắn | Theo thứ tự tác giả hoặc xáo trộn nếu bật tùy chọn |
-| Thời gian trả lời | 15 giây/câu | 15 giây câu cũ; 30 giây câu tương tác |
-| Điểm tối đa | 33 điểm (30 + 3 nhờ x2) | 3 × số câu + 3, tối đa 153 điểm |
+| Số câu mỗi trận | Toàn bộ 1–50 câu trong bộ, không cố định 10 câu | Toàn bộ 1–50 câu đã xuất bản |
+| Cách chọn câu | Chơi đủ câu, không ép tỷ lệ loại câu; ngân hàng gốc xáo trộn, bộ đã xuất bản giữ tùy chọn thứ tự | Theo thứ tự tác giả hoặc xáo trộn nếu bật tùy chọn |
+| Thời gian trả lời | 15 giây câu thường; 30 giây câu tương tác | 15 giây câu thường; 30 giây câu tương tác |
+| Điểm tối đa | 3 × số câu + 3, tối đa 153 điểm | 3 × số câu + 3, tối đa 153 điểm |
 | Bảng xếp hạng toàn cục | Có, theo kết quả trận đủ điều kiện | Không cập nhật các bộ đếm xếp hạng |
 | Kết quả và lịch sử riêng | Có | Có, gồm điểm và kết quả thắng/thua/hòa của trận |
 
-Dữ liệu mẫu có **3 bộ quiz và 60 câu hỏi**. Mỗi bộ có 20 câu để server chọn 10 câu theo cơ cấu trên.
+Dữ liệu mẫu có **3 bộ quiz và 60 câu hỏi**. Mỗi bộ chơi đủ 20 câu.
+
+Để chuyển các quiz cộng đồng hiện có sang hệ thống, triển khai server đã cập nhật,
+dừng server và sao lưu dữ liệu, rồi chạy `database/convert_community_to_system.sql`.
+Script giữ nguyên câu hỏi, ảnh, ID, phiên bản xuất bản và lịch sử; các bản nháp
+chưa xuất bản vẫn ẩn. Đây là thao tác dữ liệu tùy chọn, không đổi schema 5.
 
 ### App mở trực tiếp (không cần cài Java trên máy chơi)
 
-Bản build nằm trong `dist/`: `QuizArena-3.0.0-macos-arm64.zip` chứa **Quiz Arena.app**; `QuizArena-3.0.0-windows-x64.zip` chứa **Quiz Arena.exe** cùng runtime. Giải nén toàn bộ và mở app. Client kết nối đến server Quiz Arena 3.0/schema 5 qua host/port nhập trong màn hình đăng nhập.
+Bản build nằm trong `dist/`: `QuizArena-3.0.2-macos-arm64.zip` chứa **Quiz Arena.app**; `QuizArena-3.0.2-windows-x64.zip` chứa **Quiz Arena.exe** cùng runtime. Giải nén toàn bộ và mở app. Client kết nối đến server Quiz Arena 3.0/schema 5 qua host/port nhập trong màn hình đăng nhập.
 
-Để build lại cả hai gói trên macOS: `python3 scripts/package-desktop.py`. Xem [hướng dẫn đóng gói desktop](docs/operations/desktop-app.md).
+Để build lại cả hai gói trên macOS: `python3 scripts/package-desktop.py --version 3.0.2`. Xem [hướng dẫn đóng gói desktop](docs/operations/desktop-app.md).
+
+Bản 3.0.2 dùng nhạc **Thinking Music — Kevin MacLeod**, ghi công trong Cài đặt và giấy phép CC BY 4.0 trong `assets/sounds/MUSIC-LICENSE.txt`. Phần công bố đáp án kéo dài **6 giây**, sau đó đến bảng điểm 3 giây; server và chế độ phát lại mẫu đều áp dụng thời gian này.
+
+Bộ bổ sung **Đi một vòng thế giới — 20 điều thú vị** có 20 câu mức vừa, sáu dạng câu hỏi và 9 ảnh. Đã xuất bản ở sảnh local (ID 15) và VPS (ID 16). Nội dung, đáp án, ảnh và nguồn tham khảo nằm trong [data/generated-quizzes/curiosity-v1](data/generated-quizzes/curiosity-v1/README.md). Chuẩn bị nội dung bằng `python3 scripts/seed-curiosity-quiz.py`; thêm `--apply --host HOST --port 5555` để xuất bản qua giao thức TCP. Chạy lại trên cùng server kiểm tra dữ liệu và không tạo quiz trùng.
 
 ## 2. Công nghệ sử dụng
 
@@ -371,7 +380,7 @@ Mời đối thủ → Chấp nhận → Chờ hai người sẵn sàng (tối �
     → Chuẩn bị câu hỏi và tải ảnh (tối đa 30 giây)
     → Đếm ngược câu hỏi (2 giây)
     → Trả lời (15 giây câu cũ, 30 giây câu tương tác)
-    → Công bố đáp án (2 giây)
+    → Công bố đáp án (6 giây)
     → Bảng điểm (3 giây)
     → Câu tiếp theo, hoặc kết quả trận nếu đã hết câu
 ```

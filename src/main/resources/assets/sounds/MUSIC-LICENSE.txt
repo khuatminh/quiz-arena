@@ -1,0 +1,18 @@
+Thinking Music
+Kevin MacLeod (incompetech.com)
+ISRC: USUAN1600060
+
+Licensed under Creative Commons: By Attribution 4.0 License
+https://creativecommons.org/licenses/by/4.0/
+
+Track and original attribution:
+https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1600060
+Official catalogue: https://incompetech.com/music/royalty-free/pieces.json
+Original recording:
+https://incompetech.com/music/royalty-free/mp3-royaltyfree/Thinking%20Music.mp3
+
+Changes: converted from the original MP3 to 16-bit PCM WAV, mono, 22050 Hz.
+The full composition is included; the application repeats it during playback.
+Retrieved on 2026-11-02. Replaces the earlier synthesized music.wav.
+
+Attribution also appears in the application's sound settings and desktop guide.

@@ -60,28 +60,12 @@ public final class Match {
     this.profiles = List.copyOf(profiles);
     if (sessions.size() != 2 || sessions.get(0).userId() == sessions.get(1).userId())
       throw new IllegalArgumentException("Two distinct players required");
-    boolean community = "COMMUNITY".equals(quiz.quizSource());
-    int total = community ? quiz.totalRounds() : 10;
+    int total = quiz.totalRounds();
     if (total < 1
         || total > 50
         || questions.size() != total
         || questions.stream().map(QuestionSnapshot::questionId).distinct().count() != total)
       throw new IllegalArgumentException("Invalid distinct question count");
-    if (!community) {
-      var counts =
-          new EnumMap<vn.edu.nhom7.quiz.common.protocol.QuestionType, Integer>(
-              vn.edu.nhom7.quiz.common.protocol.QuestionType.class);
-      for (var q : questions) counts.merge(q.questionType(), 1, Integer::sum);
-      for (var type :
-          java.util.List.of(
-              vn.edu.nhom7.quiz.common.protocol.QuestionType.SINGLE_CHOICE,
-              vn.edu.nhom7.quiz.common.protocol.QuestionType.MULTIPLE_CHOICE,
-              vn.edu.nhom7.quiz.common.protocol.QuestionType.TRUE_FALSE,
-              vn.edu.nhom7.quiz.common.protocol.QuestionType.SHORT_ANSWER))
-        if (counts.getOrDefault(type, 0)
-            != (type == vn.edu.nhom7.quiz.common.protocol.QuestionType.SINGLE_CHOICE ? 4 : 2))
-          throw new IllegalArgumentException("Question distribution must be 4/2/2/2");
-    }
     sessions.forEach(s -> attached.add(s.userId()));
   }
 

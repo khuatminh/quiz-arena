@@ -13,16 +13,12 @@ import vn.edu.nhom7.quiz.server.domain.*;
 public final class JdbcQuizRepository implements QuizRepository {
   private final ConnectionFactory connections;
   private final ObjectMapper json = new ObjectMapper();
-  private static final Map<QuestionType, Integer> REQUIRED =
-      Map.of(
+  private static final List<QuestionType> BASIC_TYPES =
+      List.of(
           QuestionType.SINGLE_CHOICE,
-          4,
           QuestionType.MULTIPLE_CHOICE,
-          2,
           QuestionType.TRUE_FALSE,
-          2,
-          QuestionType.SHORT_ANSWER,
-          2);
+          QuestionType.SHORT_ANSWER);
 
   public JdbcQuizRepository(ConnectionFactory c) {
     connections = c;
@@ -69,24 +65,17 @@ public final class JdbcQuizRepository implements QuizRepository {
 
   public List<QuestionSnapshot> loadMatchQuestions(long id, RandomGenerator random) {
     var summary = summary(id);
-    if ("COMMUNITY".equals(summary.quizSource())) return loadMatchQuestions(summary, random);
+    if (summary.quizVersionId() > 0) return loadMatchQuestions(summary, random);
     var all = questions(id);
-    var result = new ArrayList<QuestionSnapshot>();
-    for (var type : QuestionType.values()) {
-      var bucket = new ArrayList<>(all.stream().filter(q -> q.questionType() == type).toList());
-      int count = REQUIRED.getOrDefault(type, 0);
-      if (bucket.size() < count)
-        throw new ServiceException("QUIZ_UNAVAILABLE", "Quiz lacks required question types");
-      shuffle(bucket, random);
-      result.addAll(bucket.subList(0, count));
-    }
-    shuffle(result, random);
-    return List.copyOf(result);
+    if (all.isEmpty() || all.size() > 50)
+      throw new ServiceException("QUIZ_UNAVAILABLE", "A quiz requires 1–50 questions");
+    shuffle(all, random);
+    return List.copyOf(all);
   }
 
   @Override
   public Payloads.QuizSummary currentMatchQuiz(Payloads.QuizSummary quiz) {
-    return "COMMUNITY".equals(quiz.quizSource()) ? summary(quiz.quizId()) : quiz;
+    return summary(quiz.quizId());
   }
 
   @Override
@@ -100,16 +89,22 @@ public final class JdbcQuizRepository implements QuizRepository {
       Payloads.QuizSummary quiz,
       RandomGenerator random,
       java.util.function.BiFunction<Payloads.QuizSummary, List<QuestionSnapshot>, T> action) {
-    if (!"COMMUNITY".equals(quiz.quizSource()))
-      return action.apply(quiz, loadMatchQuestions(quiz.quizId(), random));
+    if (quiz.quizVersionId() <= 0) {
+      var loaded = loadMatchQuestions(quiz.quizId(), random);
+      if (loaded.size() != quiz.totalRounds())
+        throw new ServiceException("QUIZ_UNAVAILABLE", "Question bank changed");
+      return action.apply(quiz, loaded);
+    }
     try (var c = connections.open()) {
       c.setAutoCommit(false);
       try (var p =
           c.prepareStatement(
               "SELECT z.public_version_id,v.shuffle_questions FROM QUIZZES z JOIN QUIZ_VERSIONS v"
-                  + " ON v.id=z.public_version_id JOIN CATEGORIES t ON t.id=v.category_id WHERE"
-                  + " z.id=? AND z.is_active=TRUE AND t.is_active=TRUE FOR SHARE")) {
+                  + " ON v.id=z.public_version_id AND v.quiz_id=z.id JOIN CATEGORIES t ON"
+                  + " t.id=v.category_id WHERE z.id=? AND z.quiz_source=? AND z.is_active=TRUE"
+                  + " AND t.is_active=TRUE FOR SHARE")) {
         p.setLong(1, quiz.quizId());
+        p.setString(2, quiz.quizSource());
         boolean shuffle;
         try (var r = p.executeQuery()) {
           if (!r.next() || r.getLong(1) != quiz.quizVersionId())
@@ -170,9 +165,9 @@ public final class JdbcQuizRepository implements QuizRepository {
   public Payloads.QuizDetail detail(long quizId) {
     var q = summary(quizId);
     var counts = new LinkedHashMap<String, Integer>();
-    for (var type : REQUIRED.keySet()) counts.put(type.name(), 0);
+    for (var type : BASIC_TYPES) counts.put(type.name(), 0);
     List<QuestionSnapshot> detailQuestions;
-    if ("COMMUNITY".equals(q.quizSource())) {
+    if (q.quizVersionId() > 0) {
       try (var c = connections.open()) {
         detailQuestions = versionQuestions(c, quizId, q.quizVersionId());
       } catch (SQLException e) {
@@ -200,11 +195,7 @@ public final class JdbcQuizRepository implements QuizRepository {
         json.createObjectNode()
             .put("totalRounds", q.totalRounds())
             .put("answerWindowMs", 15000)
-            .put("interactiveAnswerWindowMs", 30000)
-            .put("singleChoice", 4)
-            .put("multipleChoice", 2)
-            .put("trueFalse", 2)
-            .put("shortAnswer", 2);
+            .put("interactiveAnswerWindowMs", 30000);
     return new Payloads.QuizDetail(q, description, Map.copyOf(counts), rules);
   }
 
@@ -218,29 +209,26 @@ public final class JdbcQuizRepository implements QuizRepository {
       p.setLong(1, quizId);
       try (var r = p.executeQuery()) {
         if (!r.next()) throw new ServiceException("QUIZ_NOT_FOUND", "Unknown quiz");
-        if ("COMMUNITY".equals(r.getString("quiz_source"))) {
+        if ("COMMUNITY".equals(r.getString("quiz_source")) || r.getLong("public_version_id") > 0) {
           long version = r.getLong("public_version_id");
           if (version <= 0) throw new ServiceException("QUIZ_NOT_FOUND", "Unknown quiz");
           var all = versionQuestions(c, quizId, version);
+          boolean community = "COMMUNITY".equals(r.getString("quiz_source"));
+          boolean available = !all.isEmpty() && all.size() <= 50;
           return new Payloads.QuizSummary(
               quizId,
               r.getString("title"),
               r.getLong("category_id"),
               r.getString("category_name"),
               r.getString("cover_asset_id"),
-              all.isEmpty() ? "UNAVAILABLE" : "AVAILABLE",
+              available ? "AVAILABLE" : "UNAVAILABLE",
               all.size(),
-              "COMMUNITY",
-              r.getString("author_name"),
+              r.getString("quiz_source"),
+              community ? r.getString("author_name") : null,
               version);
         }
         var all = questions(quizId);
-        boolean available =
-            REQUIRED.entrySet().stream()
-                .allMatch(
-                    e ->
-                        all.stream().filter(q -> q.questionType() == e.getKey()).count()
-                            >= e.getValue());
+        boolean available = !all.isEmpty() && all.size() <= 50;
         return new Payloads.QuizSummary(
             quizId,
             r.getString("title"),
@@ -248,7 +236,7 @@ public final class JdbcQuizRepository implements QuizRepository {
             r.getString("category_name"),
             r.getString("cover_asset_id"),
             available ? "AVAILABLE" : "UNAVAILABLE",
-            10);
+            all.size());
       }
     } catch (SQLException e) {
       throw ServiceException.database();
@@ -298,22 +286,23 @@ public final class JdbcQuizRepository implements QuizRepository {
     try (var c = connections.open();
         var p =
             c.prepareStatement(
-                "SELECT z.id,COUNT(q.id) active_count FROM QUIZZES z JOIN CATEGORIES t ON"
-                    + " t.id=z.category_id LEFT JOIN QUESTIONS q ON q.quiz_id=z.id AND"
-                    + " q.is_active=TRUE WHERE z.is_active=TRUE AND t.is_active=TRUE AND"
+                "SELECT z.id,z.public_version_id,COUNT(q.id) active_count FROM QUIZZES z JOIN"
+                    + " CATEGORIES t ON t.id=z.category_id LEFT JOIN QUESTIONS q ON q.quiz_id=z.id"
+                    + " AND q.is_active=TRUE WHERE z.is_active=TRUE AND t.is_active=TRUE AND"
                     + " z.quiz_source='SYSTEM' GROUP BY z.id");
         var r = p.executeQuery()) {
       while (r.next()) {
         long id = r.getLong(1);
+        if (r.getLong("public_version_id") > 0) {
+          var published = versionQuestions(c, id, r.getLong("public_version_id"));
+          if (!published.isEmpty() && published.size() <= 50) usable++;
+          continue;
+        }
         var loaded = questions(id);
-        if (loaded.size() != r.getLong(2))
+        if (loaded.size() != r.getLong("active_count"))
           throw new IllegalStateException(
               "Invalid active question bank entry; repair the bank before startup");
-        if (REQUIRED.entrySet().stream()
-            .allMatch(
-                e ->
-                    loaded.stream().filter(q -> q.questionType() == e.getKey()).count()
-                        >= e.getValue())) usable++;
+        if (!loaded.isEmpty() && loaded.size() <= 50) usable++;
       }
     } catch (SQLException e) {
       throw new IllegalStateException("Question bank unavailable; apply database/002_seed.sql");

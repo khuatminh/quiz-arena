@@ -4,6 +4,22 @@ UTF-8 JSON with a four-byte signed big-endian byte length (1–65536). Partial f
 
 PublicQuestion never contains answer keys or explanation. Reveal and review DTOs own those fields. Authentication fields must never be logged. Optional nullable fields are represented explicitly as null on encoding.
 
+`QuizSummary.totalRounds` is the actual playable question count (1–50) for both
+SYSTEM and COMMUNITY quizzes. Every active question, or every question in the
+pinned publication when `quizVersionId > 0`, is played once. System banks without
+a publication are shuffled; published banks follow their saved shuffle setting.
+There is no fixed question-type ratio. SYSTEM matches are ranked regardless of
+their length; COMMUNITY matches remain unranked. The maximum score is
+`3 * totalRounds + 3` with the double-points lifeline. Normal questions allow
+15 seconds; REORDER, RANGE and PINPOINT allow 30 seconds. Publication versions
+remain pinned and private answers are revealed only through the existing result
+and review messages. These rules require the updated server; wire fields,
+client version 3.0 and database schema version 5 are unchanged.
+
+After answering closes, REVEAL lasts 6 seconds for every question type.
+`QUESTION_RESULT.durationMs` is `6000`; `phaseEndsAtMs` and snapshots use
+the same server deadline. Only then does the 3-second leaderboard begin.
+
 | Message | Payload record | Direction | Handler owner | Fixture |
 |---|---|---|---|---|
 | HELLO | Payloads.Hello | C → S | Network | catalogue-v1.json:HELLO |

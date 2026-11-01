@@ -24,12 +24,7 @@ public final class QuizDetailView extends VBox {
             Ui.badge("Bộ câu hỏi đã chọn"),
             new AssetLoader().view(quiz.path("coverAssetId").asText(), 220),
             Ui.title(quiz.path("title").asText()),
-            Ui.label(
-                quiz.path("totalRounds").asInt(10)
-                    + " câu · "
-                    + (quiz.path("quizSource").asText().equals("COMMUNITY")
-                        ? "15–30 giây/câu"
-                        : "15 giây/câu")),
+            Ui.label(quiz.path("totalRounds").asInt(10) + " câu · 15–30 giây/câu"),
             Ui.badge(
                 quiz.path("quizSource").asText().equals("COMMUNITY")
                     ? "Cộng đồng · Không tính hạng"

@@ -187,7 +187,7 @@ class CommunityWorkflowIT {
           opponent.socket().await(MessageType.QUESTION_RESULT, WAIT);
           assertEquals(keys[i], result.payload().path("correctAnswer"));
           assertEquals(2, result.payload().path("outcomes").get(0).path("earnedPoints").asInt());
-          timer.advance(Duration.ofSeconds(2));
+          timer.advance(Duration.ofSeconds(6));
           owner.socket().await(MessageType.ROUND_LEADERBOARD, WAIT);
           opponent.socket().await(MessageType.ROUND_LEADERBOARD, WAIT);
           timer.advance(Duration.ofSeconds(3));
@@ -351,7 +351,7 @@ class CommunityWorkflowIT {
             "FORBIDDEN",
             media(outsider, revealImage, MessageType.ERROR).payload().path("code").asText());
         author(owner, "UNPUBLISH", quiz, json.createObjectNode());
-        timer.advance(Duration.ofSeconds(2));
+        timer.advance(Duration.ofSeconds(6));
         owner.socket().await(MessageType.ROUND_LEADERBOARD, WAIT);
         opponent.socket().await(MessageType.ROUND_LEADERBOARD, WAIT);
         timer.advance(Duration.ofSeconds(3));

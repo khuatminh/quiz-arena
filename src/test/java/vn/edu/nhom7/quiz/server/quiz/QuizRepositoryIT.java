@@ -8,7 +8,7 @@ import vn.edu.nhom7.quiz.server.support.*;
 
 class QuizRepositoryIT {
   @Test
-  void seedSamplesTenUniqueQuestionsInFixedRatio() {
+  void seedPlaysEveryActiveQuestionWithoutFixedRatio() {
     var repo = new JdbcQuizRepository(TestDatabase.factory());
     assertEquals(
         3,
@@ -22,9 +22,10 @@ class QuizRepositoryIT {
           d.typeCounts());
       assertEquals("AVAILABLE", d.quiz().availability());
       var questions = repo.loadMatchQuestions(id, new Random(9));
-      assertEquals(10, questions.stream().map(q -> q.questionId()).distinct().count());
+      assertEquals(20, d.quiz().totalRounds());
+      assertEquals(20, questions.stream().map(q -> q.questionId()).distinct().count());
       assertEquals(
-          4,
+          8,
           questions.stream().filter(q -> q.questionType().name().equals("SINGLE_CHOICE")).count());
       assertEquals(questions, repo.loadMatchQuestions(id, new Random(9)));
     }

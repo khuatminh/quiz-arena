@@ -30,10 +30,7 @@ public final class WaitingView extends VBox {
             Ui.muted(
                 (match == null ? 10 : match.path("totalRounds").asInt(10))
                     + " câu hỏi · "
-                    + (match != null
-                            && match.path("quiz").path("quizSource").asText().equals("COMMUNITY")
-                        ? "15–30 giây/câu"
-                        : "15 giây/câu")));
+                    + "15–30 giây/câu"));
     var players = new HBox(28);
     players.setAlignment(Pos.CENTER);
     if (match != null)

@@ -130,6 +130,10 @@ Gói chỉ chứa client; server và cấu hình database không được nhúng
 Java runtime: Eclipse Temurin 21 (GPLv2 with Classpath Exception), giấy phép trong runtime/legal.
 JavaFX: OpenJFX 21.0.6 (GPLv2 with Classpath Exception), giấy phép trong các JAR.
 Jackson: Apache License 2.0, giấy phép trong META-INF của các JAR.
+Nhạc: Thinking Music — Kevin MacLeod (incompetech.com), CC BY 4.0.
+https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1600060
+https://creativecommons.org/licenses/by/4.0/
+Bản nhạc trong app chuyển từ MP3 gốc sang WAV mono 22050 Hz.
 Nguồn và checksum runtime được ghi trong build-info.json.
 """
     (destination / "HUONG-DAN.txt").write_text(text, encoding="utf-8")

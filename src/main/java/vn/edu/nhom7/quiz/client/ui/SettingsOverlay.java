@@ -70,6 +70,15 @@ public final class SettingsOverlay extends StackPane {
       card.getChildren().add(level);
       stops.add((javafx.scene.Node) level.getProperties().get("focus"));
     }
+    var musicCredit = Ui.label("Nhạc: Thinking Music · Kevin MacLeod (incompetech.com) · CC BY 4.0");
+    musicCredit.getStyleClass().add("muted");
+    musicCredit.setWrapText(true);
+    musicCredit.setTooltip(
+        new Tooltip(
+            "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1600060\n"
+                + "https://creativecommons.org/licenses/by/4.0/\n"
+                + "Bản dùng trong app: WAV mono 22.050 Hz, chuyển từ MP3 gốc."));
+    card.getChildren().add(musicCredit);
     var sizes = new ToggleGroup();
     var sizeRow = segmented();
     for (var size : Theme.TextSize.values())

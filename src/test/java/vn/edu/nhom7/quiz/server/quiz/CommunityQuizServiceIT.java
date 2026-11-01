@@ -12,6 +12,48 @@ class CommunityQuizServiceIT {
   private final ObjectMapper json = new ObjectMapper();
 
   @Test
+  void convertedSystemKeepsEveryPublishedQuestionAndRejectsAuthorEdits() throws Exception {
+    users();
+    var factory = TestDatabase.factory();
+    var service = new CommunityQuizService(factory);
+    var repository = new JdbcQuizRepository(factory);
+    for (int count : java.util.List.of(1, 14, 50)) {
+      long id =
+          service.execute(201, new AuthorRequest("CREATE", 0, null)).data().path("quizId").asLong();
+      for (int index = 0; index < count; index++) {
+        var data = json.createObjectNode().put("index", index);
+        data.set(
+            "question",
+            json.readTree(
+                "{\"questionType\":\"TRUE_FALSE\",\"content\":\"Question "
+                    + index
+                    + "\",\"options\":[],\"answerKey\":true}"));
+        service.execute(201, new AuthorRequest("SAVE_QUESTION", id, data));
+      }
+      service.execute(201, new AuthorRequest("PUBLISH", id, null));
+      var published = repository.loadMatchQuestions(id, new java.util.Random(1));
+      try (var c = factory.open()) {
+        QuizSql.update(c, "UPDATE QUIZZES SET quiz_source='SYSTEM' WHERE id=?", id);
+        try {
+          var summary = repository.summary(id);
+          assertEquals("SYSTEM", summary.quizSource());
+          assertEquals("AVAILABLE", summary.availability());
+          assertEquals(count, summary.totalRounds());
+          assertNull(summary.authorName());
+          assertEquals(published, repository.loadMatchQuestions(summary, new java.util.Random(1)));
+          assertEquals(count, repository.detail(id).typeCounts().get("TRUE_FALSE"));
+          assertThrows(
+              ServiceException.class,
+              () -> service.execute(201, new AuthorRequest("UNPUBLISH", id, null)));
+          repository.verifyBank();
+        } finally {
+          QuizSql.update(c, "UPDATE QUIZZES SET quiz_source='COMMUNITY' WHERE id=?", id);
+        }
+      }
+    }
+  }
+
+  @Test
   void overPreciseRangeIsRejectedBeforeMysqlCanRoundItsAnswer() throws Exception {
     users();
     var service = new CommunityQuizService(TestDatabase.factory());

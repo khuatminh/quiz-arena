@@ -20,8 +20,8 @@ python3 scripts/package-desktop.py
 Chỉ build một nền tảng hoặc đổi phiên bản tên gói:
 
 ```sh
-python3 scripts/package-desktop.py --platform macos --version 3.0.1
-python3 scripts/package-desktop.py --platform windows --version 3.0.1
+python3 scripts/package-desktop.py --platform macos --version 3.0.2
+python3 scripts/package-desktop.py --platform windows --version 3.0.2
 ```
 
 Đầu ra cũ được giữ nguyên; script dừng nếu tên gói đã tồn tại. Di chuyển bản cũ ra chỗ khác hoặc dùng phiên bản mới trước khi build lại. File tải/công cụ build nằm trong `target/desktop-packaging/`, không cài Go vào hệ thống. Nếu đã có Go trên PATH, script dùng công cụ đó; nếu chưa có, tải bản Go stable từ go.dev để biên dịch chéo launcher Windows.

@@ -11,7 +11,6 @@ final class MatchSummaryValidator {
     if (summary.player1().userId() == summary.player2().userId()
         || summary.totalRounds() < 1
         || summary.totalRounds() > 50
-        || summary.ranked() && summary.totalRounds() != 10
         || summary.rounds().size() > summary.totalRounds()
         || summary.openedRounds() != summary.rounds().size()
         || summary.completedRounds()

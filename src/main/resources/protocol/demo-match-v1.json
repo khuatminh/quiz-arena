@@ -228,8 +228,8 @@
               "totalScore": 2
             }
           ],
-          "durationMs": 2000,
-          "phaseEndsAtMs": 49000,
+          "durationMs": 6000,
+          "phaseEndsAtMs": 53000,
           "serverTimeMs": 47000
         }
       }
@@ -272,8 +272,8 @@
             }
           ],
           "durationMs": 3000,
-          "phaseEndsAtMs": 52000,
-          "serverTimeMs": 49000
+          "phaseEndsAtMs": 56000,
+          "serverTimeMs": 53000
         }
       }
     },
@@ -306,7 +306,7 @@
           },
           "roundIndex": 2,
           "totalRounds": 10,
-          "readyDeadlineAtMs": 60000
+          "readyDeadlineAtMs": 64000
         }
       }
     },
@@ -321,8 +321,8 @@
         "eventSeq": 13,
         "payload": {
           "durationMs": 2000,
-          "phaseEndsAtMs": 62000,
-          "serverTimeMs": 60000
+          "phaseEndsAtMs": 66000,
+          "serverTimeMs": 64000
         }
       }
     },
@@ -338,8 +338,8 @@
         "payload": {
           "questionId": 2,
           "remainingMs": 15000,
-          "deadlineAtMs": 77000,
-          "serverTimeMs": 62000
+          "deadlineAtMs": 81000,
+          "serverTimeMs": 66000
         }
       }
     },
@@ -443,9 +443,9 @@
               "totalScore": 3
             }
           ],
-          "durationMs": 2000,
-          "phaseEndsAtMs": 79000,
-          "serverTimeMs": 77000
+          "durationMs": 6000,
+          "phaseEndsAtMs": 87000,
+          "serverTimeMs": 81000
         }
       }
     },
@@ -487,8 +487,8 @@
             }
           ],
           "durationMs": 3000,
-          "phaseEndsAtMs": 82000,
-          "serverTimeMs": 79000
+          "phaseEndsAtMs": 90000,
+          "serverTimeMs": 87000
         }
       }
     },
@@ -521,7 +521,7 @@
           },
           "roundIndex": 3,
           "totalRounds": 10,
-          "readyDeadlineAtMs": 90000
+          "readyDeadlineAtMs": 98000
         }
       }
     },
@@ -536,8 +536,8 @@
         "eventSeq": 22,
         "payload": {
           "durationMs": 2000,
-          "phaseEndsAtMs": 92000,
-          "serverTimeMs": 90000
+          "phaseEndsAtMs": 100000,
+          "serverTimeMs": 98000
         }
       }
     },
@@ -553,8 +553,8 @@
         "payload": {
           "questionId": 3,
           "remainingMs": 15000,
-          "deadlineAtMs": 107000,
-          "serverTimeMs": 92000
+          "deadlineAtMs": 115000,
+          "serverTimeMs": 100000
         }
       }
     },
@@ -658,9 +658,9 @@
               "totalScore": 4
             }
           ],
-          "durationMs": 2000,
-          "phaseEndsAtMs": 109000,
-          "serverTimeMs": 107000
+          "durationMs": 6000,
+          "phaseEndsAtMs": 121000,
+          "serverTimeMs": 115000
         }
       }
     },
@@ -702,8 +702,8 @@
             }
           ],
           "durationMs": 3000,
-          "phaseEndsAtMs": 112000,
-          "serverTimeMs": 109000
+          "phaseEndsAtMs": 124000,
+          "serverTimeMs": 121000
         }
       }
     },
@@ -736,7 +736,7 @@
           },
           "roundIndex": 4,
           "totalRounds": 10,
-          "readyDeadlineAtMs": 120000
+          "readyDeadlineAtMs": 132000
         }
       }
     },
@@ -751,8 +751,8 @@
         "eventSeq": 31,
         "payload": {
           "durationMs": 2000,
-          "phaseEndsAtMs": 122000,
-          "serverTimeMs": 120000
+          "phaseEndsAtMs": 134000,
+          "serverTimeMs": 132000
         }
       }
     },
@@ -768,8 +768,8 @@
         "payload": {
           "questionId": 4,
           "remainingMs": 15000,
-          "deadlineAtMs": 137000,
-          "serverTimeMs": 122000
+          "deadlineAtMs": 149000,
+          "serverTimeMs": 134000
         }
       }
     },
@@ -873,9 +873,9 @@
               "totalScore": 5
             }
           ],
-          "durationMs": 2000,
-          "phaseEndsAtMs": 139000,
-          "serverTimeMs": 137000
+          "durationMs": 6000,
+          "phaseEndsAtMs": 155000,
+          "serverTimeMs": 149000
         }
       }
     },
@@ -917,8 +917,8 @@
             }
           ],
           "durationMs": 3000,
-          "phaseEndsAtMs": 142000,
-          "serverTimeMs": 139000
+          "phaseEndsAtMs": 158000,
+          "serverTimeMs": 155000
         }
       }
     },
@@ -951,7 +951,7 @@
           },
           "roundIndex": 5,
           "totalRounds": 10,
-          "readyDeadlineAtMs": 150000
+          "readyDeadlineAtMs": 166000
         }
       }
     },
@@ -966,8 +966,8 @@
         "eventSeq": 40,
         "payload": {
           "durationMs": 2000,
-          "phaseEndsAtMs": 152000,
-          "serverTimeMs": 150000
+          "phaseEndsAtMs": 168000,
+          "serverTimeMs": 166000
         }
       }
     },
@@ -983,8 +983,8 @@
         "payload": {
           "questionId": 5,
           "remainingMs": 15000,
-          "deadlineAtMs": 167000,
-          "serverTimeMs": 152000
+          "deadlineAtMs": 183000,
+          "serverTimeMs": 168000
         }
       }
     },
@@ -1094,9 +1094,9 @@
               "totalScore": 6
             }
           ],
-          "durationMs": 2000,
-          "phaseEndsAtMs": 169000,
-          "serverTimeMs": 167000
+          "durationMs": 6000,
+          "phaseEndsAtMs": 189000,
+          "serverTimeMs": 183000
         }
       }
     },
@@ -1138,8 +1138,8 @@
             }
           ],
           "durationMs": 3000,
-          "phaseEndsAtMs": 172000,
-          "serverTimeMs": 169000
+          "phaseEndsAtMs": 192000,
+          "serverTimeMs": 189000
         }
       }
     },
@@ -1172,7 +1172,7 @@
           },
           "roundIndex": 6,
           "totalRounds": 10,
-          "readyDeadlineAtMs": 180000
+          "readyDeadlineAtMs": 200000
         }
       }
     },
@@ -1187,8 +1187,8 @@
         "eventSeq": 49,
         "payload": {
           "durationMs": 2000,
-          "phaseEndsAtMs": 182000,
-          "serverTimeMs": 180000
+          "phaseEndsAtMs": 202000,
+          "serverTimeMs": 200000
         }
       }
     },
@@ -1204,8 +1204,8 @@
         "payload": {
           "questionId": 6,
           "remainingMs": 15000,
-          "deadlineAtMs": 197000,
-          "serverTimeMs": 182000
+          "deadlineAtMs": 217000,
+          "serverTimeMs": 202000
         }
       }
     },
@@ -1315,9 +1315,9 @@
               "totalScore": 7
             }
           ],
-          "durationMs": 2000,
-          "phaseEndsAtMs": 199000,
-          "serverTimeMs": 197000
+          "durationMs": 6000,
+          "phaseEndsAtMs": 223000,
+          "serverTimeMs": 217000
         }
       }
     },
@@ -1359,8 +1359,8 @@
             }
           ],
           "durationMs": 3000,
-          "phaseEndsAtMs": 202000,
-          "serverTimeMs": 199000
+          "phaseEndsAtMs": 226000,
+          "serverTimeMs": 223000
         }
       }
     },
@@ -1384,7 +1384,7 @@
           },
           "roundIndex": 7,
           "totalRounds": 10,
-          "readyDeadlineAtMs": 210000
+          "readyDeadlineAtMs": 234000
         }
       }
     },
@@ -1399,8 +1399,8 @@
         "eventSeq": 58,
         "payload": {
           "durationMs": 2000,
-          "phaseEndsAtMs": 212000,
-          "serverTimeMs": 210000
+          "phaseEndsAtMs": 236000,
+          "serverTimeMs": 234000
         }
       }
     },
@@ -1416,8 +1416,8 @@
         "payload": {
           "questionId": 7,
           "remainingMs": 15000,
-          "deadlineAtMs": 227000,
-          "serverTimeMs": 212000
+          "deadlineAtMs": 251000,
+          "serverTimeMs": 236000
         }
       }
     },
@@ -1521,9 +1521,9 @@
               "totalScore": 8
             }
           ],
-          "durationMs": 2000,
-          "phaseEndsAtMs": 229000,
-          "serverTimeMs": 227000
+          "durationMs": 6000,
+          "phaseEndsAtMs": 257000,
+          "serverTimeMs": 251000
         }
       }
     },
@@ -1565,8 +1565,8 @@
             }
           ],
           "durationMs": 3000,
-          "phaseEndsAtMs": 232000,
-          "serverTimeMs": 229000
+          "phaseEndsAtMs": 260000,
+          "serverTimeMs": 257000
         }
       }
     },
@@ -1590,7 +1590,7 @@
           },
           "roundIndex": 8,
           "totalRounds": 10,
-          "readyDeadlineAtMs": 240000
+          "readyDeadlineAtMs": 268000
         }
       }
     },
@@ -1605,8 +1605,8 @@
         "eventSeq": 67,
         "payload": {
           "durationMs": 2000,
-          "phaseEndsAtMs": 242000,
-          "serverTimeMs": 240000
+          "phaseEndsAtMs": 270000,
+          "serverTimeMs": 268000
         }
       }
     },
@@ -1622,8 +1622,8 @@
         "payload": {
           "questionId": 8,
           "remainingMs": 15000,
-          "deadlineAtMs": 257000,
-          "serverTimeMs": 242000
+          "deadlineAtMs": 285000,
+          "serverTimeMs": 270000
         }
       }
     },
@@ -1727,9 +1727,9 @@
               "totalScore": 9
             }
           ],
-          "durationMs": 2000,
-          "phaseEndsAtMs": 259000,
-          "serverTimeMs": 257000
+          "durationMs": 6000,
+          "phaseEndsAtMs": 291000,
+          "serverTimeMs": 285000
         }
       }
     },
@@ -1771,8 +1771,8 @@
             }
           ],
           "durationMs": 3000,
-          "phaseEndsAtMs": 262000,
-          "serverTimeMs": 259000
+          "phaseEndsAtMs": 294000,
+          "serverTimeMs": 291000
         }
       }
     },
@@ -1796,7 +1796,7 @@
           },
           "roundIndex": 9,
           "totalRounds": 10,
-          "readyDeadlineAtMs": 270000
+          "readyDeadlineAtMs": 302000
         }
       }
     },
@@ -1811,8 +1811,8 @@
         "eventSeq": 76,
         "payload": {
           "durationMs": 2000,
-          "phaseEndsAtMs": 272000,
-          "serverTimeMs": 270000
+          "phaseEndsAtMs": 304000,
+          "serverTimeMs": 302000
         }
       }
     },
@@ -1828,8 +1828,8 @@
         "payload": {
           "questionId": 9,
           "remainingMs": 15000,
-          "deadlineAtMs": 287000,
-          "serverTimeMs": 272000
+          "deadlineAtMs": 319000,
+          "serverTimeMs": 304000
         }
       }
     },
@@ -1933,9 +1933,9 @@
               "totalScore": 10
             }
           ],
-          "durationMs": 2000,
-          "phaseEndsAtMs": 289000,
-          "serverTimeMs": 287000
+          "durationMs": 6000,
+          "phaseEndsAtMs": 325000,
+          "serverTimeMs": 319000
         }
       }
     },
@@ -1977,8 +1977,8 @@
             }
           ],
           "durationMs": 3000,
-          "phaseEndsAtMs": 292000,
-          "serverTimeMs": 289000
+          "phaseEndsAtMs": 328000,
+          "serverTimeMs": 325000
         }
       }
     },
@@ -2002,7 +2002,7 @@
           },
           "roundIndex": 10,
           "totalRounds": 10,
-          "readyDeadlineAtMs": 300000
+          "readyDeadlineAtMs": 336000
         }
       }
     },
@@ -2017,8 +2017,8 @@
         "eventSeq": 85,
         "payload": {
           "durationMs": 2000,
-          "phaseEndsAtMs": 302000,
-          "serverTimeMs": 300000
+          "phaseEndsAtMs": 338000,
+          "serverTimeMs": 336000
         }
       }
     },
@@ -2034,8 +2034,8 @@
         "payload": {
           "questionId": 10,
           "remainingMs": 15000,
-          "deadlineAtMs": 317000,
-          "serverTimeMs": 302000
+          "deadlineAtMs": 353000,
+          "serverTimeMs": 338000
         }
       }
     },
@@ -2139,9 +2139,9 @@
               "totalScore": 11
             }
           ],
-          "durationMs": 2000,
-          "phaseEndsAtMs": 319000,
-          "serverTimeMs": 317000
+          "durationMs": 6000,
+          "phaseEndsAtMs": 359000,
+          "serverTimeMs": 353000
         }
       }
     },
@@ -2183,8 +2183,8 @@
             }
           ],
           "durationMs": 3000,
-          "phaseEndsAtMs": 322000,
-          "serverTimeMs": 319000
+          "phaseEndsAtMs": 362000,
+          "serverTimeMs": 359000
         }
       }
     },
@@ -2690,7 +2690,7 @@
         "payload": {
           "status": "SAVED",
           "retryable": false,
-          "savedAtMs": 330000
+          "savedAtMs": 370000
         }
       }
     }

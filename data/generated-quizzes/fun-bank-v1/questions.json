@@ -1,0 +1,925 @@
+[
+  {
+    "key": "everyday",
+    "categoryId": 4,
+    "title": "Tạp hóa kiến thức — Chơi là biết",
+    "questions": [
+      {
+        "questionType": "SINGLE_CHOICE",
+        "content": "Nếu Doraemon đi mua bánh khoái khẩu, cậu ấy sẽ chọn món nào?",
+        "options": [
+          {
+            "id": "A",
+            "text": "Bánh chưng"
+          },
+          {
+            "id": "B",
+            "text": "Bánh rán dorayaki"
+          },
+          {
+            "id": "C",
+            "text": "Bánh mì tỏi"
+          },
+          {
+            "id": "D",
+            "text": "Bánh tráng trộn"
+          }
+        ],
+        "answerKey": "B",
+        "explanation": "Món khoái khẩu quen thuộc của Doraemon là bánh rán dorayaki.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "SINGLE_CHOICE",
+        "content": "Trong truyện cổ tích, cô Tấm đánh rơi thứ gì để nhà vua tìm ra mình?",
+        "options": [
+          {
+            "id": "A",
+            "text": "Điện thoại"
+          },
+          {
+            "id": "B",
+            "text": "Chiếc nón"
+          },
+          {
+            "id": "C",
+            "text": "Chiếc giày"
+          },
+          {
+            "id": "D",
+            "text": "Chìa khóa xe"
+          }
+        ],
+        "answerKey": "C",
+        "explanation": "Chiếc giày đánh rơi là chi tiết giúp nhà vua tìm được Tấm.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "MULTIPLE_CHOICE",
+        "content": "Đi chợ mua nguyên liệu gói bánh chưng truyền thống: chọn những món phù hợp.",
+        "options": [
+          {
+            "id": "A",
+            "text": "Gạo nếp"
+          },
+          {
+            "id": "B",
+            "text": "Đậu xanh"
+          },
+          {
+            "id": "C",
+            "text": "Thịt lợn"
+          },
+          {
+            "id": "D",
+            "text": "Mì spaghetti"
+          }
+        ],
+        "answerKey": [
+          "A",
+          "B",
+          "C"
+        ],
+        "explanation": "Bánh chưng truyền thống có gạo nếp, đậu xanh và thịt lợn; spaghetti để dành cho bữa khác.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "MULTIPLE_CHOICE",
+        "content": "Chọn những nhạc cụ có dây trong danh sách này.",
+        "options": [
+          {
+            "id": "A",
+            "text": "Đàn guitar"
+          },
+          {
+            "id": "B",
+            "text": "Trống"
+          },
+          {
+            "id": "C",
+            "text": "Đàn violin"
+          },
+          {
+            "id": "D",
+            "text": "Sáo trúc"
+          }
+        ],
+        "answerKey": [
+          "A",
+          "C"
+        ],
+        "explanation": "Guitar và violin tạo âm bằng dây; trống và sáo thuộc các nhóm nhạc cụ khác.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "TRUE_FALSE",
+        "content": "Một ki-lô-gam bông nhẹ hơn một ki-lô-gam sắt.",
+        "options": [],
+        "answerKey": false,
+        "explanation": "Cả hai đều có khối lượng 1 kg; bông chỉ chiếm nhiều chỗ hơn.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "TRUE_FALSE",
+        "content": "Ngày 29/2 chỉ xuất hiện trong năm nhuận theo lịch Gregory.",
+        "options": [],
+        "answerKey": true,
+        "explanation": "Năm thường có tháng Hai 28 ngày; năm nhuận có thêm ngày 29/2.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "SHORT_ANSWER",
+        "content": "Điền từ còn thiếu: 'Có công mài sắt, có ngày nên ...'.",
+        "options": [],
+        "answerKey": [
+          "kim",
+          "cái kim",
+          "cai kim"
+        ],
+        "explanation": "Câu tục ngữ khuyên kiên trì: Có công mài sắt, có ngày nên kim.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "SHORT_ANSWER",
+        "content": "Trong truyện cổ tích, ai có câu thần chú 'Khắc nhập, khắc nhập'? (Nêu nhân vật, không nêu tên truyện.)",
+        "options": [],
+        "answerKey": [
+          "anh Khoai",
+          "Khoai",
+          "anh khoai",
+          "anh nông dân",
+          "anh nong dan",
+          "chàng trai",
+          "chang trai"
+        ],
+        "explanation": "Trong Cây tre trăm đốt, anh Khoai được Bụt chỉ cho câu thần chú để ghép các đốt tre.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "REORDER",
+        "content": "Đi từ sáng đến đêm: xếp các thời điểm theo thứ tự trong một ngày.",
+        "options": [
+          {
+            "id": "A",
+            "text": "Bình minh"
+          },
+          {
+            "id": "B",
+            "text": "Buổi trưa"
+          },
+          {
+            "id": "C",
+            "text": "Hoàng hôn"
+          },
+          {
+            "id": "D",
+            "text": "Nửa đêm"
+          }
+        ],
+        "answerKey": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "explanation": "Bình minh mở đầu ban ngày, tiếp đến trưa, hoàng hôn và nửa đêm.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "REORDER",
+        "content": "Xếp các ngày lễ theo thứ tự xuất hiện trong cùng một năm dương lịch.",
+        "options": [
+          {
+            "id": "A",
+            "text": "Tết Dương lịch 1/1"
+          },
+          {
+            "id": "B",
+            "text": "Quốc tế Phụ nữ 8/3"
+          },
+          {
+            "id": "C",
+            "text": "Quốc tế Thiếu nhi 1/6"
+          },
+          {
+            "id": "D",
+            "text": "Giáng sinh 25/12"
+          }
+        ],
+        "answerKey": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "explanation": "Theo thứ tự tháng: tháng 1, tháng 3, tháng 6, tháng 12.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "RANGE",
+        "content": "Bạn mua 3 ly trà sữa, mỗi ly 25 nghìn đồng. Tổng cộng bao nhiêu nghìn đồng, chưa tính phí giao hàng?",
+        "options": [],
+        "answerKey": {
+          "min": 0,
+          "max": 150,
+          "step": 1,
+          "unit": "nghìn đồng",
+          "acceptedMin": 75,
+          "acceptedMax": 75
+        },
+        "explanation": "3 × 25 = 75 nghìn đồng. Chưa cần gọi hội bạn chia tiền!",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "RANGE",
+        "content": "Một năm thường có 365 ngày. Vậy có bao nhiêu tháng có ÍT NHẤT 28 ngày?",
+        "options": [],
+        "answerKey": {
+          "min": 0,
+          "max": 12,
+          "step": 1,
+          "unit": "tháng",
+          "acceptedMin": 12,
+          "acceptedMax": 12
+        },
+        "explanation": "Cả 12 tháng đều có ít nhất 28 ngày; câu hỏi không nói 'đúng 28 ngày'.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "PINPOINT",
+        "content": "Ghim vào phần ruột miếng dưa hấu trong quầy trái cây.",
+        "options": [],
+        "answerKey": {
+          "x": 0.65,
+          "y": 0.7,
+          "width": 0.09,
+          "height": 0.058333
+        },
+        "explanation": "Miếng dưa hấu ở ô dưới bên phải, ruột đỏ và vỏ xanh.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": "fruit-stall.png"
+      },
+      {
+        "questionType": "PINPOINT",
+        "content": "Mặt Trời mọc ở hướng Đông. Trên la bàn này, ghim vào chữ chỉ hướng đó.",
+        "options": [],
+        "answerKey": {
+          "x": 0.72,
+          "y": 0.433333,
+          "width": 0.15,
+          "height": 0.133333
+        },
+        "explanation": "Đông nằm bên phải khi la bàn đặt Bắc ở trên.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": "compass.png"
+      }
+    ]
+  },
+  {
+    "key": "animals",
+    "categoryId": 4,
+    "title": "Muôn thú có gì lạ?",
+    "questions": [
+      {
+        "questionType": "SINGLE_CHOICE",
+        "content": "Mang tên 'cá' nhưng con nào dưới đây là động vật có vú?",
+        "options": [
+          {
+            "id": "A",
+            "text": "Cá chép"
+          },
+          {
+            "id": "B",
+            "text": "Cá ngừ"
+          },
+          {
+            "id": "C",
+            "text": "Cá heo"
+          },
+          {
+            "id": "D",
+            "text": "Cá vàng"
+          }
+        ],
+        "answerKey": "C",
+        "explanation": "Cá heo là động vật có vú, thở bằng phổi và nuôi con bằng sữa.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "SINGLE_CHOICE",
+        "content": "Loài nào là động vật có vú có khả năng bay chủ động thực sự?",
+        "options": [
+          {
+            "id": "A",
+            "text": "Dơi"
+          },
+          {
+            "id": "B",
+            "text": "Chim sẻ"
+          },
+          {
+            "id": "C",
+            "text": "Sóc bay"
+          },
+          {
+            "id": "D",
+            "text": "Bướm"
+          }
+        ],
+        "answerKey": "A",
+        "explanation": "Dơi là động vật có vú biết bay chủ động. Sóc bay chỉ lượn nhờ màng da.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "MULTIPLE_CHOICE",
+        "content": "Chọn các loài thuộc nhóm côn trùng.",
+        "options": [
+          {
+            "id": "A",
+            "text": "Bướm"
+          },
+          {
+            "id": "B",
+            "text": "Nhện"
+          },
+          {
+            "id": "C",
+            "text": "Ong"
+          },
+          {
+            "id": "D",
+            "text": "Kiến"
+          }
+        ],
+        "answerKey": [
+          "A",
+          "C",
+          "D"
+        ],
+        "explanation": "Bướm, ong và kiến là côn trùng; nhện thuộc nhóm hình nhện.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "MULTIPLE_CHOICE",
+        "content": "Chọn các loài chim trong danh sách. Đừng để chuyện có bay được hay không đánh lừa bạn!",
+        "options": [
+          {
+            "id": "A",
+            "text": "Chim cánh cụt"
+          },
+          {
+            "id": "B",
+            "text": "Dơi"
+          },
+          {
+            "id": "C",
+            "text": "Đà điểu"
+          },
+          {
+            "id": "D",
+            "text": "Vịt"
+          }
+        ],
+        "answerKey": [
+          "A",
+          "C",
+          "D"
+        ],
+        "explanation": "Chim cánh cụt, đà điểu và vịt đều là chim; dơi là động vật có vú.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "TRUE_FALSE",
+        "content": "Cá heo phải ngoi lên mặt nước để hít thở không khí.",
+        "options": [],
+        "answerKey": true,
+        "explanation": "Cá heo thở không khí bằng phổi qua lỗ thở; chúng không có mang như cá.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "TRUE_FALSE",
+        "content": "Nhện trưởng thành bình thường có sáu chân giống côn trùng.",
+        "options": [],
+        "answerKey": false,
+        "explanation": "Nhện có tám chân; côn trùng trưởng thành có sáu chân.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "SHORT_ANSWER",
+        "content": "Con gì thường được gọi là 'chúa sơn lâm' trong cách nói quen thuộc ở Việt Nam?",
+        "options": [],
+        "answerKey": [
+          "hổ",
+          "ho",
+          "con hổ",
+          "con ho",
+          "cọp",
+          "cop",
+          "con cọp",
+          "con cop"
+        ],
+        "explanation": "Trong cách nói quen thuộc ở Việt Nam, hổ (cọp) được gọi là chúa sơn lâm.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "SHORT_ANSWER",
+        "content": "Nhắc tới chiếc túi trước bụng để nuôi con, người ta thường nghĩ ngay tới con gì? (Tên quen thuộc ở Úc.)",
+        "options": [],
+        "answerKey": [
+          "kangaroo",
+          "kanguru",
+          "kangourou",
+          "chuột túi",
+          "chuot tui",
+          "con kangaroo"
+        ],
+        "explanation": "Kangaroo, thường gọi là chuột túi, có túi để con non phát triển.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "REORDER",
+        "content": "Một chú bướm lớn lên ra sao? Xếp vòng đời theo đúng thứ tự.",
+        "options": [
+          {
+            "id": "A",
+            "text": "Trứng"
+          },
+          {
+            "id": "B",
+            "text": "Sâu bướm"
+          },
+          {
+            "id": "C",
+            "text": "Nhộng"
+          },
+          {
+            "id": "D",
+            "text": "Bướm trưởng thành"
+          }
+        ],
+        "answerKey": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "explanation": "Bướm biến thái hoàn toàn qua trứng, ấu trùng (sâu bướm), nhộng rồi trưởng thành.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "REORDER",
+        "content": "Xếp quá trình lớn lên của ếch theo thứ tự.",
+        "options": [
+          {
+            "id": "A",
+            "text": "Trứng ếch"
+          },
+          {
+            "id": "B",
+            "text": "Nòng nọc chưa có chân"
+          },
+          {
+            "id": "C",
+            "text": "Ếch con còn đuôi"
+          },
+          {
+            "id": "D",
+            "text": "Ếch trưởng thành"
+          }
+        ],
+        "answerKey": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "explanation": "Ếch đi từ trứng đến nòng nọc, mọc chân và tiêu giảm đuôi trước khi trưởng thành.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "RANGE",
+        "content": "Một con bạch tuộc bình thường có bao nhiêu cánh tay?",
+        "options": [],
+        "answerKey": {
+          "min": 0,
+          "max": 12,
+          "step": 1,
+          "unit": "cánh tay",
+          "acceptedMin": 8,
+          "acceptedMax": 8
+        },
+        "explanation": "Bạch tuộc có tám cánh tay, không phải mười như cách dễ nhầm với mực.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "RANGE",
+        "content": "Bạch tuộc có tới bao nhiêu trái tim?",
+        "options": [],
+        "answerKey": {
+          "min": 0,
+          "max": 10,
+          "step": 1,
+          "unit": "trái tim",
+          "acceptedMin": 3,
+          "acceptedMax": 3
+        },
+        "explanation": "Bạch tuộc có ba tim: hai tim bơm máu qua mang và một tim bơm máu đi khắp cơ thể.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "PINPOINT",
+        "content": "Tai dài, hay gắn với hình ảnh cà rốt: ghim vào mặt bạn thỏ.",
+        "options": [],
+        "answerKey": {
+          "x": 0.62,
+          "y": 0.258333,
+          "width": 0.15,
+          "height": 0.191667
+        },
+        "explanation": "Bạn thỏ có đôi tai dài ở ô trên bên phải.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": "animal-friends.png"
+      },
+      {
+        "questionType": "PINPOINT",
+        "content": "Ai có tám chân? Ghim vào thân con nhện trong hình.",
+        "options": [],
+        "answerKey": {
+          "x": 0.26,
+          "y": 0.325,
+          "width": 0.06,
+          "height": 0.083333
+        },
+        "explanation": "Con nhện nằm ở ô trên bên trái; tám chân tỏa ra quanh thân.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": "tiny-creatures.png"
+      }
+    ]
+  },
+  {
+    "key": "riddles",
+    "categoryId": 4,
+    "title": "Đố vui — Dễ mà dễ lú",
+    "questions": [
+      {
+        "questionType": "SINGLE_CHOICE",
+        "content": "Bạn đang chạy đua và vượt người đứng thứ hai. Ngay lúc đó bạn đứng thứ mấy?",
+        "options": [
+          {
+            "id": "A",
+            "text": "Thứ nhất"
+          },
+          {
+            "id": "B",
+            "text": "Thứ hai"
+          },
+          {
+            "id": "C",
+            "text": "Thứ ba"
+          },
+          {
+            "id": "D",
+            "text": "Ban tổ chức"
+          }
+        ],
+        "answerKey": "B",
+        "explanation": "Bạn chiếm vị trí của người vừa vượt, tức vị trí thứ hai.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "SINGLE_CHOICE",
+        "content": "Bác sĩ đưa 3 viên kẹo, dặn ăn ngay 1 viên rồi cứ 30 phút ăn thêm 1 viên. Sau bao lâu bạn ăn hết?",
+        "options": [
+          {
+            "id": "A",
+            "text": "30 phút"
+          },
+          {
+            "id": "B",
+            "text": "60 phút"
+          },
+          {
+            "id": "C",
+            "text": "90 phút"
+          },
+          {
+            "id": "D",
+            "text": "Đợi hết phim"
+          }
+        ],
+        "answerKey": "B",
+        "explanation": "Ăn viên đầu ở phút 0, viên hai ở phút 30 và viên ba ở phút 60.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "MULTIPLE_CHOICE",
+        "content": "Chọn những thứ có 'răng' theo cách gọi tiếng Việt nhưng không nhai cơm.",
+        "options": [
+          {
+            "id": "A",
+            "text": "Cái lược"
+          },
+          {
+            "id": "B",
+            "text": "Cái cưa"
+          },
+          {
+            "id": "C",
+            "text": "Con mèo"
+          },
+          {
+            "id": "D",
+            "text": "Bánh răng"
+          }
+        ],
+        "answerKey": [
+          "A",
+          "B",
+          "D"
+        ],
+        "explanation": "Lược, cưa và bánh răng đều có răng theo tên gọi, nhưng không dùng để nhai.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "MULTIPLE_CHOICE",
+        "content": "Chọn những thứ có 'mắt' theo cách gọi tiếng Việt nhưng không dùng để nhìn.",
+        "options": [
+          {
+            "id": "A",
+            "text": "Cây kim"
+          },
+          {
+            "id": "B",
+            "text": "Quả dứa"
+          },
+          {
+            "id": "C",
+            "text": "Con cú"
+          },
+          {
+            "id": "D",
+            "text": "Lưới đánh cá"
+          }
+        ],
+        "answerKey": [
+          "A",
+          "B",
+          "D"
+        ],
+        "explanation": "Mắt kim, mắt dứa và mắt lưới là tên gọi hình dạng hoặc bộ phận; chúng không có chức năng nhìn.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "TRUE_FALSE",
+        "content": "Nếu hôm qua là thứ Hai thì ngày mai là thứ Tư.",
+        "options": [],
+        "answerKey": true,
+        "explanation": "Hôm qua thứ Hai nghĩa là hôm nay thứ Ba; ngày mai là thứ Tư.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "TRUE_FALSE",
+        "content": "Một gia đình có 4 chị em gái. Mỗi người đều có cùng 1 em trai. Gia đình đó có tổng cộng 8 người con.",
+        "options": [],
+        "answerKey": false,
+        "explanation": "Bốn chị em cùng có một em trai, nên tổng cộng là 5 người con, không phải mỗi chị một em trai riêng.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "SHORT_ANSWER",
+        "content": "Cái gì càng lau khô đồ vật thì bản thân càng ướt? (Vật dụng bằng vải.)",
+        "options": [],
+        "answerKey": [
+          "khăn",
+          "khan",
+          "cái khăn",
+          "cai khan",
+          "khăn lau",
+          "khan lau",
+          "khăn tắm",
+          "khan tam"
+        ],
+        "explanation": "Khăn thấm nước từ vật được lau nên bản thân khăn càng ướt.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "SHORT_ANSWER",
+        "content": "Cái gì có cổ nhưng không có đầu, dùng để đựng nước?",
+        "options": [],
+        "answerKey": [
+          "chai",
+          "cái chai",
+          "cai chai",
+          "chai nước",
+          "chai nuoc",
+          "lọ",
+          "lo",
+          "cái lọ",
+          "cai lo",
+          "bình",
+          "binh",
+          "cái bình",
+          "cai binh"
+        ],
+        "explanation": "Chai, lọ hoặc bình có phần được gọi là cổ, nhưng không có đầu.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "REORDER",
+        "content": "Từ bé đến lớn: xếp các đơn vị thời gian theo độ dài tăng dần.",
+        "options": [
+          {
+            "id": "A",
+            "text": "Giây"
+          },
+          {
+            "id": "B",
+            "text": "Phút"
+          },
+          {
+            "id": "C",
+            "text": "Giờ"
+          },
+          {
+            "id": "D",
+            "text": "Ngày"
+          }
+        ],
+        "answerKey": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "explanation": "60 giây = 1 phút; 60 phút = 1 giờ; 24 giờ = 1 ngày.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "REORDER",
+        "content": "Xếp các nhân vật theo tuổi tăng dần. Lưu ý: đọc đúng số tuổi nhé!",
+        "options": [
+          {
+            "id": "A",
+            "text": "Bé Na: 5 tuổi"
+          },
+          {
+            "id": "B",
+            "text": "Anh Bo: 12 tuổi"
+          },
+          {
+            "id": "C",
+            "text": "Mẹ: 36 tuổi"
+          },
+          {
+            "id": "D",
+            "text": "Ông: 70 tuổi"
+          }
+        ],
+        "answerKey": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "explanation": "5 < 12 < 36 < 70. Tên gọi chỉ để tạo bối cảnh; số tuổi mới quyết định thứ tự.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "RANGE",
+        "content": "Trên cành có 10 con chim. 3 con bay đi, không có con nào khác bay đi hay bay đến. Còn mấy con trên cành?",
+        "options": [],
+        "answerKey": {
+          "min": 0,
+          "max": 15,
+          "step": 1,
+          "unit": "con",
+          "acceptedMin": 7,
+          "acceptedMax": 7
+        },
+        "explanation": "Đề nói rõ không có thay đổi nào khác, nên còn 10 - 3 = 7 con.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "RANGE",
+        "content": "Bạn có 5 quả táo và lấy ra 2 quả để cầm trên tay. Trên tay bạn đang có mấy quả?",
+        "options": [],
+        "answerKey": {
+          "min": 0,
+          "max": 10,
+          "step": 1,
+          "unit": "quả",
+          "acceptedMin": 2,
+          "acceptedMax": 2
+        },
+        "explanation": "Câu hỏi hỏi số quả đang cầm trên tay: 2, chứ không hỏi số quả còn lại.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": null
+      },
+      {
+        "questionType": "PINPOINT",
+        "content": "Trong đám hình tròn, có một ngôi sao đi lạc. Ghim vào giữa ngôi sao đó.",
+        "options": [],
+        "answerKey": {
+          "x": 0.715,
+          "y": 0.575,
+          "width": 0.04,
+          "height": 0.066667
+        },
+        "explanation": "Ngôi sao nằm ở hàng thứ hai, cột ngoài cùng bên phải.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": "odd-star.png"
+      },
+      {
+        "questionType": "PINPOINT",
+        "content": "Kim dài chỉ 12, kim ngắn chỉ 3: ghim vào tâm chiếc đồng hồ đang chỉ 3 giờ đúng.",
+        "options": [],
+        "answerKey": {
+          "x": 0.665,
+          "y": 0.316667,
+          "width": 0.06,
+          "height": 0.1
+        },
+        "explanation": "Đồng hồ ở ô trên bên phải chỉ 3 giờ: kim phút ở 12 và kim giờ ở 3.",
+        "questionAssetId": null,
+        "explanationAssetId": null,
+        "localImage": "clock-party.png"
+      }
+    ]
+  }
+]

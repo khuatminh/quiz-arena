@@ -54,7 +54,7 @@ class MatchTerminationTest {
         engine.open();
         engine.command(0, "ANSWER", "questionId", 1, "answer", "A");
         engine.command(1, "ANSWER", "questionId", 1, "answer", "A");
-        if (desired == MatchPhase.LEADERBOARD) engine.scheduler.advance(Duration.ofSeconds(2));
+        if (desired == MatchPhase.LEADERBOARD) engine.scheduler.advance(Duration.ofSeconds(6));
       }
       default -> throw new AssertionError();
     }

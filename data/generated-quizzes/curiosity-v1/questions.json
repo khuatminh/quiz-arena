@@ -1,0 +1,536 @@
+{
+  "title": "Đi một vòng thế giới — 20 điều thú vị",
+  "description": "20 câu mức vừa về lịch sử, địa lý, khoa học và văn hóa. Sáu dạng câu hỏi, ảnh nhận diện và sơ đồ giải thích. Chơi khoảng 10 phút.",
+  "categoryId": 4,
+  "shuffleQuestions": false,
+  "questions": [
+    {
+      "questionType": "SINGLE_CHOICE",
+      "content": "Sydney và Melbourne rất nổi tiếng, nhưng thủ đô của Úc là thành phố nào?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Sydney"
+        },
+        {
+          "id": "B",
+          "text": "Canberra"
+        },
+        {
+          "id": "C",
+          "text": "Melbourne"
+        },
+        {
+          "id": "D",
+          "text": "Perth"
+        }
+      ],
+      "answerKey": "B",
+      "explanation": "Canberra là thủ đô Úc, được chọn trong quá trình tìm địa điểm đặt thủ đô liên bang giữa Sydney và Melbourne.",
+      "questionAssetId": null,
+      "explanationAssetId": null,
+      "localQuestionImage": null,
+      "localExplanationImage": null
+    },
+    {
+      "questionType": "SINGLE_CHOICE",
+      "content": "Vị vua nào dời đô từ Hoa Lư ra Đại La và đặt tên kinh đô là Thăng Long năm 1010?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Lý Thánh Tông"
+        },
+        {
+          "id": "B",
+          "text": "Trần Thái Tông"
+        },
+        {
+          "id": "C",
+          "text": "Lê Đại Hành"
+        },
+        {
+          "id": "D",
+          "text": "Lý Thái Tổ"
+        }
+      ],
+      "answerKey": "D",
+      "explanation": "Lý Thái Tổ (Lý Công Uẩn) dời đô năm 1010. Đừng nhầm với Lý Thánh Tông, vị vua đổi quốc hiệu thành Đại Việt năm 1054.",
+      "questionAssetId": null,
+      "explanationAssetId": null,
+      "localQuestionImage": null,
+      "localExplanationImage": null
+    },
+    {
+      "questionType": "SINGLE_CHOICE",
+      "content": "Hành tinh nào mất nhiều thời gian tự quay một vòng hơn thời gian đi một vòng quanh Mặt Trời?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Sao Kim"
+        },
+        {
+          "id": "B",
+          "text": "Sao Hỏa"
+        },
+        {
+          "id": "C",
+          "text": "Sao Mộc"
+        },
+        {
+          "id": "D",
+          "text": "Sao Hải Vương"
+        }
+      ],
+      "answerKey": "A",
+      "explanation": "Sao Kim tự quay một vòng khoảng 243 ngày Trái Đất, nhưng quay quanh Mặt Trời chỉ khoảng 225 ngày. Đây là chu kỳ tự quay, khác khoảng giữa hai lần Mặt Trời mọc.",
+      "questionAssetId": null,
+      "explanationAssetId": null,
+      "localQuestionImage": null,
+      "localExplanationImage": "venus-answer.png"
+    },
+    {
+      "questionType": "SINGLE_CHOICE",
+      "content": "Nhìn sơ đồ: Mặt Trăng che ánh sáng Mặt Trời tới một vùng trên Trái Đất. Người ở vùng đó quan sát hiện tượng gì?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Nguyệt thực"
+        },
+        {
+          "id": "B",
+          "text": "Cực quang"
+        },
+        {
+          "id": "C",
+          "text": "Nhật thực"
+        },
+        {
+          "id": "D",
+          "text": "Mưa sao băng"
+        }
+      ],
+      "answerKey": "C",
+      "explanation": "Nhật thực xảy ra khi Mặt Trăng nằm giữa Mặt Trời và Trái Đất, che khuất Mặt Trời với người ở vùng bóng. Nguyệt thực có Trái Đất ở giữa.",
+      "questionAssetId": null,
+      "explanationAssetId": null,
+      "localQuestionImage": "eclipse-question.png",
+      "localExplanationImage": "eclipse-answer.png"
+    },
+    {
+      "questionType": "SINGLE_CHOICE",
+      "content": "Kênh đào Suez giúp tàu thuyền đi tắt giữa hai vùng biển nào?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Biển Đen và Biển Caspi"
+        },
+        {
+          "id": "B",
+          "text": "Địa Trung Hải và Biển Đỏ"
+        },
+        {
+          "id": "C",
+          "text": "Đại Tây Dương và Thái Bình Dương"
+        },
+        {
+          "id": "D",
+          "text": "Biển Baltic và Biển Bắc"
+        }
+      ],
+      "answerKey": "B",
+      "explanation": "Suez ở Ai Cập nối Địa Trung Hải với Biển Đỏ. Kênh Panama mới là tuyến nối Đại Tây Dương với Thái Bình Dương.",
+      "questionAssetId": null,
+      "explanationAssetId": null,
+      "localQuestionImage": null,
+      "localExplanationImage": "suez-answer.png"
+    },
+    {
+      "questionType": "SINGLE_CHOICE",
+      "content": "Trong chiến thắng Bạch Đằng năm 1288, vị tướng nào chỉ huy quân Đại Việt đánh quân Nguyên bằng trận địa cọc?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Ngô Quyền"
+        },
+        {
+          "id": "B",
+          "text": "Lê Hoàn"
+        },
+        {
+          "id": "C",
+          "text": "Trần Hưng Đạo"
+        },
+        {
+          "id": "D",
+          "text": "Lê Lợi"
+        }
+      ],
+      "answerKey": "C",
+      "explanation": "Trần Hưng Đạo chỉ huy chiến thắng năm 1288. Cũng trên sông Bạch Đằng, Ngô Quyền thắng quân Nam Hán năm 938, còn Lê Hoàn thắng quân Tống năm 981.",
+      "questionAssetId": null,
+      "explanationAssetId": null,
+      "localQuestionImage": null,
+      "localExplanationImage": null
+    },
+    {
+      "questionType": "SINGLE_CHOICE",
+      "content": "Di sản nào ở Việt Nam được UNESCO ghi danh năm 2014 theo cả giá trị văn hóa lẫn thiên nhiên?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Quần thể danh thắng Tràng An"
+        },
+        {
+          "id": "B",
+          "text": "Phố cổ Hội An"
+        },
+        {
+          "id": "C",
+          "text": "Thánh địa Mỹ Sơn"
+        },
+        {
+          "id": "D",
+          "text": "Hoàng thành Thăng Long"
+        }
+      ],
+      "answerKey": "A",
+      "explanation": "Tràng An là di sản hỗn hợp văn hóa và thiên nhiên. Cảnh quan đá vôi, hang động và dấu tích cư trú của con người cùng tạo nên giá trị di sản.",
+      "questionAssetId": null,
+      "explanationAssetId": null,
+      "localQuestionImage": null,
+      "localExplanationImage": null
+    },
+    {
+      "questionType": "SINGLE_CHOICE",
+      "content": "Nếu tính cả sa mạc lạnh, sa mạc có diện tích lớn nhất thế giới nằm ở đâu?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Sahara"
+        },
+        {
+          "id": "B",
+          "text": "Bán đảo Ả Rập"
+        },
+        {
+          "id": "C",
+          "text": "Gobi"
+        },
+        {
+          "id": "D",
+          "text": "Nam Cực"
+        }
+      ],
+      "answerKey": "D",
+      "explanation": "Nam Cực là sa mạc lớn nhất khi tính cả sa mạc lạnh. Sa mạc được xác định chủ yếu bởi lượng mưa, tuyết ít, không phải cứ nóng và nhiều cát mới là sa mạc.",
+      "questionAssetId": null,
+      "explanationAssetId": null,
+      "localQuestionImage": null,
+      "localExplanationImage": "desert-answer.png"
+    },
+    {
+      "questionType": "SINGLE_CHOICE",
+      "content": "Lĩnh vực nào sau đây không có một hạng mục giải Nobel riêng?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Vật lý"
+        },
+        {
+          "id": "B",
+          "text": "Hóa học"
+        },
+        {
+          "id": "C",
+          "text": "Toán học"
+        },
+        {
+          "id": "D",
+          "text": "Văn học"
+        }
+      ],
+      "answerKey": "C",
+      "explanation": "Không có hạng mục Nobel Toán học. Các giải lớn của toán học gồm Huy chương Fields và giải Abel; một nhà toán học vẫn có thể nhận Nobel trong lĩnh vực khác.",
+      "questionAssetId": null,
+      "explanationAssetId": null,
+      "localQuestionImage": null,
+      "localExplanationImage": null
+    },
+    {
+      "questionType": "SINGLE_CHOICE",
+      "content": "Di tích Machu Picchu của nền văn minh Inca nằm ở quốc gia nào?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Mexico"
+        },
+        {
+          "id": "B",
+          "text": "Peru"
+        },
+        {
+          "id": "C",
+          "text": "Ai Cập"
+        },
+        {
+          "id": "D",
+          "text": "Campuchia"
+        }
+      ],
+      "answerKey": "B",
+      "explanation": "Machu Picchu nằm trên dãy Andes ở Peru, là một di tích tiêu biểu của nền văn minh Inca. Aztec là nền văn minh khác, gắn với Mexico.",
+      "questionAssetId": null,
+      "explanationAssetId": null,
+      "localQuestionImage": null,
+      "localExplanationImage": null
+    },
+    {
+      "questionType": "SINGLE_CHOICE",
+      "content": "Cây cà phê Arabica có nguồn gốc tự nhiên ở châu lục nào, trước khi được trồng rộng rãi ở Brazil và Việt Nam?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Nam Mỹ"
+        },
+        {
+          "id": "B",
+          "text": "Châu Á"
+        },
+        {
+          "id": "C",
+          "text": "Châu Âu"
+        },
+        {
+          "id": "D",
+          "text": "Châu Phi"
+        }
+      ],
+      "answerKey": "D",
+      "explanation": "Arabica có nguồn gốc ở châu Phi, đặc biệt gắn với vùng cao Ethiopia. Quốc gia trồng nhiều cà phê ngày nay không nhất thiết là nơi cây có nguồn gốc.",
+      "questionAssetId": null,
+      "explanationAssetId": null,
+      "localQuestionImage": null,
+      "localExplanationImage": null
+    },
+    {
+      "questionType": "SINGLE_CHOICE",
+      "content": "Lá cờ hai đuôi nheo trong hình là quốc kỳ của nước nào?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Nepal"
+        },
+        {
+          "id": "B",
+          "text": "Bhutan"
+        },
+        {
+          "id": "C",
+          "text": "Sri Lanka"
+        },
+        {
+          "id": "D",
+          "text": "Mông Cổ"
+        }
+      ],
+      "answerKey": "A",
+      "explanation": "Đây là quốc kỳ Nepal: hai đuôi nheo ghép lại, nền đỏ viền xanh, có biểu tượng Mặt Trăng và Mặt Trời.",
+      "questionAssetId": null,
+      "explanationAssetId": null,
+      "localQuestionImage": "nepal-question.png",
+      "localExplanationImage": null
+    },
+    {
+      "questionType": "MULTIPLE_CHOICE",
+      "content": "Chọn TẤT CẢ những động vật có vú nhưng đẻ trứng trong danh sách.",
+      "options": [
+        {
+          "id": "A",
+          "text": "Cá heo"
+        },
+        {
+          "id": "B",
+          "text": "Thú mỏ vịt"
+        },
+        {
+          "id": "C",
+          "text": "Thú lông nhím (echidna)"
+        },
+        {
+          "id": "D",
+          "text": "Chim cánh cụt"
+        }
+      ],
+      "answerKey": [
+        "B",
+        "C"
+      ],
+      "explanation": "Thú mỏ vịt và echidna là thú đơn huyệt, đẻ trứng nhưng vẫn nuôi con bằng sữa. Chim cánh cụt cũng đẻ trứng, nhưng thuộc lớp chim.",
+      "questionAssetId": null,
+      "explanationAssetId": null,
+      "localQuestionImage": null,
+      "localExplanationImage": null
+    },
+    {
+      "questionType": "MULTIPLE_CHOICE",
+      "content": "Ở 20°C và áp suất khí quyển bình thường, chọn TẤT CẢ các nguyên tố ở trạng thái lỏng.",
+      "options": [
+        {
+          "id": "A",
+          "text": "Brom (Br)"
+        },
+        {
+          "id": "B",
+          "text": "Sắt (Fe)"
+        },
+        {
+          "id": "C",
+          "text": "Thủy ngân (Hg)"
+        },
+        {
+          "id": "D",
+          "text": "Nhôm (Al)"
+        }
+      ],
+      "answerKey": [
+        "A",
+        "C"
+      ],
+      "explanation": "Brom và thủy ngân đều lỏng ở 20°C. Brom là phi kim, thủy ngân là kim loại; sắt và nhôm ở trạng thái rắn trong điều kiện này.",
+      "questionAssetId": null,
+      "explanationAssetId": null,
+      "localQuestionImage": null,
+      "localExplanationImage": "elements-answer.png"
+    },
+    {
+      "questionType": "TRUE_FALSE",
+      "content": "Trong chân không lý tưởng, âm thanh vẫn truyền từ nguồn phát đến tai người nghe như trong không khí.",
+      "options": [],
+      "answerKey": false,
+      "explanation": "Âm thanh là sóng cơ, cần môi trường vật chất để truyền. Trong chân không lý tưởng, ánh sáng vẫn truyền được còn âm thanh thì không.",
+      "questionAssetId": null,
+      "explanationAssetId": null,
+      "localQuestionImage": null,
+      "localExplanationImage": null
+    },
+    {
+      "questionType": "TRUE_FALSE",
+      "content": "Các mùa trên Trái Đất chủ yếu xảy ra vì khoảng cách từ Trái Đất đến Mặt Trời thay đổi trong năm.",
+      "options": [],
+      "answerKey": false,
+      "explanation": "Nguyên nhân chính là trục Trái Đất nghiêng, làm thay đổi góc chiếu sáng và độ dài ban ngày. Khi Bắc bán cầu là mùa hè thì Nam bán cầu là mùa đông.",
+      "questionAssetId": null,
+      "explanationAssetId": null,
+      "localQuestionImage": null,
+      "localExplanationImage": null
+    },
+    {
+      "questionType": "REORDER",
+      "content": "Xếp các sự kiện từ xảy ra SỚM NHẤT đến MUỘN NHẤT.",
+      "options": [
+        {
+          "id": "C",
+          "text": "Chiến tranh thế giới thứ nhất bắt đầu"
+        },
+        {
+          "id": "A",
+          "text": "Columbus tới châu Mỹ"
+        },
+        {
+          "id": "D",
+          "text": "Con người lần đầu đặt chân lên Mặt Trăng"
+        },
+        {
+          "id": "B",
+          "text": "Cách mạng Pháp bùng nổ"
+        }
+      ],
+      "answerKey": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "explanation": "Thứ tự: Columbus tới châu Mỹ (1492) → Cách mạng Pháp (1789) → Thế chiến I (1914) → Apollo 11 đưa người lên Mặt Trăng (1969).",
+      "questionAssetId": null,
+      "explanationAssetId": null,
+      "localQuestionImage": null,
+      "localExplanationImage": "timeline-answer.png"
+    },
+    {
+      "questionType": "REORDER",
+      "content": "Xếp bốn hành tinh theo khoảng cách trung bình tới Mặt Trời, từ GẦN đến XA.",
+      "options": [
+        {
+          "id": "C",
+          "text": "Trái Đất"
+        },
+        {
+          "id": "A",
+          "text": "Sao Thủy"
+        },
+        {
+          "id": "D",
+          "text": "Sao Hỏa"
+        },
+        {
+          "id": "B",
+          "text": "Sao Kim"
+        }
+      ],
+      "answerKey": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "explanation": "Bốn hành tinh đá theo thứ tự từ Mặt Trời ra ngoài là Sao Thủy → Sao Kim → Trái Đất → Sao Hỏa. Vành đai tiểu hành tinh nằm xa hơn, trước Sao Mộc.",
+      "questionAssetId": null,
+      "explanationAssetId": null,
+      "localQuestionImage": null,
+      "localExplanationImage": "planets-answer.png"
+    },
+    {
+      "questionType": "RANGE",
+      "content": "Quang Trung đại phá quân Thanh trong chiến thắng Ngọc Hồi – Đống Đa vào năm nào?",
+      "options": [],
+      "answerKey": {
+        "min": 1750,
+        "max": 1820,
+        "step": 1,
+        "unit": "năm",
+        "acceptedMin": 1789,
+        "acceptedMax": 1789
+      },
+      "explanation": "Đáp án là năm 1789, tức Tết Kỷ Dậu. Chiến dịch đánh tan quân Thanh gắn liền với tên tuổi Hoàng đế Quang Trung.",
+      "questionAssetId": null,
+      "explanationAssetId": null,
+      "localQuestionImage": null,
+      "localExplanationImage": null
+    },
+    {
+      "questionType": "SHORT_ANSWER",
+      "content": "Hệ chữ nào là nền tảng của chữ Quốc ngữ tiếng Việt? (Nhập tên hệ chữ.)",
+      "options": [],
+      "answerKey": [
+        "Latinh",
+        "La tinh",
+        "La-tinh",
+        "Latin",
+        "Latin alphabet",
+        "chữ Latinh",
+        "chữ La tinh",
+        "chữ La-tinh",
+        "chu Latinh",
+        "chu La tinh",
+        "hệ chữ Latinh",
+        "he chu Latinh"
+      ],
+      "explanation": "Chữ Quốc ngữ dùng hệ chữ Latinh, bổ sung dấu thanh và các chữ như ă, â, ê, ô, ơ, ư, đ để ghi âm tiếng Việt.",
+      "questionAssetId": null,
+      "explanationAssetId": null,
+      "localQuestionImage": null,
+      "localExplanationImage": null
+    }
+  ]
+}

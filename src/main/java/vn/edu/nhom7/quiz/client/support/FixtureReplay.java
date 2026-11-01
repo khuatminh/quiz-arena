@@ -66,7 +66,8 @@ public final class FixtureReplay implements AutoCloseable {
         delay +=
             switch (e.type()) {
               case QUESTION_OPEN -> 2500;
-              case QUESTION_RESULT, ROUND_LEADERBOARD -> 1800;
+              case QUESTION_RESULT -> e.payload().path("durationMs").asLong(6000);
+              case ROUND_LEADERBOARD -> 1800;
               case MATCH_COUNTDOWN, ROUND_COUNTDOWN -> 1000;
               case QUESTION, MATCH_START -> 1000;
               default -> 250;

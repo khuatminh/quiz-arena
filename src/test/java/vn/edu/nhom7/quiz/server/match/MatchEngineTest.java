@@ -88,7 +88,34 @@ class MatchEngineTest {
   }
 
   @Test
-  void interactiveRoundsUseThirtySecondsAndKeepKeysPrivateUntilReveal() throws Exception {
+  void revealKeepsAnswersAndExplanationVisibleForSixSeconds() {
+    start();
+    open();
+    var question = match.question();
+    var answer = MatchPayloads.correctAnswer(question);
+    command(0, "ANSWER", "questionId", question.questionId(), "answer", answer);
+    command(1, "ANSWER", "questionId", question.questionId(), "answer", answer);
+    var result = last("QUESTION_RESULT").payload();
+    assertEquals(6000, result.path("durationMs").asInt());
+    assertEquals(6000, result.path("phaseEndsAtMs").asLong() - result.path("serverTimeMs").asLong());
+    assertEquals(answer, result.path("correctAnswer"));
+    assertEquals(question.explanation(), result.path("explanation").asText());
+    scheduler.advance(Duration.ofMillis(5999));
+    assertEquals(MatchPhase.REVEAL, match.phase());
+    command(0, "MATCH_SNAPSHOT_REQUEST");
+    var snapshot = events.getLast().payload();
+    assertEquals(1, snapshot.path("phaseRemainingMs").asLong());
+    assertEquals(result, snapshot.path("latestResult"));
+    assertTrue(events.stream().noneMatch(e -> e.type() == MessageType.ROUND_LEADERBOARD));
+    scheduler.advance(Duration.ofMillis(1));
+    assertEquals(MatchPhase.LEADERBOARD, match.phase());
+    assertEquals(2, events.stream().filter(e -> e.type() == MessageType.ROUND_LEADERBOARD).count());
+  }
+
+  @org.junit.jupiter.params.ParameterizedTest
+  @org.junit.jupiter.params.provider.ValueSource(strings = {"COMMUNITY", "SYSTEM"})
+  void interactiveRoundsUseThirtySecondsAndKeepKeysPrivateUntilReveal(String source)
+      throws Exception {
     var json = new com.fasterxml.jackson.databind.ObjectMapper();
     var questions =
         List.of(
@@ -98,7 +125,7 @@ class MatchEngineTest {
                 QuestionType.PINPOINT, InteractiveQuestionsTest.REGION));
     var quiz =
         new Payloads.QuizSummary(
-            1, "Interactive", 1, "General", null, "AVAILABLE", 3, "COMMUNITY", "Author", 42);
+            1, "Interactive", 1, "General", null, "AVAILABLE", 3, source, "Author", 42);
     match = manager.prepare(UUID.randomUUID(), quiz, ServerFixtures.players(), questions);
     manager.activate(match);
     start();
@@ -117,10 +144,11 @@ class MatchEngineTest {
       scheduler.advance(Duration.ofSeconds(14));
       assertEquals(MatchPhase.REVEAL, match.phase());
       assertEquals(2, match.latestResult.path("outcomes").get(0).path("earnedPoints").asInt());
-      scheduler.advance(Duration.ofSeconds(5));
+      scheduler.advance(Duration.ofSeconds(9));
       n++;
     }
     assertEquals(3, saved.getLast().completedRounds());
+    assertEquals("SYSTEM".equals(source), saved.getLast().ranked());
     assertEquals(6, saved.getLast().player1().totalScore());
     assertEquals(
         30000,
@@ -135,6 +163,45 @@ class MatchEngineTest {
             .payload()
             .path("remainingMs")
             .asInt());
+  }
+
+  @Test
+  void systemCompletesVariableRoundsAndKeepsRankedSnapshot() {
+    for (int count : List.of(1, 14, 50)) {
+      saved.clear();
+      var quiz =
+          new Payloads.QuizSummary(
+              1, "System", 1, "General", null, "AVAILABLE", count, "SYSTEM", null, 42);
+      var base = ServerFixtures.questions().getFirst();
+      var questions = new ArrayList<QuestionSnapshot>();
+      for (int i = 1; i <= count; i++)
+        questions.add(
+            new QuestionSnapshot(
+                i,
+                1,
+                base.questionType(),
+                base.content(),
+                base.options(),
+                base.answerKeyJson(),
+                base.explanation(),
+                null,
+                null));
+      match = manager.prepare(UUID.randomUUID(), quiz, ServerFixtures.players(), questions);
+      manager.activate(match);
+      start();
+      for (int i = 0; i < count; i++) {
+        open();
+        command(0, "ANSWER", "questionId", match.question().questionId(), "answer", "A");
+        command(1, "ANSWER", "questionId", match.question().questionId(), "answer", "A");
+        scheduler.advance(Duration.ofSeconds(9));
+      }
+      var summary = saved.getLast();
+      assertEquals(count, summary.completedRounds());
+      assertEquals(count, summary.totalRounds());
+      assertEquals(count * 3, summary.player1().totalScore());
+      assertTrue(summary.ranked());
+      assertEquals(42, summary.quizVersionId());
+    }
   }
 
   @Test
@@ -165,7 +232,7 @@ class MatchEngineTest {
         open();
         command(0, "ANSWER", "questionId", match.question().questionId(), "answer", "A");
         command(1, "ANSWER", "questionId", match.question().questionId(), "answer", "A");
-        scheduler.advance(Duration.ofSeconds(5));
+        scheduler.advance(Duration.ofSeconds(9));
       }
       var summary = saved.getLast();
       assertEquals(count, summary.completedRounds());
@@ -217,7 +284,7 @@ class MatchEngineTest {
     open();
     scheduler.advance(Duration.ofSeconds(15));
     assertTrue(manager.canAccessMedia(101, "explanation"));
-    scheduler.advance(Duration.ofSeconds(5));
+    scheduler.advance(Duration.ofSeconds(9));
     assertTrue(manager.canAccessMedia(101, "explanation"));
     assertTrue(manager.canAccessMedia(102, "question"));
     assertFalse(manager.canAccessMedia(999, "explanation"));
@@ -253,7 +320,7 @@ class MatchEngineTest {
       command(0, "ANSWER", "questionId", match.question().questionId(), "answer", answer);
       command(1, "ANSWER", "questionId", match.question().questionId(), "answer", answer);
       assertEquals(MatchPhase.REVEAL, match.phase());
-      scheduler.advance(Duration.ofSeconds(5));
+      scheduler.advance(Duration.ofSeconds(9));
     }
     assertEquals(MatchPhase.RESULT, match.phase());
     assertEquals(1, saved.size());
@@ -548,7 +615,7 @@ class MatchEngineTest {
     var outcomes = last("QUESTION_RESULT").payload().path("outcomes");
     assertEquals(6, outcomes.get(0).path("earnedPoints").asInt());
     assertEquals(3, outcomes.get(1).path("earnedPoints").asInt());
-    scheduler.advance(Duration.ofSeconds(5));
+    scheduler.advance(Duration.ofSeconds(9));
     open();
     assertEquals("LIFELINE_USED", rejected(0, "DOUBLE_POINTS"));
     command(0, "LIFELINE_USE", "questionId", match.question().questionId(), "kind", "REMOVE_ONE");
@@ -571,7 +638,7 @@ class MatchEngineTest {
     assertEquals("INVALID_STATE", rejected(1, "DOUBLE_POINTS"));
     // Rounds 5-8 are multiple choice and true/false: x2 only.
     for (int round = 1; round < 7; round++) {
-      scheduler.advance(Duration.ofSeconds(20));
+      scheduler.advance(Duration.ofSeconds(24));
       open();
     }
     assertEquals(QuestionType.TRUE_FALSE, match.question().questionType());

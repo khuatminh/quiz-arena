@@ -1497,9 +1497,9 @@
             "totalScore": 1
           }
         ],
-        "durationMs": 1,
-        "phaseEndsAtMs": 1,
-        "serverTimeMs": 1
+        "durationMs": 6000,
+        "phaseEndsAtMs": 7000,
+        "serverTimeMs": 1000
       }
     },
     "invalid": {
@@ -1526,9 +1526,9 @@
             "totalScore": 1
           }
         ],
-        "durationMs": 1,
-        "phaseEndsAtMs": 1,
-        "serverTimeMs": 1,
+        "durationMs": 6000,
+        "phaseEndsAtMs": 7000,
+        "serverTimeMs": 1000,
         "unexpected": true
       }
     }
