@@ -6,11 +6,11 @@ import javafx.geometry.*;
 import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import vn.edu.nhom7.quiz.client.state.*;
 import vn.edu.nhom7.quiz.common.protocol.*;
 
 public final class HistoryView extends VBox {
-  public HistoryView(JsonNode p, JsonNode detail, UiCommandSink sink) {
+  public HistoryView(
+      JsonNode p, UiCommandSink sink, java.util.function.Consumer<JsonNode> openDetail) {
     setSpacing(16);
     setPadding(new Insets(28));
     getChildren()
@@ -18,13 +18,12 @@ public final class HistoryView extends VBox {
             Ui.kicker("LỊCH SỬ"),
             Ui.title("Lịch sử của bạn"),
             Ui.muted("Xem kết quả và ôn lại câu hỏi từ những trận đã lưu."));
-    if (detail != null) appendDetail(detail, sink);
     if (p == null) {
       getChildren().add(Ui.label("Đang tải…"));
       return;
     }
     if (p.path("items").isEmpty()) getChildren().add(Ui.label("Bạn chưa có trận đấu đã lưu."));
-    for (var match : p.path("items")) getChildren().add(matchRow(match, sink));
+    for (var match : p.path("items")) getChildren().add(matchRow(match, openDetail));
     int page = p.path("page").asInt(1);
     var pagination =
         Ui.pager(
@@ -51,66 +50,7 @@ public final class HistoryView extends VBox {
     getChildren().add(pagination);
   }
 
-  private void appendDetail(JsonNode detail, UiCommandSink sink) {
-    JsonNode summary = detail.path("summary");
-    int detailPage = detail.path("page").asInt(1);
-    long total = detail.path("totalItems").asLong(detail.path("review").size());
-    getChildren()
-        .add(
-            Ui.label(
-                summary.path("totalRounds").asInt(10)
-                    + " câu · "
-                    + (summary.path("ranked").asBoolean(true)
-                        ? "Tính hạng"
-                        : "Cộng đồng · Không tính hạng")));
-    Button previous =
-        Ui.secondary(
-            "← Câu trước",
-            () ->
-                sink.send(
-                    MessageType.MATCH_DETAIL_REQUEST,
-                    null,
-                    null,
-                    new Payloads.MatchDetailRequest(
-                        UUID.fromString(summary.path("matchId").asText()), detailPage - 1)));
-    Button next =
-        Ui.secondary(
-            "Câu tiếp →",
-            () ->
-                sink.send(
-                    MessageType.MATCH_DETAIL_REQUEST,
-                    null,
-                    null,
-                    new Payloads.MatchDetailRequest(
-                        UUID.fromString(summary.path("matchId").asText()), detailPage + 1)));
-    previous.setDisable(detailPage <= 1);
-    next.setDisable(detailPage * Payloads.REVIEW_PAGE_SIZE >= total);
-    var pageLabel = Ui.label("Trang câu " + detailPage);
-    pageLabel.getStyleClass().add("page-label");
-    var pager = new HBox(10, previous, pageLabel, next);
-    pager.setAlignment(Pos.CENTER_LEFT);
-    getChildren().add(pager);
-    var reviewPanel = new VBox(14);
-    reviewPanel.getStyleClass().add("editor-panel");
-    getChildren().add(reviewPanel);
-    for (var q : detail.path("review")) {
-      var players = com.fasterxml.jackson.databind.node.JsonNodeFactory.instance.arrayNode();
-      long self = -1;
-      for (var outcome : q.path("outcomes")) {
-        long id = outcome.path("userId").asLong();
-        // Only the opponent is named; the review card calls the viewer "Bạn".
-        if (id != summary.path("opponentUserId").asLong()) self = id;
-        else
-          players
-              .addObject()
-              .put("userId", id)
-              .put("displayName", summary.path("opponentName").asText("Đối thủ"));
-      }
-      reviewPanel.getChildren().add(new ReviewCard(q, players, self));
-    }
-  }
-
-  private HBox matchRow(JsonNode m, UiCommandSink sink) {
+  private HBox matchRow(JsonNode m, java.util.function.Consumer<JsonNode> openDetail) {
     String date =
         m.path("endedAtMs").asLong() > 0
             ? java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
@@ -146,18 +86,7 @@ public final class HistoryView extends VBox {
     outcome.setMinWidth(120);
     var row =
         new HBox(
-            24,
-            information,
-            outcome,
-            Ui.secondary(
-                "Xem chi tiết",
-                () ->
-                    sink.send(
-                        MessageType.MATCH_DETAIL_REQUEST,
-                        null,
-                        null,
-                        new Payloads.MatchDetailRequest(
-                            UUID.fromString(m.path("matchId").asText())))));
+            24, information, outcome, Ui.secondary("Xem chi tiết", () -> openDetail.accept(m)));
     row.setAlignment(Pos.CENTER_LEFT);
     row.setPadding(new Insets(20));
     row.getStyleClass().add("review-card");

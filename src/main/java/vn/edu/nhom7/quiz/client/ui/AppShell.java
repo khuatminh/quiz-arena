@@ -25,13 +25,14 @@ public final class AppShell extends BorderPane implements AutoCloseable {
   private String visible = "", query = "";
   private boolean showChat;
   private long presentation = -1, onlineRevision = -1;
-  private JsonNode lastQuiz, lastRanking, lastHistory, lastDetail, lastRematch, lastReview;
+  private JsonNode lastQuiz, lastRanking, lastHistory, lastRematch, lastReview;
   private GameView game;
   private CommunityQuizView community;
   private ResultView result;
   private ChatPanel chat;
   private ChallengeDialog challenge;
   private LobbyView lobby;
+  private MatchHistoryDetailView historyDetail;
   private Long selectedQuizCategory;
   private final boolean reducedMotionFlag = Boolean.getBoolean("quiz.reducedMotion");
   private final Effects.Layer fx = new Effects.Layer();
@@ -102,6 +103,7 @@ public final class AppShell extends BorderPane implements AutoCloseable {
     vn.edu.nhom7.quiz.client.assets.RemoteMedia.clear();
     community = null;
     lobby = null;
+    closeHistoryDetail();
     store.resetConnection();
     message.setText("Đang kết nối…");
     network
@@ -340,6 +342,7 @@ public final class AppShell extends BorderPane implements AutoCloseable {
   public void onEvent(Envelope e) {
     vn.edu.nhom7.quiz.client.assets.RemoteMedia.onEvent(e);
     if (community != null) community.onEvent(e);
+    if (query.equals("HISTORY_DETAIL") && historyDetail != null) historyDetail.onEvent(e);
     if (e.type() == MessageType.AUTHOR_RESULT
         && Set.of("PUBLISH", "UNPUBLISH").contains(e.payload().path("action").asText()))
       refreshQuizzes();
@@ -395,6 +398,10 @@ public final class AppShell extends BorderPane implements AutoCloseable {
     }
     if (e.type() == MessageType.CHALLENGE_CLOSED || e.type() == MessageType.MATCH_START)
       hideChallenge();
+    if (e.type() == MessageType.MATCH_START && query.equals("HISTORY_DETAIL")) {
+      closeHistoryDetail();
+      query = "";
+    }
     if (e.type() == MessageType.RANKING_INVALIDATED && query.equals("RANKING"))
       commands.send(MessageType.RANKING_REQUEST, null, null, new Payloads.RankingRequest(1, 20));
     if (e.type() == MessageType.LOGOUT_ACK) {
@@ -403,6 +410,7 @@ public final class AppShell extends BorderPane implements AutoCloseable {
       vn.edu.nhom7.quiz.client.assets.RemoteMedia.clear();
       community = null;
       lobby = null;
+      closeHistoryDetail();
       preparation.clear();
       selectedQuizCategory = null;
       query = "";
@@ -444,6 +452,7 @@ public final class AppShell extends BorderPane implements AutoCloseable {
 
   private void showLobby(ClientState state) {
     if (state.activeMatchId() == null) {
+      closeHistoryDetail();
       query = "";
       visible = "";
       refreshQuizzes();
@@ -455,6 +464,7 @@ public final class AppShell extends BorderPane implements AutoCloseable {
 
   private void showCommunity(ClientState state) {
     if (state.activeMatchId() != null) return;
+    closeHistoryDetail();
     query = "COMMUNITY";
     if (community == null) {
       JsonNode quizzes = state.payload(MessageType.QUIZ_LIST);
@@ -469,6 +479,7 @@ public final class AppShell extends BorderPane implements AutoCloseable {
   private void showQuery(ClientState state, String destination) {
     if (state.activeMatchId() != null) return;
     query = destination;
+    closeHistoryDetail();
     visible = "";
     if (destination.equals("RANKING")) {
       commands.send(MessageType.RANKING_REQUEST, null, null, new Payloads.RankingRequest(1, 20));
@@ -476,6 +487,32 @@ public final class AppShell extends BorderPane implements AutoCloseable {
       commands.send(MessageType.HISTORY_REQUEST, null, null, new Payloads.HistoryRequest(1, 20));
     }
     render(state);
+  }
+
+  private void showHistoryDetail(ClientState state, JsonNode match) {
+    if (state.activeMatchId() != null) return;
+    closeHistoryDetail();
+    historyDetail =
+        new MatchHistoryDetailView(
+            match,
+            state.selfUserId(),
+            commands,
+            () -> {
+              query = "HISTORY";
+              closeHistoryDetail();
+              visible = "";
+              render(store.state());
+            });
+    query = "HISTORY_DETAIL";
+    visible = "";
+    setLeft(null);
+    render(state);
+    historyDetail.load();
+  }
+
+  private void closeHistoryDetail() {
+    if (historyDetail != null) historyDetail.close();
+    historyDetail = null;
   }
 
   public void render(ClientState state) {
@@ -487,6 +524,10 @@ public final class AppShell extends BorderPane implements AutoCloseable {
     }
     header(state);
     if (state.profile() == null) {
+      closeHistoryDetail();
+      query = "";
+      visible = "";
+      setLeft(null);
       setCenter(auth);
       setRight(null);
       return;
@@ -515,9 +556,7 @@ public final class AppShell extends BorderPane implements AutoCloseable {
     if (view.equals("RANKING"))
       rebuild |= !Objects.equals(lastRanking, state.payload(MessageType.RANKING));
     if (view.equals("HISTORY"))
-      rebuild |=
-          !Objects.equals(lastHistory, state.payload(MessageType.HISTORY))
-              || !Objects.equals(lastDetail, state.payload(MessageType.MATCH_DETAIL));
+      rebuild |= !Objects.equals(lastHistory, state.payload(MessageType.HISTORY));
     if (view.equals("RESULT"))
       rebuild |=
           !Objects.equals(lastReview, state.payload(MessageType.LIVE_REVIEW))
@@ -533,7 +572,6 @@ public final class AppShell extends BorderPane implements AutoCloseable {
     lastQuiz = state.payload(MessageType.QUIZ_LIST);
     lastRanking = state.payload(MessageType.RANKING);
     lastHistory = state.payload(MessageType.HISTORY);
-    lastDetail = state.payload(MessageType.MATCH_DETAIL);
     lastRematch = state.payload(MessageType.REMATCH_STATUS);
     lastReview = state.payload(MessageType.LIVE_REVIEW);
     if (game != null) game.dispose();
@@ -571,8 +609,15 @@ public final class AppShell extends BorderPane implements AutoCloseable {
         setCenter(Ui.scroll(new RankingView(lastRanking, commands)));
       }
       case "HISTORY" -> {
+        setLeft(null);
         setRight(null);
-        setCenter(Ui.scroll(new HistoryView(lastHistory, lastDetail, commands)));
+        setCenter(
+            Ui.scroll(new HistoryView(lastHistory, commands, m -> showHistoryDetail(state, m))));
+      }
+      case "HISTORY_DETAIL" -> {
+        setLeft(null);
+        setRight(null);
+        setCenter(historyDetail);
       }
       case "WAITING_READY" -> setCenter(Ui.scroll(new WaitingView(state, commands)));
       case "RESULT" -> {
@@ -612,6 +657,7 @@ public final class AppShell extends BorderPane implements AutoCloseable {
   }
 
   public void close() {
+    closeHistoryDetail();
     clock.stop();
     toast.close();
     if (game != null) game.dispose();

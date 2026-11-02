@@ -46,7 +46,7 @@ final class NavigationBar extends HBox {
             || !quizzes.path("categories").isArray()
             || quizzes.path("categories").isEmpty());
     var ranking = navigation("Xếp hạng", actions.ranking(), query.equals("RANKING"));
-    var history = navigation("Lịch sử", actions.history(), query.equals("HISTORY"));
+    var history = navigation("Lịch sử", actions.history(), query.startsWith("HISTORY"));
     ranking.setDisable(attached);
     history.setDisable(attached);
     var chat = navigation("Chat", actions.chat(), false);

@@ -503,24 +503,33 @@ class InterfaceEvidenceTest {
               .put("pageSize", 10)
               .put("totalItems", 5)
               .set("items", matches);
-      add("18-history", Ui.scroll(new HistoryView(history, null, sink)));
+      add("18-history", Ui.scroll(new HistoryView(history, sink, m -> {})));
       add(
           "history-empty",
           new HistoryView(
-              json.createObjectNode().set("items", json.createArrayNode()), null, sink));
+              json.createObjectNode().set("items", json.createArrayNode()), sink, m -> {}));
       var result = state.payload(MessageType.MATCH_RESULT);
-      if (result != null)
-        add(
-            "19-history-review",
-            Ui.scroll(
-                new HistoryView(
-                    history,
-                    json.createObjectNode()
-                        .put("page", 1)
-                        .put("totalItems", 10)
-                        .<ObjectNode>set("summary", matches.get(0))
-                        .set("review", result.path("review")),
-                    sink)));
+      if (result != null) {
+        UUID request = UUID.randomUUID();
+        var review =
+            new MatchHistoryDetailView(matches.get(0), 101, (t, m, r, p) -> request, () -> {});
+        review.load();
+        review.onEvent(
+            new Envelope(
+                1,
+                MessageType.MATCH_DETAIL,
+                request,
+                null,
+                null,
+                null,
+                json.createObjectNode()
+                    .put("page", 1)
+                    .put("totalItems", result.path("review").size())
+                    .<ObjectNode>set("summary", matches.get(0))
+                    .set("review", result.path("review"))));
+        cleanup.add(review);
+        add("19-history-review", review);
+      }
       var readyData = new EnumMap<MessageType, JsonNode>(MessageType.class);
       readyData.putAll(state.data());
       readyData.put(
