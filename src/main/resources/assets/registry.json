@@ -60,22 +60,22 @@
     {
       "id": "quiz-cover-general",
       "kind": "image",
-      "path": "/assets/images/quiz-cover-general-v2.png",
-      "attribution": "Quiz Arena illustration generated with OpenAI image generation, 2026",
+      "path": "/assets/images/quiz-cover-general.jpg",
+      "attribution": "Rain Bennett; https://unsplash.com/photos/i3-dBKC9ZnM; Unsplash License",
       "required": false
     },
     {
       "id": "quiz-cover-science",
       "kind": "image",
-      "path": "/assets/images/quiz-cover-science-v2.png",
-      "attribution": "Quiz Arena illustration generated with OpenAI image generation, 2026",
+      "path": "/assets/images/quiz-cover-science.jpg",
+      "attribution": "Edward Jenner; https://www.pexels.com/photo/a-man-using-a-microscope-in-a-laboratory-4033019/; Pexels License",
       "required": false
     },
     {
       "id": "quiz-cover-history",
       "kind": "image",
-      "path": "/assets/images/quiz-cover-history-v2.png",
-      "attribution": "Quiz Arena illustration generated with OpenAI image generation, 2026",
+      "path": "/assets/images/quiz-cover-history.jpg",
+      "attribution": "Lộc Nguyễn; https://www.pexels.com/photo/majestic-hue-imperial-city-architecture-in-vietnam-33551604/; Pexels License",
       "required": false
     },
     {
@@ -91,6 +91,62 @@
       "path": "/assets/images/placeholder.png",
       "attribution": "Original Quiz Arena team artwork; CC0",
       "required": true
+    },
+    {
+      "id": "quiz-cover-technology",
+      "kind": "image",
+      "path": "/assets/images/quiz-cover-technology.jpg",
+      "attribution": "Markus Spiske; https://www.pexels.com/photo/display-coding-programming-development-1921326/; Pexels License",
+      "required": false
+    },
+    {
+      "id": "quiz-cover-networks",
+      "kind": "image",
+      "path": "/assets/images/quiz-cover-networks.jpg",
+      "attribution": "Field Engineer; https://www.pexels.com/photo/electronics-engineer-fixing-cables-on-server-442150/; Pexels License",
+      "required": false
+    },
+    {
+      "id": "quiz-cover-java",
+      "kind": "image",
+      "path": "/assets/images/quiz-cover-java.jpg",
+      "attribution": "Godfrey Atima; https://www.pexels.com/photo/programming-code-on-computer-screen-5223887/; Pexels License",
+      "required": false
+    },
+    {
+      "id": "quiz-cover-math",
+      "kind": "image",
+      "path": "/assets/images/quiz-cover-math.jpg",
+      "attribution": "Monstera Production; https://www.pexels.com/photo/mathematical-equation-written-on-blackboard-6238050/; Pexels License",
+      "required": false
+    },
+    {
+      "id": "quiz-cover-everyday",
+      "kind": "image",
+      "path": "/assets/images/quiz-cover-everyday.jpg",
+      "attribution": "Sadat Ahmed; https://www.pexels.com/photo/vibrant-display-of-fresh-fruits-in-dhaka-market-33030030/; Pexels License",
+      "required": false
+    },
+    {
+      "id": "quiz-cover-animals",
+      "kind": "image",
+      "path": "/assets/images/quiz-cover-animals.jpg",
+      "attribution": "Caleb Falkenhagen; https://www.pexels.com/photo/majestic-giraffe-in-african-savanna-landscape-29862073/; Pexels License",
+      "required": false
+    },
+    {
+      "id": "quiz-cover-riddles",
+      "kind": "image",
+      "path": "/assets/images/quiz-cover-riddles.jpg",
+      "attribution": "Piseth Mao; https://www.pexels.com/photo/a-5x5-rubik-cube-puzzle-on-white-table-5509887/; Pexels License",
+      "required": false
+    },
+    {
+      "id": "quiz-cover-world",
+      "kind": "image",
+      "path": "/assets/images/quiz-cover-world.jpg",
+      "attribution": "Luke Greenwood; https://www.pexels.com/photo/close-up-view-of-a-world-globe-map-34092362/; Pexels License",
+      "required": false
     }
   ]
 }

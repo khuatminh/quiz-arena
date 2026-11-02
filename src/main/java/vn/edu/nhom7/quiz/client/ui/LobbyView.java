@@ -301,10 +301,7 @@ public final class LobbyView extends BorderPane {
 
   private VBox card(JsonNode q, java.util.function.Consumer<JsonNode> detail) {
     boolean available = q.path("availability").asText().equals("AVAILABLE");
-    var cover =
-        new vn.edu.nhom7.quiz.client.assets.AssetLoader()
-            .view(q.path("coverAssetId").asText("placeholder"), 226);
-    cover.setFitHeight(132);
+    var cover = vn.edu.nhom7.quiz.client.assets.QuizCovers.view(q, 226, 132);
     var coverBox = new StackPane(cover);
     coverBox.getStyleClass().add("quiz-cover");
     if (q.path("quizSource").asText().equals("COMMUNITY")) {

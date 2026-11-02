@@ -8,6 +8,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.shape.*;
 import vn.edu.nhom7.quiz.client.assets.AssetLoader;
+import vn.edu.nhom7.quiz.client.assets.QuizCovers;
 import vn.edu.nhom7.quiz.common.protocol.*;
 
 /**
@@ -80,10 +81,7 @@ public final class ChallengeDialog extends VBox {
     }
     head.getChildren().addAll(who, countdownRing());
 
-    var cover = new AssetLoader().view(quiz.path("coverAssetId").asText("quiz-cover-general"), 64);
-    cover.setFitWidth(96);
-    cover.setFitHeight(64);
-    cover.setPreserveRatio(false);
+    var cover = QuizCovers.view(quiz, 96, 64);
     var clip = new Rectangle(96, 64);
     clip.setArcWidth(20);
     clip.setArcHeight(20);

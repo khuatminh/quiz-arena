@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import vn.edu.nhom7.quiz.client.assets.AssetLoader;
+import vn.edu.nhom7.quiz.client.assets.QuizCovers;
 import vn.edu.nhom7.quiz.common.protocol.*;
 
 public final class QuizDetailView extends VBox {
@@ -22,7 +22,7 @@ public final class QuizDetailView extends VBox {
         new VBox(
             16,
             Ui.badge("Bộ câu hỏi đã chọn"),
-            new AssetLoader().view(quiz.path("coverAssetId").asText(), 220),
+            QuizCovers.view(quiz, 220, 128),
             Ui.title(quiz.path("title").asText()),
             Ui.label(quiz.path("totalRounds").asInt(10) + " câu · 15–30 giây/câu"),
             Ui.badge(
